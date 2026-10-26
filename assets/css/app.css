@@ -12,6 +12,11 @@
 @source "../../lib/plausible_web";
 @source "../../extra/lib/plausible_web";
 
+/* extra/ is not part of this repository, but upstream's Community Edition
+   stylesheet includes the classes Tailwind finds there. Listing them keeps
+   the generated CSS identical to the official image. */
+@source inline("align-top bg-blue-500 bg-blue-600 bg-blue-700 bg-blue-800 bg-cyan-500 bg-cyan-600 bg-cyan-700 bg-cyan-800 bg-emerald-500 bg-emerald-600 bg-emerald-700 bg-emerald-800 bg-gray-700 bg-gray-800/95 bg-green-600 bg-green-700 bg-green-800 bg-orange-500 bg-orange-600 bg-orange-700 bg-orange-800 bg-purple-500 bg-purple-600 bg-purple-700 bg-purple-800 bg-red-600 bg-red-700 bg-red-800 bg-yellow-500 bg-yellow-600 bg-yellow-700 bg-yellow-800 dark:bg-blue-900 dark:divide-gray-800 dark:divide-gray-900 dark:hover:bg-indigo-600 dark:text-blue-200 dark:text-blue-500 divide-x first:rounded-l-lg flex-grow float-right focus:border-blue-500 focus:ring-blue-500 font-sans gap-x-8 h-14 h-[24px] last:rounded-r-lg m-0 md:inline md:w-2/3 p-0 p-16 p-2.5 sm:divide-x sm:divide-y-0 sm:grid-cols-3 sm:pt-1 sm:space-x-5 space-y-4 text-blue-600 text-blue-800 w-14 w-2/5 w-4/12 w-[500] w-min");
+
 /* Tailwind v3 compatibility: restore v3 default border and ring styling */
 
 @layer base {
