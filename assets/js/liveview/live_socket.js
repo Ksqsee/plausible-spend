@@ -1,0 +1,102 @@
+/**
+  The modules below this comment block are resolved from '../deps' folder,
+  which does not exist when running the lint command in Github CI
+*/
+
+/* eslint-disable import/no-unresolved */
+import 'phoenix_html'
+import { Socket } from 'phoenix'
+import { LiveSocket } from 'phoenix_live_view'
+import { Modal, Dropdown } from 'prima'
+import DashboardRoot from './dashboard_root'
+import DashboardTabs from './dashboard_tabs.js'
+import topbar from 'topbar'
+/* eslint-enable import/no-unresolved */
+
+import Alpine from 'alpinejs'
+
+let csrfToken = document.querySelector("meta[name='csrf-token']")
+let websocketUrl = document.querySelector("meta[name='websocket-url']")
+let disablePushStateFlag = document.querySelector(
+  "meta[name='live-socket-disable-push-state']"
+)
+let domain = document.querySelector("meta[name='dashboard-domain']")
+if (csrfToken && websocketUrl) {
+  let Hooks = { Modal, Dropdown, DashboardRoot, DashboardTabs }
+  Hooks.Metrics = {
+    mounted() {
+      this.handleEvent('send-metrics', ({ event_name }) => {
+        window.plausible(event_name)
+        this.pushEvent('send-metrics-after', { event_name })
+      })
+    }
+  }
+  let Uploaders = {}
+  Uploaders.S3 = function (entries, onViewError) {
+    entries.forEach((entry) => {
+      let xhr = new XMLHttpRequest()
+      onViewError(() => xhr.abort())
+      xhr.onload = () =>
+        xhr.status === 200 ? entry.progress(100) : entry.error()
+      xhr.onerror = () => entry.error()
+      xhr.upload.addEventListener('progress', (event) => {
+        if (event.lengthComputable) {
+          let percent = Math.round((event.loaded / event.total) * 100)
+          if (percent < 100) {
+            entry.progress(percent)
+          }
+        }
+      })
+      let url = entry.meta.url
+      xhr.open('PUT', url, true)
+      xhr.send(entry.file)
+    })
+  }
+  let token = csrfToken.getAttribute('content')
+  let url = websocketUrl.getAttribute('content')
+  let liveUrl = url === '' ? '/live' : new URL('/live', url).href
+  let disablePushState =
+    !!disablePushStateFlag &&
+    disablePushStateFlag.getAttribute('content') === 'true'
+  let domainName = domain && domain.getAttribute('content')
+  let liveSocket = new LiveSocket(liveUrl, Socket, {
+    // For dashboard LV migration
+    disablePushState: disablePushState,
+    heartbeatIntervalMs: 10000,
+    hooks: Hooks,
+    uploaders: Uploaders,
+    dom: {
+      // for alpinejs integration
+      onBeforeElUpdated(from, to) {
+        if (from._x_dataStack) {
+          Alpine.clone(from, to)
+        }
+      }
+    },
+    params: () => {
+      if (domainName) {
+        return {
+          // The prefs are used by dashboard LiveView to persist
+          // user preferences across the reloads.
+          user_prefs: {
+            pages_tab: localStorage.getItem(`pageTab__${domainName}`)
+          },
+          _csrf_token: token
+        }
+      } else {
+        return { _csrf_token: token }
+      }
+    }
+  })
+
+  topbar.config({
+    barColors: { 0: '#303f9f' },
+    shadowColor: 'rgba(0, 0, 0, .3)',
+    barThickness: 4
+  })
+  window.addEventListener('phx:page-loading-start', (_info) => topbar.show())
+  window.addEventListener('phx:page-loading-stop', (_info) => topbar.hide())
+
+  liveSocket.connect()
+  window.liveSocket = liveSocket
+}
