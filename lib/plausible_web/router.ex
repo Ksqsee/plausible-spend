@@ -258,6 +258,8 @@ defmodule PlausibleWeb.Router do
         get "/:domain/funnels/:id", StatsController, :funnel
       end
 
+      get "/:domain/ad-spend", StatsController, :ad_spend
+
       scope private: %{allow_consolidated_views: true} do
         get "/:domain/current-visitors", StatsController, :current_visitors
         get "/:domain/main-graph", StatsController, :main_graph

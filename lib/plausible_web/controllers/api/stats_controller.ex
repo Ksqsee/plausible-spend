@@ -673,6 +673,34 @@ defmodule PlausibleWeb.Api.StatsController do
     end
   end
 
+  def ad_spend(conn, params) do
+    site = conn.assigns[:site]
+
+    if Plausible.AdSpend.configured_for?(site) do
+      params = Map.put(params, "property", "visit:utm_campaign")
+      query = Query.from(site, params, debug_metadata(conn))
+      metrics = breakdown_metrics(query, extra_metrics: [])
+
+      %{results: utm_rows} = Stats.breakdown(site, query, metrics, {1000, 1})
+
+      report =
+        site
+        |> Plausible.AdSpend.campaign_totals(Query.date_range(query))
+        |> Plausible.AdSpend.build_report(utm_rows)
+
+      json(
+        conn,
+        Map.merge(report, %{
+          configured: true,
+          currency: Plausible.AdSpend.currency(),
+          goal_filter: toplevel_goal_filter?(query)
+        })
+      )
+    else
+      json(conn, %{configured: false})
+    end
+  end
+
   def utm_contents(conn, params) do
     site = conn.assigns[:site]
     params = Map.put(params, "property", "visit:utm_content")

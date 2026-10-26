@@ -7,6 +7,7 @@ import Locations from './stats/locations'
 import Devices from './stats/devices'
 import { TopBar } from './nav-menu/top-bar'
 import Behaviours from './stats/behaviours'
+import AdSpend from './stats/ad-spend'
 import { useQueryContext } from './query-context'
 import { useSiteContext } from './site-context'
 import { isRealTimeDashboard } from './util/filters'
@@ -82,6 +83,8 @@ function DashboardStats({
       </div>
 
       <Behaviours importedDataInView={importedDataInView} />
+
+      <AdSpend />
     </>
   )
 }

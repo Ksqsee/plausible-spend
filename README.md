@@ -1,3 +1,35 @@
+# Plausible + Ad Spend
+
+A fork of [Plausible Community Edition](https://github.com/plausible/analytics) v3.2.1 with an **Ad Spend** panel on the dashboard. Spend comes from [Windsor.ai](https://windsor.ai) and is matched to visitors by `utm_campaign`.
+
+## What's added
+
+- `ad_spend` table with daily spend per campaign (`priv/repo/migrations/20261026150000_create_ad_spend.exs`)
+- `Plausible.Workers.SyncAdSpend` pulls the last 14 days from Windsor every 6 hours
+- `GET /api/stats/:domain/ad-spend` combines spend with visitors per `utm_campaign`
+- Dashboard panel in `assets/js/dashboard/stats/ad-spend.tsx`
+- `.github/workflows/build-image.yml` builds `ghcr.io/ksqsee/plausible-spend` on every push to `main`
+
+`extra/` (Plausible's Enterprise code, not licensed for redistribution) is left out. The Community Edition build doesn't use it.
+
+## Configuration
+
+| Variable | Example |
+|---|---|
+| `WINDSOR_API_KEY` | your Windsor.ai API key |
+| `AD_SPEND_ACCOUNTS` | `example.com:google_ads:123-456-7890,example.com:facebook:987654` |
+| `AD_SPEND_CURRENCY` | `EUR` (default) |
+
+Each `AD_SPEND_ACCOUNTS` entry is `plausible-site-domain:windsor-connector:account-id`. The panel only appears on sites that have at least one entry.
+
+A campaign matches when the visit's `utm_campaign` equals the campaign name or ID (case-insensitive). Using `utm_campaign={campaignid}` in the Google Ads tracking template keeps matches working when campaigns are renamed. With a goal filter, the panel shows conversions and cost per conversion.
+
+## Updating Plausible
+
+Import the new upstream tag the same way as the initial import (copy the tree without `extra/`, `.github/workflows` and `.github/dependabot.yml`), re-apply this fork's commits on top, and check that `COPY extra ./extra` is still removed from the `Dockerfile`.
+
+---
+
 # Plausible Analytics
 
 <p align="center">

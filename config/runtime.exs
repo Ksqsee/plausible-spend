@@ -777,6 +777,11 @@ case mailer_adapter do
     """
 end
 
+config :plausible, Plausible.AdSpend,
+  api_key: get_var_from_path_or_env(config_dir, "WINDSOR_API_KEY"),
+  accounts: get_var_from_path_or_env(config_dir, "AD_SPEND_ACCOUNTS"),
+  currency: get_var_from_path_or_env(config_dir, "AD_SPEND_CURRENCY", "EUR")
+
 base_cron = [
   # Daily at midnight
   {"0 0 * * *", Plausible.Workers.RotateSalts},
@@ -795,7 +800,9 @@ base_cron = [
   # Every 2 hours
   {"0 */2 * * *", Plausible.Workers.ExpireDomainChangeTransitions},
   # Daily at midnight
-  {"0 0 * * *", Plausible.Workers.LocationsSync}
+  {"0 0 * * *", Plausible.Workers.LocationsSync},
+  # Every 6 hours
+  {"20 */6 * * *", Plausible.Workers.SyncAdSpend}
 ]
 
 cloud_cron = [
@@ -832,7 +839,8 @@ base_queues = [
   domain_change_transition: 1,
   check_accept_traffic_until: 1,
   clickhouse_clean_sites: 1,
-  locations_sync: 1
+  locations_sync: 1,
+  ad_spend_sync: 1
 ]
 
 cloud_queues = [
