@@ -3,7 +3,7 @@
 
 import { localParts } from './ingest.js'
 
-const WINDSOR_URL = 'https://connectors.windsor.ai'
+const DEFAULT_WINDSOR_URL = 'https://connectors.windsor.ai'
 
 async function windsor(env, connector, fields, account, dateFrom, dateTo) {
   const params = new URLSearchParams({
@@ -13,7 +13,8 @@ async function windsor(env, connector, fields, account, dateFrom, dateTo) {
     date_to: dateTo,
     select_accounts: account
   })
-  const res = await fetch(`${WINDSOR_URL}/${connector}?${params}`, { headers: { Accept: 'application/json' } })
+  const base = env.WINDSOR_URL || DEFAULT_WINDSOR_URL
+  const res = await fetch(`${base}/${connector}?${params}`, { headers: { Accept: 'application/json' } })
   const text = await res.text()
   let body
   try {
@@ -98,7 +99,13 @@ async function syncSearch(env, site, dateFrom, dateTo) {
 }
 
 export async function syncAll(env, days = 30) {
-  if (!env.WINDSOR_API_KEY) return [{ error: 'WINDSOR_API_KEY is not set' }]
+  if (!env.WINDSOR_API_KEY) {
+    const error = 'WINDSOR_API_KEY ist nicht gesetzt'
+    await env.DB.prepare('INSERT INTO sync_log (ts, source, site, rows, error) VALUES (?, ?, ?, ?, ?)')
+      .bind(Date.now(), 'windsor', '*', null, error)
+      .run()
+    return [{ error }]
+  }
   const today = localParts(Date.now()).date
   const from = new Date(today + 'T00:00:00Z')
   from.setUTCDate(from.getUTCDate() - (days - 1))

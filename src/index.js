@@ -1,5 +1,6 @@
 import trackerSource from './tracker.client.js'
 import dashboardHtml from './dashboard.html'
+import logoSvg from './logo.svg'
 import { handleEvent } from './ingest.js'
 import { BadRequest, ads, breakdown, overview, parseQuery, realtime, search, timeseries } from './stats.js'
 import { syncAll } from './sync.js'
@@ -87,7 +88,11 @@ export default {
       })
     }
     if (url.pathname === '/e') return handleEvent(request, env)
-    if (url.pathname === '/favicon.ico') return new Response(null, { status: 204 })
+    if (url.pathname === '/logo.svg' || url.pathname === '/favicon.ico') {
+      return new Response(logoSvg, {
+        headers: { 'Content-Type': 'image/svg+xml', 'Cache-Control': 'public, max-age=86400' }
+      })
+    }
 
     if (!authorized(request, env)) return unauthorized()
 

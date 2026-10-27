@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Gruppenwerk Analytics</title>
+<link rel="icon" type="image/svg+xml" href="/logo.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -69,6 +70,11 @@ body {
 }
 button, select, input { font: inherit; color: inherit; }
 .wrap { max-width: 1120px; margin: 0 auto; padding: 24px 16px 80px; }
+
+/* brand */
+.brand { display: flex; align-items: center; gap: 10px; margin-bottom: 22px; font-weight: 700; font-size: 17px; letter-spacing: -.01em; }
+.brand img { width: 26px; height: 26px; border-radius: 6px; }
+.brand span { color: var(--text-3); font-weight: 500; }
 
 /* top bar */
 .bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
@@ -197,6 +203,7 @@ td.m { color: var(--text-3); font-weight: 400; }
 </head>
 <body>
 <div class="wrap">
+  <div class="brand"><img src="/logo.svg" alt="">Gruppenwerk <span>Analytics</span></div>
   <div class="bar">
     <div class="left">
       <label class="site"><img id="siteIcon" alt=""><select id="site" aria-label="Website"></select></label>
@@ -773,7 +780,7 @@ td.m { color: var(--text-3); font-weight: 400; }
   }
   function loadSyncInfo() {
     fetch('/api/sync-log').then(function (r) { return r.json() }).then(function (rows) {
-      var mine = rows.filter(function (r) { return r.site === state.site })
+      var mine = rows.filter(function (r) { return r.site === state.site || r.site === '*' })
       var label = $('synced')
       label.title = ''
       if (!mine.length) { label.textContent = 'Werbe- und Suchdaten noch nicht abgerufen'; return }

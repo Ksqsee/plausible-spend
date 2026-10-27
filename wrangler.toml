@@ -6,7 +6,7 @@ workers_dev = true
 
 [[rules]]
 type = "Text"
-globs = ["**/*.html", "**/*.client.js"]
+globs = ["**/*.html", "**/*.client.js", "**/*.svg"]
 fallthrough = false
 
 [[d1_databases]]
