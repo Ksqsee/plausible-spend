@@ -120,7 +120,8 @@ export async function timeseries(db, q) {
   const bucket = byHour ? 'hour' : 'date'
   const { results } = await db
     .prepare(
-      `SELECT ${bucket} AS bucket, COUNT(DISTINCT visitor_id) AS visitors, SUM(name = 'pageview') AS pageviews
+      `SELECT ${bucket} AS bucket, COUNT(DISTINCT visitor_id) AS visitors, COUNT(DISTINCT session_id) AS visits,
+              SUM(name = 'pageview') AS pageviews
        FROM events WHERE ${w.sql} GROUP BY ${bucket} ORDER BY ${bucket}`
     )
     .bind(...w.params)
