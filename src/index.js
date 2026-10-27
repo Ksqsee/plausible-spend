@@ -4,6 +4,7 @@ import logoSvg from './logo.svg'
 import { handleEvent } from './ingest.js'
 import { BadRequest, ads, breakdown, overview, parseQuery, realtime, resolveSites, search, sitesSummary, timeseries } from './stats.js'
 import { syncAll } from './sync.js'
+import { adsDeep, content, forms, funnel, gbp, insights, leads } from './deep.js'
 
 const json = (data, status = 200) =>
   new Response(JSON.stringify(data), {
@@ -40,12 +41,30 @@ async function api(request, env, url) {
   if (path === 'sites') {
     const { results } = await db
       .prepare(
-        `SELECT s.domain, s.name, s.company, c.name AS company_name, c.logo_domain, c.sort
+        `SELECT s.domain, s.name, s.company, s.favicon_url, s.logo_url, s.config, s.ads_account, s.gsc_property,
+                c.name AS company_name, c.logo_domain, c.sort, c.favicon_url AS company_favicon, c.logo_url AS company_logo
          FROM sites s LEFT JOIN companies c ON c.id = s.company
          ORDER BY c.sort, c.name, s.domain = c.logo_domain DESC, s.name`
       )
       .all()
-    return json(results)
+    return json(results.map((r) => ({ ...r, config: r.config ? JSON.parse(r.config) : null })))
+  }
+  if (path === 'tracking') {
+    // Last event per site and what the tracker has seen in the last 7 days, for the setup view.
+    const since = Date.now() - 7 * 86400000
+    const { results } = await db
+      .prepare(
+        `SELECT site, MAX(ts) AS last_ts, COUNT(*) AS events, COUNT(DISTINCT name) AS kinds,
+                GROUP_CONCAT(DISTINCT name) AS names
+         FROM events WHERE ts > ? GROUP BY site`
+      )
+      .bind(since)
+      .all()
+    const { results: last } = await db.prepare('SELECT site, MAX(ts) AS last_ts FROM events GROUP BY site').all()
+    const lastBySite = new Map(last.map((r) => [r.site, r.last_ts]))
+    return json(results.map((r) => ({ ...r, names: r.names ? r.names.split(',') : [] })).concat(
+      last.filter((r) => !results.some((x) => x.site === r.site)).map((r) => ({ site: r.site, last_ts: lastBySite.get(r.site), events: 0, names: [] }))
+    ))
   }
   if (path === 'sites-summary') {
     const from = url.searchParams.get('from')
@@ -57,7 +76,8 @@ async function api(request, env, url) {
   }
   if (path === 'sync' && request.method === 'POST') {
     const days = Math.min(Math.max(Number(url.searchParams.get('days')) || 30, 1), 400)
-    return json(await syncAll(env, days))
+    const detail = url.searchParams.has('detail') ? Math.min(Math.max(Number(url.searchParams.get('detail')) || 0, 0), 90) : Math.min(days, 30)
+    return json(await syncAll(env, days, detail))
   }
   if (path === 'sync-log') {
     const { results } = await db.prepare('SELECT * FROM sync_log ORDER BY ts DESC LIMIT 40').all()
@@ -80,6 +100,20 @@ async function api(request, env, url) {
       return json(await ads(db, q))
     case 'search':
       return json(await search(db, q))
+    case 'leads':
+      return json(await leads(db, q))
+    case 'funnel':
+      return json(await funnel(db, q))
+    case 'forms':
+      return json(await forms(db, q))
+    case 'content':
+      return json(await content(db, q))
+    case 'ads-deep':
+      return json(await adsDeep(db, q))
+    case 'gbp':
+      return json(await gbp(db, q))
+    case 'insights':
+      return json(await insights(db, q))
     default:
       return json({ error: 'not found' }, 404)
   }
@@ -124,7 +158,9 @@ export default {
     return new Response('Not found', { status: 404 })
   },
 
-  async scheduled(_event, env, ctx) {
-    ctx.waitUntil(syncAll(env, 30))
+  async scheduled(event, env, ctx) {
+    // Keyword level tables are large: the full 30 days once a night, the last 3 days otherwise.
+    const nightly = new Date(event.scheduledTime).getUTCHours() < 6
+    ctx.waitUntil(syncAll(env, 30, nightly ? 30 : 3))
   }
 }

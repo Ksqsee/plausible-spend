@@ -1,6 +1,6 @@
 // Read-side queries for the dashboard.
 
-const LEAD_EVENTS = ['Phone click', 'Email click', 'WhatsApp click', 'Form submit']
+export const LEAD_EVENTS = ['Phone click', 'Email click', 'WhatsApp click', 'Form submit']
 
 // Dimensions that can be filtered on and broken down, mapped to event columns.
 const DIMENSIONS = {
@@ -72,7 +72,7 @@ export function parseQuery(url, sites) {
 
 const inList = (sites) => `site IN (${sites.map(() => '?').join(',')})`
 
-function where(q, { pageviewsOnly = false, range = [q.from, q.to] } = {}) {
+export function where(q, { pageviewsOnly = false, range = [q.from, q.to] } = {}) {
   const clauses = [inList(q.sites), 'date >= ?', 'date <= ?']
   const params = [...q.sites, range[0], range[1]]
   for (const [dim, value] of q.filters) {
@@ -172,7 +172,7 @@ export async function breakdown(db, q, dim, limit = 50) {
     const { results } = await db
       .prepare(
         `SELECT ${column} AS name, COUNT(DISTINCT visitor_id) AS visitors, COUNT(*) AS events
-         FROM events WHERE ${w.sql} AND name != 'pageview'
+         FROM events WHERE ${w.sql} AND name NOT IN ('pageview', 'Engagement', 'Form step')
          GROUP BY ${column} ORDER BY visitors DESC, events DESC LIMIT ?`
       )
       .bind(...w.params, limit)

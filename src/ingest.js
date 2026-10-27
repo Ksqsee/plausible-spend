@@ -182,8 +182,12 @@ export async function handleEvent(request, env) {
     utm.medium = utm.medium || 'cpc'
   }
   if (!utm.source && params.has('fbclid')) utm.source = 'facebook'
+  // Google adds the campaign ID on its own; it matches ads_spend.campaign_id.
+  if (!utm.campaign && params.get('gad_campaignid')) utm.campaign = clean(params.get('gad_campaignid'), 30)
   const isAdClick = utm.medium && /^(cpc|ppc|paid|paidsearch|paid_search|display|paid_social)$/i.test(utm.medium)
+  const isProfile = /^(gbp|gmb|google_business|googlebusiness|google-business)$/i.test(utm.source || '') || /^(gbp|gmb)$/i.test(utm.campaign || '')
   const source =
+    (isProfile && 'Google Business Profile') ||
     (utm.source && (isAdClick && /google/i.test(utm.source) ? 'Google Ads' : capitalizeSource(utm.source))) ||
     refSource ||
     'Direct / None'
@@ -193,9 +197,9 @@ export async function handleEvent(request, env) {
   const device = deviceFromWidth(payload.w)
   const isPageview = name === 'pageview'
 
-  const props = payload.p && typeof payload.p === 'object' ? payload.p : null
+  const props = sanitizeProps(payload.p)
   const label = props ? clean(props.label, 100) : null
-  const propsJson = props ? JSON.stringify(props).slice(0, 1000) : null
+  const propsJson = props ? JSON.stringify(props) : null
 
   const db = env.DB
   const last = await db
@@ -303,4 +307,28 @@ function capitalizeSource(source) {
   const s = source.toLowerCase()
   const known = { google: 'Google', facebook: 'Facebook', instagram: 'Instagram', linkedin: 'LinkedIn', bing: 'Bing', newsletter: 'Newsletter' }
   return known[s] || source
+}
+
+// Event properties are kept small and flat: strings, numbers, a list of strings (sections seen)
+// and one level of string choices (form answers).
+export function sanitizeProps(raw) {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null
+  const out = {}
+  let keys = 0
+  for (const [k, v] of Object.entries(raw)) {
+    if (keys >= 12) break
+    const key = String(k).slice(0, 40)
+    if (typeof v === 'string') out[key] = v.slice(0, 200)
+    else if (typeof v === 'number' && Number.isFinite(v)) out[key] = v
+    else if (Array.isArray(v)) out[key] = v.filter((x) => typeof x === 'string').slice(0, 40).map((x) => x.slice(0, 60))
+    else if (v && typeof v === 'object') {
+      const flat = {}
+      for (const [ck, cv] of Object.entries(v).slice(0, 8)) {
+        if (typeof cv === 'string' || typeof cv === 'number') flat[String(ck).slice(0, 40)] = String(cv).slice(0, 80)
+      }
+      out[key] = flat
+    } else continue
+    keys++
+  }
+  return keys ? out : null
 }

@@ -23,6 +23,7 @@
   --tip-bg: #111827; --tip-text: #f9fafb; --tip-muted: #9ca3af;
   --hover: rgba(17,24,39,.045); --chip: #eef2ff;
   --sk: #eef0f3; --sk-hi: #f7f8fa;
+  --warn: #f59e0b; --info: #3b82f6;
 }
 @media (prefers-color-scheme: dark) {
   :root:where(:not([data-theme="light"])) {
@@ -34,6 +35,7 @@
     --bar-goals: rgba(239,68,68,.11); --bar-search: rgba(20,184,166,.12); --bar-sites: rgba(25,163,148,.14);
     --tip-bg: #0a0a0c; --tip-text: #f4f4f5; --tip-muted: #a1a1aa; --hover: rgba(255,255,255,.05); --chip: rgba(129,140,248,.18);
     --sk: #24242a; --sk-hi: #2c2c33;
+    --warn: #fbbf24; --info: #60a5fa;
   }
 }
 :root[data-theme="dark"] {
@@ -45,6 +47,7 @@
   --bar-goals: rgba(239,68,68,.11); --bar-search: rgba(20,184,166,.12); --bar-sites: rgba(25,163,148,.14);
   --tip-bg: #0a0a0c; --tip-text: #f4f4f5; --tip-muted: #a1a1aa; --hover: rgba(255,255,255,.05); --chip: rgba(129,140,248,.18);
   --sk: #24242a; --sk-hi: #2c2c33;
+  --warn: #fbbf24; --info: #60a5fa;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; }
@@ -94,7 +97,7 @@ a { color: inherit; }
 .ttl .logo.big { padding: 0; }
 .ttl h1 { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: -.015em; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ttl .sub { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text-3); margin-top: 1px; flex-wrap: wrap; }
-.ttl .sub a { color: inherit; text-decoration: none; } .ttl .sub a:hover { text-decoration: underline; }
+.ttl .sub a { color: inherit; text-decoration: none; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; } .ttl .sub a:hover { text-decoration: underline; }
 .live { display: inline-flex; align-items: center; gap: 6px; }
 .live i { width: 7px; height: 7px; border-radius: 50%; background: var(--live); animation: pulse 2s infinite; }
 @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(16,185,129,.5) } 70% { box-shadow: 0 0 0 6px rgba(16,185,129,0) } 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0) } }
@@ -239,6 +242,128 @@ td.m { color: var(--text-3); font-weight: 400; }
 .sitecard .meta { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--text-3); border-top: 1px solid var(--line-soft); padding-top: 10px; }
 .sitecard .meta b { color: var(--text); font-weight: 600; }
 
+
+/* ---------- opportunities ---------- */
+.badge-n { margin-left: auto; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px; background: var(--down); color: #fff; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
+.badge-n:empty { display: none; }
+.ins-list { display: flex; flex-direction: column; margin-top: 6px; }
+.ins { display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; gap: 4px 14px; padding: 14px 0; border-top: 1px solid var(--line-soft); align-items: start; }
+.ins:first-child { border-top: 0; }
+.ins .dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 5px; background: var(--info); box-shadow: 0 0 0 4px color-mix(in srgb, var(--info) 18%, transparent); }
+.ins.high .dot { background: var(--down); box-shadow: 0 0 0 4px color-mix(in srgb, var(--down) 18%, transparent); }
+.ins.medium .dot { background: var(--warn); box-shadow: 0 0 0 4px color-mix(in srgb, var(--warn) 20%, transparent); }
+.ins h3 { margin: 0; font-size: 14px; font-weight: 600; line-height: 1.4; }
+.ins .meta { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 3px; font-size: 12px; color: var(--text-3); }
+.ins .meta img, .ins .meta .fallback { width: 14px; height: 14px; border-radius: 3px; }
+.ins .tag { font-size: 11px; font-weight: 600; letter-spacing: .02em; padding: 1px 7px; border-radius: 5px; background: var(--sel); color: var(--text-2); }
+.ins p { margin: 3px 0 0; color: var(--text-2); font-size: 13px; overflow-wrap: anywhere; }
+.ins .act { margin-top: 7px; font-size: 13px; color: var(--text); display: flex; gap: 6px; overflow-wrap: anywhere; }
+.ins .act::before { content: "→"; color: var(--brand); font-weight: 700; }
+.ins .val { text-align: right; font-size: 13px; font-weight: 600; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.ins .val small { display: block; font-weight: 400; color: var(--text-3); font-size: 11px; }
+.ins details { margin-top: 6px; font-size: 12px; color: var(--text-2); }
+.ins details summary { cursor: pointer; color: var(--text-3); }
+.ins details ul { margin: 6px 0 0; padding-left: 18px; columns: 2; column-gap: 24px; }
+.more { display: inline-flex; align-items: center; gap: 4px; margin-top: 10px; font-size: 13px; font-weight: 600; color: var(--accent); text-decoration: none; }
+.more:hover { text-decoration: underline; }
+.seg { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 14px; }
+.seg button { border: 1px solid var(--line); background: var(--card); border-radius: 999px; padding: 4px 12px; font-size: 13px; font-weight: 500; cursor: pointer; color: var(--text-2); transition: all .15s; display: inline-flex; gap: 6px; align-items: center; }
+.seg button:hover { border-color: var(--text-3); color: var(--text); }
+.seg button.on { background: var(--text); border-color: var(--text); color: var(--card); }
+.seg button img, .seg button .fallback { width: 14px; height: 14px; border-radius: 3px; }
+.seg button span.c { font-size: 11px; opacity: .7; }
+
+/* ---------- funnel ---------- */
+.funnel { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+.fstep { display: grid; grid-template-columns: minmax(120px, 220px) minmax(0, 1fr) 150px; gap: 14px; align-items: center; }
+.fstep .lbl { font-size: 13px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fstep .lbl small { display: block; font-weight: 400; color: var(--text-3); font-size: 11px; }
+.fstep .bar { position: relative; height: 30px; border-radius: 6px; background: var(--line-soft); overflow: hidden; }
+.fstep .bar i { position: absolute; left: 0; top: 0; bottom: 0; width: 0; border-radius: 6px; background: linear-gradient(90deg, var(--brand), color-mix(in srgb, var(--brand) 70%, var(--accent))); transition: width .8s cubic-bezier(.2,.8,.2,1); }
+.fstep .num { font-variant-numeric: tabular-nums; font-size: 13px; text-align: right; white-space: nowrap; }
+.fstep .num b { font-size: 15px; }
+.fstep .num .drop { display: block; font-size: 11px; color: var(--down); }
+
+/* ---------- lead feed ---------- */
+.feed { display: flex; flex-direction: column; margin-top: 10px; }
+.lead { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; gap: 12px; padding: 11px 0; border-top: 1px solid var(--line-soft); align-items: start; }
+.lead:first-child { border-top: 0; }
+.lead .ic { width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; background: var(--sel); }
+.lead .ic svg { width: 17px; height: 17px; }
+.lead .ic.form { background: color-mix(in srgb, var(--brand) 16%, transparent); color: var(--brand); }
+.lead .ic.call { background: color-mix(in srgb, var(--up) 16%, transparent); color: var(--up); }
+.lead .ic.mail { background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--accent); }
+.lead .ic.wa { background: color-mix(in srgb, #25d366 18%, transparent); color: #1da851; }
+.lead b { font-weight: 600; }
+.lead .sub2 { font-size: 12px; color: var(--text-3); margin-top: 2px; display: flex; flex-wrap: wrap; gap: 4px 10px; }
+.lead .sub2 svg { width: 13px; height: 13px; vertical-align: -2px; margin-right: 4px; }
+.lead .sub2 img, .lead .sub2 .fallback { width: 13px; height: 13px; border-radius: 3px; vertical-align: -2px; margin-right: 4px; }
+.lead .ch { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+.lead .ch span { font-size: 12px; background: var(--chip); border-radius: 5px; padding: 1px 7px; }
+.lead .ch span em { font-style: normal; color: var(--text-3); }
+.lead time { font-size: 12px; color: var(--text-3); white-space: nowrap; }
+.kw { font-size: 12px; font-weight: 600; background: color-mix(in srgb, var(--warn) 18%, transparent); border-radius: 5px; padding: 0 6px; }
+
+/* ---------- tables, flags, small charts ---------- */
+.flag2 { display: inline-block; font-size: 11px; font-weight: 600; padding: 1px 6px; border-radius: 5px; margin-left: 6px; vertical-align: 1px; }
+.flag2.bad { background: color-mix(in srgb, var(--down) 15%, transparent); color: var(--down); }
+.flag2.good { background: color-mix(in srgb, var(--up) 16%, transparent); color: var(--up); }
+.flag2.warn { background: color-mix(in srgb, var(--warn) 20%, transparent); color: color-mix(in srgb, var(--warn) 70%, var(--text)); }
+.flag2.info { background: color-mix(in srgb, var(--info) 16%, transparent); color: var(--info); }
+.qs { display: inline-flex; width: 22px; height: 22px; border-radius: 6px; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; }
+td.wrap { white-space: normal; min-width: 180px; }
+.hours { display: grid; grid-template-columns: repeat(24, minmax(0, 1fr)); gap: 3px; align-items: end; height: 140px; margin-top: 18px; }
+.hours div { position: relative; background: var(--bar-goals); border-radius: 3px 3px 0 0; height: 0; transition: height .7s cubic-bezier(.2,.8,.2,1); }
+.hours div.cv { background: color-mix(in srgb, var(--up) 55%, transparent); }
+.hours div.off { opacity: .55; }
+.hlab { display: grid; grid-template-columns: repeat(24, minmax(0, 1fr)); gap: 3px; font-size: 10px; color: var(--text-3); text-align: center; margin-top: 4px; }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--text-3); margin-top: 10px; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+.share { display: flex; height: 10px; border-radius: 5px; overflow: hidden; background: var(--line-soft); min-width: 140px; }
+.share i { display: block; height: 100%; }
+.sub-h { font-size: 12px; font-weight: 600; letter-spacing: .02em; text-transform: uppercase; color: var(--text-3); margin: 22px 0 4px; }
+.split { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+.split > * { min-width: 0; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.chips span { font-size: 12px; background: var(--sel); border-radius: 6px; padding: 3px 8px; }
+.chips span b { font-weight: 600; margin-left: 4px; }
+.stars { color: #f59e0b; letter-spacing: 1px; }
+
+/* ---------- tracking setup ---------- */
+.trk { padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; }
+.trk .h { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.trk .h img, .trk .h .fallback { width: 22px; height: 22px; border-radius: 5px; }
+.trk .h b { font-size: 15px; }
+.trk .h small { color: var(--text-3); }
+.status { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 999px; }
+.status i { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.status.ok { color: var(--up); background: color-mix(in srgb, var(--up) 12%, transparent); }
+.status.off { color: var(--text-3); background: var(--sel); }
+.status.wait { color: color-mix(in srgb, var(--warn) 75%, var(--text)); background: color-mix(in srgb, var(--warn) 16%, transparent); }
+.code { position: relative; font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: var(--sel); border-radius: 8px; padding: 10px 84px 10px 12px; overflow-x: auto; white-space: pre; color: var(--text); }
+.code button { position: absolute; right: 6px; top: 6px; border: 1px solid var(--line); background: var(--card); border-radius: 6px; padding: 3px 9px; font: 500 12px Inter, sans-serif; cursor: pointer; }
+.trk .grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; font-size: 13px; }
+.trk .grid3 > div { min-width: 0; }
+.trk .grid3 .k { font-size: 11px; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; color: var(--text-3); margin-bottom: 4px; }
+.trk ol { margin: 0; padding-left: 18px; color: var(--text-2); overflow-wrap: anywhere; }
+.brandlogo { height: 22px; max-width: 120px; object-fit: contain; margin-left: 4px; padding: 3px 6px; border-radius: 6px; background: #fff; box-shadow: 0 0 0 1px var(--line); }
+@media (max-width: 960px) {
+  .split, .trk .grid3 { grid-template-columns: 1fr; }
+  .fstep { grid-template-columns: minmax(0, 1fr) auto; }
+  .fstep .num .drop { white-space: normal; }
+  .ttl { flex: 1; }
+  .ttl > div { flex: 1; min-width: 0; }
+  .fstep .bar { grid-column: 1 / -1; grid-row: 2; }
+}
+@media (max-width: 560px) {
+  .ins { grid-template-columns: 10px minmax(0, 1fr); }
+  .ins .val { grid-column: 2; text-align: left; }
+  .ins details ul { columns: 1; }
+  .lead { grid-template-columns: 30px minmax(0, 1fr); }
+  .lead time { grid-column: 2; }
+  .hlab span:nth-child(odd) { visibility: hidden; }
+}
+
 /* ---------- responsive ---------- */
 @media (max-width: 1100px) { .sites { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 960px) {
@@ -279,6 +404,14 @@ td.m { color: var(--text-3); font-weight: 400; }
     <a class="nav" href="?scope=all" data-nav data-key="scope:all">
       <svg class="i" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg>
       <span class="lbl">Alle Unternehmen</span>
+    </a>
+    <a class="nav" href="?view=insights" data-nav data-key="view:insights">
+      <svg class="i" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.6.5 1 1.2 1 2V16h5.2v-.2c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"/></svg>
+      <span class="lbl">Chancen</span><span class="badge-n" id="insCount"></span>
+    </a>
+    <a class="nav" href="?view=tracking" data-nav data-key="view:tracking">
+      <svg class="i" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 9l-4 3 4 3M16 9l4 3-4 3M13.5 6l-3 12"/></svg>
+      <span class="lbl">Tracking</span>
     </a>
     <div class="stitle">Unternehmen</div>
     <div id="companies"></div>
@@ -344,8 +477,12 @@ td.m { color: var(--text-3); font-weight: 400; }
   }
   var EVENT_NAMES = {
     'Phone click': 'Anruf-Klick', 'Email click': 'E-Mail-Klick', 'WhatsApp click': 'WhatsApp-Klick', 'Form submit': 'Formular gesendet',
-    'Button click': 'Button-Klick', 'Outbound link': 'Externer Link', 'File download': 'Datei-Download', 'Maps click': 'Google-Maps-Klick'
+    'Button click': 'Button-Klick', 'Outbound link': 'Externer Link', 'File download': 'Datei-Download', 'Maps click': 'Google-Maps-Klick',
+    'Form start': 'Formular begonnen', 'Review click': 'Bewertungs-Klick', 'FAQ open': 'FAQ geöffnet', 'Copy contact': 'Kontakt kopiert',
+    'Video play': 'Video abgespielt', 'Application': 'Bewerbung gesendet', 'Application start': 'Bewerbung begonnen'
   }
+  var AREAS = ['Google Ads', 'Tracking', 'Synergie', 'SEO', 'Google Business', 'Website']
+  var SEVERITY = { high: 'Dringend', medium: 'Wichtig', info: 'Hinweis' }
   var STATS = [
     ['visitors', 'Besucher', true], ['visits', 'Besuche', true], ['pageviews', 'Seitenaufrufe', true],
     ['bounce_rate', 'Absprungrate', false], ['visit_duration', 'Besuchsdauer', false], ['leads', 'Anfragen', false]
@@ -355,7 +492,7 @@ td.m { color: var(--text-3); font-weight: 400; }
     Google: 'google.com', 'Google Ads': 'ads.google.com', Bing: 'bing.com', DuckDuckGo: 'duckduckgo.com', Ecosia: 'ecosia.org', Yahoo: 'yahoo.com',
     Qwant: 'qwant.com', Facebook: 'facebook.com', Instagram: 'instagram.com', LinkedIn: 'linkedin.com', X: 'x.com', YouTube: 'youtube.com',
     TikTok: 'tiktok.com', Pinterest: 'pinterest.com', ChatGPT: 'chatgpt.com', Perplexity: 'perplexity.ai', Claude: 'claude.ai',
-    Gemini: 'gemini.google.com', Copilot: 'copilot.microsoft.com', MyHammer: 'my-hammer.de', 'Gelbe Seiten': 'gelbeseiten.de',
+    Gemini: 'gemini.google.com', 'Google Business Profile': 'business.google.com', Copilot: 'copilot.microsoft.com', MyHammer: 'my-hammer.de', 'Gelbe Seiten': 'gelbeseiten.de',
     '11880': '11880.com', WhatsApp: 'whatsapp.com'
   }
   var BROWSER_DOMAINS = { Chrome: 'google.com/chrome', Safari: 'apple.com/safari', Firefox: 'firefox.com', Edge: 'microsoft.com/edge', Opera: 'opera.com', 'Samsung Internet': 'samsung.com' }
@@ -414,7 +551,7 @@ td.m { color: var(--text-3); font-weight: 400; }
       default: return [state.from || iso(addDays(t, -29)), state.to || iso(t)]
     }
   }
-  function scopeParams() { return state.site ? { site: state.site } : { scope: state.scope } }
+  function scopeParams() { return state.site ? { site: state.site } : { scope: state.scope || 'all' } }
   function qs(extra) {
     var r = range()
     var p = new URLSearchParams(Object.assign(scopeParams(), { from: r[0], to: r[1] }))
@@ -439,12 +576,27 @@ td.m { color: var(--text-3); font-weight: 400; }
     }
     return img
   }
+  // Real favicons from the Onepage CDN, falling back to the search-engine favicon service.
+  function logoImg(url, fallbackDomain, cls) {
+    if (!url) return favicon(fallbackDomain, cls)
+    var img = el('img', cls)
+    img.alt = ''
+    img.loading = 'lazy'
+    img.referrerPolicy = 'no-referrer'
+    img.src = url
+    img.onerror = function () { img.replaceWith(favicon(fallbackDomain, cls)) }
+    return img
+  }
+  function companyLogo(c, cls) { return logoImg(c.favicon_url, c.logo_domain, cls) }
   function logoDomainFor(domain) {
     var s = SITE_BY_DOMAIN[domain]
     // sites still on a builder subdomain show their company's logo
     return /\.onepage\.me$/.test(domain) && s && s.logo_domain ? s.logo_domain : domain
   }
-  function siteLogo(domain, cls) { return favicon(logoDomainFor(domain), cls) }
+  function siteLogo(domain, cls) {
+    var s = SITE_BY_DOMAIN[domain]
+    return logoImg(s && (s.favicon_url || s.company_favicon), logoDomainFor(domain), cls)
+  }
   function flag(code) {
     if (!code || code.length !== 2) return null
     return el('span', 'flag', String.fromCodePoint.apply(null, code.toUpperCase().split('').map(function (c) { return 127397 + c.charCodeAt(0) })))
@@ -532,7 +684,9 @@ td.m { color: var(--text-3); font-weight: 400; }
     state.site = p.get('site') && SITE_BY_DOMAIN[p.get('site')] ? p.get('site') : null
     var scope = p.get('scope')
     state.scope = !state.site && scope && (scope === 'all' || COMPANIES.some(function (c) { return 'company:' + c.id === scope })) ? scope : null
-    state.view = state.site || state.scope ? 'dash' : 'overview'
+    var v = p.get('view')
+    state.view = v === 'insights' || v === 'tracking' ? v : state.site || state.scope ? 'dash' : 'overview'
+    if (state.view === 'insights' && !state.site && !state.scope) state.scope = 'all'
     state.period = p.get('period') || '30d'
     state.from = p.get('from')
     state.to = p.get('to')
@@ -540,6 +694,7 @@ td.m { color: var(--text-3); font-weight: 400; }
   }
   function urlFor(target) {
     var p = new URLSearchParams()
+    if (target.view) p.set('view', target.view)
     if (target.site) p.set('site', target.site)
     else if (target.scope) p.set('scope', target.scope)
     var period = state.period
@@ -554,7 +709,10 @@ td.m { color: var(--text-3); font-weight: 400; }
     readUrl()
     render()
   }
-  function saveUrl() { history.replaceState(null, '', urlFor({ site: state.site, scope: state.scope, filters: state.filters })) }
+  function saveUrl() {
+    var view = state.view === 'insights' || state.view === 'tracking' ? state.view : null
+    history.replaceState(null, '', urlFor({ view: view, site: state.site, scope: view === 'insights' && state.scope === 'all' ? null : state.scope, filters: state.filters }))
+  }
 
   document.addEventListener('click', function (e) {
     var a = e.target.closest && e.target.closest('a[data-nav]')
@@ -562,7 +720,8 @@ td.m { color: var(--text-3); font-weight: 400; }
     e.preventDefault()
     closeMenu()
     // links are rebuilt with the current period when clicked
-    var href = a.dataset.site ? urlFor({ site: a.dataset.site }) : a.dataset.scope ? urlFor({ scope: a.dataset.scope }) : a.getAttribute('href') === '/' ? urlFor({}) : a.getAttribute('href')
+    var view = a.dataset.view || (/view=(insights|tracking)/.exec(a.getAttribute('href')) || [])[1]
+    var href = a.dataset.site ? urlFor({ site: a.dataset.site, view: a.dataset.view }) : a.dataset.scope ? urlFor({ scope: a.dataset.scope, view: a.dataset.view }) : view ? urlFor({ view: view }) : a.getAttribute('href') === '/' ? urlFor({}) : a.getAttribute('href')
     navigate(href)
   })
   window.addEventListener('popstate', function () { readUrl(); render() })
@@ -584,7 +743,7 @@ td.m { color: var(--text-3); font-weight: 400; }
       a.dataset.nav = ''
       a.dataset.scope = 'company:' + c.id
       a.dataset.key = 'scope:company:' + c.id
-      a.append(favicon(c.logo_domain, 'logo'), el('span', 'lbl', c.name))
+      a.append(companyLogo(c, 'logo'), el('span', 'lbl', c.name))
       var tog = el('button', 'tog')
       tog.type = 'button'
       tog.setAttribute('aria-label', 'Websites von ' + c.name + ' ein- oder ausklappen')
@@ -605,7 +764,7 @@ td.m { color: var(--text-3); font-weight: 400; }
         sa.dataset.site = s.domain
         sa.dataset.key = 'site:' + s.domain
         sa.title = s.domain
-        sa.append(favicon(logoDomainFor(s.domain)), el('span', 'lbl', s.name))
+        sa.append(siteLogo(s.domain), el('span', 'lbl', s.name))
         inner.append(sa)
       })
       sites.append(inner)
@@ -614,7 +773,7 @@ td.m { color: var(--text-3); font-weight: 400; }
     })
   }
   function markSidebar() {
-    var key = state.site ? 'site:' + state.site : state.scope ? 'scope:' + state.scope : 'overview'
+    var key = state.view === 'insights' || state.view === 'tracking' ? 'view:' + state.view : state.site ? 'site:' + state.site : state.scope ? 'scope:' + state.scope : 'overview'
     Array.prototype.forEach.call(document.querySelectorAll('.side .nav[data-key]'), function (n) { n.classList.toggle('on', n.dataset.key === key) })
     var company = state.site ? (SITE_BY_DOMAIN[state.site] || {}).company : state.scope && state.scope.indexOf('company:') === 0 ? state.scope.slice(8) : null
     if (company && !openCompanies[company]) {
@@ -635,7 +794,15 @@ td.m { color: var(--text-3); font-weight: 400; }
     var logo = $('ttlLogo'), sub = $('sub')
     logo.replaceChildren(); sub.replaceChildren()
     var title, img
-    if (state.view === 'overview') {
+    if (state.view === 'insights') {
+      title = 'Chancen'
+      img = brandLogo()
+      sub.append(document.createTextNode('Empfehlungen aus Google Ads, Search Console, Unternehmensprofil und Website-Tracking'))
+    } else if (state.view === 'tracking') {
+      title = 'Tracking'
+      img = brandLogo()
+      sub.append(document.createTextNode('Snippets, Status und was je Website gemessen wird'))
+    } else if (state.view === 'overview') {
       title = 'Übersicht'
       img = brandLogo()
       sub.append(document.createTextNode(COMPANIES.length + ' Unternehmen · ' + SITES.length + ' Websites'))
@@ -651,12 +818,13 @@ td.m { color: var(--text-3); font-weight: 400; }
     } else {
       var c = COMPANIES.filter(function (x) { return 'company:' + x.id === state.scope })[0]
       title = c.name
-      img = favicon(c.logo_domain, 'logo')
+      img = companyLogo(c, 'logo')
       sub.append(document.createTextNode(c.sites.length === 1 ? '1 Website' : c.sites.length + ' Websites zusammengefasst'))
     }
     logo.append(img)
     $('ttl').textContent = title
     document.title = (state.view === 'overview' ? '' : title + ' · ') + 'Gruppenwerk Analytics'
+    $('period').parentNode.style.display = state.view === 'tracking' ? 'none' : ''
     if (state.view === 'dash') {
       var live = el('span', 'live'); live.id = 'live'
       live.append(el('i'), el('span', null, '…'))
@@ -703,6 +871,8 @@ td.m { color: var(--text-3); font-weight: 400; }
     void view.offsetWidth
     view.classList.add('enter')
     if (state.view === 'overview') renderOverview(view)
+    else if (state.view === 'insights') renderInsightsPage(view)
+    else if (state.view === 'tracking') renderTracking(view)
     else renderDash(view)
     window.scrollTo(0, 0)
   }
@@ -715,15 +885,16 @@ td.m { color: var(--text-3); font-weight: 400; }
     chart.append(el('div', 'tip'))
     main.append(el('div', 'stats'), chart)
     var grid = el('div', 'grid')
-    var panels = (combined ? ['sites'] : []).concat(['sources', 'pages', 'locations', 'devices', 'goals'])
-    panels.forEach(function (k) {
-      var s = el('section', 'card panel' + (k === 'sites' || k === 'goals' ? ' wide' : ''))
-      s.dataset.panel = k
-      grid.append(s)
-    })
-    var ads = el('section', 'card panel wide'); ads.id = 'ads'
-    var search = el('section', 'card panel wide'); search.id = 'search'
-    grid.append(ads, search)
+    var wide = function (id) { var x = el('section', 'card panel wide'); x.id = id; grid.append(x); return x }
+    var panel = function (k, isWide) { var x = el('section', 'card panel' + (isWide ? ' wide' : '')); x.dataset.panel = k; grid.append(x) }
+    wide('insp')
+    if (combined) panel('sites', true)
+    wide('funnel'); wide('leads')
+    var forms = el('section', 'card panel'); forms.id = 'forms'; grid.append(forms)
+    var content = el('section', 'card panel'); content.id = 'content'; grid.append(content)
+    ;['sources', 'pages', 'locations', 'devices'].forEach(function (k) { panel(k, false) })
+    panel('goals', true)
+    wide('ads'); wide('gbp'); wide('search')
     view.append(main, grid)
     loadDash()
     timers.push(setInterval(loadLive, 30000))
@@ -750,6 +921,12 @@ td.m { color: var(--text-3); font-weight: 400; }
     Array.prototype.forEach.call(document.querySelectorAll('[data-panel]:not([data-panel="goals"])'), function (s) { renderPanel(s, s.dataset.panel) })
     renderAds()
     renderSearch()
+    renderInsightsPanel($('insp'))
+    renderFunnel()
+    renderLeads()
+    renderForms()
+    renderContent()
+    renderGbp()
     loadLive()
   }
 
@@ -997,39 +1174,519 @@ td.m { color: var(--text-3); font-weight: 400; }
     t.append(tb); wrap.append(t)
     return wrap
   }
+  // ---------- Google Ads: campaigns, keywords, search terms, timing, landing pages ----------
+  var ADS_TABS = [['campaigns', 'Kampagnen'], ['keywords', 'Keywords'], ['terms', 'Suchbegriffe'], ['timing', 'Zeiten & Geräte'], ['urls', 'Zielseiten']]
+  function qsBadge(q) {
+    var b = el('span', 'qs', q === null || q === undefined ? '–' : q)
+    b.style.background = q === null || q === undefined ? 'var(--line)' : q >= 7 ? 'var(--up)' : q >= 5 ? 'var(--warn)' : 'var(--down)'
+    b.title = 'Qualitätsfaktor'
+    return b
+  }
+  function flagEl(text, kind) { return el('span', 'flag2 ' + kind, text) }
+  function cellNode(node) { return { node: node } }
+  function richTable(headers, rows) {
+    var wrap = el('div', 'tbl'), t = el('table'), thead = el('thead'), hr = el('tr')
+    headers.forEach(function (h) { hr.append(el('th', null, h)) })
+    thead.append(hr); t.append(thead)
+    var tb = el('tbody')
+    rows.forEach(function (cells) {
+      var tr = el('tr')
+      cells.forEach(function (c, i) {
+        var td = el('td', c && c.cls ? c.cls : null)
+        if (c && c.node) td.append(c.node)
+        else if (c && typeof c === 'object' && 'text' in c) { td.textContent = c.text; if (c.muted) td.classList.add('m') }
+        else td.textContent = c === null || c === undefined ? '–' : String(c)
+        if (i === 0) td.title = td.textContent
+        tr.append(td)
+      })
+      tb.append(tr)
+    })
+    t.append(tb); wrap.append(t)
+    return wrap
+  }
+  function siteTag(domain) {
+    var x = el('span')
+    if (!state.site && domain) { x.append(siteLogo(domain)); x.title = (SITE_BY_DOMAIN[domain] || {}).name || domain }
+    return x
+  }
+  function labelCell(text, domain, flags) {
+    var x = el('span')
+    if (!state.site && domain) { var lg = siteLogo(domain); lg.style.cssText = 'width:14px;height:14px;border-radius:3px;vertical-align:-2px;margin-right:6px'; x.append(lg) }
+    x.append(document.createTextNode(text))
+    ;(flags || []).forEach(function (f) { if (f) x.append(f) })
+    return cellNode(x)
+  }
+  var adsCache = null
   function renderAds() {
     var section = $('ads'), token = renderToken
     if (!section) return
+    var tab = state.tabs.ads || 'campaigns'
     section.replaceChildren()
-    header(section, [['ads', 'Google Ads']], 'ads', null, null)
-    var sk = skeletonRows(3); section.append(sk)
-    api('ads').then(function (d) {
+    header(section, ADS_TABS, tab, function (t) { state.tabs.ads = t; renderAds() }, tab === 'keywords' || tab === 'terms' ? function () { renderAds() } : null)
+    var sk = skeletonRows(4); section.append(sk)
+    var key = qs()
+    var deep = adsCache && adsCache.key === key ? Promise.resolve(adsCache.data) : api('ads-deep').then(function (d) { adsCache = { key: key, data: d }; return d })
+    Promise.all([api('ads'), deep]).then(function (res) {
       if (token !== renderToken) return
       sk.remove()
-      if (!d.results.length) { section.append(el('div', 'empty', 'Keine Werbeausgaben in diesem Zeitraum')); return }
+      var d = res[0], x = res[1]
+      if (!d.results.length && !x.keywords.length) { section.append(el('div', 'empty', 'Keine Werbeausgaben in diesem Zeitraum')); return }
       var t = d.totals, kpis = el('div', 'kpis')
       var spendN = el('div', 'n')
       var k1 = el('div', 'kpi'); k1.append(el('div', 'k', 'Ausgaben'), spendN, el('div', 's', nf.format(t.clicks) + ' Klicks · ' + nf.format(t.impressions) + ' Impressionen'))
-      countUp(spendN, t.spend, function (x) { return money.format(x) })
+      countUp(spendN, t.spend, function (v) { return money.format(v) })
+      var waste = x.keywords.filter(function (k) { return k.spend > 0 && !k.conversions && !k.site_leads }).reduce(function (a, k) { return a + k.spend }, 0)
       kpis.append(
         k1,
         kpi('Conversions (Google)', nf.format(t.conversions), t.cost_per_conversion !== null ? money.format(t.cost_per_conversion) + ' pro Conversion' : '–'),
-        kpi('Besucher über Ads', nf.format(t.visitors), 'auf der Website gezählt'),
-        kpi('Anfragen über Ads', nf.format(t.leads), t.cost_per_lead !== null ? money.format(t.cost_per_lead) + ' pro Anfrage' : LEAD_HINT)
+        kpi('Anfragen über Ads', nf.format(t.leads), t.cost_per_lead !== null ? money.format(t.cost_per_lead) + ' pro Anfrage (Website)' : nf.format(t.visitors) + ' Besucher über Ads'),
+        kpi('Keywords ohne Ergebnis', money0.format(waste), t.spend ? Math.round((waste / t.spend) * 100) + ' % der Ausgaben' : '')
       )
       section.append(kpis)
-      section.append(table(
-        ['Kampagne', 'Ausgaben', 'Klicks', 'CPC', 'Conversions', 'Besucher', 'Anfragen', '€ / Anfrage'],
-        d.results.map(function (r) {
-          return [r.campaign, money.format(r.spend), { text: nf.format(r.clicks), muted: true },
-            { text: r.clicks ? money.format(r.spend / r.clicks) : '–', muted: true }, nf.format(r.conversions),
-            r.visitors === null ? { text: '–', muted: true } : nf.format(r.visitors),
-            r.leads === null ? { text: '–', muted: true } : nf.format(r.leads),
-            r.cost_per_lead === null ? { text: '–', muted: true } : money.format(r.cost_per_lead)]
-        })
-      ))
-      section.append(el('div', 'note', 'Besucher und Anfragen je Kampagne erscheinen, wenn die Anzeigen utm_campaign={campaignid} oder den Kampagnennamen mitgeben. Google-Ads-Klicks ohne UTM (gclid) zählen trotzdem in den Summen oben.'))
+      var expanded = !!section.dataset.expanded
+      if (tab === 'campaigns') {
+        var shareBy = {}
+        x.share.forEach(function (r) { shareBy[r.campaign] = r })
+        section.append(richTable(
+          ['Kampagne', 'Ausgaben', 'Klicks', 'CPC', 'Conv.', 'Anfragen', '€ / Anfrage', 'Sichtbarkeit'],
+          d.results.map(function (r) {
+            var sh = shareBy[r.campaign]
+            var bar = el('div', 'share')
+            if (sh && sh.impression_share !== null) {
+              var a = el('i'); a.style.width = (sh.impression_share * 100) + '%'; a.style.background = 'var(--brand)'
+              var b = el('i'); b.style.width = ((sh.lost_budget || 0) * 100) + '%'; b.style.background = 'var(--warn)'
+              var c = el('i'); c.style.width = ((sh.lost_rank || 0) * 100) + '%'; c.style.background = 'var(--down)'; c.style.opacity = .55
+              bar.append(a, b, c)
+              bar.title = 'Impression-Share ' + Math.round(sh.impression_share * 100) + ' % · verloren durch Budget ' + Math.round((sh.lost_budget || 0) * 100) + ' % · durch Rang ' + Math.round((sh.lost_rank || 0) * 100) + ' %'
+            }
+            return [r.campaign, money.format(r.spend), { text: nf.format(r.clicks), muted: true },
+              { text: r.clicks ? money.format(r.spend / r.clicks) : '–', muted: true }, nf.format(r.conversions),
+              r.leads === null ? { text: '–', muted: true } : nf.format(r.leads),
+              r.cost_per_lead === null ? { text: '–', muted: true } : money.format(r.cost_per_lead), cellNode(bar)]
+          })
+        ))
+        var lg = el('div', 'legend')
+        ;[['var(--brand)', 'Gezeigt'], ['var(--warn)', 'Verloren: Budget'], ['var(--down)', 'Verloren: Anzeigenrang']].forEach(function (l) { var s2 = el('span'), i = el('i'); i.style.background = l[0]; s2.append(i, document.createTextNode(l[1])); lg.append(s2) })
+        section.append(lg)
+        section.append(el('div', 'note', 'Anfragen je Kampagne erscheinen, sobald die Anzeigen utm_campaign={campaignid} mitgeben (oder Google gad_campaignid anhängt) und das Tracking auf der Zielseite läuft.'))
+      } else if (tab === 'keywords') {
+        var rows = x.keywords.slice(0, expanded ? 300 : 15)
+        section.append(richTable(
+          ['Keyword', 'QF', 'Klicks', 'CTR', 'CPC', 'Ausgaben', 'Conv.', 'Anfragen (Website)', 'Organisch'],
+          rows.map(function (k) {
+            var flags = []
+            if (k.spend >= 10 && !k.conversions && !k.site_leads) flags.push(flagEl('ohne Ergebnis', 'bad'))
+            if (k.organic_position && k.organic_position <= 3 && k.organic_impressions >= 20) flags.push(flagEl('organisch Top 3', 'info'))
+            if (k.conversions && k.spend / k.conversions < 25) flags.push(flagEl('effizient', 'good'))
+            return [labelCell(k.keyword + ' · ' + matchShort(k.match_type), k.site, flags), cellNode(qsBadge(k.quality_score)), nf.format(k.clicks),
+              { text: k.ctr === null ? '–' : pct.format(k.ctr) + '%', muted: true }, { text: k.cpc === null ? '–' : money.format(k.cpc), muted: true },
+              money.format(k.spend), nf.format(k.conversions), k.site_leads === null ? { text: '–', muted: true } : nf.format(k.site_leads),
+              k.organic_position === null ? { text: '–', muted: true } : { text: 'Pos. ' + pct.format(k.organic_position) + ' (' + nf.format(k.organic_impressions) + '×)', muted: true }]
+          })
+        ))
+        if (!x.has_term_tracking) section.append(el('div', 'note', '„Anfragen (Website)“ füllt sich, sobald die Tracking-Vorlage utm_term={keyword} mitgibt (siehe Chancen → Tracking).'))
+      } else if (tab === 'terms') {
+        var terms = x.search_terms.slice(0, expanded ? 400 : 15)
+        section.append(richTable(
+          ['Suchbegriff', 'Status', 'Klicks', 'Ausgaben', 'Conv.', 'Organisch'],
+          terms.map(function (r) {
+            var flags = []
+            if (r.conversions > 0 && !r.is_keyword) flags.push(flagEl('als Keyword übernehmen', 'good'))
+            else if (r.spend >= 3 && !r.conversions) flags.push(flagEl('prüfen / ausschließen', 'warn'))
+            return [labelCell(r.term, r.site, flags), { text: r.is_keyword ? 'Keyword' : r.status === 'EXCLUDED' ? 'ausgeschlossen' : 'nur Suchbegriff', muted: true },
+              nf.format(r.clicks), money.format(r.spend), nf.format(r.conversions),
+              r.organic_position === null ? { text: '–', muted: true } : { text: 'Pos. ' + pct.format(r.organic_position), muted: true }]
+          })
+        ))
+        section.append(el('div', 'note', 'Nur Suchbegriffe mit mindestens einem Klick. Ausschließen und Übernehmen geht direkt über Windsor: Claude fragen, z. B. „schließe die markierten Begriffe bei Seehafer aus“.'))
+      } else if (tab === 'timing') {
+        var hours = {}
+        x.segments.hour.forEach(function (h) { hours[Number(h.key)] = h })
+        var maxS = Math.max.apply(null, x.segments.hour.map(function (h) { return h.spend }).concat([1]))
+        var hb = el('div', 'hours'), hl = el('div', 'hlab')
+        for (var i = 0; i < 24; i++) {
+          var h = hours[i] || { spend: 0, clicks: 0, conversions: 0 }
+          var bar2 = el('div', (h.conversions ? 'cv' : '') + (i < 7 || i > 20 ? ' off' : ''))
+          bar2.dataset.h = Math.max(h.spend ? 3 : 0, (h.spend / maxS) * 100) + '%'
+          bar2.title = String(i).padStart(2, '0') + ' Uhr · ' + money.format(h.spend) + ' · ' + nf.format(h.clicks) + ' Klicks · ' + pct.format(h.conversions) + ' Conv.'
+          hb.append(bar2)
+          hl.append(el('span', null, i))
+        }
+        section.append(el('div', 'sub-h', 'Ausgaben nach Uhrzeit'), hb, hl)
+        var lg2 = el('div', 'legend')
+        ;[['var(--bar-goals)', 'Ausgaben ohne Conversion'], ['color-mix(in srgb, var(--up) 55%, transparent)', 'Stunde mit Conversion']].forEach(function (l) { var s2 = el('span'), ii = el('i'); ii.style.background = l[0]; s2.append(ii, document.createTextNode(l[1])); lg2.append(s2) })
+        section.append(lg2)
+        requestAnimationFrame(function () { requestAnimationFrame(function () { Array.prototype.forEach.call(hb.children, function (b, j) { b.style.transitionDelay = (j * 18) + 'ms'; b.style.height = b.dataset.h }) }) })
+        section.append(el('div', 'sub-h', 'Geräte'))
+        section.append(richTable(['Gerät', 'Klicks', 'Ausgaben', 'Conv.', '€ / Conv.'], x.segments.device.map(function (r) {
+          return [DEVICE_NAMES[r.key] || r.key, nf.format(r.clicks), money.format(r.spend), nf.format(r.conversions), r.conversions ? money.format(r.spend / r.conversions) : { text: '–', muted: true }]
+        })))
+      } else if (tab === 'urls') {
+        section.append(richTable(['Zielseite', 'Klicks', 'Ausgaben', 'Conv.', '€ / Conv.'], x.segments.url.slice(0, 30).map(function (r) {
+          var flags = r.spend >= 20 && !r.conversions ? [flagEl('ohne Conversion', 'bad')] : []
+          return [labelCell(r.key.replace(/^https?:\/\//, ''), null, flags), nf.format(r.clicks), money.format(r.spend), nf.format(r.conversions), r.conversions ? money.format(r.spend / r.conversions) : { text: '–', muted: true }]
+        })))
+      }
     }).catch(function () { sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
+  }
+  var DEVICE_NAMES = { MOBILE: 'Smartphone', DESKTOP: 'Computer', TABLET: 'Tablet', CONNECTED_TV: 'TV', OTHER: 'Sonstige' }
+  function matchShort(m) { return { EXACT: 'exakt', PHRASE: 'Wortgruppe', BROAD: 'weitgehend' }[m] || (m || '').toLowerCase() }
+
+  // ---------- opportunities ----------
+  function insightEl(r) {
+    var row = el('div', 'ins ' + r.severity)
+    row.append(el('span', 'dot'))
+    var body = el('div'), meta = el('div', 'meta')
+    meta.append(el('span', 'tag', SEVERITY[r.severity]), el('span', 'tag', r.area))
+    if (r.site && SITE_BY_DOMAIN[r.site]) { var sp = el('span'); sp.style.cssText = 'display:inline-flex;gap:5px;align-items:center'; sp.append(siteLogo(r.site), document.createTextNode(SITE_BY_DOMAIN[r.site].name)); meta.append(sp) }
+    body.append(meta, el('h3', null, r.title), el('p', null, r.detail), el('div', 'act', r.action))
+    if (r.terms && r.terms.length) {
+      var det = el('details'), sum = el('summary', null, r.terms.length + ' Begriffe anzeigen'), ul = el('ul')
+      r.terms.forEach(function (t) {
+        ul.append(el('li', null, t.term + (t.spend !== undefined ? ' · ' + money.format(t.spend) : '') + (t.impressions !== undefined ? ' · ' + nf.format(t.impressions) + '× Pos. ' + pct.format(t.position) : '') + (t.site && !state.site && SITE_BY_DOMAIN[t.site] ? ' · ' + SITE_BY_DOMAIN[t.site].name : '')))
+      })
+      det.append(sum, ul); body.append(det)
+    }
+    row.append(body)
+    var val = el('div', 'val')
+    if (r.value) { val.append(document.createTextNode('≈ ' + money0.format(r.value))); val.append(el('small', null, 'pro Monat')) }
+    row.append(val)
+    return row
+  }
+  function renderInsightsPanel(section) {
+    if (!section) return
+    var token = renderToken
+    section.replaceChildren()
+    header(section, [['ins', 'Chancen']], 'ins', null, null)
+    var sk = skeletonRows(3); section.append(sk)
+    api('insights').then(function (d) {
+      if (token !== renderToken) return
+      sk.remove()
+      var list = el('div', 'ins-list')
+      var top = d.results.filter(function (r) { return r.severity !== 'info' }).slice(0, 4)
+      if (!top.length) top = d.results.slice(0, 3)
+      if (!top.length) { section.append(el('div', 'empty', 'Keine offenen Punkte in diesem Zeitraum')); return }
+      top.forEach(function (r) { list.append(insightEl(r)) })
+      section.append(list)
+      var more = el('a', 'more'); more.href = '#'; more.dataset.nav = ''; more.dataset.view = 'insights'
+      if (state.site) more.dataset.site = state.site; else more.dataset.scope = state.scope
+      more.textContent = 'Alle ' + d.results.length + ' Chancen ansehen →'
+      section.append(more)
+    }).catch(function () { sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
+  }
+  var insFilter = 'all'
+  function renderInsightsPage(view) {
+    var token = renderToken
+    var seg = el('div', 'seg'), segA = el('div', 'seg')
+    var scopes = [['all', 'Alle Unternehmen', null]].concat(COMPANIES.map(function (c) { return ['company:' + c.id, c.name, c] }))
+    scopes.forEach(function (sc) {
+      var b = el('button', (state.site ? '' : state.scope === sc[0] ? 'on' : ''))
+      b.type = 'button'
+      if (sc[2]) b.append(companyLogo(sc[2]))
+      b.append(document.createTextNode(sc[1]))
+      b.onclick = function () { state.site = null; state.scope = sc[0]; saveUrl(); render() }
+      seg.append(b)
+    })
+    var totals = el('div', 'totals')
+    var card = el('section', 'card panel wide'); card.style.minHeight = '0'
+    var sk = skeletonRows(6); card.append(sk)
+    view.append(seg, totals, card)
+    api('insights').then(function (d) {
+      if (token !== renderToken) return
+      sk.remove()
+      var counts = { high: 0, medium: 0, info: 0 }, areaCount = {}
+      d.results.forEach(function (r) { counts[r.severity]++; areaCount[r.area] = (areaCount[r.area] || 0) + 1 })
+      var adsWaste = d.results.filter(function (r) { return r.area === 'Google Ads' && /ohne (Anfrage|Conversion)|Kaufabsicht/.test(r.title) && !/^Zielseite/.test(r.title) }).reduce(function (a, r) { return a + (r.value || 0) }, 0)
+      ;[['Dringend', counts.high, 'sofort angehen'], ['Wichtig', counts.medium, 'diese Woche'], ['Hinweise', counts.info, 'zur Einordnung'], ['Ads ohne Ergebnis', money0.format(adsWaste), 'pro Monat, Keywords & Suchbegriffe']].forEach(function (t, i) {
+        var c = el('div', 'card total'), n = el('div', 'n', t[1])
+        if (i === 0) n.style.color = 'var(--down)'
+        c.append(el('div', 'k', t[0]), n, el('div', 'd', t[2]))
+        totals.append(c)
+      })
+      var areas = [['all', 'Alle', d.results.length]].concat(AREAS.filter(function (a) { return areaCount[a] }).map(function (a) { return [a, a, areaCount[a]] }))
+      areas.forEach(function (a) {
+        var b = el('button', insFilter === a[0] ? 'on' : '')
+        b.type = 'button'
+        b.append(document.createTextNode(a[1]), el('span', 'c', a[2]))
+        b.onclick = function () { insFilter = a[0]; render() }
+        segA.append(b)
+      })
+      card.append(segA)
+      var list = el('div', 'ins-list')
+      var rows = d.results.filter(function (r) { return insFilter === 'all' || r.area === insFilter })
+      rows.forEach(function (r, i) { var e = insightEl(r); if (!REDUCED) e.style.animation = 'rise .4s ' + Math.min(i * 0.03, 0.5) + 's cubic-bezier(.2,.8,.2,1) both'; list.append(e) })
+      if (!rows.length) list.append(el('div', 'empty', 'Nichts in dieser Kategorie'))
+      card.append(list)
+      card.append(el('div', 'note', 'Euro-Werte sind auf 30 Tage hochgerechnet und können sich überschneiden (ein Keyword kann auch in einer Zielseite stecken). Änderungen an Anzeigen und Profilen führt Claude über Windsor erst nach Freigabe aus.'))
+    }).catch(function () { sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
+  }
+  function loadInsightCount() {
+    var r = range()
+    fetch('/api/insights?scope=all&from=' + r[0] + '&to=' + r[1]).then(function (x) { return x.json() }).then(function (d) {
+      var n = (d.results || []).filter(function (x) { return x.severity === 'high' }).length
+      $('insCount').textContent = n ? n : ''
+      $('insCount').title = n + ' dringende Chancen'
+    }).catch(function () {})
+  }
+
+  // ---------- funnel ----------
+  function renderFunnel() {
+    var section = $('funnel'), token = renderToken
+    if (!section) return
+    section.replaceChildren()
+    var cfg = state.site && SITE_BY_DOMAIN[state.site].config
+    header(section, [['f', 'Funnel' + (cfg && cfg.service ? ' · ' + cfg.service : '')]], 'f', null, null)
+    var sk = skeletonRows(4); section.append(sk)
+    api('funnel').then(function (d) {
+      if (token !== renderToken) return
+      sk.remove()
+      if (!d.steps.length || !d.steps[0].sessions) { section.append(el('div', 'empty', 'Noch keine Besuche in diesem Zeitraum')); return }
+      var box = el('div', 'funnel')
+      d.steps.forEach(function (st, i) {
+        var row = el('div', 'fstep'), lbl = el('div', 'lbl', st.label)
+        lbl.title = st.label
+        var bar = el('div', 'bar'), fill = el('i')
+        bar.append(fill)
+        var num = el('div', 'num'), b = el('b', null, nf.format(st.sessions))
+        num.append(b, document.createTextNode(' · ' + pct.format(st.rate) + ' %'))
+        if (st.drop !== null && i) num.append(el('span', 'drop', '−' + pct.format(st.drop) + ' % zum Vorschritt'))
+        row.append(lbl, bar, num)
+        box.append(row)
+        requestAnimationFrame(function () { requestAnimationFrame(function () { fill.style.transitionDelay = (i * 90) + 'ms'; fill.style.width = Math.max(st.rate, st.sessions ? 1 : 0) + '%' }) })
+      })
+      section.append(box)
+      section.append(el('div', 'note', state.site ? 'Besuche, die jeden Schritt bis hierhin erreicht haben. Abschnitte zählen, sobald sie in der Bildschirmmitte waren.' : 'Gemeinsamer Funnel aller Websites im Bereich: Besuch → Anfrage-Bereich → Formular begonnen → gesendet. Einzelne Websites haben eigene Schritte.'))
+    }).catch(function () { sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
+  }
+
+  // ---------- lead feed ----------
+  var LEAD_ICON = {
+    'Form submit': ['form', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg>'],
+    'Phone click': ['call', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>'],
+    'Email click': ['mail', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>'],
+    'WhatsApp click': ['wa', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.5A8.4 8.4 0 1 1 21 11.5z"/></svg>'],
+    Application: ['', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>']
+  }
+  var LEAD_TITLE = { 'Form submit': 'Anfrage über Formular', 'Phone click': 'Anruf-Klick', 'Email click': 'E-Mail-Klick', 'WhatsApp click': 'WhatsApp-Klick', Application: 'Bewerbung' }
+  function timeAgo(ts) {
+    var s = Math.round((Date.now() - ts) / 1000)
+    if (s < 3600) return Math.max(1, Math.round(s / 60)) + ' Min.'
+    if (s < 86400) return Math.round(s / 3600) + ' Std.'
+    return new Date(ts).toLocaleDateString('de-DE', { day: 'numeric', month: 'short' }) + ', ' + new Date(ts).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })
+  }
+  function renderLeads() {
+    var section = $('leads'), token = renderToken
+    if (!section) return
+    section.replaceChildren()
+    header(section, [['l', 'Anfragen & Kontakte']], 'l', null, function () { renderLeads() })
+    var sk = skeletonRows(4); section.append(sk)
+    api('leads').then(function (d) {
+      if (token !== renderToken) return
+      sk.remove()
+      if (!d.results.length) { section.append(el('div', 'empty', 'Noch keine Anfragen in diesem Zeitraum')); return }
+      var chips = el('div', 'chips')
+      Object.keys(d.by_type).forEach(function (k) { var c = el('span', null, LEAD_TITLE[k] || k); c.append(el('b', null, d.by_type[k])); chips.append(c) })
+      var split = el('div', 'split'), left = el('div'), right = el('div')
+      var feed = el('div', 'feed')
+      d.results.slice(0, section.dataset.expanded ? 60 : 8).forEach(function (r) {
+        var row = el('div', 'lead'), ic = LEAD_ICON[r.type] || LEAD_ICON['Form submit']
+        var icon = el('div', 'ic ' + ic[0]); icon.append(html(ic[1]))
+        var body = el('div'), t = el('b', null, LEAD_TITLE[r.type] || r.type)
+        body.append(t)
+        if (r.label && r.type !== 'Form submit') body.append(document.createTextNode(' · ' + r.label))
+        var sub = el('div', 'sub2')
+        if (!state.site) { var ss = el('span'); ss.append(siteLogo(r.site), document.createTextNode((SITE_BY_DOMAIN[r.site] || {}).name || r.site)); sub.append(ss) }
+        var src = el('span'); var si = iconFor('source', r.source); if (si) src.append(si); src.append(document.createTextNode(r.source || 'Direkt')); sub.append(src)
+        if (r.keyword) { var kw = el('span'); kw.append(el('span', 'kw', r.keyword)); sub.append(kw) }
+        sub.append(el('span', null, 'Einstieg ' + (r.entry_page || r.page)))
+        if (r.device) sub.append(el('span', null, r.device + (r.city ? ' · ' + r.city : '')))
+        body.append(sub)
+        if (r.choices && Object.keys(r.choices).length) {
+          var ch = el('div', 'ch')
+          Object.keys(r.choices).forEach(function (k) { var c = el('span'); c.append(el('em', null, k + ': '), document.createTextNode(r.choices[k])); ch.append(c) })
+          body.append(ch)
+        }
+        row.append(icon, body, el('time', null, timeAgo(r.ts)))
+        feed.append(row)
+      })
+      left.append(chips, feed)
+      right.append(el('div', 'sub-h', 'Was Anfragende auswählen'))
+      if (!d.choices.length) right.append(el('div', 'note', 'Erscheint, sobald Formular-Anfragen mit Auswahlfeldern (Problem, Material, Anzahl …) eingehen. Kontaktdaten werden nie gespeichert.'))
+      else {
+        var list = el('div', 'list'), max = d.choices[0].leads
+        d.choices.slice(0, 12).forEach(function (c) { list.append(barRow(c.answer + '  ·  ' + c.question, null, (c.leads / max) * 100, 'var(--bar-goals)', [[nf.format(c.leads)]], null)) })
+        right.append(list)
+        growBars(list)
+      }
+      split.append(left, right)
+      section.append(split)
+    }).catch(function () { sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
+  }
+
+  // ---------- forms & content ----------
+  function renderForms() {
+    var section = $('forms'), token = renderToken
+    if (!section) return
+    section.replaceChildren()
+    header(section, [['f', 'Formulare']], 'f', null, null)
+    var sk = skeletonRows(4); section.append(sk)
+    api('forms').then(function (d) {
+      if (token !== renderToken) return
+      sk.remove()
+      if (!d.results.length) { section.append(el('div', 'empty', 'Noch keine Formular-Interaktionen')); return }
+      d.results.slice(0, 4).forEach(function (f) {
+        var isJob = f.application_starts || f.applications
+        section.append(el('div', 'sub-h', (isJob && !f.starts ? 'Bewerbung · ' : 'Formular · ') + '#' + f.form))
+        var steps = [{ label: 'Begonnen', sessions: f.starts || f.application_starts }].concat(f.steps).concat([{ label: isJob && !f.starts ? 'Bewerbung gesendet' : 'Anfrage gesendet', sessions: f.leads || f.applications }])
+        var max = Math.max.apply(null, steps.map(function (x) { return x.sessions }).concat([1]))
+        var list = el('div', 'list')
+        steps.forEach(function (st, i) {
+          var prev = i ? steps[i - 1].sessions : null
+          var drop = prev ? Math.round((1 - st.sessions / prev) * 100) : null
+          list.append(barRow(st.label, null, (st.sessions / max) * 100, 'var(--bar-sites)', [[drop !== null && drop > 0 ? '−' + drop + ' %' : '', true], [nf.format(st.sessions)]], null))
+        })
+        section.append(list)
+        growBars(list)
+      })
+      section.append(el('div', 'note', 'Mehrstufige Formulare: jeder „Weiter“-Schritt wird einzeln gezählt, eine Anfrage erst, wenn das CRM sie angenommen hat.'))
+    }).catch(function () { sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
+  }
+  function renderContent() {
+    var section = $('content'), token = renderToken
+    if (!section) return
+    var tab = state.tabs.content || 'sections'
+    section.replaceChildren()
+    header(section, [['sections', 'Abschnitte'], ['depth', 'Lesetiefe'], ['faq', 'Fragen']], tab, function (t) { state.tabs.content = t; renderContent() }, null)
+    var sk = skeletonRows(6); section.append(sk)
+    api('content').then(function (d) {
+      if (token !== renderToken) return
+      sk.remove()
+      var cols = el('div', 'cols'), nums = el('span', 'nums'), list = el('div', 'list')
+      if (tab === 'sections') {
+        if (!d.sections.length) { section.append(el('div', 'empty', 'Noch keine Abschnittsdaten (kommen mit Tracker v2)')); return }
+        nums.append(el('span', 'm', 'Aktionen'), el('span', null, 'Reichweite'))
+        cols.append(el('span', null, 'Abschnitt'), nums)
+        d.sections.slice(0, 12).forEach(function (r) {
+          var acts = Object.keys(r.actions).reduce(function (a, k) { return a + r.actions[k] }, 0)
+          list.append(barRow('#' + r.section, null, r.reach, 'var(--bar-sites)', [[acts ? nf.format(acts) : '', true], [pct.format(r.reach) + ' %']], null))
+        })
+      } else if (tab === 'depth') {
+        if (!d.pages.length) { section.append(el('div', 'empty', 'Noch keine Lesedaten')); return }
+        nums.append(el('span', 'm', 'Zeit'), el('span', null, 'Scrolltiefe'))
+        cols.append(el('span', null, 'Seite'), nums)
+        d.pages.slice(0, 10).forEach(function (r) { list.append(barRow(r.page, null, r.depth, 'var(--bar-pages)', [[fmtDuration(r.time), true], [r.depth + ' %']], function () { addFilter('page', r.page) })) })
+      } else {
+        if (!d.faq.length) { section.append(el('div', 'empty', 'Noch keine FAQ-Klicks')); return }
+        nums.append(el('span', 'm', 'Klicks'), el('span', null, 'Besucher'))
+        cols.append(el('span', null, 'Frage'), nums)
+        var max = d.faq[0].visitors
+        d.faq.forEach(function (r) { list.append(barRow(r.name, null, (r.visitors / max) * 100, 'var(--bar-locations)', [[nf.format(r.events), true], [nf.format(r.visitors)]], null)) })
+      }
+      section.append(cols, list)
+      growBars(list)
+    }).catch(function () { sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
+  }
+
+  // ---------- Google Business Profile ----------
+  function renderGbp() {
+    var section = $('gbp'), token = renderToken
+    if (!section) return
+    section.replaceChildren()
+    header(section, [['g', 'Google-Unternehmensprofil']], 'g', null, null)
+    var sk = skeletonRows(3); section.append(sk)
+    api('gbp').then(function (d) {
+      if (token !== renderToken) return
+      sk.remove()
+      if (!d.locations.length) { section.append(el('div', 'empty', 'Kein Unternehmensprofil mit dieser Website verknüpft')); return }
+      var t = d.totals, kpis = el('div', 'kpis')
+      var reviews = d.locations.reduce(function (a, l) { return a + (l.reviews || 0) }, 0)
+      kpis.append(
+        kpi('Einblendungen', nf.format(t.maps + t.search), nf.format(t.maps) + ' Maps · ' + nf.format(t.search) + ' Suche'),
+        kpi('Anrufe', nf.format(t.calls), 'direkt aus dem Profil'),
+        kpi('Routen & Website', nf.format(t.directions) + ' · ' + nf.format(t.website), 'Routenplanungen · Website-Klicks'),
+        kpi('Bewertungen', nf.format(reviews), d.locations.length === 1 && d.locations[0].rating ? '★ ' + pct.format(d.locations[0].rating) : d.locations.length + ' Profile')
+      )
+      section.append(kpis)
+      section.append(richTable(['Profil', 'Maps', 'Suche', 'Anrufe', 'Website', 'Routen', 'Bewertungen'], d.locations.map(function (l) {
+        var flags = (l.reviews || 0) < 10 ? [flagEl('wenige Bewertungen', 'warn')] : []
+        return [labelCell(l.name, l.site, flags), nf.format(l.maps), nf.format(l.search), nf.format(l.calls), nf.format(l.website), nf.format(l.directions),
+          l.reviews === null ? { text: '–', muted: true } : nf.format(l.reviews) + (l.rating ? ' · ★ ' + pct.format(l.rating) : '')]
+      })))
+      if (d.keywords.length) {
+        section.append(el('div', 'sub-h', 'So wird das Profil gefunden (letzter Monat)'))
+        var chips = el('div', 'chips')
+        d.keywords.slice(0, 30).forEach(function (k) {
+          var c = el('span', null, k.keyword)
+          c.append(el('b', null, k.value !== null ? nf.format(k.value) : '< ' + (k.threshold || 15)))
+          if (!state.site && d.locations.length > 1) c.title = k.location_name
+          chips.append(c)
+        })
+        section.append(chips)
+      }
+      section.append(el('div', 'note', 'Anrufe aus dem Profil sind Leads, die keine Website-Statistik sieht. Bewertungen und Beiträge lassen sich über Windsor beantworten bzw. veröffentlichen.'))
+    }).catch(function () { sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
+  }
+
+  // ---------- tracking setup ----------
+  var TRACKER_ORIGIN = location.origin
+  function renderTracking(view) {
+    var token = renderToken
+    var intro = el('section', 'card trk')
+    intro.append(el('b', null, 'Ein Snippet je Website, der Rest wird erkannt'))
+    intro.append(el('div', 'note', 'Der Tracker erkennt Anruf-, Mail- und WhatsApp-Klicks, Bewertungs- und Karten-Links, FAQ, gelesene Abschnitte, Scrolltiefe, mehrstufige Formulare (Start, jeder Schritt, angenommene Anfrage inkl. Auswahl ohne Kontaktdaten) und Bewerbungen. Die Funnel-Schritte je Website liegen serverseitig, das Snippet muss dafür nie geändert werden. Eigene Ziele: Attribut data-track="Name" an ein Element setzen.'))
+    var tpl = el('div', 'code', '{lpurl}?utm_source=google&utm_medium=cpc&utm_campaign={campaignid}&utm_term={keyword}&utm_content={creative}')
+    var cp0 = el('button', null, 'Kopieren'); cp0.type = 'button'; cp0.onclick = function () { copy(tpl.firstChild.textContent, cp0) }
+    tpl.append(cp0)
+    intro.append(el('div', 'sub-h', 'Tracking-Vorlage für alle Google-Ads-Konten (Kontoebene)'), tpl)
+    view.append(intro)
+    var list = el('div'); list.style.cssText = 'display:flex;flex-direction:column;gap:16px;margin-top:16px'
+    view.append(list)
+    fetch('/api/tracking').then(function (r) { return r.json() }).then(function (rows) {
+      if (token !== renderToken) return
+      var by = {}
+      rows.forEach(function (r) { by[r.site] = r })
+      COMPANIES.forEach(function (c) {
+        c.sites.forEach(function (s) {
+          var info = by[s.domain] || {}
+          var card = el('section', 'card trk'), h = el('div', 'h')
+          var nm = el('div'); nm.append(el('b', null, s.name), el('br'), el('small', null, s.domain))
+          h.append(siteLogo(s.domain), nm)
+          var fresh = info.last_ts && Date.now() - info.last_ts < 3 * 86400000
+          var st = el('span', 'status ' + (fresh ? 'ok' : info.last_ts ? 'wait' : 'off'))
+          st.append(el('i'), document.createTextNode(fresh ? 'Aktiv · ' + timeAgo(info.last_ts) : info.last_ts ? 'Zuletzt ' + timeAgo(info.last_ts) : 'Nicht installiert'))
+          h.append(st)
+          card.append(h)
+          var snippet = '<script defer data-domain="' + s.domain + '" src="' + TRACKER_ORIGIN + '/s.js"></' + 'script>'
+          var code = el('div', 'code', snippet), cp = el('button', null, 'Kopieren')
+          cp.type = 'button'; cp.onclick = function () { copy(snippet, cp) }
+          code.append(cp)
+          card.append(code)
+          var g = el('div', 'grid3')
+          var a = el('div'); a.append(el('div', 'k', 'Funnel'))
+          var ol = el('ol')
+          ;((s.config && s.config.funnel) || []).forEach(function (f) { ol.append(el('li', null, f.label)) })
+          a.append(ol)
+          var b = el('div'); b.append(el('div', 'k', 'Gemessen (7 Tage)'))
+          var ch = el('div', 'chips'); ch.style.marginTop = '0'
+          ;(info.names || []).forEach(function (n) { ch.append(el('span', null, EVENT_NAMES[n] || (n === 'pageview' ? 'Seitenaufruf' : n === 'Engagement' ? 'Lesetiefe' : n === 'Form step' ? 'Formularschritt' : n))) })
+          if (!(info.names || []).length) ch.append(el('span', null, 'noch nichts'))
+          b.append(ch)
+          var c3 = el('div'); c3.append(el('div', 'k', 'Verknüpft'))
+          var ul = el('ol'); ul.style.listStyle = 'none'; ul.style.paddingLeft = '0'
+          ul.append(el('li', null, s.ads_account ? 'Google Ads ' + s.ads_account : 'Google Ads: –'))
+          ul.append(el('li', null, s.gsc_property ? 'Search Console ✓' : 'Search Console: –'))
+          ul.append(el('li', null, 'Profil-Link mit ?utm_source=gbp'))
+          c3.append(ul)
+          g.append(a, b, c3)
+          card.append(g)
+          list.append(card)
+        })
+      })
+    })
+  }
+  function copy(text, btn) {
+    var done = function () { btn.textContent = 'Kopiert'; setTimeout(function () { btn.textContent = 'Kopieren' }, 1500) }
+    if (navigator.clipboard) navigator.clipboard.writeText(text).then(done, function () {})
   }
   function renderSearch() {
     var section = $('search'), token = renderToken
@@ -1101,10 +1758,12 @@ td.m { color: var(--text-3); font-weight: 400; }
       return { key: t[1], card: c, n: n, sk: s }
     })
     var groups = el('div')
-    view.append(totals, groups)
+    var ins = el('section', 'card panel wide'); ins.id = 'insp'; ins.style.cssText = 'min-height:0;margin:16px 0 0'
+    view.append(totals, ins, groups)
+    renderInsightsPanel(ins)
     COMPANIES.forEach(function (c) {
       var head = el('div', 'cohead')
-      head.append(favicon(c.logo_domain), el('h2', null, c.name), el('span', 'meta', c.sites.length === 1 ? '1 Website' : c.sites.length + ' Websites'))
+      head.append(companyLogo(c), el('h2', null, c.name), el('span', 'meta', c.sites.length === 1 ? '1 Website' : c.sites.length + ' Websites'))
       var link = el('a'); link.href = '?scope=company:' + c.id; link.dataset.nav = ''; link.dataset.scope = 'company:' + c.id
       link.append(document.createTextNode('Gesamtdashboard '), el('span', null, '→'))
       head.append(link)
@@ -1190,6 +1849,7 @@ td.m { color: var(--text-3); font-weight: 400; }
     else { var r = range(); $('from').value = r[0]; $('to').value = r[1] }
     saveUrl()
     if (state.view === 'dash') { renderHeader(); refreshDash() } else render()
+    loadInsightCount()
   }
   $('from').onchange = $('to').onchange = function () {
     if ($('from').value && $('to').value && $('from').value <= $('to').value) {
@@ -1212,7 +1872,7 @@ td.m { color: var(--text-3); font-weight: 400; }
       SITE_BY_DOMAIN[s.domain] = s
       var id = s.company || 'other'
       if (!byCompany[id]) {
-        byCompany[id] = { id: id, name: s.company_name || 'Weitere', logo_domain: s.logo_domain || s.domain, sites: [] }
+        byCompany[id] = { id: id, name: s.company_name || 'Weitere', logo_domain: s.logo_domain || s.domain, favicon_url: s.company_favicon, logo_url: s.company_logo, sites: [] }
         COMPANIES.push(byCompany[id])
       }
       byCompany[id].sites.push(s)
@@ -1221,6 +1881,7 @@ td.m { color: var(--text-3); font-weight: 400; }
     readUrl()
     render()
     loadSyncInfo()
+    loadInsightCount()
   })
 })()
 </script>
