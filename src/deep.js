@@ -33,7 +33,7 @@ async function siteRows(db, sites) {
 
 export async function leads(db, q, limit = 60) {
   const w = where(q)
-  const names = [...LEAD_EVENTS, 'Application']
+  const names = [...LEAD_EVENTS, 'Application', 'Application contact']
   const { results } = await db
     .prepare(
       `SELECT e.ts, e.site, e.name, e.label, e.props, e.page, e.source, e.utm_campaign, e.utm_term, e.device, e.city,
@@ -106,7 +106,7 @@ async function sessionFacts(db, q) {
   const { results } = await db
     .prepare(
       `SELECT session_id, name, page, label, props FROM events
-       WHERE ${w.sql} AND name IN ('pageview', 'Engagement', 'Form start', 'Form step', 'FAQ open', ${LEAD_EVENTS.map(() => '?').join(',')})`
+       WHERE ${w.sql} AND name IN ('pageview', 'Engagement', 'Form start', 'Form step', 'FAQ open', 'Application', 'Application contact', ${LEAD_EVENTS.map(() => '?').join(',')})`
     )
     .bind(...w.params, ...LEAD_EVENTS)
     .all()
@@ -141,6 +141,10 @@ function matches(step, s) {
       return s.sections.has(step.value)
     case 'event':
       return s.events.has(step.value)
+    case 'events':
+      return step.value.some((v) => s.events.has(v))
+    case 'page_or_section':
+      return step.value.some((v) => (v.startsWith('/') ? s.pages.has(v) : s.sections.has(v)))
     case 'lead':
       return s.lead
     default:

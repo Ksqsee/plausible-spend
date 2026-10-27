@@ -7,7 +7,8 @@
 //   pageview, Engagement (scroll depth, seconds visible, named sections seen)
 //   Phone / Email / WhatsApp / Maps click, Review click, Outbound link, File download, Button click
 //   FAQ open, Copy contact, Video play
-//   Form start, Form step, Form submit (a lead the CRM accepted), Application start, Application
+//   Form start, Form step, Form submit (a lead the CRM accepted), Application start, Application,
+//   Application contact (call or mail about a job), Cancellation (withdrawal form, not a lead)
 (function () {
   'use strict'
   var script = document.currentScript
@@ -141,6 +142,8 @@
 
   var FILE_RE = /\.(pdf|xlsx?|docx?|pptx?|txt|rtf|csv|zip|rar|7z|gz|dmg|exe|mp3|mp4|mov|avi|wav)$/i
   var BUTTON_RE = /(^|[\s_-])(btn|button|cta)|Cta|Button|Btn/
+  var APPLICATION_RE = /bewerb|bewirb|karriere|\/jobs?\b|stellen|lebenslauf|apply|application|aplikuj|başvur|заявк/i
+  var CANCEL_RE = /widerruf|kündig|kuendig|storn/i
   var REVIEW_RE = /g\.page\/r\/|writereview|\/maps\?cid=/i
 
   function text(el) {
@@ -170,16 +173,18 @@
 
       if (el.tagName === 'A') {
         var href = el.getAttribute('href') || ''
-        if (/^tel:/i.test(href)) return send('Phone click', props({ target: href.slice(4).replace(/[^\d+]/g, '') }))
-        if (/^mailto:/i.test(href)) return send('Email click', props({ target: href.slice(7).split('?')[0] }))
-        if (/^https?:\/\/(wa\.me|api\.whatsapp\.com|chat\.whatsapp\.com)/i.test(href)) return send('WhatsApp click', props({}))
+        // Calls and mails about a job are applications, not customer leads.
+        var job = APPLICATION_RE.test(label + ' ' + (where || '') + ' ' + location.pathname)
+        if (/^tel:/i.test(href)) return send(job ? 'Application contact' : 'Phone click', props({ target: href.slice(4).replace(/[^\d+]/g, ''), via: 'Telefon' }))
+        if (/^mailto:/i.test(href)) return send(job ? 'Application contact' : 'Email click', props({ target: href.slice(7).split('?')[0], via: 'E-Mail' }))
+        if (/^https?:\/\/(wa\.me|api\.whatsapp\.com|chat\.whatsapp\.com)/i.test(href)) return send(job ? 'Application contact' : 'WhatsApp click', props({ via: 'WhatsApp' }))
         var url
         try {
           url = new URL(el.href, location.href)
         } catch (err) {}
         if (url && FILE_RE.test(url.pathname)) return send('File download', props({ target: url.href }))
         if (url && /^https?:$/.test(url.protocol) && url.host !== location.host) {
-          if (REVIEW_RE.test(url.href)) return send('Review click', props({ target: url.host }))
+          if (REVIEW_RE.test(url.href) || /bewertung|rezension|review/i.test(label)) return send('Review click', props({ target: url.host }))
           if (/google\.[a-z.]+\/maps|maps\.google|goo\.gl\/maps|maps\.app\.goo\.gl|openstreetmap\.org/i.test(url.href))
             return send('Maps click', props({ target: url.host }))
           return send('Outbound link', props({ target: url.origin + url.pathname }))
@@ -213,7 +218,7 @@
   }
 
   function isApplication(text) {
-    return /bewerb|karriere|stelle|lebenslauf/i.test(text + ' ' + location.pathname)
+    return APPLICATION_RE.test(text + ' ' + location.pathname)
   }
 
   function onFormTouch(e) {
@@ -223,6 +228,7 @@
     lastForm = key
     if (formsStarted[key]) return
     formsStarted[key] = true
+    if (CANCEL_RE.test(key + ' ' + location.pathname)) return
     send(isApplication(key) ? 'Application start' : 'Form start', { label: key })
   }
   document.addEventListener('pointerdown', onFormTouch, true)
@@ -297,7 +303,27 @@
     } catch (e) {}
     var labels = fields.map(function (f) { return (f && f.label) || '' }).join(' ')
     var key = lastForm || 'form'
-    send(isApplication(key + ' ' + labels) ? 'Application' : 'Form submit', { label: key, c: choices(fields) })
+    leadAt = Date.now()
+    var where = key + ' ' + labels + ' ' + location.pathname
+    var name = CANCEL_RE.test(where) ? 'Cancellation' : isApplication(where) ? 'Application' : 'Form submit'
+    send(name, { label: key, c: name === 'Form submit' ? choices(fields) : {} })
+  }
+
+  // Fallback for forms that keep their own reference to fetch and so bypass the wrapper below:
+  // the browser still reports the request in its resource timing.
+  var leadAt = 0
+  if (window.PerformanceObserver) {
+    try {
+      new PerformanceObserver(function (list) {
+        list.getEntries().forEach(function (entry) {
+          if (!LEAD_URL.test(entry.name)) return
+          if (entry.responseStatus && (entry.responseStatus < 200 || entry.responseStatus >= 300)) return
+          // Only count it if the fetch wrapper has not already seen this request.
+          var startedAt = (performance.timeOrigin || Date.now() - performance.now()) + entry.startTime
+          setTimeout(function () { if (leadAt < startedAt) leadSent('') }, 1500)
+        })
+      }).observe({ type: 'resource', buffered: false })
+    } catch (e) {}
   }
 
   var LEAD_URL = /leadV2\.create/
