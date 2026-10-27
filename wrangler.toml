@@ -1,0 +1,23 @@
+name = "gw-analytics"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+account_id = "25346b53f111266024f71046763f6aee"
+workers_dev = true
+
+[[rules]]
+type = "Text"
+globs = ["**/*.html", "**/*.client.js"]
+fallthrough = false
+
+[[d1_databases]]
+binding = "DB"
+database_name = "gw-analytics"
+database_id = "9b9fbe90-d23e-4aff-bb3d-53a8944b7962"
+migrations_dir = "migrations"
+
+[triggers]
+# Every 6 hours, Windsor sync (Google Ads + Search Console)
+crons = ["17 */6 * * *"]
+
+[observability]
+enabled = true

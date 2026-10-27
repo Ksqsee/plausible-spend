@@ -1,0 +1,712 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gruppenwerk Analytics</title>
+<style>
+:root {
+  color-scheme: light;
+  --bg: #f6f6f4;
+  --surface: #ffffff;
+  --border: #e7e6e2;
+  --text: #16161a;
+  --text-2: #52514e;
+  --text-3: #8a8983;
+  --accent: #2a78d6;
+  --accent-soft: rgba(42, 120, 214, 0.12);
+  --bar: rgba(42, 120, 214, 0.10);
+  --bar-goal: rgba(27, 175, 122, 0.14);
+  --up: #0f8a5f;
+  --down: #c2410c;
+  --grid: #ecebe7;
+  --shadow: 0 1px 2px rgba(20, 20, 20, 0.05);
+}
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) {
+    color-scheme: dark;
+    --bg: #111110;
+    --surface: #1a1a19;
+    --border: #2b2b29;
+    --text: #f0efec;
+    --text-2: #c3c2b7;
+    --text-3: #8f8e86;
+    --accent: #3987e5;
+    --accent-soft: rgba(57, 135, 229, 0.18);
+    --bar: rgba(57, 135, 229, 0.16);
+    --bar-goal: rgba(25, 158, 112, 0.2);
+    --up: #34c58e;
+    --down: #f08a5d;
+    --grid: #262624;
+    --shadow: none;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #111110; --surface: #1a1a19; --border: #2b2b29; --text: #f0efec; --text-2: #c3c2b7; --text-3: #8f8e86;
+  --accent: #3987e5; --accent-soft: rgba(57, 135, 229, 0.18); --bar: rgba(57, 135, 229, 0.16); --bar-goal: rgba(25, 158, 112, 0.2);
+  --up: #34c58e; --down: #f08a5d; --grid: #262624; --shadow: none;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font: 14px/1.45 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 1120px; margin: 0 auto; padding: 20px 16px 64px; }
+header { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
+.brand { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.brand h1 { font-size: 16px; margin: 0; font-weight: 700; letter-spacing: -0.01em; }
+.live { display: inline-flex; align-items: center; gap: 6px; color: var(--text-2); font-size: 13px; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: #1baf7a; box-shadow: 0 0 0 0 rgba(27, 175, 122, 0.5); animation: pulse 2s infinite; }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(27,175,122,0.5) } 70% { box-shadow: 0 0 0 6px rgba(27,175,122,0) } 100% { box-shadow: 0 0 0 0 rgba(27,175,122,0) } }
+select, input[type="date"], button {
+  font: inherit; color: var(--text); background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 7px 10px; box-shadow: var(--shadow);
+}
+button { cursor: pointer; }
+button:hover, select:hover { border-color: var(--text-3); }
+.controls { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.custom { display: none; gap: 6px; align-items: center; }
+.custom.on { display: inline-flex; }
+.filters { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; min-height: 0; }
+.chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 6px 4px 10px; border-radius: 999px; background: var(--accent-soft); color: var(--text); font-size: 13px; }
+.chip b { font-weight: 600; }
+.chip button { border: 0; background: transparent; box-shadow: none; padding: 0 4px; color: var(--text-2); font-size: 15px; line-height: 1; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; box-shadow: var(--shadow); }
+.top { margin-top: 16px; }
+.stats { display: grid; grid-template-columns: repeat(6, 1fr); border-bottom: 1px solid var(--border); }
+.stat { padding: 14px 16px; border: 0; border-right: 1px solid var(--border); background: transparent; text-align: left; border-radius: 0; box-shadow: none; }
+.stat:last-child { border-right: 0; }
+.stat .k { font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-3); }
+.stat .v { font-size: 22px; font-weight: 700; margin-top: 2px; font-variant-numeric: tabular-nums; }
+.stat .c { font-size: 12px; margin-top: 1px; color: var(--text-3); font-variant-numeric: tabular-nums; }
+.stat .c.up { color: var(--up); }
+.stat .c.down { color: var(--down); }
+.stat.sel { box-shadow: inset 0 -2px 0 var(--accent); }
+.stat.sel .k { color: var(--accent); }
+.chart { position: relative; padding: 12px 16px 8px; height: 280px; }
+.chart svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.tip { position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.12); white-space: nowrap; display: none; z-index: 2; }
+.tip strong { display: block; font-size: 15px; font-variant-numeric: tabular-nums; }
+.tip span { color: var(--text-2); }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+.grid2 > * { min-width: 0; }
+.panel { padding: 16px; min-height: 380px; display: flex; flex-direction: column; }
+.panel.wide { grid-column: 1 / -1; min-height: 0; }
+.ph { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.ph h2 { margin: 0; font-size: 15px; font-weight: 700; }
+.tabs { display: flex; gap: 12px; flex-wrap: wrap; }
+.tabs button { border: 0; background: none; box-shadow: none; padding: 0; color: var(--text-3); font-size: 13px; font-weight: 600; }
+.tabs button.on { color: var(--accent); text-decoration: underline; text-underline-offset: 4px; }
+.cols { display: flex; justify-content: space-between; margin: 14px 0 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-3); }
+.cols span:last-child { display: flex; gap: 16px; }
+.cols .n { width: 64px; text-align: right; }
+.row { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 3px 0; min-height: 32px; }
+.row .bar { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 6px; background: var(--bar); }
+.row.goal .bar { background: var(--bar-goal); }
+.row .lbl { position: relative; z-index: 1; padding: 6px 8px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+.row .lbl.click { cursor: pointer; }
+.row .lbl.click:hover { text-decoration: underline; }
+.row .nums { display: flex; gap: 16px; flex-shrink: 0; }
+.row .n { width: 64px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+.row .n.muted { color: var(--text-2); font-weight: 500; }
+.empty { flex: 1; display: flex; align-items: center; justify-content: center; color: var(--text-3); padding: 32px 0; text-align: center; }
+.more { margin-top: auto; padding-top: 10px; }
+.more button { width: 100%; }
+table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+th { text-align: right; font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-3); padding: 12px 8px 6px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; padding-left: 0; }
+td { text-align: right; padding: 8px; border-bottom: 1px solid var(--grid); }
+td:first-child { max-width: 360px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+td .sub { display: block; font-size: 12px; color: var(--text-3); }
+.tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 14px; }
+.tile .k { font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-3); }
+.tile .v { font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.tile .s { font-size: 12px; color: var(--text-3); }
+.note { font-size: 12px; color: var(--text-3); margin-top: 10px; }
+.scroll { overflow-x: auto; }
+.muted { color: var(--text-3); }
+.syncbar { display: flex; gap: 8px; align-items: center; justify-content: flex-end; margin-top: 24px; font-size: 12px; color: var(--text-3); flex-wrap: wrap; }
+@media (max-width: 860px) {
+  .stats { grid-template-columns: repeat(3, 1fr); }
+  .stat:nth-child(3) { border-right: 0; }
+  .stat:nth-child(-n+3) { border-bottom: 1px solid var(--border); }
+  .grid2 { grid-template-columns: 1fr; }
+  .panel { min-height: 0; }
+  .tiles { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 520px) {
+  .stats { grid-template-columns: repeat(2, 1fr); }
+  .stat { border-right: 1px solid var(--border) !important; border-bottom: 1px solid var(--border); }
+  .stat:nth-child(2n) { border-right: 0 !important; }
+  .row .n.muted { display: none; }
+  .cols .n.muted { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <h1>Gruppenwerk Analytics</h1>
+      <select id="site" aria-label="Website"></select>
+      <span class="live"><span class="dot"></span><span id="live">–</span></span>
+    </div>
+    <div class="controls">
+      <select id="period" aria-label="Zeitraum">
+        <option value="today">Heute</option>
+        <option value="yesterday">Gestern</option>
+        <option value="7d">Letzte 7 Tage</option>
+        <option value="30d" selected>Letzte 30 Tage</option>
+        <option value="month">Dieser Monat</option>
+        <option value="lastmonth">Letzter Monat</option>
+        <option value="12mo">Letzte 12 Monate</option>
+        <option value="custom">Eigener Zeitraum…</option>
+      </select>
+      <span class="custom" id="custom">
+        <input type="date" id="from" aria-label="Von"> – <input type="date" id="to" aria-label="Bis">
+      </span>
+    </div>
+  </header>
+
+  <div class="filters" id="filters"></div>
+
+  <section class="card top">
+    <div class="stats" id="stats"></div>
+    <div class="chart" id="chart"><div class="tip" id="tip"></div></div>
+  </section>
+
+  <div class="grid2">
+    <section class="card panel" data-panel="sources"></section>
+    <section class="card panel" data-panel="pages"></section>
+    <section class="card panel" data-panel="locations"></section>
+    <section class="card panel" data-panel="devices"></section>
+    <section class="card panel wide" data-panel="goals"></section>
+    <section class="card panel wide" id="ads"></section>
+    <section class="card panel wide" id="search"></section>
+  </div>
+
+  <div class="syncbar">
+    <span id="synced"></span>
+    <button id="syncnow">Werbe- &amp; Suchdaten jetzt abrufen</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict'
+
+  var PANELS = {
+    sources: { title: 'Quellen', tabs: [['source', 'Quelle'], ['utm_medium', 'Medium'], ['utm_source', 'UTM-Quelle'], ['utm_campaign', 'Kampagne']], col: 'Besucher' },
+    pages: { title: 'Seiten', tabs: [['page', 'Top-Seiten'], ['entry_page', 'Einstieg'], ['exit_page', 'Ausstieg']], col: 'Besucher' },
+    locations: { title: 'Standorte', tabs: [['city', 'Städte'], ['region', 'Regionen'], ['country', 'Länder']], col: 'Besucher' },
+    devices: { title: 'Geräte', tabs: [['device', 'Gerät'], ['browser', 'Browser'], ['os', 'System']], col: 'Besucher' },
+    goals: { title: 'Klicks & Ziele', tabs: [['event', 'Ereignisse'], ['label', 'Button-Texte']], col: 'Besucher', goal: true }
+  }
+  var FILTER_NAMES = {
+    page: 'Seite', source: 'Quelle', referrer: 'Verweis', utm_source: 'UTM-Quelle', utm_medium: 'Medium', utm_campaign: 'Kampagne',
+    utm_content: 'UTM-Inhalt', utm_term: 'UTM-Begriff', country: 'Land', region: 'Region', city: 'Stadt', device: 'Gerät',
+    browser: 'Browser', os: 'System', event: 'Ereignis', label: 'Button-Text', hostname: 'Hostname'
+  }
+  var EVENT_NAMES = {
+    'Phone click': 'Anruf-Klick', 'Email click': 'E-Mail-Klick', 'WhatsApp click': 'WhatsApp-Klick', 'Form submit': 'Formular gesendet',
+    'Button click': 'Button-Klick', 'Outbound link': 'Externer Link', 'File download': 'Datei-Download', 'Maps click': 'Google-Maps-Klick'
+  }
+  var STATS = [
+    ['visitors', 'Besucher'], ['visits', 'Besuche'], ['pageviews', 'Seitenaufrufe'],
+    ['bounce_rate', 'Absprungrate'], ['visit_duration', 'Besuchsdauer'], ['leads', 'Anfragen']
+  ]
+
+  var state = { site: null, period: '30d', from: null, to: null, filters: [], metric: 'visitors', tabs: {} }
+  var nf = new Intl.NumberFormat('de-DE')
+  var money = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' })
+  var regionNames = (function () { try { return new Intl.DisplayNames(['de'], { type: 'region' }) } catch (e) { return null } })()
+
+  function $(id) { return document.getElementById(id) }
+  function el(tag, cls, text) {
+    var e = document.createElement(tag)
+    if (cls) e.className = cls
+    if (text !== undefined && text !== null) e.textContent = String(text)
+    return e
+  }
+  function iso(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0') }
+  function berlinToday() {
+    var p = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Berlin', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date())
+    var a = p.split('-').map(Number)
+    return new Date(a[0], a[1] - 1, a[2])
+  }
+  function addDays(d, n) { var x = new Date(d); x.setDate(x.getDate() + n); return x }
+
+  function range() {
+    var t = berlinToday()
+    switch (state.period) {
+      case 'today': return [iso(t), iso(t)]
+      case 'yesterday': return [iso(addDays(t, -1)), iso(addDays(t, -1))]
+      case '7d': return [iso(addDays(t, -6)), iso(t)]
+      case '30d': return [iso(addDays(t, -29)), iso(t)]
+      case 'month': return [iso(new Date(t.getFullYear(), t.getMonth(), 1)), iso(t)]
+      case 'lastmonth': return [iso(new Date(t.getFullYear(), t.getMonth() - 1, 1)), iso(new Date(t.getFullYear(), t.getMonth(), 0))]
+      case '12mo': return [iso(new Date(t.getFullYear() - 1, t.getMonth(), t.getDate() + 1)), iso(t)]
+      default: return [state.from || iso(addDays(t, -29)), state.to || iso(t)]
+    }
+  }
+
+  function qs(extra) {
+    var r = range()
+    var p = new URLSearchParams({ site: state.site, from: r[0], to: r[1] })
+    if (state.filters.length) p.set('filters', JSON.stringify(state.filters))
+    Object.keys(extra || {}).forEach(function (k) { p.set(k, extra[k]) })
+    return p.toString()
+  }
+
+  function api(path, extra) {
+    return fetch('/api/' + path + '?' + qs(extra), { headers: { Accept: 'application/json' } }).then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status)
+      return r.json()
+    })
+  }
+
+  function saveUrl() {
+    var p = new URLSearchParams({ site: state.site, period: state.period })
+    if (state.period === 'custom') { p.set('from', state.from || ''); p.set('to', state.to || '') }
+    if (state.filters.length) p.set('filters', JSON.stringify(state.filters))
+    history.replaceState(null, '', '?' + p.toString())
+  }
+
+  function fmtDuration(s) {
+    s = Math.round(s || 0)
+    if (s < 60) return s + ' s'
+    var m = Math.floor(s / 60), r = s % 60
+    return m + ' min ' + (r ? r + ' s' : '')
+  }
+  function fmtStat(key, v) {
+    if (key === 'bounce_rate') return v + ' %'
+    if (key === 'visit_duration') return fmtDuration(v)
+    return nf.format(v || 0)
+  }
+  function displayName(dim, value) {
+    if (value === null || value === undefined) return '(keine Angabe)'
+    if (dim === 'country' && regionNames) { try { return regionNames.of(value) || value } catch (e) { return value } }
+    if (dim === 'event') return EVENT_NAMES[value] || value
+    return value
+  }
+
+  // ---------- filters ----------
+  function addFilter(dim, value) {
+    state.filters = state.filters.filter(function (f) { return f[0] !== dim })
+    state.filters.push([dim, value === null ? '(none)' : value])
+    refresh()
+  }
+  function renderFilters() {
+    var box = $('filters')
+    box.replaceChildren()
+    state.filters.forEach(function (f, i) {
+      var chip = el('span', 'chip')
+      chip.append(el('span', null, FILTER_NAMES[f[0]] + ': '), el('b', null, f[1] === '(none)' ? '(keine Angabe)' : displayName(f[0], f[1])))
+      var x = el('button', null, '×')
+      x.setAttribute('aria-label', 'Filter entfernen')
+      x.onclick = function () { state.filters.splice(i, 1); refresh() }
+      chip.append(x)
+      box.append(chip)
+    })
+  }
+
+  // ---------- top stats ----------
+  function renderStats(data) {
+    var box = $('stats')
+    box.replaceChildren()
+    STATS.forEach(function (s) {
+      var key = s[0]
+      var cur = data.current[key], prev = data.previous[key]
+      var b = el('button', 'stat' + (state.metric === key ? ' sel' : ''))
+      b.type = 'button'
+      b.append(el('div', 'k', s[1]), el('div', 'v', fmtStat(key, cur)))
+      var change = el('div', 'c', '')
+      if (prev) {
+        var pct = Math.round(((cur - prev) / prev) * 100)
+        var better = key === 'bounce_rate' ? pct < 0 : pct > 0
+        change.textContent = (pct > 0 ? '↑ ' : pct < 0 ? '↓ ' : '') + Math.abs(pct) + ' % ggü. Vorzeitraum'
+        if (pct !== 0) change.classList.add(better ? 'up' : 'down')
+      } else {
+        change.textContent = 'kein Vergleich'
+      }
+      b.append(change)
+      if (key === 'visitors' || key === 'pageviews') {
+        b.onclick = function () { state.metric = key; loadChart(); renderStats(data) }
+      } else {
+        b.style.cursor = 'default'
+      }
+      box.append(b)
+    })
+  }
+
+  // ---------- chart ----------
+  var NS = 'http://www.w3.org/2000/svg'
+  function svg(tag, attrs) {
+    var e = document.createElementNS(NS, tag)
+    Object.keys(attrs || {}).forEach(function (k) { e.setAttribute(k, attrs[k]) })
+    return e
+  }
+  function niceMax(v) {
+    if (v <= 4) return 4
+    var pow = Math.pow(10, Math.floor(Math.log10(v)))
+    var steps = [1, 2, 2.5, 5, 10]
+    for (var i = 0; i < steps.length; i++) if (steps[i] * pow >= v) return steps[i] * pow
+    return 10 * pow
+  }
+  function renderChart(series) {
+    var box = $('chart')
+    var tip = $('tip')
+    Array.prototype.slice.call(box.querySelectorAll('svg')).forEach(function (n) { n.remove() })
+    var W = box.clientWidth - 32, H = box.clientHeight - 20
+    var padL = 36, padB = 24, padT = 8, padR = 8
+    var iw = W - padL - padR, ih = H - padT - padB
+    var max = niceMax(Math.max.apply(null, series.map(function (p) { return p.value }).concat([1])))
+    var root = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': (state.metric === 'visitors' ? 'Besucher' : 'Seitenaufrufe') + ' im Zeitverlauf' })
+    var css = getComputedStyle(document.documentElement)
+    var grid = css.getPropertyValue('--grid').trim(), muted = css.getPropertyValue('--text-3').trim(), accent = css.getPropertyValue('--accent').trim()
+
+    for (var i = 0; i <= 4; i++) {
+      var y = padT + ih - (ih * i) / 4
+      root.append(svg('line', { x1: padL, x2: W - padR, y1: y, y2: y, stroke: grid, 'stroke-width': 1 }))
+      var t = svg('text', { x: padL - 8, y: y + 4, 'text-anchor': 'end', 'font-size': 11, fill: muted })
+      t.textContent = nf.format((max * i) / 4)
+      root.append(t)
+    }
+    var n = series.length
+    var x = function (i) { return padL + (n === 1 ? iw / 2 : (iw * i) / (n - 1)) }
+    var yv = function (v) { return padT + ih - (ih * v) / max }
+    var labelEvery = Math.max(1, Math.ceil(n / Math.max(2, Math.floor(iw / 70))))
+    series.forEach(function (p, i) {
+      if (i % labelEvery !== 0 && i !== n - 1) return
+      var t = svg('text', { x: x(i), y: H - 4, 'text-anchor': i === 0 ? 'start' : i === n - 1 ? 'end' : 'middle', 'font-size': 11, fill: muted })
+      t.textContent = p.short
+      root.append(t)
+    })
+    var d = series.map(function (p, i) { return (i ? 'L' : 'M') + x(i).toFixed(1) + ' ' + yv(p.value).toFixed(1) }).join(' ')
+    var area = d + ' L' + x(n - 1).toFixed(1) + ' ' + (padT + ih) + ' L' + x(0).toFixed(1) + ' ' + (padT + ih) + ' Z'
+    var grad = svg('linearGradient', { id: 'g', x1: 0, x2: 0, y1: 0, y2: 1 })
+    grad.append(svg('stop', { offset: '0%', 'stop-color': accent, 'stop-opacity': 0.18 }), svg('stop', { offset: '100%', 'stop-color': accent, 'stop-opacity': 0 }))
+    var defs = svg('defs'); defs.append(grad); root.append(defs)
+    root.append(svg('path', { d: area, fill: 'url(#g)' }))
+    root.append(svg('path', { d: d, fill: 'none', stroke: accent, 'stroke-width': 2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }))
+    var hair = svg('line', { y1: padT, y2: padT + ih, stroke: muted, 'stroke-width': 1, 'stroke-dasharray': '3 3', visibility: 'hidden' })
+    var marker = svg('circle', { r: 4.5, fill: accent, stroke: css.getPropertyValue('--surface').trim(), 'stroke-width': 2, visibility: 'hidden' })
+    root.append(hair, marker)
+    var hit = svg('rect', { x: padL, y: padT, width: iw, height: ih, fill: 'transparent' })
+    root.append(hit)
+    function show(evt) {
+      var rect = root.getBoundingClientRect()
+      var px = ((evt.clientX - rect.left) / rect.width) * W
+      var i = n === 1 ? 0 : Math.round(((px - padL) / iw) * (n - 1))
+      i = Math.max(0, Math.min(n - 1, i))
+      var p = series[i]
+      hair.setAttribute('x1', x(i)); hair.setAttribute('x2', x(i)); hair.setAttribute('visibility', 'visible')
+      marker.setAttribute('cx', x(i)); marker.setAttribute('cy', yv(p.value)); marker.setAttribute('visibility', 'visible')
+      tip.replaceChildren(el('strong', null, nf.format(p.value)), el('span', null, (state.metric === 'visitors' ? 'Besucher' : 'Seitenaufrufe') + ' · ' + p.long))
+      tip.style.display = 'block'
+      var left = 16 + (x(i) / W) * (box.clientWidth - 32)
+      var tw = tip.offsetWidth
+      tip.style.left = Math.min(Math.max(left - tw / 2, 4), box.clientWidth - tw - 4) + 'px'
+      tip.style.top = '8px'
+    }
+    function hide() { hair.setAttribute('visibility', 'hidden'); marker.setAttribute('visibility', 'hidden'); tip.style.display = 'none' }
+    hit.addEventListener('pointermove', show)
+    hit.addEventListener('pointerleave', hide)
+    box.append(root)
+  }
+
+  var lastSeries = []
+  function loadChart() {
+    var r = range()
+    return api('timeseries').then(function (data) {
+      var map = {}
+      data.results.forEach(function (row) { map[row.bucket] = row })
+      var series = []
+      if (data.interval === 'hour') {
+        for (var h = 0; h < 24; h++) {
+          var row = map[h]
+          series.push({ value: row ? row[state.metric] : 0, short: h + ' Uhr', long: h + ':00–' + h + ':59 Uhr' })
+        }
+      } else {
+        var d = new Date(r[0] + 'T00:00:00'), end = new Date(r[1] + 'T00:00:00')
+        var monthly = (end - d) / 86400000 > 120
+        var buckets = {}
+        var order = []
+        for (; d <= end; d = addDays(d, 1)) {
+          var key = monthly ? iso(d).slice(0, 7) : iso(d)
+          if (!buckets[key]) {
+            buckets[key] = { value: 0, visitors: 0, date: new Date(d) }
+            order.push(key)
+          }
+          var row2 = map[iso(d)]
+          if (row2) buckets[key].value += row2[state.metric] || 0
+        }
+        series = order.map(function (k) {
+          var b = buckets[k]
+          return monthly
+            ? { value: b.value, short: b.date.toLocaleDateString('de-DE', { month: 'short' }), long: b.date.toLocaleDateString('de-DE', { month: 'long', year: 'numeric' }) }
+            : { value: b.value, short: b.date.toLocaleDateString('de-DE', { day: 'numeric', month: 'short' }), long: b.date.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' }) }
+        })
+        if (monthly && state.metric === 'visitors') {
+          $('chart').title = 'Monatswerte sind Summen der täglichen Besucher'
+        }
+      }
+      lastSeries = series
+      renderChart(series)
+    })
+  }
+
+  // ---------- list panels ----------
+  function renderPanel(section, key) {
+    var conf = PANELS[key]
+    var tab = state.tabs[key] || conf.tabs[0][0]
+    section.replaceChildren()
+    var head = el('div', 'ph')
+    head.append(el('h2', null, conf.title))
+    var tabs = el('div', 'tabs')
+    conf.tabs.forEach(function (t) {
+      var b = el('button', t[0] === tab ? 'on' : '', t[1])
+      b.type = 'button'
+      b.onclick = function () { state.tabs[key] = t[0]; renderPanel(section, key) }
+      tabs.append(b)
+    })
+    head.append(tabs)
+    section.append(head)
+    var body = el('div', 'empty', 'Lädt…')
+    section.append(body)
+    var isGoal = tab === 'event' || tab === 'label'
+    var isSession = tab === 'entry_page' || tab === 'exit_page'
+    var limit = section.dataset.expanded ? 100 : 9
+    api('breakdown', { dim: tab, limit: limit + 1 }).then(function (rows) {
+      body.remove()
+      if (!rows.length) {
+        section.append(el('div', 'empty', isGoal ? 'Noch keine Klicks erfasst' : 'Noch keine Daten'))
+        return
+      }
+      var second = isGoal ? 'Klicks' : isSession ? 'Besuche' : 'Aufrufe'
+      var cols = el('div', 'cols')
+      var right = el('span')
+      right.append(el('span', 'n muted', second), el('span', 'n', conf.col))
+      cols.append(el('span', null, conf.tabs.filter(function (t) { return t[0] === tab })[0][1]), right)
+      section.append(cols)
+      var shown = rows.slice(0, limit)
+      var max = Math.max.apply(null, shown.map(function (r) { return r.visitors }))
+      shown.forEach(function (r) {
+        var row = el('div', 'row' + (conf.goal ? ' goal' : ''))
+        var bar = el('div', 'bar')
+        bar.style.width = Math.max(2, (r.visitors / max) * 100) + '%'
+        var lbl = el('div', 'lbl', displayName(tab, r.name))
+        lbl.title = displayName(tab, r.name)
+        if (!isSession) {
+          lbl.classList.add('click')
+          lbl.onclick = function () { addFilter(tab, r.name) }
+        }
+        var nums = el('div', 'nums')
+        nums.append(el('div', 'n muted', nf.format(isGoal ? r.events : isSession ? r.visits : r.pageviews)), el('div', 'n', nf.format(r.visitors)))
+        row.append(bar, lbl, nums)
+        section.append(row)
+      })
+      if (rows.length > limit || section.dataset.expanded) {
+        var more = el('div', 'more')
+        var b = el('button', null, section.dataset.expanded ? 'Weniger anzeigen' : 'Mehr anzeigen')
+        b.type = 'button'
+        b.onclick = function () {
+          if (section.dataset.expanded) delete section.dataset.expanded
+          else section.dataset.expanded = '1'
+          renderPanel(section, key)
+        }
+        more.append(b)
+        section.append(more)
+      }
+    }).catch(function () { body.textContent = 'Fehler beim Laden' })
+  }
+
+  // ---------- ads ----------
+  function tile(k, v, s) {
+    var t = el('div', 'tile')
+    t.append(el('div', 'k', k), el('div', 'v', v))
+    if (s) t.append(el('div', 's', s))
+    return t
+  }
+  function renderAds() {
+    var section = $('ads')
+    section.replaceChildren()
+    var head = el('div', 'ph')
+    head.append(el('h2', null, 'Google Ads'))
+    section.append(head)
+    api('ads').then(function (d) {
+      if (!d.results.length) {
+        section.append(el('div', 'empty', 'Keine Werbeausgaben in diesem Zeitraum (oder noch nicht synchronisiert)'))
+        return
+      }
+      var t = d.totals
+      var tiles = el('div', 'tiles')
+      tiles.append(
+        tile('Ausgaben', money.format(t.spend), nf.format(t.clicks) + ' Klicks · ' + nf.format(t.impressions) + ' Impressionen'),
+        tile('Conversions (Google)', nf.format(t.conversions), t.cost_per_conversion !== null ? money.format(t.cost_per_conversion) + ' pro Conversion' : ''),
+        tile('Besucher über Ads', nf.format(t.visitors), 'gezählt auf der Website'),
+        tile('Anfragen über Ads', nf.format(t.leads), t.cost_per_lead !== null ? money.format(t.cost_per_lead) + ' pro Anfrage' : 'Anruf, E-Mail, Formular')
+      )
+      section.append(tiles)
+      var wrap = el('div', 'scroll')
+      var table = el('table')
+      var hr = el('tr')
+      ;['Kampagne', 'Ausgaben', 'Klicks', 'CPC', 'Conv.', 'Besucher', 'Anfragen', '€ / Anfrage'].forEach(function (h) { hr.append(el('th', null, h)) })
+      var thead = el('thead'); thead.append(hr); table.append(thead)
+      var tb = el('tbody')
+      d.results.forEach(function (r) {
+        var tr = el('tr')
+        var c = el('td'); c.append(document.createTextNode(r.campaign)); c.title = r.campaign
+        tr.append(
+          c,
+          el('td', null, money.format(r.spend)),
+          el('td', null, nf.format(r.clicks)),
+          el('td', null, r.clicks ? money.format(r.spend / r.clicks) : '–'),
+          el('td', null, nf.format(r.conversions)),
+          el('td', null, r.visitors === null ? '–' : nf.format(r.visitors)),
+          el('td', null, r.leads === null ? '–' : nf.format(r.leads)),
+          el('td', null, r.cost_per_lead === null ? '–' : money.format(r.cost_per_lead))
+        )
+        tb.append(tr)
+      })
+      table.append(tb); wrap.append(table); section.append(wrap)
+      section.append(el('div', 'note', 'Besucher und Anfragen je Kampagne erscheinen, wenn die Anzeigen utm_campaign={campaignid} oder den Kampagnennamen mitgeben. Ohne UTM zählt Google-Ads-Verkehr (gclid) trotzdem in den Summen oben.'))
+    }).catch(function () { section.append(el('div', 'empty', 'Fehler beim Laden')) })
+  }
+
+  // ---------- search console ----------
+  function renderSearch() {
+    var section = $('search')
+    section.replaceChildren()
+    var head = el('div', 'ph')
+    head.append(el('h2', null, 'Google-Suche (Search Console)'))
+    section.append(head)
+    api('search').then(function (d) {
+      if (!d.results.length) {
+        section.append(el('div', 'empty', 'Keine Suchdaten in diesem Zeitraum (Google liefert sie mit 2–3 Tagen Verzögerung)'))
+        return
+      }
+      var t = d.totals
+      var tiles = el('div', 'tiles')
+      tiles.append(
+        tile('Klicks aus Google', nf.format(t.clicks)),
+        tile('Impressionen', nf.format(t.impressions)),
+        tile('Klickrate', t.impressions ? (Math.round((t.clicks / t.impressions) * 1000) / 10).toLocaleString('de-DE') + ' %' : '–'),
+        tile('Ø Position', t.position === null ? '–' : t.position.toLocaleString('de-DE'), t.latest ? 'Daten bis ' + new Date(t.latest + 'T00:00:00').toLocaleDateString('de-DE') : '')
+      )
+      section.append(tiles)
+      var wrap = el('div', 'scroll')
+      var table = el('table')
+      var hr = el('tr')
+      ;['Suchbegriff', 'Impressionen', 'Klicks', 'Klickrate', 'Ø Position'].forEach(function (h) { hr.append(el('th', null, h)) })
+      var thead = el('thead'); thead.append(hr); table.append(thead)
+      var tb = el('tbody')
+      var expanded = section.dataset.expanded
+      d.results.slice(0, expanded ? 100 : 15).forEach(function (r) {
+        var tr = el('tr')
+        var c = el('td'); c.append(document.createTextNode(r.name)); c.title = r.name
+        tr.append(
+          c,
+          el('td', null, nf.format(r.impressions)),
+          el('td', null, nf.format(r.clicks)),
+          el('td', null, r.impressions ? (Math.round((r.clicks / r.impressions) * 1000) / 10).toLocaleString('de-DE') + ' %' : '–'),
+          el('td', null, r.position === null ? '–' : r.position.toLocaleString('de-DE'))
+        )
+        tb.append(tr)
+      })
+      table.append(tb); wrap.append(table); section.append(wrap)
+      if (d.results.length > 15) {
+        var more = el('div', 'more')
+        var b = el('button', null, expanded ? 'Weniger anzeigen' : 'Alle ' + d.results.length + ' Suchbegriffe anzeigen')
+        b.type = 'button'
+        b.onclick = function () { if (expanded) delete section.dataset.expanded; else section.dataset.expanded = '1'; renderSearch() }
+        more.append(b); section.append(more)
+      }
+    }).catch(function () { section.append(el('div', 'empty', 'Fehler beim Laden')) })
+  }
+
+  // ---------- live + sync ----------
+  function loadLive() {
+    if (!state.site) return
+    fetch('/api/realtime?site=' + encodeURIComponent(state.site)).then(function (r) { return r.json() }).then(function (d) {
+      $('live').textContent = d.visitors === 1 ? '1 Besucher gerade aktiv' : nf.format(d.visitors) + ' Besucher gerade aktiv'
+    }).catch(function () {})
+  }
+  function loadSyncInfo() {
+    fetch('/api/sync-log').then(function (r) { return r.json() }).then(function (rows) {
+      var mine = rows.filter(function (r) { return r.site === state.site })
+      if (!mine.length) { $('synced').textContent = 'Werbe- und Suchdaten noch nicht abgerufen'; return }
+      var last = mine[0]
+      var errors = mine.filter(function (r) { return r.ts === last.ts && r.error })
+      $('synced').textContent = 'Zuletzt abgerufen: ' + new Date(last.ts).toLocaleString('de-DE') + (mine.some(function (r) { return r.error && r.ts >= last.ts - 60000 }) ? ' (mit Fehlern)' : '')
+      if (errors.length) $('synced').title = errors.map(function (e) { return e.source + ': ' + e.error }).join('\n')
+    }).catch(function () {})
+  }
+  $('syncnow').onclick = function () {
+    var b = $('syncnow')
+    b.disabled = true
+    b.textContent = 'Wird abgerufen…'
+    fetch('/api/sync?days=90', { method: 'POST' }).then(function (r) { return r.json() }).then(function () {
+      b.textContent = 'Fertig'
+      refresh()
+    }).catch(function () { b.textContent = 'Fehler' }).finally(function () {
+      setTimeout(function () { b.disabled = false; b.textContent = 'Werbe- & Suchdaten jetzt abrufen' }, 2500)
+    })
+  }
+
+  function refresh() {
+    saveUrl()
+    renderFilters()
+    api('overview').then(renderStats)
+    loadChart()
+    Array.prototype.forEach.call(document.querySelectorAll('[data-panel]'), function (s) { renderPanel(s, s.dataset.panel) })
+    renderAds()
+    renderSearch()
+    loadLive()
+    loadSyncInfo()
+  }
+
+  // ---------- init ----------
+  var params = new URLSearchParams(location.search)
+  state.period = params.get('period') || '30d'
+  state.from = params.get('from')
+  state.to = params.get('to')
+  try { state.filters = JSON.parse(params.get('filters') || '[]') } catch (e) { state.filters = [] }
+
+  $('period').value = state.period
+  $('custom').classList.toggle('on', state.period === 'custom')
+  var r0 = range()
+  $('from').value = r0[0]; $('to').value = r0[1]
+  $('period').onchange = function () {
+    state.period = this.value
+    $('custom').classList.toggle('on', state.period === 'custom')
+    if (state.period === 'custom') { state.from = $('from').value; state.to = $('to').value }
+    refresh()
+  }
+  $('from').onchange = $('to').onchange = function () {
+    if ($('from').value && $('to').value && $('from').value <= $('to').value) {
+      state.from = $('from').value; state.to = $('to').value; refresh()
+    }
+  }
+  $('site').onchange = function () { state.site = this.value; state.filters = []; refresh() }
+
+  var resizeTimer
+  window.addEventListener('resize', function () { clearTimeout(resizeTimer); resizeTimer = setTimeout(function () { renderChart(lastSeries) }, 150) })
+  setInterval(loadLive, 30000)
+
+  fetch('/api/sites').then(function (r) { return r.json() }).then(function (sites) {
+    var sel = $('site')
+    sites.forEach(function (s) { var o = el('option', null, s.name); o.value = s.domain; sel.append(o) })
+    var wanted = params.get('site')
+    state.site = sites.some(function (s) { return s.domain === wanted }) ? wanted : sites[0].domain
+    sel.value = state.site
+    refresh()
+  })
+})()
+</script>
+</body>
+</html>

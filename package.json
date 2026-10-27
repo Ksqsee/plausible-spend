@@ -1,0 +1,13 @@
+{
+  "name": "gw-analytics",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "migrate": "wrangler d1 migrations apply gw-analytics --remote"
+  },
+  "devDependencies": {
+    "wrangler": "^4.40.0"
+  }
+}
