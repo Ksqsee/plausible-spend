@@ -20,20 +20,39 @@ const DIMENSIONS = {
   os: 'os',
   event: 'name',
   label: 'label',
-  hostname: 'hostname'
+  hostname: 'hostname',
+  site: 'site'
 }
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/
 
 export class BadRequest extends Error {}
 
-export function parseQuery(url) {
+// Resolves ?scope=all, ?scope=company:<id> or ?site=<domain> to a list of site domains.
+export async function resolveSites(db, url) {
   const p = url.searchParams
+  const scope = p.get('scope')
   const site = p.get('site')
+  let rows
+  if (scope === 'all') {
+    rows = (await db.prepare('SELECT domain FROM sites').all()).results
+  } else if (scope && scope.startsWith('company:')) {
+    rows = (await db.prepare('SELECT domain FROM sites WHERE company = ?').bind(scope.slice(8)).all()).results
+  } else if (site) {
+    rows = (await db.prepare('SELECT domain FROM sites WHERE domain = ?').bind(site).all()).results
+  } else {
+    throw new BadRequest('scope or site is required')
+  }
+  if (!rows.length) throw new BadRequest('unknown site or company')
+  return rows.map((r) => r.domain)
+}
+
+export function parseQuery(url, sites) {
+  const p = url.searchParams
   const from = p.get('from')
   const to = p.get('to')
-  if (!site || !DATE_RE.test(from || '') || !DATE_RE.test(to || '') || from > to) {
-    throw new BadRequest('site, from and to (YYYY-MM-DD) are required')
+  if (!DATE_RE.test(from || '') || !DATE_RE.test(to || '') || from > to) {
+    throw new BadRequest('from and to (YYYY-MM-DD) are required')
   }
   let filters = []
   if (p.get('filters')) {
@@ -48,12 +67,14 @@ export function parseQuery(url) {
     if (!Array.isArray(f) || !DIMENSIONS[f[0]] || typeof f[1] !== 'string') throw new BadRequest('invalid filter')
     return [f[0], f[1]]
   })
-  return { site, from, to, filters }
+  return { sites, from, to, filters }
 }
 
+const inList = (sites) => `site IN (${sites.map(() => '?').join(',')})`
+
 function where(q, { pageviewsOnly = false, range = [q.from, q.to] } = {}) {
-  const clauses = ['site = ?', 'date >= ?', 'date <= ?']
-  const params = [q.site, range[0], range[1]]
+  const clauses = [inList(q.sites), 'date >= ?', 'date <= ?']
+  const params = [...q.sites, range[0], range[1]]
   for (const [dim, value] of q.filters) {
     if (value === '(none)') {
       clauses.push(`${DIMENSIONS[dim]} IS NULL`)
@@ -226,10 +247,10 @@ export async function sitesSummary(db, from, to) {
   })
 }
 
-export async function realtime(db, site) {
+export async function realtime(db, sites) {
   const row = await db
-    .prepare('SELECT COUNT(DISTINCT visitor_id) AS visitors FROM events WHERE site = ? AND ts > ?')
-    .bind(site, Date.now() - 5 * 60 * 1000)
+    .prepare(`SELECT COUNT(DISTINCT visitor_id) AS visitors FROM events WHERE ${inList(sites)} AND ts > ?`)
+    .bind(...sites, Date.now() - 5 * 60 * 1000)
     .first()
   return { visitors: row.visitors || 0 }
 }
@@ -245,10 +266,10 @@ export async function ads(db, q) {
     .prepare(
       `SELECT campaign_id, campaign, SUM(spend) AS spend, SUM(clicks) AS clicks,
               SUM(impressions) AS impressions, SUM(conversions) AS conversions
-       FROM ads_spend WHERE site = ? AND date >= ? AND date <= ?
+       FROM ads_spend WHERE ${inList(q.sites)} AND date >= ? AND date <= ?
        GROUP BY campaign_id, campaign ORDER BY spend DESC`
     )
-    .bind(q.site, q.from, q.to)
+    .bind(...q.sites, q.from, q.to)
     .all()
 
   const w = where(q)
@@ -313,19 +334,19 @@ export async function search(db, q, limit = 100) {
     .prepare(
       `SELECT query AS name, SUM(clicks) AS clicks, SUM(impressions) AS impressions,
               SUM(position * impressions) / NULLIF(SUM(impressions), 0) AS position
-       FROM search_queries WHERE site = ? AND date >= ? AND date <= ?
+       FROM search_queries WHERE ${inList(q.sites)} AND date >= ? AND date <= ?
        GROUP BY query ORDER BY impressions DESC, clicks DESC LIMIT ?`
     )
-    .bind(q.site, q.from, q.to, limit)
+    .bind(...q.sites, q.from, q.to, limit)
     .all()
   const totals = await db
     .prepare(
       `SELECT SUM(clicks) AS clicks, SUM(impressions) AS impressions,
               SUM(position * impressions) / NULLIF(SUM(impressions), 0) AS position,
               MAX(date) AS latest
-       FROM search_queries WHERE site = ? AND date >= ? AND date <= ?`
+       FROM search_queries WHERE ${inList(q.sites)} AND date >= ? AND date <= ?`
     )
-    .bind(q.site, q.from, q.to)
+    .bind(...q.sites, q.from, q.to)
     .first()
   const round = (n) => (n === null || n === undefined ? null : Math.round(n * 10) / 10)
   return {

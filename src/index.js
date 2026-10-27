@@ -2,7 +2,7 @@ import trackerSource from './tracker.client.js'
 import dashboardHtml from './dashboard.html'
 import logoSvg from './logo.svg'
 import { handleEvent } from './ingest.js'
-import { BadRequest, ads, breakdown, overview, parseQuery, realtime, search, sitesSummary, timeseries } from './stats.js'
+import { BadRequest, ads, breakdown, overview, parseQuery, realtime, resolveSites, search, sitesSummary, timeseries } from './stats.js'
 import { syncAll } from './sync.js'
 
 const json = (data, status = 200) =>
@@ -38,7 +38,13 @@ async function api(request, env, url) {
   const path = url.pathname.slice('/api/'.length)
 
   if (path === 'sites') {
-    const { results } = await db.prepare('SELECT domain, name FROM sites ORDER BY name').all()
+    const { results } = await db
+      .prepare(
+        `SELECT s.domain, s.name, s.company, c.name AS company_name, c.logo_domain, c.sort
+         FROM sites s LEFT JOIN companies c ON c.id = s.company
+         ORDER BY c.sort, c.name, s.domain = c.logo_domain DESC, s.name`
+      )
+      .all()
     return json(results)
   }
   if (path === 'sites-summary') {
@@ -57,13 +63,10 @@ async function api(request, env, url) {
     const { results } = await db.prepare('SELECT * FROM sync_log ORDER BY ts DESC LIMIT 40').all()
     return json(results)
   }
-  if (path === 'realtime') {
-    const site = url.searchParams.get('site')
-    if (!site) throw new BadRequest('site is required')
-    return json(await realtime(db, site))
-  }
+  const sites = await resolveSites(db, url)
+  if (path === 'realtime') return json(await realtime(db, sites))
 
-  const q = parseQuery(url)
+  const q = parseQuery(url, sites)
   switch (path) {
     case 'overview':
       return json(await overview(db, q))
