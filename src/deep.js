@@ -446,7 +446,7 @@ async function gbpRange(db, q) {
     .all()
   if (!locations.length) return { locations: [], daily: [], keywords: [], totals: null }
   const ids = locations.map((l) => l.location)
-  const [totals, daily, keywords, profileVisits] = await Promise.all([
+  const [totals, daily, keywords, profileVisits, ever] = await Promise.all([
     db
       .prepare(
         `SELECT location, SUM(impressions_maps) AS maps, SUM(impressions_search) AS search, SUM(calls) AS calls,
@@ -473,9 +473,18 @@ async function gbpRange(db, q) {
          WHERE ${inList('site', q.sites)} AND date >= ? AND date <= ? AND source = 'Google Business Profile' GROUP BY site`
       )
       .bind(...q.sites, q.from, q.to)
+      .all(),
+    // a profile that never reported anything is usually not verified yet
+    db
+      .prepare(
+        `SELECT DISTINCT location FROM gbp_daily WHERE ${inList('location', ids)}
+         AND impressions_maps + impressions_search + calls + website_clicks + directions > 0`
+      )
+      .bind(...ids)
       .all()
   ])
   const t = new Map(totals.results.map((r) => [r.location, r]))
+  const reporting = new Set(ever.results.map((r) => r.location))
   const visits = new Map(profileVisits.results.map((r) => [r.site, r.visitors]))
   const sum = { maps: 0, search: 0, calls: 0, website: 0, directions: 0 }
   const rows = locations.map((l) => {
@@ -492,7 +501,8 @@ async function gbpRange(db, q) {
       calls: r.calls || 0,
       website: r.website || 0,
       directions: r.directions || 0,
-      tracked_visits: visits.get(l.site) || 0
+      tracked_visits: visits.get(l.site) || 0,
+      reporting: reporting.has(l.location)
     }
   })
   const names = new Map(locations.map((l) => [l.location, l.name]))
@@ -525,7 +535,7 @@ export async function insights(db, q) {
   const add = (o) => out.push(o)
   const eur = (n) => `${Math.round(n).toLocaleString('de-DE')} €`
 
-  const [spendRows, trackerRows, adsSessions, ads, gbpData, gscRows, formData, leadData, faqRows, outbound] = await Promise.all([
+  const [spendRows, trackerRows, adsSessions, ads, gbpData, gscRows, formData, leadData, faqRows, outbound, trackedRows] = await Promise.all([
     db.prepare(`SELECT site, SUM(spend) AS spend, SUM(clicks) AS clicks, SUM(conversions) AS conversions FROM ads_spend WHERE ${scope} GROUP BY site`).bind(...range).all(),
     db
       .prepare(
@@ -559,8 +569,10 @@ export async function insights(db, q) {
     db
       .prepare(`SELECT site, json_extract(props, '$.target') AS target, COUNT(DISTINCT session_id) AS n FROM events WHERE ${scope} AND name = 'Outbound link' GROUP BY site, target`)
       .bind(...range)
-      .all()
+      .all(),
+    db.prepare(`SELECT DISTINCT site FROM events WHERE ${inList('site', q.sites)}`).bind(...q.sites).all()
   ])
+  const everTracked = new Set(trackedRows.results.map((r) => r.site))
 
   const tracker = new Map(trackerRows.results.map((r) => [r.site, r]))
   const adSess = new Map(adsSessions.results.map((r) => [r.site, r]))
@@ -585,14 +597,15 @@ export async function insights(db, q) {
         value: scaleToMonth(s.spend, q)
       })
     }
-    if (!t || !t.visitors) {
+    if ((!t || !t.visitors) && !everTracked.has(s.site)) {
+      // never a single event: either just installed or the snippet is missing
       add({
-        severity: 'medium',
+        severity: 'info',
         area: 'Tracking',
         site: s.site,
-        title: `${name}: Anzeigenklicks ohne Website-Tracking`,
-        detail: `${eur(s.spend)} Ausgaben, aber keine Besuche im eigenen Tracker. Klick → Anfrage → Keyword lässt sich so nicht verbinden.`,
-        action: 'Tracking-Snippet im Onepage-Kopfbereich der Website einfügen (Bereich „Tracking“).',
+        title: `${name}: noch kein Besuch im eigenen Tracker`,
+        detail: `${eur(s.spend)} Werbeausgaben im Zeitraum, aber das Snippet hat noch keinen Besuch gemeldet. Direkt nach dem Einbau ist das normal.`,
+        action: 'Wenn nach zwei Tagen weiterhin nichts ankommt: Snippet im Onepage-Kopfbereich prüfen (Seite „Snippets“).',
         value: null
       })
     }
@@ -802,18 +815,43 @@ export async function insights(db, q) {
   }
 
   // --- Business Profile ---
-  for (const l of gbpData.locations) {
-    if ((l.reviews ?? 0) < 10) {
-      add({
-        severity: (l.reviews ?? 0) < 5 ? 'high' : 'medium',
-        area: 'Google Business',
+  const silentProfiles = gbpData.locations.filter((l) => !l.reporting)
+  if (silentProfiles.length) {
+    add({
+      severity: 'medium',
+      area: 'Google Business',
+      site: silentProfiles.length === 1 ? silentProfiles[0].site : null,
+      title: silentProfiles.length === 1
+        ? `${silentProfiles[0].name}: Profil liefert keine Zahlen`
+        : `${silentProfiles.length} Profile liefern keine Zahlen`,
+      detail: 'Google meldet weder Einblendungen noch Anrufe. Fast immer ist das Profil noch nicht bestätigt (Postkarte, Video oder Telefon).',
+      action: 'In business.google.com die Bestätigung abschließen; danach füllt sich das Dashboard von selbst.',
+      items: silentProfiles.map((l) => ({ site: l.site, label: l.name, value: 'nicht bestätigt?' })),
+      value: null
+    })
+  }
+  const fewReviews = gbpData.locations.filter((l) => l.reporting && (l.reviews ?? 0) < 10).sort((a, b) => (a.reviews ?? 0) - (b.reviews ?? 0))
+  if (fewReviews.length) {
+    const seen = fewReviews.reduce((a, l) => a + l.maps + l.search, 0)
+    add({
+      severity: fewReviews.some((l) => (l.reviews ?? 0) < 5 && l.maps + l.search >= 50) ? 'high' : 'medium',
+      area: 'Google Business',
+      site: fewReviews.length === 1 ? fewReviews[0].site : null,
+      title: fewReviews.length === 1
+        ? `${fewReviews[0].name}: nur ${fewReviews[0].reviews ?? 0} Google-Bewertungen`
+        : `${fewReviews.length} Profile haben weniger als 10 Google-Bewertungen`,
+      detail: `Zusammen ${seen.toLocaleString('de-DE')} Einblendungen in Maps und Suche im Zeitraum. Bewertungen sind der stärkste Hebel im Kartenranking.`,
+      action: 'Nach jedem Auftrag den Bewertungslink per WhatsApp oder SMS schicken; jede Bewertung kurz beantworten.',
+      items: fewReviews.map((l) => ({
         site: l.site,
-        title: `${l.name}: nur ${l.reviews ?? 0} Google-Bewertungen`,
-        detail: `${l.maps + l.search} Einblendungen, ${l.calls} Anrufe und ${l.directions} Routen im Zeitraum. Bewertungen sind der stärkste Hebel im Kartenranking.`,
-        action: 'Nach jedem Auftrag den Bewertungslink per WhatsApp/SMS schicken; Bewertungen über Windsor beantworten.',
-        value: null
-      })
-    }
+        label: l.name,
+        value: `${l.reviews ?? 0} ${(l.reviews ?? 0) === 1 ? 'Bewertung' : 'Bewertungen'}`,
+        note: `${(l.maps + l.search).toLocaleString('de-DE')} Einblendungen · ${l.calls} Anrufe`
+      })),
+      value: null
+    })
+  }
+  for (const l of gbpData.locations) {
     if (l.calls >= 5) {
       add({
         severity: 'info',

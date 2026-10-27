@@ -1,6 +1,8 @@
 import trackerSource from './tracker.client.js'
 import dashboardHtml from './dashboard.html'
 import logoSvg from './logo.svg'
+import gwSvg from './gw.svg'
+import icons from './icons.js'
 import { handleEvent } from './ingest.js'
 import { BadRequest, ads, breakdown, overview, parseQuery, realtime, resolveSites, search, sitesSummary, timeseries } from './stats.js'
 import { syncAll } from './sync.js'
@@ -133,9 +135,16 @@ export default {
       })
     }
     if (url.pathname === '/e') return handleEvent(request, env)
-    if (url.pathname === '/logo.svg' || url.pathname === '/favicon.ico') {
-      return new Response(logoSvg, {
+    if (url.pathname === '/logo.svg' || url.pathname === '/favicon.ico' || url.pathname === '/gw.svg') {
+      return new Response(url.pathname === '/gw.svg' ? gwSvg : logoSvg, {
         headers: { 'Content-Type': 'image/svg+xml', 'Cache-Control': 'public, max-age=86400' }
+      })
+    }
+
+    const icon = url.pathname.match(/^\/i\/([a-z0-9-]+)\.svg$/)
+    if (icon && Object.prototype.hasOwnProperty.call(icons, icon[1])) {
+      return new Response(icons[icon[1]], {
+        headers: { 'Content-Type': 'image/svg+xml', 'Cache-Control': 'public, max-age=604800' }
       })
     }
 

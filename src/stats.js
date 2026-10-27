@@ -181,9 +181,11 @@ export async function breakdown(db, q, dim, limit = 50) {
   }
 
   const w = where(q, { pageviewsOnly: dim === 'page' })
+  // cities and regions carry their country so the dashboard can show a flag
+  const country = dim === 'city' || dim === 'region' ? ', MAX(country) AS country' : ''
   const { results } = await db
     .prepare(
-      `SELECT ${column} AS name, COUNT(DISTINCT visitor_id) AS visitors, SUM(name = 'pageview') AS pageviews
+      `SELECT ${column} AS name, COUNT(DISTINCT visitor_id) AS visitors, SUM(name = 'pageview') AS pageviews${country}
        FROM events WHERE ${w.sql}
        GROUP BY ${column} ORDER BY visitors DESC, pageviews DESC LIMIT ?`
     )
