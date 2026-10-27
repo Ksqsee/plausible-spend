@@ -275,6 +275,13 @@ td.m { color: var(--text-3); font-weight: 400; }
 /* ---------- opportunities ---------- */
 .badge-n { margin-left: auto; min-width: 19px; height: 19px; padding: 0 6px; border-radius: 10px; background: var(--down); color: #fff; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
 .badge-n:empty { display: none; }
+.warn-card { padding: 16px 20px; margin-bottom: 16px; box-shadow: 0 0 0 1px color-mix(in srgb, var(--warn) 45%, transparent); }
+.warn-card .wh { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.warn-card .wh .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--warn); box-shadow: 0 0 0 4px color-mix(in srgb, var(--warn) 22%, transparent); }
+.warn-card .wh b { font: 600 15px var(--display); letter-spacing: -.01em; }
+.warn-card .wh .more { margin: 0 0 0 auto; }
+.warn-card .chips span { display: inline-flex; align-items: center; gap: 6px; }
+.warn-card .chips img, .warn-card .chips .fallback { width: 14px; height: 14px; border-radius: 3px; }
 .ins-list { display: flex; flex-direction: column; margin-top: 6px; }
 .ins { display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; gap: 4px 16px; padding: 16px 0; border-top: 1px solid var(--line-soft); align-items: start; }
 .ins:first-child { border-top: 0; }
@@ -441,10 +448,6 @@ td.wrap { white-space: normal; min-width: 180px; }
     <a class="nav" href="?view=insights" data-nav data-key="view:insights">
       <svg class="i" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.6.5 1 1.2 1 2V16h5.2v-.2c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"/></svg>
       <span class="lbl">Chancen</span><span class="badge-n" id="insCount"></span>
-    </a>
-    <a class="nav" href="?view=tracking" data-nav data-key="view:tracking">
-      <svg class="i" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 9l-4 3 4 3M16 9l4 3-4 3M13.5 6l-3 12"/></svg>
-      <span class="lbl">Tracking</span>
     </a>
     <div class="stitle">Unternehmen</div>
     <div id="companies"></div>
@@ -832,7 +835,7 @@ td.wrap { white-space: normal; min-width: 180px; }
       img = brandLogo()
       sub.append(document.createTextNode('Empfehlungen aus Google Ads, Search Console, Unternehmensprofil und Website-Tracking'))
     } else if (state.view === 'tracking') {
-      title = 'Tracking'
+      title = 'Snippets'
       img = brandLogo()
       sub.append(document.createTextNode('Snippets, Status und was je Website gemessen wird'))
     } else if (state.view === 'overview') {
@@ -1676,6 +1679,27 @@ td.wrap { white-space: normal; min-width: 180px; }
     }).catch(function () { sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
   }
 
+  // Warns when a site that used to send data has gone quiet, e.g. the snippet was removed while editing.
+  var SILENT_DAYS = 3
+  function renderSilentSites(box) {
+    fetch('/api/tracking').then(function (r) { return r.json() }).then(function (rows) {
+      var silent = rows.filter(function (r) { return r.last_ts && Date.now() - r.last_ts > SILENT_DAYS * 86400000 && SITE_BY_DOMAIN[r.site] })
+      if (!silent.length) return
+      var card = el('section', 'card warn-card')
+      var head = el('div', 'wh')
+      head.append(el('span', 'dot'), el('b', null, silent.length === 1 ? '1 Website sendet keine Daten mehr' : silent.length + ' Websites senden keine Daten mehr'))
+      var more = el('a', 'more', 'Snippets prüfen →'); more.href = '?view=tracking'; more.dataset.nav = ''; more.dataset.view = 'tracking'
+      head.append(more)
+      var list = el('div', 'chips')
+      silent.forEach(function (r) {
+        var c = el('span'); c.append(siteLogo(r.site), document.createTextNode(SITE_BY_DOMAIN[r.site].name + ' · seit ' + Math.floor((Date.now() - r.last_ts) / 86400000) + ' Tagen'))
+        list.append(c)
+      })
+      card.append(head, list, el('div', 'note', 'Meist wurde beim Bearbeiten in Onepage der Kopfbereich-Code geändert. Das Snippet je Website steht auf der Snippet-Seite.'))
+      box.append(card)
+    }).catch(function () {})
+  }
+
   // ---------- tracking setup ----------
   var TRACKER_ORIGIN = location.origin
   function renderTracking(view) {
@@ -1808,7 +1832,9 @@ td.wrap { white-space: normal; min-width: 180px; }
     })
     var groups = el('div')
     var ins = el('section', 'card panel wide'); ins.id = 'insp'; ins.style.cssText = 'min-height:0;margin:16px 0 0'
-    view.append(totals, ins, groups)
+    var alert = el('div')
+    view.append(alert, totals, ins, groups)
+    renderSilentSites(alert)
     renderInsightsPanel(ins)
     COMPANIES.forEach(function (c) {
       var head = el('div', 'cohead')

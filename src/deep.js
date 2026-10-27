@@ -567,10 +567,11 @@ export async function insights(db, q) {
         site: s.site,
         title: `${name}: Google Ads meldet 0 Conversions bei ${eur(s.spend)} Ausgaben`,
         detail:
-          a && a.lead_sessions
-            ? `Unser Tracker sieht ${a.lead_sessions} Besuche aus Google Ads mit Anfrage oder Anruf-Klick. Google lernt davon nichts, Smart Bidding optimiert blind.`
-            : 'Ohne gemeldete Conversions kann Google nicht auf Anfragen optimieren, und niemand sieht, welche Keywords Kunden bringen.',
-        action: 'Conversion-Aktion für Formular-Anfrage und Anruf-Klick im Google-Tag prüfen (Einwilligungsmodus, Auslöser auf Erfolgsmeldung statt Absende-Klick).',
+          (a && a.lead_sessions
+            ? `Unser Tracker zählt ${a.lead_sessions} Besuche aus Google Ads mit Anfrage oder Anruf-Klick. `
+            : '') +
+          'Google zählt Conversions nur bei Besuchern, die Cookies zustimmen; ohne Zustimmung gehen sie bei kleinem Volumen verloren. Für Berichte gelten die Anfragen aus diesem Dashboard.',
+        action: 'In Google Ads die Anruf-Conversion als primär markieren und im Google-Tag url_passthrough aktivieren. Vor einem Wechsel auf Conversion-Gebote erst prüfen, ob Google genug Conversions sieht.',
         value: scaleToMonth(s.spend, q)
       })
     }
