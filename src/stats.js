@@ -329,7 +329,31 @@ export async function ads(db, q) {
   }
 }
 
+function shiftDays(date, days) {
+  const d = new Date(date + 'T00:00:00Z')
+  d.setUTCDate(d.getUTCDate() + days)
+  return d.toISOString().slice(0, 10)
+}
+
+// Google delivers Search Console and Business Profile data with a few days' delay. When the
+// chosen period has none yet, the latest 30 days that do have data are shown instead.
+export async function latestWindow(db, table, column, ids, before, hasData = '1') {
+  const row = await db
+    .prepare(`SELECT MAX(date) AS latest FROM ${table} WHERE ${column} IN (${ids.map(() => '?').join(',')}) AND date <= ? AND ${hasData}`)
+    .bind(...ids, before)
+    .first()
+  return row && row.latest ? { from: shiftDays(row.latest, -29), to: row.latest } : null
+}
+
 export async function search(db, q, limit = 100) {
+  const result = await searchRange(db, q, limit)
+  if (result.results.length) return result
+  const window = await latestWindow(db, 'search_queries', 'site', q.sites, q.to)
+  if (!window) return result
+  return { ...(await searchRange(db, { ...q, ...window }, limit)), fallback: window }
+}
+
+async function searchRange(db, q, limit) {
   const { results } = await db
     .prepare(
       `SELECT query AS name, SUM(clicks) AS clicks, SUM(impressions) AS impressions,

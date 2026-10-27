@@ -1,7 +1,7 @@
 // Deeper read-side views: leads, funnels, forms, content, keyword level Ads, Business Profile,
 // and the opportunities that come from putting those sources side by side.
 
-import { LEAD_EVENTS, where } from './stats.js'
+import { LEAD_EVENTS, latestWindow, where } from './stats.js'
 
 const inList = (col, list) => `${col} IN (${list.map(() => '?').join(',')})`
 const round = (n, d = 2) => (n === null || n === undefined || Number.isNaN(n) ? null : Math.round(n * 10 ** d) / 10 ** d)
@@ -427,6 +427,16 @@ export async function adsDeep(db, q) {
 // Google Business Profile: the locations whose website is one of the sites in scope.
 
 export async function gbp(db, q) {
+  const result = await gbpRange(db, q)
+  if (!result.totals || Object.values(result.totals).some((v) => v > 0)) return result
+  // Today's rows exist but stay at zero until Google reports the day.
+  const window = await latestWindow(db, 'gbp_daily', 'location', result.locations.map((l) => l.location), q.to,
+    'impressions_maps + impressions_search + calls + website_clicks + directions > 0')
+  if (!window) return result
+  return { ...(await gbpRange(db, { ...q, ...window })), fallback: window }
+}
+
+async function gbpRange(db, q) {
   const { results: locations } = await db
     .prepare(
       `SELECT l.location, l.name, l.site, l.company, r.count AS reviews, r.rating

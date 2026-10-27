@@ -237,6 +237,7 @@ td { text-align: right; padding: 9px 0 9px 16px; border-top: 1px solid var(--lin
 td:first-child { font-weight: 400; max-width: 380px; overflow: hidden; text-overflow: ellipsis; }
 tbody tr { transition: background .15s; } tbody tr:hover { background: var(--hover); }
 td.m { color: var(--text-3); font-weight: 400; }
+.note.delay { margin: 10px 0 0; padding: 8px 12px; border-radius: 10px; background: var(--sel); color: var(--text-2); }
 .note { margin-top: 14px; font-size: 12px; color: var(--text-3); line-height: 1.55; }
 
 /* ---------- overview ---------- */
@@ -1650,6 +1651,7 @@ td.wrap { white-space: normal; min-width: 180px; }
       if (token !== renderToken) return
       sk.remove()
       if (!d.locations.length) { section.append(el('div', 'empty', 'Kein Unternehmensprofil mit dieser Website verknüpft')); return }
+      if (d.fallback) section.append(delayNote(d.fallback, '3–5'))
       var t = d.totals, kpis = el('div', 'kpis')
       var reviews = d.locations.reduce(function (a, l) { return a + (l.reviews || 0) }, 0)
       kpis.append(
@@ -1761,6 +1763,10 @@ td.wrap { white-space: normal; min-width: 180px; }
     var done = function () { btn.textContent = 'Kopiert'; setTimeout(function () { btn.textContent = 'Kopieren' }, 1500) }
     if (navigator.clipboard) navigator.clipboard.writeText(text).then(done, function () {})
   }
+  function delayNote(window, days) {
+    var f = function (x) { return new Date(x + 'T00:00:00').toLocaleDateString('de-DE', { day: 'numeric', month: 'short' }) }
+    return el('div', 'note delay', 'Google liefert diese Daten mit ' + days + ' Tagen Verzögerung. Für den gewählten Zeitraum gibt es noch keine, daher die letzten verfügbaren 30 Tage: ' + f(window.from) + ' – ' + f(window.to) + '.')
+  }
   function renderSearch() {
     var section = $('search'), token = renderToken
     if (!section) return
@@ -1770,7 +1776,8 @@ td.wrap { white-space: normal; min-width: 180px; }
     api('search').then(function (d) {
       if (token !== renderToken) return
       sk.remove()
-      if (!d.results.length) { section.append(el('div', 'empty', 'Keine Suchdaten in diesem Zeitraum (Google liefert sie mit 2–3 Tagen Verzögerung)')); return }
+      if (!d.results.length) { section.append(el('div', 'empty', 'Noch keine Suchdaten von Google')); return }
+      if (d.fallback) section.append(delayNote(d.fallback, '2–3'))
       var t = d.totals, kpis = el('div', 'kpis')
       kpis.append(
         kpi('Klicks aus Google', nf.format(t.clicks)),
