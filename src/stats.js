@@ -171,6 +171,61 @@ export async function breakdown(db, q, dim, limit = 50) {
   return results
 }
 
+// Visitors per site for the overview page, with a daily series for sparklines.
+export async function sitesSummary(db, from, to) {
+  const q = { from, to }
+  const prev = previousRange(q)
+  const leadList = LEAD_EVENTS.map(() => '?').join(',')
+  const totalsSql = `SELECT site, COUNT(DISTINCT visitor_id) AS visitors, SUM(name = 'pageview') AS pageviews,
+          COUNT(DISTINCT CASE WHEN name IN (${leadList}) THEN visitor_id END) AS leads
+     FROM events WHERE date >= ? AND date <= ? GROUP BY site`
+  const [sites, current, previous, daily, spend, live] = await Promise.all([
+    db.prepare('SELECT domain, name FROM sites ORDER BY name').all(),
+    db.prepare(totalsSql).bind(...LEAD_EVENTS, from, to).all(),
+    db.prepare(totalsSql).bind(...LEAD_EVENTS, prev[0], prev[1]).all(),
+    db
+      .prepare(
+        `SELECT site, date, COUNT(DISTINCT visitor_id) AS visitors FROM events
+         WHERE date >= ? AND date <= ? GROUP BY site, date`
+      )
+      .bind(from, to)
+      .all(),
+    db
+      .prepare('SELECT site, SUM(spend) AS spend FROM ads_spend WHERE date >= ? AND date <= ? GROUP BY site')
+      .bind(from, to)
+      .all(),
+    db
+      .prepare('SELECT site, COUNT(DISTINCT visitor_id) AS visitors FROM events WHERE ts > ? GROUP BY site')
+      .bind(Date.now() - 5 * 60 * 1000)
+      .all()
+  ])
+  const bySite = (rows) => new Map(rows.results.map((r) => [r.site, r]))
+  const cur = bySite(current)
+  const prv = bySite(previous)
+  const spendBySite = bySite(spend)
+  const liveBySite = bySite(live)
+  const series = new Map()
+  for (const r of daily.results) {
+    if (!series.has(r.site)) series.set(r.site, {})
+    series.get(r.site)[r.date] = r.visitors
+  }
+  return sites.results.map((s) => {
+    const c = cur.get(s.domain) || {}
+    const p = prv.get(s.domain) || {}
+    return {
+      domain: s.domain,
+      name: s.name,
+      visitors: c.visitors || 0,
+      previous_visitors: p.visitors || 0,
+      pageviews: c.pageviews || 0,
+      leads: c.leads || 0,
+      spend: Math.round(((spendBySite.get(s.domain) || {}).spend || 0) * 100) / 100,
+      live: (liveBySite.get(s.domain) || {}).visitors || 0,
+      daily: series.get(s.domain) || {}
+    }
+  })
+}
+
 export async function realtime(db, site) {
   const row = await db
     .prepare('SELECT COUNT(DISTINCT visitor_id) AS visitors FROM events WHERE site = ? AND ts > ?')

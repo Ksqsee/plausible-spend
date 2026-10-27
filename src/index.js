@@ -2,7 +2,7 @@ import trackerSource from './tracker.client.js'
 import dashboardHtml from './dashboard.html'
 import logoSvg from './logo.svg'
 import { handleEvent } from './ingest.js'
-import { BadRequest, ads, breakdown, overview, parseQuery, realtime, search, timeseries } from './stats.js'
+import { BadRequest, ads, breakdown, overview, parseQuery, realtime, search, sitesSummary, timeseries } from './stats.js'
 import { syncAll } from './sync.js'
 
 const json = (data, status = 200) =>
@@ -40,6 +40,14 @@ async function api(request, env, url) {
   if (path === 'sites') {
     const { results } = await db.prepare('SELECT domain, name FROM sites ORDER BY name').all()
     return json(results)
+  }
+  if (path === 'sites-summary') {
+    const from = url.searchParams.get('from')
+    const to = url.searchParams.get('to')
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(from || '') || !/^\d{4}-\d{2}-\d{2}$/.test(to || '') || from > to) {
+      throw new BadRequest('from and to (YYYY-MM-DD) are required')
+    }
+    return json(await sitesSummary(db, from, to))
   }
   if (path === 'sync' && request.method === 'POST') {
     const days = Math.min(Math.max(Number(url.searchParams.get('days')) || 30, 1), 400)

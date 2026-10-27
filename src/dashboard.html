@@ -72,17 +72,49 @@ button, select, input { font: inherit; color: inherit; }
 .wrap { max-width: 1120px; margin: 0 auto; padding: 24px 16px 80px; }
 
 /* brand */
-.brand { display: flex; align-items: center; gap: 10px; margin-bottom: 22px; font-weight: 700; font-size: 17px; letter-spacing: -.01em; }
+.brand { display: inline-flex; color: inherit; text-decoration: none; align-items: center; gap: 10px; margin-bottom: 22px; font-weight: 700; font-size: 17px; letter-spacing: -.01em; }
 .brand img { width: 26px; height: 26px; border-radius: 6px; }
 .brand span { color: var(--text-3); font-weight: 500; }
 
 /* top bar */
 .bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .left, .right { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
-.site { position: relative; display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: 15px; }
-.site img { width: 18px; height: 18px; border-radius: 4px; }
-.site select { appearance: none; -webkit-appearance: none; border: 0; background: transparent; font-weight: 700; font-size: 15px; padding: 2px 20px 2px 0; cursor: pointer; }
-.site::after { content: ""; position: absolute; right: 4px; top: 50%; width: 6px; height: 6px; border-right: 1.5px solid var(--text-3); border-bottom: 1.5px solid var(--text-3); transform: translateY(-70%) rotate(45deg); pointer-events: none; }
+.switch { position: relative; }
+.switch > button { display: inline-flex; align-items: center; gap: 8px; background: transparent; border: 0; padding: 4px 6px 4px 0; cursor: pointer; font-weight: 700; font-size: 15px; border-radius: 6px; }
+.switch > button img, .menu img, .sitecard .fav { width: 18px; height: 18px; border-radius: 4px; flex-shrink: 0; }
+.switch > button svg { width: 14px; height: 14px; stroke: var(--text-3); }
+.menu { position: absolute; z-index: 20; top: calc(100% + 6px); left: 0; min-width: 260px; background: var(--menu); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,.12); padding: 6px; display: none; }
+.menu.open { display: block; }
+.menu a { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 6px; color: var(--text); text-decoration: none; font-weight: 500; }
+.menu a:hover, .menu a:focus-visible { background: var(--hover); outline: none; }
+.menu a.cur { font-weight: 700; }
+.menu a .chk { margin-left: auto; color: var(--accent); }
+.menu hr { border: 0; border-top: 1px solid var(--line); margin: 6px 4px; }
+.menu .all { color: var(--text-2); }
+.fallback { width: 18px; height: 18px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #fff; background: #016b63; flex-shrink: 0; }
+
+/* sites overview */
+.ohead { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+.ohead h1 { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -.01em; }
+.sites { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.sitecard { display: flex; flex-direction: column; gap: 14px; padding: 18px 20px; color: inherit; text-decoration: none; transition: box-shadow .15s, transform .15s; }
+.sitecard:hover { box-shadow: 0 6px 20px rgba(0,0,0,.08); transform: translateY(-1px); }
+.sitecard .top { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 15px; min-width: 0; }
+.sitecard .top span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sitecard .top .livebadge { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; color: var(--text-3); white-space: nowrap; }
+.sitecard .top .livebadge i { width: 7px; height: 7px; border-radius: 50%; background: var(--live); }
+.sitecard .spark { height: 56px; }
+.sitecard .spark svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.sitecard .big { display: flex; align-items: baseline; gap: 8px; }
+.sitecard .big b { font-size: 20px; font-variant-numeric: tabular-nums; }
+.sitecard .big span { font-size: 13px; color: var(--text-3); }
+.sitecard .big .d { font-size: 12px; }
+.sitecard .meta { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--text-3); border-top: 1px solid var(--line-soft); padding-top: 10px; }
+.sitecard .meta b { color: var(--text); font-weight: 600; }
+.up { color: var(--up); }
+.down { color: var(--down); }
+@media (max-width: 900px) { .sites { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .sites { grid-template-columns: 1fr; } }
 .live { display: inline-flex; align-items: center; gap: 8px; color: var(--text-3); font-size: 14px; }
 .live i { width: 8px; height: 8px; border-radius: 50%; background: var(--live); box-shadow: 0 0 0 0 rgba(16,185,129,.5); animation: pulse 2s infinite; }
 @keyframes pulse { 70% { box-shadow: 0 0 0 6px rgba(16,185,129,0) } 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0) } }
@@ -203,10 +235,32 @@ td.m { color: var(--text-3); font-weight: 400; }
 </head>
 <body>
 <div class="wrap">
-  <div class="brand"><img src="/logo.svg" alt="">Gruppenwerk <span>Analytics</span></div>
+  <div><a class="brand" href="/" title="Alle Websites"><img src="/logo.svg" alt="">Gruppenwerk <span>Analytics</span></a></div>
+
+  <div id="overview" hidden>
+    <div class="ohead">
+      <h1>Meine Websites</h1>
+      <label class="period">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg>
+        <select id="operiod" aria-label="Zeitraum">
+          <option value="today">Heute</option>
+          <option value="7d">Letzte 7 Tage</option>
+          <option value="30d" selected>Letzte 30 Tage</option>
+          <option value="month">Dieser Monat</option>
+          <option value="12mo">Letzte 12 Monate</option>
+        </select>
+      </label>
+    </div>
+    <div class="sites" id="sites"></div>
+  </div>
+
+  <div id="dash" hidden>
   <div class="bar">
     <div class="left">
-      <label class="site"><img id="siteIcon" alt=""><select id="site" aria-label="Website"></select></label>
+      <div class="switch">
+        <button type="button" id="switchBtn" aria-haspopup="true" aria-expanded="false"><span id="siteIcon"></span><span id="siteName"></span><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="menu" id="menu"></div>
+      </div>
       <span class="live"><i></i><span id="live">–</span></span>
     </div>
     <div class="right">
@@ -246,6 +300,7 @@ td.m { color: var(--text-3); font-weight: 400; }
   <div class="foot">
     <span id="synced"></span>
     <button id="syncnow" type="button">Werbe- &amp; Suchdaten jetzt abrufen</button>
+  </div>
   </div>
 </div>
 
@@ -803,17 +858,54 @@ td.m { color: var(--text-3); font-weight: 400; }
     })
   }
 
-  function setSiteIcon() {
-    var img = $('siteIcon')
-    img.src = 'https://icons.duckduckgo.com/ip3/' + state.site + '.ico'
-    img.onerror = function () { img.style.visibility = 'hidden' }
-    img.onload = function () { img.style.visibility = 'visible' }
+  var SITES = []
+
+  function siteIcon(domain) {
+    var img = el('img')
+    img.alt = ''
+    img.referrerPolicy = 'no-referrer'
+    img.src = 'https://icons.duckduckgo.com/ip3/' + domain + '.ico'
+    img.onerror = function () {
+      var f = el('span', 'fallback', domain.charAt(0).toUpperCase())
+      img.replaceWith(f)
+    }
+    return img
+  }
+
+  function siteHref(domain) {
+    var p = new URLSearchParams({ site: domain, period: state.period === 'custom' ? '30d' : state.period })
+    return '?' + p.toString()
+  }
+
+  function renderSwitcher() {
+    $('siteIcon').replaceChildren(siteIcon(state.site))
+    $('siteName').textContent = state.site
+    var menu = $('menu')
+    menu.replaceChildren()
+    SITES.forEach(function (s) {
+      var a = el('a', s.domain === state.site ? 'cur' : '')
+      a.href = siteHref(s.domain)
+      a.append(siteIcon(s.domain), el('span', null, s.domain))
+      if (s.domain === state.site) a.append(el('span', 'chk', '✓'))
+      menu.append(a)
+    })
+    menu.append(el('hr'))
+    var all = el('a', 'all', 'Alle Websites')
+    all.href = '/'
+    menu.append(all)
+  }
+
+  function toggleMenu(open) {
+    var menu = $('menu'), btn = $('switchBtn')
+    var show = open === undefined ? !menu.classList.contains('open') : open
+    menu.classList.toggle('open', show)
+    btn.setAttribute('aria-expanded', String(show))
   }
 
   function refresh() {
     saveUrl()
     renderFilters()
-    setSiteIcon()
+    renderSwitcher()
     api('overview').then(function (d) {
       renderStats(d)
       // goal conversion rates need the total visitor count
@@ -851,19 +943,94 @@ td.m { color: var(--text-3); font-weight: 400; }
       state.from = $('from').value; state.to = $('to').value; refresh()
     }
   }
-  $('site').onchange = function () { state.site = this.value; state.filters = []; refresh() }
+  $('switchBtn').onclick = function (e) { e.stopPropagation(); toggleMenu() }
+  document.addEventListener('click', function (e) { if (!e.target.closest('.switch')) toggleMenu(false) })
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') toggleMenu(false) })
 
   var resizeTimer
-  window.addEventListener('resize', function () { clearTimeout(resizeTimer); resizeTimer = setTimeout(function () { renderChart(lastSeries) }, 150) })
-  setInterval(loadLive, 30000)
+  window.addEventListener('resize', function () {
+    clearTimeout(resizeTimer)
+    resizeTimer = setTimeout(function () { if (!$('dash').hidden) renderChart(lastSeries) }, 150)
+  })
+
+  // ---------- sites overview ----------
+  function sparkline(daily, from, to) {
+    var values = []
+    for (var d = new Date(from + 'T00:00:00'), end = new Date(to + 'T00:00:00'); d <= end; d = addDays(d, 1)) values.push(daily[iso(d)] || 0)
+    if (values.length < 2) values = [values[0] || 0, values[0] || 0]
+    var W = 300, H = 56, max = Math.max.apply(null, values.concat([1]))
+    var pts = values.map(function (v, i) { return [(W * i) / (values.length - 1), H - 4 - ((H - 8) * v) / max] })
+    var line = pts.map(function (p, i) { return (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1) }).join(' ')
+    var css = getComputedStyle(document.documentElement)
+    var accent = css.getPropertyValue('--accent').trim()
+    var root = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, preserveAspectRatio: 'none', 'aria-hidden': 'true' })
+    var id = 'sp' + Math.random().toString(36).slice(2)
+    var defs = svg('defs'), grad = svg('linearGradient', { id: id, x1: 0, x2: 0, y1: 0, y2: 1 })
+    grad.append(svg('stop', { offset: '0%', 'stop-color': accent, 'stop-opacity': 0.2 }), svg('stop', { offset: '100%', 'stop-color': accent, 'stop-opacity': 0 }))
+    defs.append(grad); root.append(defs)
+    root.append(svg('path', { d: line + ' L' + W + ' ' + H + ' L0 ' + H + ' Z', fill: 'url(#' + id + ')' }))
+    root.append(svg('path', { d: line, fill: 'none', stroke: accent, 'stroke-width': 2, 'vector-effect': 'non-scaling-stroke', 'stroke-linejoin': 'round' }))
+    return root
+  }
+
+  var PERIOD_TEXT = { today: 'heute', '7d': 'in den letzten 7 Tagen', '30d': 'in den letzten 30 Tagen', month: 'diesen Monat', '12mo': 'in den letzten 12 Monaten' }
+
+  function renderOverview() {
+    var r = range()
+    var box = $('sites')
+    box.replaceChildren()
+    var spin = el('div', 'empty'); spin.append(el('div', 'spin')); box.append(spin)
+    fetch('/api/sites-summary?from=' + r[0] + '&to=' + r[1]).then(function (res) { return res.json() }).then(function (sites) {
+      box.replaceChildren()
+      sites.forEach(function (s) {
+        var a = el('a', 'card sitecard')
+        a.href = siteHref(s.domain)
+        var top = el('div', 'top')
+        var icon = siteIcon(s.domain); icon.classList && icon.classList.add('fav')
+        top.append(icon, el('span', null, s.domain))
+        if (s.live) { var lb = el('span', 'livebadge'); lb.append(el('i'), document.createTextNode(nf.format(s.live) + ' aktiv')); top.append(lb) }
+        var spark = el('div', 'spark'); spark.append(sparkline(s.daily, r[0], r[1]))
+        var big = el('div', 'big')
+        big.append(el('b', null, nf.format(s.visitors)), el('span', null, 'Besucher ' + (PERIOD_TEXT[state.period] || '')))
+        if (s.previous_visitors) {
+          var ch = Math.round(((s.visitors - s.previous_visitors) / s.previous_visitors) * 100)
+          var d = el('span', 'd')
+          if (ch !== 0) d.append(el('span', ch > 0 ? 'up' : 'down', ch > 0 ? '↗ ' : '↘ '))
+          d.append(document.createTextNode(Math.abs(ch) + '%'))
+          big.append(d)
+        }
+        var meta = el('div', 'meta')
+        function m(label, value) { var x = el('span'); x.append(el('b', null, value), document.createTextNode(' ' + label)); meta.append(x) }
+        m('Aufrufe', nf.format(s.pageviews))
+        m('Anfragen', nf.format(s.leads))
+        if (s.spend) m('Ads', money.format(s.spend))
+        a.append(top, spark, big, meta)
+        box.append(a)
+      })
+    }).catch(function () { box.replaceChildren(el('div', 'empty', 'Fehler beim Laden')) })
+  }
 
   fetch('/api/sites').then(function (r) { return r.json() }).then(function (sites) {
-    var sel = $('site')
-    sites.forEach(function (s) { var o = el('option', null, s.domain); o.value = s.domain; sel.append(o) })
+    SITES = sites
     var wanted = params.get('site')
-    state.site = sites.some(function (s) { return s.domain === wanted }) ? wanted : sites[0].domain
-    sel.value = state.site
-    refresh()
+    if (wanted && sites.some(function (s) { return s.domain === wanted })) {
+      state.site = wanted
+      $('dash').hidden = false
+      document.title = wanted + ' · Gruppenwerk Analytics'
+      setInterval(loadLive, 30000)
+      refresh()
+    } else {
+      if (!['today', '7d', '30d', 'month', '12mo'].includes(state.period)) state.period = '30d'
+      $('operiod').value = state.period
+      $('operiod').onchange = function () {
+        state.period = this.value
+        history.replaceState(null, '', '?period=' + state.period)
+        renderOverview()
+      }
+      $('overview').hidden = false
+      renderOverview()
+      setInterval(renderOverview, 60000)
+    }
   })
 })()
 </script>
