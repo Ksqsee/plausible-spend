@@ -1859,7 +1859,7 @@ td.wrap { white-space: normal; min-width: 180px; }
       sk.remove()
       var cols = el('div', 'cols'), nums = el('span', 'nums'), list = el('div', 'list')
       if (tab === 'sections') {
-        if (!d.sections.length) { section.append(el('div', 'empty', 'Noch keine Abschnittsdaten (kommen mit Tracker v2)')); return }
+        if (!d.sections.length) { section.append(el('div', 'empty', 'Noch keine Daten. Hier erscheint, wie viele Besucher welchen Bereich der Seite gesehen haben, sobald die ersten Besuche da sind.')); return }
         nums.append(el('span', 'm', 'Aktionen'), el('span', null, 'Reichweite'))
         cols.append(el('span', null, 'Abschnitt'), nums)
         d.sections.slice(0, 12).forEach(function (r) {
@@ -1867,12 +1867,12 @@ td.wrap { white-space: normal; min-width: 180px; }
           list.append(barRow('#' + r.section, null, r.reach, 'var(--bar-sites)', [[acts ? nf.format(acts) : '', true], [pct.format(r.reach) + ' %']], null))
         })
       } else if (tab === 'depth') {
-        if (!d.pages.length) { section.append(el('div', 'empty', 'Noch keine Lesedaten')); return }
+        if (!d.pages.length) { section.append(el('div', 'empty', 'Noch keine Daten. Hier erscheint, wie weit Besucher jede Seite lesen und wie lange sie bleiben.')); return }
         nums.append(el('span', 'm', 'Zeit'), el('span', null, 'Scrolltiefe'))
         cols.append(el('span', null, 'Seite'), nums)
         d.pages.slice(0, 10).forEach(function (r) { list.append(barRow(r.page, null, r.depth, 'var(--bar-pages)', [[fmtDuration(r.time), true], [r.depth + ' %']], function () { addFilter('page', r.page) })) })
       } else {
-        if (!d.faq.length) { section.append(el('div', 'empty', 'Noch keine FAQ-Klicks')); return }
+        if (!d.faq.length) { section.append(el('div', 'empty', 'Noch niemand hat eine Frage im FAQ aufgeklappt.')); return }
         nums.append(el('span', 'm', 'Klicks'), el('span', null, 'Besucher'))
         cols.append(el('span', null, 'Frage'), nums)
         var max = d.faq[0].visitors

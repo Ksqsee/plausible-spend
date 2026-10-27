@@ -439,7 +439,7 @@ export async function gbp(db, q) {
 async function gbpRange(db, q) {
   const { results: locations } = await db
     .prepare(
-      `SELECT l.location, l.name, l.site, l.company, r.count AS reviews, r.rating
+      `SELECT l.location, l.name, l.site, l.company, l.website_tagged, r.count AS reviews, r.rating
        FROM gbp_locations l LEFT JOIN gbp_reviews r ON r.location = l.location WHERE ${inList('l.site', q.sites)}`
     )
     .bind(...q.sites)
@@ -502,7 +502,8 @@ async function gbpRange(db, q) {
       website: r.website || 0,
       directions: r.directions || 0,
       tracked_visits: visits.get(l.site) || 0,
-      reporting: reporting.has(l.location)
+      reporting: reporting.has(l.location),
+      website_tagged: !!l.website_tagged
     }
   })
   const names = new Map(locations.map((l) => [l.location, l.name]))
@@ -864,15 +865,16 @@ export async function insights(db, q) {
       })
     }
   }
-  const untagged = gbpData.locations.filter((l) => l.website >= 3 && !l.tracked_visits)
+  const untagged = gbpData.locations.filter((l) => l.website >= 3 && !l.website_tagged && !l.tracked_visits)
   if (untagged.length) {
     add({
       severity: 'medium',
       area: 'Tracking',
       site: untagged.length === 1 ? untagged[0].site : null,
       title: `${untagged.reduce((a, l) => a + l.website, 0)} Website-Klicks aus Google-Profilen sind nicht als solche erkennbar`,
-      detail: untagged.map((l) => `${l.name} ${l.website}`).join(' · ') + '. Sie erscheinen sonst als „Google“ oder „Direkt“.',
-      action: 'Website-Link in jedem Profil mit ?utm_source=gbp&utm_medium=organic&utm_campaign=gbp versehen (geht auch über Windsor).',
+      detail: 'Ohne Markierung im Website-Link erscheinen diese Besucher als „Google“ oder „Direkt“ statt als „Google-Profil“.',
+      action: 'Den Website-Link im Profil markieren lassen (Claude erledigt das über Windsor in einer Minute).',
+      items: untagged.map((l) => ({ site: l.site, label: l.name, value: `${l.website} Klicks` })),
       value: null
     })
   }
