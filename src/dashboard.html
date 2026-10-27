@@ -1701,7 +1701,7 @@ td.wrap { white-space: normal; min-width: 180px; }
           h.append(siteLogo(s.domain), nm)
           var fresh = info.last_ts && Date.now() - info.last_ts < 3 * 86400000
           var st = el('span', 'status ' + (fresh ? 'ok' : info.last_ts ? 'wait' : 'off'))
-          st.append(el('i'), document.createTextNode(fresh ? 'Aktiv · ' + timeAgo(info.last_ts) : info.last_ts ? 'Zuletzt ' + timeAgo(info.last_ts) : 'Nicht installiert'))
+          st.append(el('i'), document.createTextNode(fresh ? 'Aktiv · ' + timeAgo(info.last_ts) : info.last_ts ? 'Zuletzt ' + timeAgo(info.last_ts) : 'Noch keine Besuche'))
           h.append(st)
           card.append(h)
           var snippet = '<script defer data-domain="' + s.domain + '" src="' + TRACKER_ORIGIN + '/s.js"></' + 'script>'
