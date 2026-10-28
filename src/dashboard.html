@@ -73,6 +73,7 @@
 }
 :root { --bar-sources: var(--bar); --bar-pages: var(--bar); --bar-locations: var(--bar); --bar-devices: var(--bar); --bar-goals: var(--bar); --bar-search: var(--bar); --bar-sites: var(--bar); }
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html, body { margin: 0; min-height: 100%; }
 body { background: var(--bg); color: var(--text); font: 14px/1.5 Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; font-feature-settings: "cv11", "ss01", "ss03"; letter-spacing: -.006em; }
 button, select, input { font: inherit; color: inherit; letter-spacing: inherit; }
@@ -174,14 +175,14 @@ a { color: inherit; }
 /* ---------- cards & stats ---------- */
 .card { background: var(--card); border-radius: 22px; box-shadow: var(--card-shadow); }
 .mainc { padding: 18px 22px 22px; }
-.stats { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; }
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
 .stat { position: relative; display: flex; flex-direction: column; align-items: flex-start; text-align: left; background: transparent; border: 0; border-radius: 14px; padding: 12px 14px 13px; cursor: default; transition: background .25s var(--ease); }
 .stat.pick { cursor: pointer; } .stat.pick:hover { background: var(--hover); }
 .stat.sel { background: var(--sel); }
 .stat .k { font-size: 13px; color: var(--text-3); white-space: nowrap; }
 .stat.sel .k { color: var(--text); }
 .stat .v { display: flex; align-items: baseline; gap: 8px; margin-top: 4px; flex-wrap: wrap; }
-.stat .n { font: 600 28px/1.15 var(--display); font-variant-numeric: tabular-nums; letter-spacing: -.03em; }
+.stat .n { font: 600 38px/1.1 var(--display); font-variant-numeric: tabular-nums; letter-spacing: -.03em; }
 .d { font-size: 13px; color: var(--text-3); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .up { color: var(--up); } .down { color: var(--down); }
 .chart { position: relative; height: 320px; margin-top: 22px; }
@@ -343,21 +344,47 @@ td.m { color: var(--text-3); font-weight: 400; }
 .total .k { font-size: 13px; color: var(--text-3); }
 .total .n { font: 600 36px/1.1 var(--display); letter-spacing: -.035em; margin-top: 8px; font-variant-numeric: tabular-nums; }
 .total .d { margin-top: 6px; white-space: normal; }
-.brief { padding: 26px 28px 24px; margin-bottom: 24px; }
-.brief h2 { margin: 0; font: 600 26px/1.15 var(--display); letter-spacing: -.028em; }
-.brief .bsub { margin: 4px 0 0; color: var(--text-3); font-size: 14px; }
-.blist { list-style: none; margin: 18px 0 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
-.blist li { display: flex; align-items: flex-start; gap: 12px; font: 500 16px/1.45 var(--display); letter-spacing: -.01em; }
-.blist li i { width: 8px; height: 8px; border-radius: 50%; margin-top: 8px; flex-shrink: 0; background: var(--text-3); }
-.blist li.b-up i { background: var(--up); box-shadow: 0 0 0 4px color-mix(in srgb, var(--up) 18%, transparent); }
-.blist li.b-down i { background: var(--down); box-shadow: 0 0 0 4px color-mix(in srgb, var(--down) 18%, transparent); }
-@media (max-width: 560px) { .brief { padding: 20px; } .brief h2 { font-size: 22px; } .blist li { font-size: 15px; } }
+.hero { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; padding: 12px 4px 40px; }
+.hn .k { font-size: 15px; color: var(--text-3); white-space: nowrap; }
+.hn .n { font: 600 64px/1.02 var(--display); letter-spacing: -.045em; margin-top: 10px; font-variant-numeric: tabular-nums; }
+.hn .d { margin-top: 10px; font-size: 14px; }
+.nudge { margin: 24px 0 0; }
+.hero + .nudge { margin-top: 0; }
+.nudge-in { display: flex; align-items: center; gap: 16px; padding: 18px 22px; color: var(--text); text-decoration: none; border-radius: inherit; transition: background .2s; }
+.nudge-in:hover { background: var(--hover); }
+.nudge-in .nd { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; background: var(--warn); box-shadow: 0 0 0 5px color-mix(in srgb, var(--warn) 18%, transparent); }
+.nudge-in .nd.high { background: var(--down); box-shadow: 0 0 0 5px color-mix(in srgb, var(--down) 16%, transparent); }
+.nudge-in .nt { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.nudge-in .nt b { font: 600 16px/1.35 var(--display); letter-spacing: -.01em; }
+.nudge-in .nt span { font-size: 13.5px; color: var(--text-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nudge-in .na { font-size: 14px; font-weight: 500; color: var(--text-2); white-space: nowrap; }
+.gtabs { display: flex; gap: 28px; margin-bottom: 6px; }
+.gtabs button { border: 0; background: none; padding: 0 0 6px; font: 600 20px/1.2 var(--display); letter-spacing: -.02em; color: var(--text-3); cursor: pointer; border-bottom: 2px solid transparent; transition: color .2s, border-color .2s; }
+.gtabs button:hover { color: var(--text-2); }
+.gtabs button.on { color: var(--text); border-bottom-color: var(--ink); }
+.gsub > .ph:empty, .tabs:empty { display: none; }
+.mored { margin-top: 40px; }
+.mored > summary { list-style: none; display: flex; justify-content: center; }
+.mored > summary::-webkit-details-marker { display: none; }
+.mored > summary { cursor: pointer; margin: 0 auto; width: max-content; padding: 10px 20px; border-radius: 999px; background: var(--card); box-shadow: var(--card-shadow); font-size: 14px; font-weight: 500; color: var(--text-2); transition: box-shadow .2s, color .2s; }
+.mored > summary:hover { box-shadow: var(--card-hover); color: var(--text); }
+.mored > summary::after { content: "↓"; margin-left: 8px; }
+.mored[open] > summary::after { content: "↑"; }
+.sitecard .lp { margin-left: auto; font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 999px; white-space: nowrap; color: color-mix(in srgb, var(--up) 85%, var(--text)); background: color-mix(in srgb, var(--up) 13%, transparent); }
+/* the (i) stays out of the way until you look at a number */
+.stat .qi, .kpi .qi, .hn .qi, .total .qi { opacity: 0; transition: opacity .2s; }
+.stat:hover .qi, .kpi:hover .qi, .hn:hover .qi, .total:hover .qi, .qi:focus-visible, .qi[aria-expanded="true"] { opacity: 1; }
+@media (hover: none) { .stat .qi, .kpi .qi, .hn .qi, .total .qi { opacity: .55; } }
+@media (max-width: 960px) { .hero { grid-template-columns: 1fr 1fr; } .hn .n { font-size: 48px; } }
+@media (max-width: 560px) { .hero { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; padding: 4px 0 24px; } .hn .k { font-size: 12.5px; } .hn .n { font-size: 30px; letter-spacing: -.035em; } .hn .d { font-size: 12px; } .nudge-in .na { display: none; } .gtabs { gap: 18px; overflow-x: auto; } .gtabs button { font-size: 17px; white-space: nowrap; } }
 .cohead { display: flex; align-items: center; gap: 12px; margin: 56px 0 18px; flex-wrap: wrap; }
 .cohead img, .cohead .fallback { width: 28px; height: 28px; border-radius: 8px; box-shadow: var(--card-shadow); }
 .cohead h2 { margin: 0; font: 600 20px/1.2 var(--display); letter-spacing: -.02em; }
 .cohead .meta { color: var(--text-3); font-size: 13px; }
-.cohead a { margin-left: auto; font-size: 13px; font-weight: 500; color: var(--text); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 999px; background: var(--card); box-shadow: var(--card-shadow); transition: box-shadow .2s; }
-.cohead a:hover { box-shadow: var(--card-hover); }
+.cohead a { margin-left: auto; font-size: 14px; font-weight: 500; color: var(--text-3); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: color .2s; }
+.cohead a:hover { color: var(--text); }
+.sitecard.quiet { box-shadow: none; background: transparent; outline: 1px dashed var(--line); outline-offset: -1px; }
+.sitecard.quiet .big b { color: var(--text-3); }
 .cohead a span { transition: transform .3s var(--ease); display: inline-block; } .cohead a:hover span { transform: translateX(3px); }
 .sites { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
 .sites > * { min-width: 0; }
@@ -374,7 +401,7 @@ td.m { color: var(--text-3); font-weight: 400; }
 .sitecard .spark svg { width: 100%; height: 100%; display: block; overflow: visible; }
 .sitecard .spark .line { transition: stroke-dashoffset 1.2s var(--ease); }
 .sitecard .big { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
-.sitecard .big b { font: 600 24px/1.1 var(--display); letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+.sitecard .big b { font: 600 30px/1.1 var(--display); letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
 .sitecard .big span { font-size: 13px; color: var(--text-3); }
 .sitecard .meta { display: flex; gap: 14px; flex-wrap: wrap; font-size: 13px; color: var(--text-3); border-top: 1px solid var(--line-soft); padding-top: 12px; }
 .sitecard .meta b { color: var(--text); font-weight: 600; }
@@ -560,14 +587,14 @@ td.wrap { white-space: normal; min-width: 180px; }
   .kpi { padding: 10px 14px; }
   .kpi:nth-child(3) { border-left: 0; padding-left: 0; }
   .kpis { row-gap: 8px; }
-  .stats { grid-template-columns: repeat(3, 1fr); }
+  .stats { grid-template-columns: repeat(2, 1fr); }
   .grid { grid-template-columns: 1fr; }
   .panel { min-height: 0; }
   .kpis, .totals { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 560px) {
   .stats { grid-template-columns: repeat(2, 1fr); }
-  .stat .n { font-size: 22px; }
+  .stat .n { font-size: 30px; }
   .chart { height: 220px; }
   .cols .nums span.m, .row .nums span.m { display: none; }
   .cols .nums span, .row .nums span { width: 56px; }
@@ -678,8 +705,7 @@ td.wrap { white-space: normal; min-width: 180px; }
   var AREAS = ['Google Ads', 'Tracking', 'Synergie', 'SEO', 'Google Business', 'Website']
   var SEVERITY = { high: 'Dringend', medium: 'Wichtig', info: 'Hinweis' }
   var STATS = [
-    ['visitors', 'Besucher', true], ['visits', 'Besuche', true], ['pageviews', 'Seitenaufrufe', true],
-    ['bounce_rate', 'Absprungrate', false], ['visit_duration', 'Besuchsdauer', false], ['leads', 'Anfragen', false]
+    ['visitors', 'Besucher', true], ['pageviews', 'Seitenaufrufe', true], ['visit_duration', 'Besuchsdauer', false], ['leads', 'Anfragen', false]
   ]
   // What each number means, how it is counted and what is good: shown behind the (i) next to it.
   var HELP = {
@@ -690,6 +716,7 @@ td.wrap { white-space: normal; min-width: 180px; }
     'Besuchsdauer': ['Wie lange ein Besuch im Schnitt dauert.', 'Zeit zwischen dem ersten und dem letzten Lebenszeichen eines Besuchs.', 'Über 1 Minute gut, 30–60 Sekunden okay, darunter wird kaum gelesen.'],
     'Anfragen': ['Menschen, die angerufen, eine E-Mail geschrieben, WhatsApp genutzt oder ein Formular abgeschickt haben.', 'Klick auf Telefonnummer, E-Mail-Adresse oder WhatsApp, oder ein erfolgreich gesendetes Formular. Jede Person zählt einmal.', 'Im Handwerk sind 2–5 % der Besucher gut, über 5 % sehr gut.'],
     'Werbeausgaben': ['Was Google Ads im Zeitraum gekostet hat.', 'Direkt aus Google Ads übernommen, alle Konten zusammen.', 'Gut ist, wenn jede Anfrage deutlich weniger kostet, als ein Auftrag einbringt.'],
+    'Werbung': ['Was Google Ads im Zeitraum gekostet hat.', 'Direkt aus Google Ads übernommen, alle Konten zusammen.', 'Gut ist, wenn jede Anfrage deutlich weniger kostet, als ein Auftrag einbringt.'],
     'Ausgegeben': ['Was die Anzeigen im Zeitraum gekostet haben.', 'Direkt aus Google Ads. Google rechnet pro Klick ab, nicht pro Einblendung.', 'Gut ist, wenn daraus Anfragen werden. Ohne Anfragen ist auch wenig Geld zu viel.'],
     'Preis pro Klick': ['Was ein Klick auf eine Anzeige im Schnitt gekostet hat.', 'Ausgaben ÷ Klicks.', 'Im Handwerk in Hamburg sind 1–3 € üblich. Darüber lohnt ein Blick auf die Keywords.'],
     'Preis pro Anfrage': ['Was eine Anfrage über Anzeigen im Schnitt gekostet hat.', 'Ausgaben ÷ Anfragen über Anzeigen.', 'Im Handwerk sind 20–60 € pro Anfrage üblich. Entscheidend ist, was ein Auftrag wert ist.'],
@@ -1153,20 +1180,46 @@ td.wrap { white-space: normal; min-width: 180px; }
     var main = el('section', 'card mainc'), chart = el('div', 'chart')
     chart.append(el('div', 'tip'))
     main.append(el('div', 'stats'), chart)
+    var nudge = el('section', 'card nudge'); nudge.id = 'insp'; nudge.hidden = true
     var grid = el('div', 'grid')
-    var wide = function (id) { var x = el('section', 'card panel wide'); x.id = id; grid.append(x); return x }
-    var panel = function (k, isWide) { var x = el('section', 'card panel' + (isWide ? ' wide' : '')); x.dataset.panel = k; grid.append(x) }
-    wide('insp')
+    var wide = function (id, cls) { var x = el('section', 'card panel wide' + (cls ? ' ' + cls : '')); x.id = id; grid.append(x); return x }
+    var panel = function (k, isWide, into) { var x = el('section', 'card panel' + (isWide ? ' wide' : '')); x.dataset.panel = k; (into || grid).append(x); return x }
     if (combined) panel('sites', true)
-    wide('funnel'); wide('leads')
-    var forms = el('section', 'card panel'); forms.id = 'forms'; grid.append(forms)
-    var content = el('section', 'card panel'); content.id = 'content'; grid.append(content)
-    ;['sources', 'pages', 'locations', 'devices'].forEach(function (k) { panel(k, false) })
-    panel('goals', true)
-    wide('ads'); wide('gbp'); wide('search')
-    view.append(main, grid)
+    wide('leads'); wide('funnel')
+    // Google Ads, Business Profile and Search share one card
+    var g = wide('google', 'gcard'), gt = el('div', 'gtabs')
+    ;[['ads', 'Anzeigen'], ['gbp', 'Google-Profil'], ['search', 'Google-Suche']].forEach(function (t) {
+      var b = el('button', null, t[1]); b.type = 'button'; b.dataset.g = t[0]
+      b.onclick = function () { state.tabs.google = t[0]; showGoogle() }
+      gt.append(b)
+    })
+    g.append(gt)
+    ;['ads', 'gbp', 'search'].forEach(function (id) { var x = el('div', 'gsub'); x.id = id; g.append(x) })
+    ;['sources', 'locations', 'pages', 'devices'].forEach(function (k) { panel(k, false) })
+    // rarely needed detail behind one click
+    var more = el('details', 'mored'), inner = el('div', 'grid')
+    more.append(el('summary', null, 'Mehr Details'), inner)
+    var forms = el('section', 'card panel'); forms.id = 'forms'; inner.append(forms)
+    var content = el('section', 'card panel'); content.id = 'content'; inner.append(content)
+    panel('goals', true, inner)
+    view.append(main, nudge, grid, more)
+    showGoogle()
     loadDash()
     timers.push(setInterval(loadLive, 30000))
+  }
+  function showGoogle() {
+    var g = $('google'); if (!g) return
+    var tabs = g.querySelectorAll('.gtabs button'), avail = []
+    Array.prototype.forEach.call(tabs, function (b) {
+      var sub = $(b.dataset.g), empty = sub.dataset.loaded && (!sub.children.length || sub.querySelector(':scope > .empty'))
+      b.hidden = !!empty
+      if (!empty) avail.push(b.dataset.g)
+    })
+    var active = avail.indexOf(state.tabs.google) >= 0 ? state.tabs.google : avail[0]
+    g.hidden = !avail.length
+    Array.prototype.forEach.call(tabs, function (b) { b.classList.toggle('on', b.dataset.g === active) })
+    ;['ads', 'gbp', 'search'].forEach(function (id) { $(id).hidden = id !== active })
+    g.querySelector('.gtabs').hidden = avail.length < 2
   }
   function refreshDash() {
     saveUrl()
@@ -1188,14 +1241,15 @@ td.wrap { white-space: normal; min-width: 180px; }
     })
     loadChart()
     Array.prototype.forEach.call(document.querySelectorAll('[data-panel]:not([data-panel="goals"])'), function (s) { renderPanel(s, s.dataset.panel) })
-    renderAds()
-    renderSearch()
+    Promise.all([renderAds(), renderGbp(), renderSearch()].map(function (p) { return Promise.resolve(p).catch(function () {}) })).then(function () {
+      ;['ads', 'gbp', 'search'].forEach(function (id) { if ($(id)) $(id).dataset.loaded = '1' })
+      showGoogle()
+    })
     renderInsightsPanel($('insp'))
     renderFunnel()
     renderLeads()
     renderForms()
     renderContent()
-    renderGbp()
     loadLive()
   }
 
@@ -1213,8 +1267,6 @@ td.wrap { white-space: normal; min-width: 180px; }
       if (prev) ch.title = 'Zeitraum davor: ' + fmtStat(key, prev)
       v.append(n, ch)
       b.append(v)
-      var rt = rating(key, data.current)
-      if (rt) b.append(el('span', 'rate ' + rt[1], rt[0]))
       countUp(n, cur, function (x) { return fmtStat(key, x) })
       if (s[2]) b.onclick = function () {
         state.metric = key
@@ -1223,17 +1275,6 @@ td.wrap { white-space: normal; min-width: 180px; }
       }
       box.append(b)
     })
-  }
-
-  // Gut / Okay / Schwach for the numbers where a benchmark exists; nothing below 20 visits.
-  function rating(key, c) {
-    if (!c || (c.visits || 0) < 20) return null
-    var landing = state.site && SITE_BY_DOMAIN[state.site] && SITE_BY_DOMAIN[state.site].config && SITE_BY_DOMAIN[state.site].config.kind === 'landing'
-    var r = function (good, ok) { return good ? ['Gut', 'good'] : ok ? ['Okay', 'ok'] : ['Schwach', 'weak'] }
-    if (key === 'bounce_rate' && !landing) return r(c.bounce_rate < 50, c.bounce_rate < 70)
-    if (key === 'visit_duration') return r(c.visit_duration >= 60, c.visit_duration >= 30)
-    if (key === 'leads' && c.visitors) { var q = (c.leads / c.visitors) * 100; return r(q >= 3, q >= 1) }
-    return null
   }
 
   // Monotone cubic curve through the points, so lines never overshoot below zero.
@@ -1377,7 +1418,7 @@ td.wrap { white-space: normal; min-width: 180px; }
   function header(section, tabsDef, active, onTab, expandable) {
     var ph = el('div', 'ph'), tabs = el('div', 'tabs')
     tabsDef.forEach(function (t) {
-      if (!onTab) { tabs.append(el('span', 'title', t[1])); return }
+      if (!onTab) { if (!section.classList.contains('gsub')) tabs.append(el('span', 'title', t[1])); return }
       var b = el('button', t[0] === active ? 'on' : '', t[1])
       b.type = 'button'
       b.onclick = function () { onTab(t[0]) }
@@ -1423,7 +1464,7 @@ td.wrap { white-space: normal; min-width: 180px; }
     var sk = skeletonRows(key === 'sites' ? 4 : 7)
     section.append(sk)
     var isGoal = !!conf.goal, isSession = tab === 'entry_page' || tab === 'exit_page'
-    var limit = section.dataset.expanded ? 100 : key === 'sites' ? 20 : 9
+    var limit = section.dataset.expanded ? 100 : key === 'sites' ? 20 : 5
     api('breakdown', { dim: tab, limit: limit }).then(function (rows) {
       if (token !== renderToken) return
       sk.remove()
@@ -1438,25 +1479,31 @@ td.wrap { white-space: normal; min-width: 180px; }
           return
         }
       }
-      if (!rows.length) { section.append(el('div', 'empty', isGoal ? 'Noch keine Klicks erfasst' : 'Noch keine Daten')); return }
-      var cols = el('div', 'cols'), nums = el('span', 'nums')
-      if (isGoal) nums.append(el('span', 'm', 'Gesamt'), el('span', null, 'Besucher'), el('span', null, 'CR'))
-      else nums.append(el('span', 'm', isSession ? 'Besuche' : 'Aufrufe'), el('span', null, 'Besucher'))
-      cols.append(el('span', null, tabDef[2]), nums)
-      section.append(cols)
+      if (!rows.length) {
+        // an empty card on first view is noise; once someone switched tabs, say why it is empty
+        if (!state.tabs[key]) { section.hidden = true; return }
+        section.append(el('div', 'empty', isGoal ? 'Noch keine Klicks erfasst' : 'Noch keine Daten'))
+        return
+      }
+      section.hidden = false
+      if (isGoal) {
+        var cols = el('div', 'cols'), nums = el('span', 'nums')
+        nums.append(el('span', 'm', 'Gesamt'), el('span', null, 'Besucher'), el('span', null, 'Quote'))
+        cols.append(el('span', null, tabDef[2]), nums)
+        section.append(cols)
+      }
       var list = el('div', 'list')
       var max = Math.max.apply(null, rows.map(function (r) { return r.visitors }))
       var color = 'var(' + conf.bar + ')'
       rows.forEach(function (r) {
         var values = isGoal
           ? [[nf.format(r.events), true], [nf.format(r.visitors)], [pct.format(state.totalVisitors ? (r.visitors / state.totalVisitors) * 100 : 0) + '%']]
-          : [[nf.format(isSession ? r.visits : r.pageviews), true], [nf.format(r.visitors)]]
+          : [[nf.format(r.visitors)]]
         list.append(barRow(displayName(tab, r.name), iconFor(tab, r.name, r), (r.visitors / max) * 100, color, values,
           isSession ? null : function () { addFilter(tab, r.name) }))
       })
       section.append(list)
       if (untagged) section.append(el('div', 'foot', '+ ' + nf.format(untagged) + ' Besucher ohne markierten Link'))
-      lede(section, panelSentence(tab, rows, isGoal))
       growBars(list)
     }).catch(function (e) { console.error(e); sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
   }
@@ -1508,34 +1555,6 @@ td.wrap { white-space: normal; min-width: 180px; }
     if (ph) ph.after(p); else section.prepend(p)
   }
   function share(part, whole) { return whole ? Math.round((part / whole) * 100) : 0 }
-  var DEVICE_WHERE = { Mobile: 'auf dem Handy', Desktop: 'am Computer', Tablet: 'auf dem Tablet' }
-  function panelSentence(tab, rows, isGoal) {
-    var top = rows[0]
-    if (!top) return ''
-    var total = Math.max(state.totalVisitors || 0, rows.reduce(function (a, r) { return a + r.visitors }, 0))
-    var p = share(top.visitors, total), name = displayName(tab, top.name), second = rows[1]
-    switch (tab) {
-      case 'source': {
-        var t = top.name === 'Direct / None' ? 'Die meisten kommen direkt, über die eingetippte Adresse oder ein Lesezeichen (' + p + ' %).' : 'Die meisten Besucher kommen über ' + name + ' (' + p + ' %).'
-        if (second && share(second.visitors, total) >= 15) t += ' Danach ' + (second.name === 'Direct / None' ? 'direkte Besuche' : displayName(tab, second.name)) + ' (' + share(second.visitors, total) + ' %).'
-        return t
-      }
-      case 'utm_source': case 'utm_medium': case 'utm_campaign': return '„' + name + '“ hat die meisten markierten Besuche gebracht (' + nf.format(top.visitors) + ').'
-      case 'page': return 'Am häufigsten geöffnet: ' + name + ' (' + nf.format(top.pageviews) + ' Aufrufe).'
-      case 'entry_page': return 'Die meisten landen zuerst auf ' + name + '.'
-      case 'exit_page': return 'Die meisten verlassen die Website auf ' + name + '.'
-      case 'city': return p + ' % der Besucher kommen aus ' + name + '.'
-      case 'region': return p + ' % der Besucher kommen aus ' + name + '.'
-      case 'country': return p + ' % der Besucher kommen aus ' + name + '.'
-      case 'browser': return p + ' % nutzen ' + name + '.'
-      case 'os': return p + ' % nutzen ' + name + '.'
-      case 'device': return p + ' % surfen ' + (DEVICE_WHERE[top.name] || name) + '.'
-      case 'event': return 'Häufigste Aktion: ' + name + ' (' + nf.format(top.visitors) + (top.visitors === 1 ? ' Besucher' : ' Besucher') + ').'
-      case 'label': return 'Am häufigsten geklickt: „' + name + '“.'
-      case 'site': return 'Die meisten Besucher hatte ' + name + ' (' + nf.format(top.visitors) + ').'
-    }
-    return ''
-  }
   function hint(text) {
     var h = el('div', 'hint')
     h.append(html(ICON_INFO), el('span', null, text))
@@ -1675,7 +1694,7 @@ td.wrap { white-space: normal; min-width: 180px; }
     var sk = skeletonRows(4); section.append(sk)
     var key = qs()
     var deep = adsCache && adsCache.key === key ? Promise.resolve(adsCache.data) : api('ads-deep').then(function (d) { adsCache = { key: key, data: d }; return d })
-    Promise.all([api('ads'), deep]).then(function (res) {
+    return Promise.all([api('ads'), deep]).then(function (res) {
       if (token !== renderToken) return
       sk.remove()
       var d = res[0], x = res[1]
@@ -1714,9 +1733,6 @@ td.wrap { white-space: normal; min-width: 180px; }
           list.append(row)
         })
         section.append(list)
-        if (d.results.every(function (r) { return r.leads === null })) {
-          section.append(hint('Welche Kampagne eine Anfrage gebracht hat, erscheint, sobald die Kampagnen-Kennung in den Anzeigen-Links steckt. Das ist eine einmalige Einstellung in Google Ads (Tracking-Vorlage).'))
-        }
       } else if (tab === 'keywords') {
         // by default only keywords somebody clicked; the rest is one tap away
         var active = x.keywords.filter(function (k) { return k.clicks > 0 })
@@ -1748,7 +1764,6 @@ td.wrap { white-space: normal; min-width: 180px; }
           if (section.dataset.all) delete section.dataset.all; else section.dataset.all = '1'
           renderAds()
         }))
-        if (hasOrganicHint(rows)) section.append(hint('„Ohne Anzeige“ zeigt, auf welchem Platz die Website bei Google ohnehin steht. Wer organisch auf Platz 1–3 steht, braucht für den Begriff oft keine Anzeige.'))
       } else if (tab === 'terms') {
         var terms = x.search_terms.slice(0, section.dataset.all ? 400 : 12)
         if (!terms.length) section.append(el('div', 'empty', 'Noch keine Suchbegriffe mit Klick in diesem Zeitraum'))
@@ -1798,7 +1813,6 @@ td.wrap { white-space: normal; min-width: 180px; }
       }
     }).catch(function (e) { console.error(e); sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
   }
-  function hasOrganicHint(rows) { return rows.some(function (k) { return k.organic_position !== null }) }
   function stat2(v, k) { var s = el('div', 's2'); s.append(el('b', null, v), el('span', null, k)); return s }
   function toggleMore(text, onClick) { var b = el('button', 'more-btn', text); b.type = 'button'; b.onclick = onClick; return b }
   function shareBlock(sh) {
@@ -1882,27 +1896,20 @@ td.wrap { white-space: normal; min-width: 180px; }
     if (!section) return
     var token = renderToken
     section.replaceChildren()
-    header(section, [['ins', 'Chancen']], 'ins', null, null)
-    var sk = skeletonRows(3); section.append(sk)
+    section.hidden = true
     api('insights').then(function (d) {
       if (token !== renderToken) return
-      sk.remove()
-      var list = el('div', 'ins-list')
       var open = d.results.filter(function (r) { return r.state === 'open' })
+      if (!open.length) return
       var high = open.filter(function (r) { return r.severity === 'high' }).length
-      lede(section, !open.length ? 'Alles erledigt. Neue Punkte erscheinen hier automatisch.' : high ? high + (high === 1 ? ' Punkt kostet' : ' Punkte kosten') + ' gerade Geld oder Anfragen. Diese zuerst angehen.' : 'Nichts Dringendes. ' + open.length + (open.length === 1 ? ' Verbesserung wartet.' : ' Verbesserungen warten.'))
-      var pg = insightProgress(d.results); if (pg) section.append(pg)
-      var top = open.filter(function (r) { return r.severity !== 'info' }).slice(0, 4)
-      if (!top.length) top = open.slice(0, 3)
-      if (!top.length) return
-      top.forEach(function (r) { list.append(insightEl(r, function () { renderInsightsPanel(section) })) })
-      section.append(list)
-      if (open.length <= top.length) return
-      var more = el('a', 'more'); more.href = '#'; more.dataset.nav = ''; more.dataset.view = 'insights'
-      if (state.site) more.dataset.site = state.site; else more.dataset.scope = state.scope
-      more.textContent = 'Alle ' + open.length + ' offenen Chancen ansehen →'
-      section.append(more)
-    }).catch(function (e) { console.error(e); sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
+      var a = el('a', 'nudge-in'); a.href = '#'; a.dataset.nav = ''; a.dataset.view = 'insights'
+      if (state.site) a.dataset.site = state.site; else a.dataset.scope = state.scope
+      var txt = el('div', 'nt')
+      txt.append(el('b', null, high ? high + (high === 1 ? ' dringender Punkt' : ' dringende Punkte') : open.length + (open.length === 1 ? ' Verbesserung möglich' : ' Verbesserungen möglich')), el('span', null, open[0].title))
+      a.append(el('span', 'nd ' + (high ? 'high' : 'medium')), txt, el('span', 'na', 'Ansehen →'))
+      section.append(a)
+      section.hidden = false
+    }).catch(function (e) { console.error(e) })
   }
   var insFilter = 'all'
   function renderInsightsPage(view) {
@@ -1958,7 +1965,6 @@ td.wrap { white-space: normal; min-width: 180px; }
         det.append(sum, cl)
         card.append(det)
       }
-      card.append(hint('Euro-Beträge sind auf einen Monat hochgerechnet. Sie können sich überschneiden, weil ein Keyword auch auf einer der genannten Zielseiten landen kann.'))
     }).catch(function (e) { console.error(e); sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
   }
   function loadInsightCount() {
@@ -1981,7 +1987,8 @@ td.wrap { white-space: normal; min-width: 180px; }
     api('funnel').then(function (d) {
       if (token !== renderToken) return
       sk.remove()
-      if (!d.steps.length || !d.steps[0].sessions) { section.append(el('div', 'empty', 'Noch keine Besuche in diesem Zeitraum')); return }
+      if (!d.steps.length || !d.steps[0].sessions) { section.hidden = true; return }
+      section.hidden = false
       var box = el('div', 'funnel')
       d.steps.forEach(function (st, i) {
         var row = el('div', 'fstep'), lbl = el('div', 'lbl', st.label)
@@ -1990,18 +1997,11 @@ td.wrap { white-space: normal; min-width: 180px; }
         bar.append(fill)
         var num = el('div', 'num'), b = el('b', null, nf.format(st.sessions))
         num.append(b, document.createTextNode(' · ' + pct.format(st.rate) + ' %'))
-        if (st.drop !== null && i) num.append(el('span', 'drop', '−' + pct.format(st.drop) + ' % zum Vorschritt'))
         row.append(lbl, bar, num)
         box.append(row)
         requestAnimationFrame(function () { requestAnimationFrame(function () { fill.style.transitionDelay = (i * 90) + 'ms'; fill.style.width = Math.max(st.rate, st.sessions ? 1 : 0) + '%' }) })
       })
       section.append(box)
-      var first = d.steps[0].sessions, last = d.steps[d.steps.length - 1].sessions, worst = null
-      d.steps.forEach(function (st, i) { if (i && st.drop !== null && d.steps[i - 1].sessions >= 5 && (!worst || st.drop > worst.drop)) worst = st })
-      var per100 = Math.round((last / first) * 100)
-      lede(section, (first < 20 ? 'Noch wenige Besuche, die Zahlen sind vorläufig. ' : '') + (per100 ? 'Von 100 Besuchen ' + (per100 === 1 ? 'endet 1' : 'enden ' + per100) + ' mit einer Anfrage.' : 'Bisher hat kein Besuch zu einer Anfrage geführt.') +
-        (worst && worst.drop >= 30 ? ' Die meisten steigen vor „' + worst.label + '“ aus.' : ''))
-      section.append(hint(state.site ? 'So viele Besuche haben jeden Schritt erreicht. Ein Abschnitt zählt, sobald er auf dem Bildschirm zu sehen war.' : 'Alle Websites zusammen. Wer eine einzelne Website öffnet, sieht deren eigene Schritte.'))
     }).catch(function (e) { console.error(e); sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
   }
 
@@ -2030,12 +2030,10 @@ td.wrap { white-space: normal; min-width: 180px; }
     api('leads').then(function (d) {
       if (token !== renderToken) return
       sk.remove()
-      if (!d.results.length) { section.append(el('div', 'empty', 'Noch keine Anfragen in diesem Zeitraum')); return }
+      if (!d.results.length) { section.hidden = true; return }
+      section.hidden = false
       var chips = el('div', 'chips')
       Object.keys(d.by_type).forEach(function (k) { var c = el('span', null, LEAD_TITLE[k] || k); c.append(el('b', null, d.by_type[k])); chips.append(c) })
-      var nLeads = Object.keys(d.by_type).reduce(function (a, k) { return a + d.by_type[k] }, 0)
-      var topType = Object.keys(d.by_type).sort(function (a, b) { return d.by_type[b] - d.by_type[a] })[0]
-      lede(section, nf.format(nLeads) + (nLeads === 1 ? ' Kontakt' : ' Kontakte') + ' im Zeitraum' + (topType ? ', am häufigsten ' + (LEAD_TITLE[topType] || topType) + ' (' + d.by_type[topType] + ').' : '.'))
       var split = el('div', 'split'), left = el('div'), right = el('div')
       var feed = el('div', 'feed')
       d.results.slice(0, section.dataset.expanded ? 60 : 8).forEach(function (r) {
@@ -2060,9 +2058,9 @@ td.wrap { white-space: normal; min-width: 180px; }
         feed.append(row)
       })
       left.append(chips, feed)
+      if (!d.choices.length) { section.append(left); return }
       right.append(el('div', 'sub-h', 'Was Anfragende auswählen'))
-      if (!d.choices.length) right.append(hint('Hier erscheint, was Anfragende im Formular auswählen (z. B. Problem oder Material). Namen, Telefonnummern und E-Mails werden nie gespeichert.'))
-      else {
+      {
         var list = el('div', 'list'), max = d.choices[0].leads
         d.choices.slice(0, 12).forEach(function (c) { list.append(barRow(c.answer + '  ·  ' + c.question, null, (c.leads / max) * 100, 'var(--bar-goals)', [[nf.format(c.leads)]], null)) })
         right.append(list)
@@ -2083,10 +2081,8 @@ td.wrap { white-space: normal; min-width: 180px; }
     api('forms').then(function (d) {
       if (token !== renderToken) return
       sk.remove()
-      if (!d.results.length) { section.append(el('div', 'empty', 'Noch keine Formular-Interaktionen')); return }
-      var fStarts = d.results.reduce(function (a, f) { return a + (f.starts || f.application_starts || 0) }, 0)
-      var fSent = d.results.reduce(function (a, f) { return a + (f.leads || f.applications || 0) }, 0)
-      lede(section, fStarts ? nf.format(fSent) + ' von ' + nf.format(fStarts) + ' begonnenen Formularen wurden abgeschickt (' + share(fSent, fStarts) + ' %).' : '')
+      if (!d.results.length) { section.hidden = true; return }
+      section.hidden = false
       d.results.slice(0, 4).forEach(function (f) {
         var isJob = f.application_starts || f.applications
         section.append(el('div', 'sub-h', (isJob && !f.starts ? 'Bewerbung · ' : 'Formular · ') + '#' + f.form))
@@ -2101,7 +2097,6 @@ td.wrap { white-space: normal; min-width: 180px; }
         section.append(list)
         growBars(list)
       })
-      section.append(hint('Bei Formularen mit mehreren Schritten zählt jeder „Weiter“-Klick einzeln. Als Anfrage zählt erst das erfolgreiche Absenden.'))
     }).catch(function (e) { console.error(e); sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
   }
   function renderContent() {
@@ -2114,9 +2109,11 @@ td.wrap { white-space: normal; min-width: 180px; }
     api('content').then(function (d) {
       if (token !== renderToken) return
       sk.remove()
+      if (!d.sections.length && !d.pages.length && !d.faq.length) { section.hidden = true; return }
+      section.hidden = false
       var cols = el('div', 'cols'), nums = el('span', 'nums'), list = el('div', 'list')
       if (tab === 'sections') {
-        if (!d.sections.length) { section.append(el('div', 'empty', 'Noch keine Daten. Hier erscheint, wie viele Besucher welchen Bereich der Seite gesehen haben, sobald die ersten Besuche da sind.')); return }
+        if (!d.sections.length) { section.append(el('div', 'empty', 'Noch keine Daten')); return }
         nums.append(el('span', 'm', 'Aktionen'), el('span', null, 'Reichweite'))
         cols.append(el('span', null, 'Abschnitt'), nums)
         d.sections.slice(0, 12).forEach(function (r) {
@@ -2124,12 +2121,12 @@ td.wrap { white-space: normal; min-width: 180px; }
           list.append(barRow('#' + r.section, null, r.reach, 'var(--bar-sites)', [[acts ? nf.format(acts) : '', true], [pct.format(r.reach) + ' %']], null))
         })
       } else if (tab === 'depth') {
-        if (!d.pages.length) { section.append(el('div', 'empty', 'Noch keine Daten. Hier erscheint, wie weit Besucher jede Seite lesen und wie lange sie bleiben.')); return }
+        if (!d.pages.length) { section.append(el('div', 'empty', 'Noch keine Daten')); return }
         nums.append(el('span', 'm', 'Zeit'), el('span', null, 'Scrolltiefe'))
         cols.append(el('span', null, 'Seite'), nums)
         d.pages.slice(0, 10).forEach(function (r) { list.append(barRow(r.page, null, r.depth, 'var(--bar-pages)', [[fmtDuration(r.time), true], [r.depth + ' %']], function () { addFilter('page', r.page) })) })
       } else {
-        if (!d.faq.length) { section.append(el('div', 'empty', 'Noch niemand hat eine Frage im FAQ aufgeklappt.')); return }
+        if (!d.faq.length) { section.append(el('div', 'empty', 'Noch keine Fragen aufgeklappt')); return }
         nums.append(el('span', 'm', 'Klicks'), el('span', null, 'Besucher'))
         cols.append(el('span', null, 'Frage'), nums)
         var max = d.faq[0].visitors
@@ -2147,7 +2144,7 @@ td.wrap { white-space: normal; min-width: 180px; }
     section.replaceChildren()
     header(section, [['g', 'Google-Unternehmensprofil']], 'g', null, null)
     var sk = skeletonRows(3); section.append(sk)
-    api('gbp').then(function (d) {
+    return api('gbp').then(function (d) {
       if (token !== renderToken) return
       sk.remove()
       if (!d.locations.length) { section.append(el('div', 'empty', 'Kein Unternehmensprofil mit dieser Website verknüpft')); return }
@@ -2178,7 +2175,6 @@ td.wrap { white-space: normal; min-width: 180px; }
           : kpi('Bewertungen', nf.format(d.locations.reduce(function (a, l) { return a + (l.reviews || 0) }, 0)), d.locations.length + ' Profile')
       )
       section.append(kpis)
-      lede(section, (t.maps + t.search) ? nf.format(t.maps + t.search) + ' Mal bei Google gezeigt. Daraus wurden ' + nf.format(t.calls) + (t.calls === 1 ? ' Anruf, ' : ' Anrufe, ') + nf.format(t.website) + ' Website-Besuche und ' + nf.format(t.directions) + ' Routenplanungen.' : '')
       if (!single) {
         section.append(richTable(['Profil', 'Maps', 'Suche', 'Anrufe', 'Website', 'Routen', 'Bewertungen'], d.locations.map(function (l) {
           var flags = !l.reporting ? [flagEl('keine Zahlen', 'warn')] : (l.reviews || 0) < 10 ? [flagEl('wenige Bewertungen', 'warn')] : []
@@ -2189,7 +2185,7 @@ td.wrap { white-space: normal; min-width: 180px; }
       if (d.keywords.length) {
         section.append(el('div', 'sub-h', 'Mit diesen Suchen wird das Profil gefunden (letzter Monat)'))
         var chips = el('div', 'chips')
-        d.keywords.slice(0, 30).forEach(function (k) {
+        d.keywords.slice(0, 8).forEach(function (k) {
           var c = el('span', null, k.keyword)
           c.append(el('b', null, k.value !== null ? nf.format(k.value) + '×' : 'unter ' + (k.threshold || 15) + '×'))
           if (!state.site && d.locations.length > 1) c.title = k.location_name
@@ -2197,7 +2193,6 @@ td.wrap { white-space: normal; min-width: 180px; }
         })
         section.append(chips)
       }
-      section.append(hint('Anrufe direkt aus dem Google-Profil sind echte Anfragen, die in keiner Website-Statistik auftauchen.'))
     }).catch(function (e) { console.error(e); sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
   }
 
@@ -2295,7 +2290,7 @@ td.wrap { white-space: normal; min-width: 180px; }
     section.replaceChildren()
     header(section, [['search', 'Google-Suchbegriffe']], 'search', null, function () { renderSearch() })
     var sk = skeletonRows(5); section.append(sk)
-    api('search').then(function (d) {
+    return api('search').then(function (d) {
       if (token !== renderToken) return
       sk.remove()
       if (!d.results.length) { section.append(el('div', 'empty', 'Noch keine Suchdaten von Google')); return }
@@ -2313,9 +2308,6 @@ td.wrap { white-space: normal; min-width: 180px; }
       cols.append(el('span', null, 'Suchbegriff'), nums)
       section.append(cols)
       var rows = d.results.slice(0, section.dataset.expanded ? 100 : 10)
-      var topQ = d.results[0]
-      lede(section, 'Am häufigsten gefunden über „' + topQ.name + '“' + (topQ.position !== null ? ', dort im Schnitt auf Platz ' + Math.round(topQ.position) : '') + '.' +
-        (t.position !== null ? (t.position <= 10 ? ' Insgesamt meist auf Seite 1.' : ' Insgesamt meist erst ab Seite 2, dort klickt kaum jemand.') : ''))
       var max = Math.max.apply(null, rows.map(function (r) { return r.impressions }))
       var list = el('div', 'list')
       rows.forEach(function (r) {
@@ -2353,44 +2345,27 @@ td.wrap { white-space: normal; min-width: 180px; }
     root.append(path)
     return { root: root, path: path }
   }
-  // Three to four plain sentences: how many came, what came of it, where it happened.
-  function briefList(rows, sum) {
-    var ul = el('ul', 'blist')
-    var item = function (kind, text) { var li = el('li', 'b-' + kind); li.append(el('i'), el('span', null, text)); ul.append(li) }
-    var name = function (d) { return (SITE_BY_DOMAIN[d] || {}).name || d }
-    var ch = sum.previous_visitors ? Math.round(((sum.visitors - sum.previous_visitors) / sum.previous_visitors) * 100) : null
-    item(ch === null ? 'n' : ch >= 0 ? 'up' : 'down', nf.format(sum.visitors) + ' Besucher auf allen Websites' + (ch === null ? '.' : ch === 0 ? ', genauso viele wie davor.' : ', ' + Math.abs(ch) + ' % ' + (ch > 0 ? 'mehr' : 'weniger') + ' als im Zeitraum davor.'))
-    var byLeads = rows.filter(function (x) { return x.leads }).sort(function (a, b) { return b.leads - a.leads })
-    if (sum.leads) item('up', nf.format(sum.leads) + (sum.leads === 1 ? ' Anfrage' : ' Anfragen') + ' über die Websites' + (byLeads[0] ? ', die meisten bei ' + name(byLeads[0].domain) + ' (' + byLeads[0].leads + ').' : '.'))
-    else item('n', 'Noch keine Anfrage über die Websites in diesem Zeitraum.')
-    var busiest = rows.slice().sort(function (a, b) { return b.visitors - a.visitors })[0]
-    if (busiest && busiest.visitors) item('n', 'Am meisten los war bei ' + name(busiest.domain) + ' (' + nf.format(busiest.visitors) + ' Besucher).')
-    if (sum.spend) item(sum.leads ? 'n' : 'down', money0.format(sum.spend) + ' für Google-Anzeigen ausgegeben' + (sum.leads ? '.' : ', bisher ohne Anfrage über die Website.'))
-    return ul
-  }
   function renderOverview(view) {
     var r = range(), token = renderToken
-    var totals = el('div', 'totals')
-    var tiles = [['Besucher', 'visitors'], ['Seitenaufrufe', 'pageviews'], ['Anfragen', 'leads'], ['Werbeausgaben', 'spend']].map(function (t) {
-      var c = el('div', 'card total'), n = el('div', 'n'), s = el('div', 'sk'); s.style.height = '30px'; s.style.marginTop = '6px'
-      c.append(labelWithInfo('k', t[0]), s)
-      totals.append(c)
-      return { key: t[1], card: c, n: n, sk: s }
+    // three numbers, nothing else above the fold
+    var hero = el('div', 'hero')
+    var tiles = [['Besucher', 'visitors'], ['Anfragen', 'leads'], ['Werbung', 'spend']].map(function (t) {
+      var c = el('div', 'hn'), n = el('div', 'n'), sk = el('div', 'sk'); sk.style.height = '56px'; sk.style.width = '60%'
+      c.append(labelWithInfo('k', t[0]), sk)
+      hero.append(c)
+      return { key: t[1], card: c, n: n, sk: sk }
     })
     var groups = el('div')
-    var ins = el('section', 'card panel wide'); ins.id = 'insp'; ins.style.cssText = 'min-height:0;margin:16px 0 0'
-    var alert = el('div'), brief = el('section', 'card brief')
-    var hour = Number(new Intl.DateTimeFormat('de-DE', { timeZone: 'Europe/Berlin', hour: 'numeric', hour12: false }).format(new Date()))
-    brief.append(el('h2', null, hour < 11 ? 'Guten Morgen' : hour < 18 ? 'Guten Tag' : 'Guten Abend'), el('p', 'bsub', 'Das Wichtigste auf einen Blick · ' + PERIOD_TEXT[state.period]))
-    var bsk = el('div', 'sk'); bsk.style.height = '64px'; bsk.style.marginTop = '14px'; brief.append(bsk)
-    view.append(alert, brief, totals, ins, groups)
+    var ins = el('section', 'card nudge'); ins.id = 'insp'; ins.hidden = true
+    var alert = el('div')
+    view.append(alert, hero, ins, groups)
     renderSilentSites(alert)
     renderInsightsPanel(ins)
     COMPANIES.forEach(function (c) {
       var head = el('div', 'cohead')
       head.append(companyLogo(c), el('h2', null, c.name), el('span', 'meta', c.sites.length === 1 ? '1 Website' : c.sites.length + ' Websites'))
       var link = el('a'); link.href = '?scope=company:' + c.id; link.dataset.nav = ''; link.dataset.scope = 'company:' + c.id
-      link.append(document.createTextNode('Gesamtdashboard '), el('span', null, '→'))
+      link.append(document.createTextNode('Alle Zahlen '), el('span', null, '→'))
       head.append(link)
       var grid = el('div', 'sites')
       c.sites.forEach(function () { var sk = el('div', 'card sitecard'), x = el('div', 'sk'); x.style.height = '150px'; sk.append(x); grid.append(sk) })
@@ -2404,14 +2379,10 @@ td.wrap { white-space: normal; min-width: 180px; }
         by[x.domain] = x
         sum.visitors += x.visitors; sum.pageviews += x.pageviews; sum.leads += x.leads; sum.spend += x.spend; sum.previous_visitors += x.previous_visitors
       })
-      bsk.replaceWith(briefList(rows, sum))
       tiles.forEach(function (t) {
         t.sk.replaceWith(t.n)
         countUp(t.n, sum[t.key], t.key === 'spend' ? function (x) { return money0.format(x) } : function (x) { return nf.format(Math.round(x)) })
-        var d = el('div', 'd')
-        if (t.key === 'visitors' && sum.previous_visitors) { d.append(changeEl(sum.visitors, sum.previous_visitors), document.createTextNode(' · ')) }
-        d.append(document.createTextNode(PERIOD_TEXT[state.period] + (t.key === 'leads' ? ' · ' + LEAD_HINT : t.key === 'spend' ? ' · Google Ads' : '')))
-        t.card.append(d)
+        if (t.key === 'visitors' && sum.previous_visitors) { var d = el('div', 'd'); d.append(changeEl(sum.visitors, sum.previous_visitors)); t.card.append(d) }
       })
       COMPANIES.forEach(function (c) {
         var grid = c._grid
@@ -2422,21 +2393,20 @@ td.wrap { white-space: normal; min-width: 180px; }
           a.href = '?site=' + encodeURIComponent(site.domain); a.dataset.nav = ''; a.dataset.site = site.domain
           if (!REDUCED) a.style.animation = 'rise .45s ' + (0.05 * i) + 's cubic-bezier(.2,.8,.2,1) both'
           var top = el('div', 'top2'), nm = el('div', 'nm')
-          nm.append(el('b', null, site.name), el('small', null, site.domain))
+          nm.append(el('b', null, site.name))
           top.append(siteLogo(site.domain), nm)
-          if (s.live) { var bd = el('span', 'badge'); bd.append(el('i'), document.createTextNode(nf.format(s.live) + ' aktiv')); top.append(bd) }
+          if (s.leads) top.append(el('span', 'lp', nf.format(s.leads) + (s.leads === 1 ? ' Anfrage' : ' Anfragen')))
+          else if (s.live) { var bd = el('span', 'badge'); bd.append(el('i'), document.createTextNode(nf.format(s.live) + ' aktiv')); top.append(bd) }
           var sp = sparkline(s.daily, r[0], r[1]), spark = el('div', 'spark')
           spark.append(sp.root)
           var big = el('div', 'big'), bn = el('b')
           big.append(bn, el('span', null, 'Besucher'))
           if (s.previous_visitors) big.append(changeEl(s.visitors, s.previous_visitors))
-          var meta = el('div', 'meta')
-          var m = function (label, value) { var x = el('span'); x.append(el('b', null, value), document.createTextNode(' ' + label)); meta.append(x) }
-          m('Aufrufe', nf.format(s.pageviews)); m('Anfragen', nf.format(s.leads)); if (s.spend) m('Ads', money0.format(s.spend))
-          a.append(top, spark, big, meta)
+          if (s.visitors) a.append(top, big, spark)
+          else { a.classList.add('quiet'); a.append(top, big) }
           grid.append(a)
           countUp(bn, s.visitors, function (x) { return nf.format(Math.round(x)) })
-          requestAnimationFrame(function () { drawLine(sp.path) })
+          if (s.visitors) requestAnimationFrame(function () { drawLine(sp.path) })
         })
       })
     }).catch(function (e) { console.error(e); groups.replaceChildren(el('div', 'empty', 'Fehler beim Laden')) })
