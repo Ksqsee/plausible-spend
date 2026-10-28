@@ -9,6 +9,11 @@ type = "Text"
 globs = ["**/*.html", "**/*.client.js", "**/*.svg"]
 fallthrough = false
 
+[[rules]]
+type = "Data"
+globs = ["**/*.woff2"]
+fallthrough = false
+
 [[d1_databases]]
 binding = "DB"
 database_name = "gw-analytics"
@@ -21,3 +26,15 @@ crons = ["17 */6 * * *"]
 
 [observability]
 enabled = true
+
+# Event intake: at most 120 events per minute per visitor IP and site; more is dropped quietly.
+[[ratelimits]]
+name = "EVENTS_RATE"
+namespace_id = "1001"
+simple = { limit = 120, period = 60 }
+
+# second net against floods from many IPs; far above real traffic of these sites
+[[ratelimits]]
+name = "EVENTS_SITE_RATE"
+namespace_id = "1002"
+simple = { limit = 600, period = 60 }

@@ -5,10 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Gruppenwerk Analytics</title>
 <link rel="icon" type="image/svg+xml" href="/logo.svg?v=3">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preload" href="/f/inter.woff2" as="font" type="font/woff2" crossorigin>
 <style>
+@font-face { font-family: "Inter"; font-style: normal; font-weight: 400 700; font-display: swap; src: url(/f/inter.woff2) format("woff2"); }
+@font-face { font-family: "Inter Tight"; font-style: normal; font-weight: 500 700; font-display: swap; src: url(/f/inter-tight.woff2) format("woff2"); }
+@font-face { font-family: "DM Mono"; font-style: normal; font-weight: 400; font-display: swap; src: url(/f/dm-mono-400.woff2) format("woff2"); }
+@font-face { font-family: "DM Mono"; font-style: normal; font-weight: 500; font-display: swap; src: url(/f/dm-mono-500.woff2) format("woff2"); }
 :root {
   color-scheme: light;
   --bg: #f5f5f7; --side: rgba(245,245,247,.78); --card: #ffffff; --raise: #ffffff;
@@ -118,6 +120,37 @@ a { color: inherit; }
 .sfoot button { align-self: flex-start; background: var(--card); border: 0; box-shadow: var(--card-shadow); border-radius: 999px; padding: 6px 14px; cursor: pointer; font-size: 12px; font-weight: 500; transition: transform .2s var(--ease), box-shadow .2s; }
 .sfoot button:hover { box-shadow: var(--card-hover); }
 .sfoot button:active { transform: scale(.97); }
+.sfoot .me { display: flex; align-items: center; gap: 4px; margin: 6px -10px 0; border-top: 1px solid var(--line-soft); padding-top: 10px; }
+.sfoot .me .nav { flex: 1; }
+.sfoot #logout { align-self: center; width: 34px; height: 34px; padding: 0; display: inline-flex; align-items: center; justify-content: center; box-shadow: none; background: none; color: var(--text-3); }
+.sfoot #logout:hover { background: var(--hover); color: var(--text); box-shadow: none; }
+.sfoot #logout svg { width: 17px; height: 17px; }
+.role-company .adm, .role-company #navAll { display: none !important; }
+.acc { padding: 26px 28px; margin-bottom: 24px; max-width: 760px; }
+.acc h2 { margin: 0; font: 600 20px/1.2 var(--display); letter-spacing: -.02em; }
+.accsub { margin: 6px 0 0; color: var(--text-3); font-size: 14px; }
+.accf { display: flex; flex-direction: column; gap: 12px; margin-top: 18px; max-width: 380px; }
+.fld { display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 500; color: var(--text-2); }
+.fld input { font: inherit; font-size: 15px; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 11px; padding: 10px 12px; }
+.fld input:focus { outline: none; border-color: var(--info); box-shadow: 0 0 0 4px color-mix(in srgb, var(--info) 18%, transparent); }
+.btn { align-self: flex-start; border: 0; border-radius: 999px; padding: 10px 18px; font-size: 14px; font-weight: 600; background: var(--ink); color: var(--bg); cursor: pointer; }
+.btn:disabled { opacity: .5; cursor: default; }
+.btn.sm { padding: 7px 14px; font-size: 13px; }
+.btn.ghost { background: var(--sel); color: var(--text); }
+.msg { margin: 0; font-size: 14px; }
+.msg.good { color: color-mix(in srgb, var(--up) 85%, var(--text)); }
+.msg.bad { color: var(--down); }
+.acclist { display: flex; flex-direction: column; margin-top: 16px; }
+.accrow { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px 16px; align-items: center; padding: 14px 0; border-top: 1px solid var(--line-soft); }
+.accrow .who { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.accrow .who img, .accrow .who .fallback { width: 26px; height: 26px; border-radius: 7px; }
+.accrow .who b { display: block; font-weight: 600; }
+.accrow .who small { display: block; color: var(--text-3); font-size: 13px; }
+.accrow .acts { display: flex; gap: 8px; }
+.accrow .once { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 14px; }
+.accrow .once:empty { display: none; }
+.accrow .once code { font: 600 15px var(--mono); padding: 4px 10px; border-radius: 8px; background: var(--sel); user-select: all; }
+.accrow .once small { width: 100%; color: var(--text-3); }
 .scrim { display: none; }
 
 /* ---------- top bar ---------- */
@@ -620,7 +653,7 @@ td.wrap { white-space: normal; min-width: 180px; }
       <svg class="i" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
       <span class="lbl">Übersicht</span>
     </a>
-    <a class="nav" href="?scope=all" data-nav data-key="scope:all">
+    <a class="nav" href="?scope=all" data-nav data-key="scope:all" id="navAll">
       <svg class="i" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg>
       <span class="lbl">Alle Unternehmen</span>
     </a>
@@ -631,8 +664,15 @@ td.wrap { white-space: normal; min-width: 180px; }
     <div class="stitle">Unternehmen</div>
     <div id="companies"></div>
     <div class="sfoot">
-      <span id="synced"></span>
-      <button id="syncnow" type="button">Werbe- &amp; Suchdaten abrufen</button>
+      <span id="synced" class="adm"></span>
+      <button id="syncnow" class="adm" type="button">Werbe- &amp; Suchdaten abrufen</button>
+      <div class="me">
+        <a class="nav" href="?view=account" data-nav data-key="view:account">
+          <svg class="i" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+          <span class="lbl" id="meName">Konto</span>
+        </a>
+        <button id="logout" type="button" title="Abmelden" aria-label="Abmelden"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg></button>
+      </div>
     </div>
   </aside>
   <div class="scrim" id="scrim"></div>
@@ -769,7 +809,8 @@ td.wrap { white-space: normal; min-width: 180px; }
   var regionNames = (function () { try { return new Intl.DisplayNames(['de'], { type: 'region' }) } catch (e) { return null } })()
 
   // ---------- state ----------
-  var SITES = [], COMPANIES = [], SITE_BY_DOMAIN = {}
+  var SITES = [], COMPANIES = [], SITE_BY_DOMAIN = {}, ME = { role: 'company' }
+  function isAdmin() { return ME.role === 'admin' }
   var state = { view: 'overview', scope: null, site: null, period: '30d', from: null, to: null, filters: [], metric: 'visitors', tabs: {}, totalVisitors: 0 }
   var renderToken = 0
   var timers = []
@@ -879,10 +920,10 @@ td.wrap { white-space: normal; min-width: 180px; }
     if (dim === 'source') {
       if (value === 'Direct / None') return html(ICON_LINK)
       if (BRAND_ICONS[value]) return brandIcon(BRAND_ICONS[value])
-      var d = SOURCE_DOMAINS[value] || (value.indexOf('.') > 0 ? value : null)
+      // only known names get a fetched icon; referrer domains come from outside and are not looked up
+      var d = SOURCE_DOMAINS[value]
       return d ? favicon(d) : html(ICON_LINK)
     }
-    if (dim === 'utm_source' && value.indexOf('.') > 0) return favicon(value)
     if ((dim === 'browser' || dim === 'os') && BRAND_ICONS[value]) return brandIcon(BRAND_ICONS[value])
     if (dim === 'device' && DEVICE_ICONS[value]) return html(DEVICE_ICONS[value])
     if (dim === 'country') return flag(value)
@@ -962,7 +1003,7 @@ td.wrap { white-space: normal; min-width: 180px; }
     var scope = p.get('scope')
     state.scope = !state.site && scope && (scope === 'all' || COMPANIES.some(function (c) { return 'company:' + c.id === scope })) ? scope : null
     var v = p.get('view')
-    state.view = v === 'insights' || v === 'tracking' ? v : state.site || state.scope ? 'dash' : 'overview'
+    state.view = v === 'insights' || v === 'account' || (v === 'tracking' && isAdmin()) ? v : state.site || state.scope ? 'dash' : 'overview'
     if (state.view === 'insights' && !state.site && !state.scope) state.scope = 'all'
     state.period = p.get('period') || '30d'
     state.from = p.get('from')
@@ -987,7 +1028,7 @@ td.wrap { white-space: normal; min-width: 180px; }
     render()
   }
   function saveUrl() {
-    var view = state.view === 'insights' || state.view === 'tracking' ? state.view : null
+    var view = state.view === 'insights' || state.view === 'tracking' || state.view === 'account' ? state.view : null
     history.replaceState(null, '', urlFor({ view: view, site: state.site, scope: view === 'insights' && state.scope === 'all' ? null : state.scope, filters: state.filters }))
   }
 
@@ -997,7 +1038,7 @@ td.wrap { white-space: normal; min-width: 180px; }
     e.preventDefault()
     closeMenu()
     // links are rebuilt with the current period when clicked
-    var view = a.dataset.view || (/view=(insights|tracking)/.exec(a.getAttribute('href')) || [])[1]
+    var view = a.dataset.view || (/view=(insights|tracking|account)/.exec(a.getAttribute('href')) || [])[1]
     var href = a.dataset.site ? urlFor({ site: a.dataset.site, view: a.dataset.view }) : a.dataset.scope ? urlFor({ scope: a.dataset.scope, view: a.dataset.view }) : view ? urlFor({ view: view }) : a.getAttribute('href') === '/' ? urlFor({}) : a.getAttribute('href')
     navigate(href)
   })
@@ -1079,6 +1120,10 @@ td.wrap { white-space: normal; min-width: 180px; }
       title = 'Snippets'
       img = brandLogo()
       sub.append(document.createTextNode('Snippets, Status und was je Website gemessen wird'))
+    } else if (state.view === 'account') {
+      title = 'Konto'
+      img = brandLogo()
+      sub.append(document.createTextNode('Angemeldet als ' + ME.username + (isAdmin() ? ' · Admin' : '')))
     } else if (state.view === 'overview') {
       title = 'Übersicht'
       img = brandLogo()
@@ -1172,6 +1217,7 @@ td.wrap { white-space: normal; min-width: 180px; }
     if (state.view === 'overview') renderOverview(view)
     else if (state.view === 'insights') renderInsightsPage(view)
     else if (state.view === 'tracking') renderTracking(view)
+    else if (state.view === 'account') renderAccount(view)
     else renderDash(view)
     window.scrollTo(0, 0)
   }
@@ -1930,7 +1976,7 @@ td.wrap { white-space: normal; min-width: 180px; }
     var totals = el('div', 'totals')
     var card = el('section', 'card panel wide'); card.style.minHeight = '0'; card.style.marginTop = '16px'
     var sk = skeletonRows(6); card.append(sk)
-    view.append(seg, totals, card)
+    view.append(isAdmin() ? seg : el('div'), totals, card)
     api('insights').then(function (d) {
       if (token !== renderToken) return
       sk.remove()
@@ -2372,7 +2418,7 @@ td.wrap { white-space: normal; min-width: 180px; }
     var ins = el('section', 'card nudge'); ins.id = 'insp'; ins.hidden = true
     var alert = el('div')
     view.append(alert, hero, ins, groups)
-    renderSilentSites(alert)
+    if (isAdmin()) renderSilentSites(alert)
     renderInsightsPanel(ins)
     COMPANIES.forEach(function (c) {
       var head = el('div', 'cohead')
@@ -2426,6 +2472,84 @@ td.wrap { white-space: normal; min-width: 180px; }
     timers.push(setInterval(function () { if (state.view === 'overview') render() }, 120000))
   }
 
+  // ---------- account: own password, and for the admin the company logins ----------
+  function postJson(path, body) {
+    return fetch(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+      .then(function (r) { return r.json().then(function (d) { if (!r.ok) throw new Error(d.error || 'Fehler'); return d }) })
+  }
+  function field(label, type, name, auto) {
+    var l = el('label', 'fld'), i = el('input'); i.type = type; i.name = name; i.autocomplete = auto; i.required = true
+    l.append(el('span', null, label), i)
+    return l
+  }
+  function renderAccount(view) {
+    $('pick').style.display = 'none'
+    var pw = el('section', 'card acc')
+    pw.append(el('h2', null, 'Passwort ändern'))
+    var f = el('form', 'accf'), msg = el('p', 'msg')
+    f.append(field('Aktuelles Passwort', 'password', 'current', 'current-password'), field('Neues Passwort (mind. 12 Zeichen)', 'password', 'next', 'new-password'), field('Neues Passwort wiederholen', 'password', 'again', 'new-password'))
+    var b = el('button', 'btn', 'Passwort speichern'); b.type = 'submit'
+    f.append(b, msg)
+    f.onsubmit = function (e) {
+      e.preventDefault()
+      msg.className = 'msg'
+      if (f.next.value !== f.again.value) { msg.textContent = 'Die beiden neuen Passwörter sind nicht gleich.'; msg.classList.add('bad'); return }
+      b.disabled = true
+      postJson('/api/me/password', { current: f.current.value, next: f.next.value }).then(function () {
+        msg.textContent = 'Gespeichert. Andere Geräte sind jetzt abgemeldet, dieses gleich auch.'; msg.classList.add('good')
+        setTimeout(function () { location.href = '/login' }, 1800)
+      }).catch(function (err) { msg.textContent = err.message; msg.classList.add('bad') }).finally(function () { b.disabled = false })
+    }
+    pw.append(f)
+    view.append(pw)
+    if (!isAdmin()) return
+
+    var box = el('section', 'card acc')
+    box.append(el('h2', null, 'Zugänge der Unternehmen'), el('p', 'accsub', 'Jedes Unternehmen sieht nur seine eigenen Websites. Ein neues Passwort wird nur einmal angezeigt.'))
+    var list = el('div', 'acclist')
+    box.append(list)
+    view.append(box)
+    var load = function () {
+      fetch('/api/users').then(function (r) { return r.json() }).then(function (rows) {
+        list.replaceChildren()
+        rows.forEach(function (u) {
+          var c = COMPANIES.filter(function (x) { return x.id === u.company })[0]
+          var row = el('div', 'accrow'), who = el('div', 'who')
+          if (c) who.append(companyLogo(c))
+          var nm = el('div'), status = el('small', null, !u.username ? 'Noch kein Zugang' : u.disabled ? 'Gesperrt · Benutzername ' + u.username : 'Benutzername ' + u.username + (u.last_login ? ' · zuletzt angemeldet ' + new Date(u.last_login).toLocaleDateString('de-DE') : ' · noch nie angemeldet'))
+          nm.append(el('b', null, u.name), status)
+          who.append(nm)
+          var acts = el('div', 'acts'), out = el('div', 'once')
+          var gen = el('button', 'btn sm', !u.username ? 'Zugang erstellen' : 'Neues Passwort'); gen.type = 'button'
+          gen.onclick = function () {
+            if (u.username && !u.disabled && !confirm('Neues Passwort für ' + u.name + '? Das alte funktioniert dann nicht mehr.')) return
+            gen.disabled = true
+            postJson('/api/users', { company: u.company }).then(function (d) {
+              out.replaceChildren()
+              var code = el('code', null, d.password), copyB = el('button', 'btn sm ghost', 'Kopieren'); copyB.type = 'button'
+              copyB.onclick = function () { navigator.clipboard.writeText('Benutzername: ' + d.username + '\nPasswort: ' + d.password).then(function () { copyB.textContent = 'Kopiert' }) }
+              out.append(el('span', null, 'Benutzername ' + d.username + ' · Passwort '), code, copyB, el('small', null, 'Nur jetzt sichtbar. Bitte direkt weitergeben.'))
+              gen.textContent = 'Neues Passwort'
+              status.textContent = 'Benutzername ' + d.username + ' · noch nie angemeldet'
+            }).catch(function (err) { out.textContent = err.message }).finally(function () { gen.disabled = false })
+          }
+          acts.append(gen)
+          if (u.username && !u.disabled) {
+            var dis = el('button', 'btn sm ghost', 'Sperren'); dis.type = 'button'
+            dis.onclick = function () {
+              if (!confirm(u.name + ' sperren? Der Zugang wird sofort abgemeldet.')) return
+              postJson('/api/users', { company: u.company, action: 'disable' }).then(load)
+            }
+            acts.append(dis)
+          }
+          row.append(who, acts, out)
+          list.append(row)
+        })
+      })
+    }
+    load()
+  }
+
   // ---------- sync ----------
   function loadSyncInfo() {
     fetch('/api/sync-log').then(function (r) { return r.json() }).then(function (rows) {
@@ -2471,7 +2595,17 @@ td.wrap { white-space: normal; min-width: 180px; }
   window.addEventListener('scroll', function () { topBar.classList.toggle('stuck', window.scrollY > 8) }, { passive: true })
 
   // ---------- init ----------
-  fetch('/api/sites').then(function (r) { return r.json() }).then(function (sites) {
+  var nativeFetch = window.fetch.bind(window)
+  window.fetch = function () {
+    return nativeFetch.apply(null, arguments).then(function (r) { if (r.status === 401) location.href = '/login'; return r })
+  }
+  $('logout').onclick = function () { nativeFetch('/logout', { method: 'POST' }).finally(function () { location.href = '/login' }) }
+  fetch('/api/me').then(function (r) { return r.json() }).then(function (me) {
+    ME = me
+    document.documentElement.classList.toggle('role-company', !isAdmin())
+    $('meName').textContent = isAdmin() ? 'Konto · Admin' : 'Konto'
+    return fetch('/api/sites')
+  }).then(function (r) { return r.json() }).then(function (sites) {
     SITES = sites
     var byCompany = {}
     sites.forEach(function (s) {
@@ -2486,7 +2620,7 @@ td.wrap { white-space: normal; min-width: 180px; }
     buildSidebar()
     readUrl()
     render()
-    loadSyncInfo()
+    if (isAdmin()) loadSyncInfo()
     loadInsightCount()
   })
 })()

@@ -119,7 +119,7 @@ async function sessionFacts(db, q) {
     }
     const props = parse(r.props) || {}
     if (r.name === 'pageview') s.pages.add(r.page)
-    if (r.name === 'Engagement') for (const id of props.sec || []) s.sections.add(id)
+    if (r.name === 'Engagement') for (const id of Array.isArray(props.sec) ? props.sec : []) s.sections.add(id)
     if (props.section) s.sections.add(props.section)
     if (r.name === 'Form start' && r.label) s.sections.add(r.label)
     if (r.name === 'Form step') s.steps.add(r.label)
@@ -249,7 +249,7 @@ export async function content(db, q) {
     pg.depth += Number(p.d) || 0
     pg.time += Number(p.t) || 0
     pages.set(r.page, pg)
-    for (const id of p.sec || []) {
+    for (const id of Array.isArray(p.sec) ? p.sec : []) {
       if (!sectionSessions.has(id)) sectionSessions.set(id, new Set())
       sectionSessions.get(id).add(r.session_id)
     }
@@ -527,7 +527,7 @@ function scaleToMonth(value, q) {
   return round((value / days) * 30, 0)
 }
 
-export async function insights(db, q) {
+export async function insights(db, q, owner = 'admin') {
   const sites = await siteRows(db, q.sites)
   const names = new Map(sites.map((s) => [s.domain, s.name]))
   const scope = `${inList('site', q.sites)} AND date >= ? AND date <= ?`
@@ -953,7 +953,7 @@ export async function insights(db, q) {
 
   const order = { high: 0, medium: 1, info: 2 }
   out.sort((a, b) => order[a.severity] - order[b.severity] || (b.value || 0) - (a.value || 0))
-  await attachStates(db, out)
+  await attachStates(db, out, owner)
   return { results: out, sites: Object.fromEntries(names) }
 }
 
@@ -964,11 +964,13 @@ export function insightKey(r) {
   return [r.area, r.site || '', r.title.replace(/[\d.,€%]+/g, '#')].join('|').slice(0, 300)
 }
 
-async function attachStates(db, items) {
+// Each account keeps its own checklist: the stored key is prefixed with the owner.
+async function attachStates(db, items, owner) {
   for (const r of items) r.key = insightKey(r)
   if (!items.length) return
   // D1 allows at most 100 bound values per statement
-  const keys = [...new Set(items.map((r) => r.key))]
+  const stored = (k) => owner + ':' + k
+  const keys = [...new Set(items.map((r) => stored(r.key)))]
   const states = new Map()
   for (let i = 0; i < keys.length; i += 90) {
     const chunk = keys.slice(i, i + 90)
@@ -976,7 +978,7 @@ async function attachStates(db, items) {
     for (const x of results) states.set(x.key, x)
   }
   for (const r of items) {
-    const st = states.get(r.key)
+    const st = states.get(stored(r.key))
     r.state = 'open'
     if (!st) continue
     if (st.state === 'done' && Date.now() - st.at > DONE_FOR_MS) r.reopened = true
@@ -987,8 +989,9 @@ async function attachStates(db, items) {
   }
 }
 
-export async function setInsightState(db, key, state) {
-  if (typeof key !== 'string' || !key || key.length > 300) throw new BadRequest('key required')
+export async function setInsightState(db, rawKey, state, owner) {
+  if (typeof rawKey !== 'string' || !rawKey || rawKey.length > 300) throw new BadRequest('key required')
+  const key = owner + ':' + rawKey
   if (state === 'open') await db.prepare('DELETE FROM insight_state WHERE key = ?').bind(key).run()
   else if (state === 'done' || state === 'hidden') {
     await db

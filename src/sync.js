@@ -327,7 +327,8 @@ async function run(env, log, source, site, fn) {
   try {
     entry = { source, site, rows: await fn() }
   } catch (e) {
-    entry = { source, site, error: String(e.message || e).slice(0, 500) }
+    // never keep a key that an upstream error might echo back
+    entry = { source, site, error: String(e.message || e).replace(/(api_key=|key["':= ]+)[A-Za-z0-9_-]+/gi, '$1…').slice(0, 500) }
   }
   log.push(entry)
   await logSync(env, entry)

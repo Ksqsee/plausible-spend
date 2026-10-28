@@ -31,6 +31,10 @@ const SOURCES = [
   [/(^|\.)(wa\.me|whatsapp\.com)$/, 'WhatsApp']
 ]
 
+const MAX_BODY = 8192
+const MAX_EVENTS_PER_VISITOR_MINUTE = 120
+const MAX_EVENTS_PER_SITE_MINUTE = 1000
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
@@ -138,12 +142,17 @@ export async function handleEvent(request, env) {
   const ua = request.headers.get('User-Agent') || ''
   if (!ua || BOT_RE.test(ua)) return accepted()
 
+  // events are tiny; anything big is not from our tracker
+  if (Number(request.headers.get('Content-Length') || 0) > MAX_BODY) return new Response('Too large', { status: 413, headers: corsHeaders })
   let payload
   try {
-    payload = JSON.parse(await request.text())
+    const text = await request.text()
+    if (text.length > MAX_BODY) return new Response('Too large', { status: 413, headers: corsHeaders })
+    payload = JSON.parse(text)
   } catch {
     return new Response('Bad request', { status: 400, headers: corsHeaders })
   }
+  if (!payload || typeof payload !== 'object') return new Response('Bad request', { status: 400, headers: corsHeaders })
 
   let url
   try {
@@ -158,6 +167,25 @@ export async function handleEvent(request, env) {
   const hostname = url.hostname.toLowerCase()
   // Unknown sites and foreign hostnames (e.g. a site builder's editor preview) are dropped.
   if (!allowedHosts || !allowedHosts.includes(hostname)) return accepted()
+  // a browser always names the page that sent the beacon; it has to be one of the site's own hosts
+  const origin = request.headers.get('Origin')
+  if (origin && origin !== 'null') {
+    let originHost = ''
+    try {
+      originHost = new URL(origin).hostname.toLowerCase()
+    } catch {}
+    if (!allowedHosts.includes(originHost)) return accepted()
+  }
+  const ipForLimit = request.headers.get('CF-Connecting-IP') || ''
+  // a real visitor sends a handful of events a minute; floods are dropped quietly
+  if (env.EVENTS_RATE) {
+    const { success } = await env.EVENTS_RATE.limit({ key: site + '|' + ipForLimit })
+    if (!success) return accepted()
+  }
+  if (env.EVENTS_SITE_RATE) {
+    const { success } = await env.EVENTS_SITE_RATE.limit({ key: site })
+    if (!success) return accepted()
+  }
 
   const name = clean(payload.n, 80) || 'pageview'
   const now = Date.now()
@@ -165,10 +193,18 @@ export async function handleEvent(request, env) {
   const ip = request.headers.get('CF-Connecting-IP') || ''
   const salt = await dailySalt(env.DB, date)
   const visitorId = (await sha256Hex(`${salt}|${site}|${ip}|${ua}`)).slice(0, 20)
+  // the rate limiter above is only approximate (it counts per server), so the database has the final word
+  const recent = await env.DB.prepare(
+    'SELECT COUNT(*) AS site_n, SUM(visitor_id = ?) AS visitor_n FROM events WHERE site = ? AND ts > ?'
+  )
+    .bind(visitorId, site, now - 60000)
+    .first()
+  if (recent && (recent.visitor_n >= MAX_EVENTS_PER_VISITOR_MINUTE || recent.site_n >= MAX_EVENTS_PER_SITE_MINUTE)) return accepted()
 
   const page = (url.pathname || '/').slice(0, 300)
   const params = url.searchParams
-  const referrer = clean(payload.r, 500)
+  // only where someone came from, never the full address (query strings can carry tokens or personal data)
+  const referrer = shortReferrer(payload.r)
   const refSource = sourceFromReferrer(referrer, hostname)
   const utm = {
     source: clean(params.get('utm_source'), 100),
@@ -303,6 +339,17 @@ export async function handleEvent(request, env) {
   return accepted()
 }
 
+function shortReferrer(raw) {
+  const r = clean(raw, 500)
+  if (!r) return null
+  try {
+    const u = new URL(r)
+    return (u.origin + u.pathname).slice(0, 300)
+  } catch {
+    return null
+  }
+}
+
 function capitalizeSource(source) {
   const s = source.toLowerCase()
   const known = { google: 'Google', facebook: 'Facebook', instagram: 'Instagram', linkedin: 'LinkedIn', bing: 'Bing', newsletter: 'Newsletter' }
@@ -318,9 +365,13 @@ export function sanitizeProps(raw) {
   for (const [k, v] of Object.entries(raw)) {
     if (keys >= 12) break
     const key = String(k).slice(0, 40)
-    if (typeof v === 'string') out[key] = v.slice(0, 200)
+    // "sec" (sections seen) is the only list; the dashboard iterates it, so it must be one
+    if (key === 'sec') {
+      if (!Array.isArray(v)) continue
+      out.sec = v.filter((x) => typeof x === 'string').slice(0, 40).map((x) => x.slice(0, 60))
+    } else if (typeof v === 'string') out[key] = v.slice(0, 200)
     else if (typeof v === 'number' && Number.isFinite(v)) out[key] = v
-    else if (Array.isArray(v)) out[key] = v.filter((x) => typeof x === 'string').slice(0, 40).map((x) => x.slice(0, 60))
+    else if (Array.isArray(v)) continue
     else if (v && typeof v === 'object') {
       const flat = {}
       for (const [ck, cv] of Object.entries(v).slice(0, 8)) {

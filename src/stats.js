@@ -25,21 +25,32 @@ const DIMENSIONS = {
 }
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/
+export const MAX_RANGE_DAYS = 400
 
 export class BadRequest extends Error {}
+export class Forbidden extends Error {}
 
 // Resolves ?scope=all, ?scope=company:<id> or ?site=<domain> to a list of site domains.
-export async function resolveSites(db, url) {
+// A company account only ever gets its own sites: "all" means all of its own, anything else is refused.
+export async function resolveSites(db, url, user) {
   const p = url.searchParams
   const scope = p.get('scope')
   const site = p.get('site')
+  const own = user && user.role !== 'admin' ? user.company : null
+  if (user && user.role !== 'admin' && !own) throw new Forbidden('no company')
   let rows
   if (scope === 'all') {
-    rows = (await db.prepare('SELECT domain FROM sites').all()).results
+    rows = own
+      ? (await db.prepare('SELECT domain FROM sites WHERE company = ?').bind(own).all()).results
+      : (await db.prepare('SELECT domain FROM sites').all()).results
   } else if (scope && scope.startsWith('company:')) {
+    if (own && scope.slice(8) !== own) throw new Forbidden('not your company')
     rows = (await db.prepare('SELECT domain FROM sites WHERE company = ?').bind(scope.slice(8)).all()).results
   } else if (site) {
-    rows = (await db.prepare('SELECT domain FROM sites WHERE domain = ?').bind(site).all()).results
+    rows = own
+      ? (await db.prepare('SELECT domain FROM sites WHERE domain = ? AND company = ?').bind(site, own).all()).results
+      : (await db.prepare('SELECT domain FROM sites WHERE domain = ?').bind(site).all()).results
+    if (own && !rows.length) throw new Forbidden('not your site')
   } else {
     throw new BadRequest('scope or site is required')
   }
@@ -54,6 +65,8 @@ export function parseQuery(url, sites) {
   if (!DATE_RE.test(from || '') || !DATE_RE.test(to || '') || from > to) {
     throw new BadRequest('from and to (YYYY-MM-DD) are required')
   }
+  // keep every query bounded: at most a little over a year at a time
+  if ((new Date(to) - new Date(from)) / 86400000 > MAX_RANGE_DAYS) throw new BadRequest('range too long')
   let filters = []
   if (p.get('filters')) {
     try {
@@ -62,9 +75,9 @@ export function parseQuery(url, sites) {
       throw new BadRequest('filters must be JSON')
     }
   }
-  if (!Array.isArray(filters)) throw new BadRequest('filters must be a list')
+  if (!Array.isArray(filters) || filters.length > 10) throw new BadRequest('filters must be a list of at most 10')
   filters = filters.map((f) => {
-    if (!Array.isArray(f) || !DIMENSIONS[f[0]] || typeof f[1] !== 'string') throw new BadRequest('invalid filter')
+    if (!Array.isArray(f) || !Object.hasOwn(DIMENSIONS, f[0]) || typeof f[1] !== 'string' || f[1].length > 300) throw new BadRequest('invalid filter')
     return [f[0], f[1]]
   })
   return { sites, from, to, filters }
@@ -164,7 +177,7 @@ export async function breakdown(db, q, dim, limit = 50) {
     return results
   }
 
-  const column = DIMENSIONS[dim]
+  const column = Object.hasOwn(DIMENSIONS, dim) ? DIMENSIONS[dim] : null
   if (!column) throw new BadRequest('unknown dimension')
 
   if (dim === 'event' || dim === 'label') {

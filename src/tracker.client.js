@@ -182,14 +182,14 @@
         try {
           url = new URL(el.href, location.href)
         } catch (err) {}
-        if (url && FILE_RE.test(url.pathname)) return send('File download', props({ target: url.href }))
+        if (url && FILE_RE.test(url.pathname)) return send('File download', props({ target: url.origin + url.pathname }))
         if (url && /^https?:$/.test(url.protocol) && url.host !== location.host) {
           if (REVIEW_RE.test(url.href) || /bewertung|rezension|review/i.test(label)) return send('Review click', props({ target: url.host }))
           if (/google\.[a-z.]+\/maps|maps\.google|goo\.gl\/maps|maps\.app\.goo\.gl|openstreetmap\.org/i.test(url.href))
             return send('Maps click', props({ target: url.host }))
           return send('Outbound link', props({ target: url.origin + url.pathname }))
         }
-        if (custom || BUTTON_RE.test(el.className || '')) return send('Button click', props({ target: href }))
+        if (custom || BUTTON_RE.test(el.className || '')) return send('Button click', props({ target: href.split(/[?#]/)[0] }))
         return
       }
 
@@ -277,7 +277,9 @@
   )
 
   var PII_TYPE = /email|phone|tel|textarea|consent|file|upload|signature|password/i
-  var PII_LABEL = /name|adresse|anschrift|stra(ß|ss)e|plz|postleitzahl|\bort\b|wohnort|firma|unternehmen|telefon|handy|mobil|mail|nachricht|notiz|kommentar|anmerkung|geburt|iban|datenschutz|einwillig/i
+  // only fields where the visitor picks from given options; free text can hold anything personal
+  var CHOICE_TYPE = /select|radio|checkbox|choice|option|dropdown|toggle|rating|slider|range|number|date/i
+  var PII_LABEL = /ansprech|beschreib|anliegen|helfen|frage|name|adresse|anschrift|stra(ß|ss)e|plz|postleitzahl|\bort\b|wohnort|firma|unternehmen|telefon|handy|mobil|mail|nachricht|notiz|kommentar|anmerkung|geburt|iban|datenschutz|einwillig/i
 
   // Keeps only the choices a visitor picked (problem, material, size, timing), never contact details.
   function choices(fields) {
@@ -287,7 +289,7 @@
       var f = fields[i] || {}
       var label = clip(f.label, 40)
       var value = typeof f.value === 'string' || typeof f.value === 'number' ? clip(f.value, 80) : ''
-      if (!label || !value || PII_TYPE.test(f.atomType || '') || PII_LABEL.test(label)) continue
+      if (!label || !value || !CHOICE_TYPE.test(f.atomType || '') || PII_TYPE.test(f.atomType || '') || PII_LABEL.test(label)) continue
       if (/@|\d{5,}|https?:/.test(value)) continue
       out[label] = value
       n++
@@ -362,7 +364,10 @@
         var xhr = this
         var text = typeof body === 'string' ? body : ''
         xhr.addEventListener('load', function () {
-          if (xhr.status >= 200 && xhr.status < 300 && !/"error"\s*:\s*\{/.test(xhr.responseText || '')) leadSent(text)
+          var body = ''
+          // responseText throws when the site asked for json or blob responses
+          try { body = !xhr.responseType || xhr.responseType === 'text' ? xhr.responseText : JSON.stringify(xhr.response) } catch (e) {}
+          if (xhr.status >= 200 && xhr.status < 300 && !/"error"\s*:\s*\{/.test(body || '')) leadSent(text)
         })
       }
       return xhrSend.apply(this, arguments)
