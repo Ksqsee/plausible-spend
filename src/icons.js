@@ -1,5 +1,8 @@
-// Official brand marks served at /i/{name}.svg (simple-icons, svgl, alrra/browser-logos).
+// Official brand marks served at /i/{name}.svg (simple-icons, svgl, alrra/browser-logos) plus app-style contact icons.
 import android from './icons/android.svg'
+import app_mail from './icons/app-mail.svg'
+import app_phone from './icons/app-phone.svg'
+import app_whatsapp from './icons/app-whatsapp.svg'
 import apple from './icons/apple.svg'
 import bing from './icons/bing.svg'
 import chrome from './icons/chrome.svg'
@@ -31,6 +34,9 @@ import youtube from './icons/youtube.svg'
 
 export default {
   'android': android,
+  'app-mail': app_mail,
+  'app-phone': app_phone,
+  'app-whatsapp': app_whatsapp,
   'apple': apple,
   'bing': bing,
   'chrome': chrome,

@@ -497,8 +497,8 @@ td.m { color: var(--text-3); font-weight: 400; }
 .lead .ic.call { background: color-mix(in srgb, var(--up) 16%, transparent); color: var(--up); }
 .lead .ic.mail { background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--accent); }
 .lead .ic.wa { background: color-mix(in srgb, #25d366 18%, transparent); color: #1da851; }
-.lead .ic.brand { background: color-mix(in srgb, #25d366 12%, transparent); }
-.lead .ic.brand img { width: 20px; height: 20px; }
+.lead .ic.appic { background: none; }
+.lead .ic.appic img { width: 34px; height: 34px; border-radius: 9px; box-shadow: 0 1px 2px rgba(0,0,0,.12); }
 .lead b { font-weight: 600; }
 .lead .sub2 { font-size: 13px; color: var(--text-3); margin-top: 2px; display: flex; flex-wrap: wrap; gap: 4px 10px; }
 .lead .sub2 svg { width: 13px; height: 13px; vertical-align: -2px; margin-right: 4px; }
@@ -531,7 +531,7 @@ td.wrap { white-space: normal; min-width: 180px; }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
 .chips span { font-size: 13px; background: var(--sel); border-radius: 999px; padding: 4px 10px; }
 .chips span b { font-weight: 600; margin-left: 4px; }
-.chips span img { width: 14px; height: 14px; margin-right: 6px; vertical-align: -2px; }
+.chips span img { width: 16px; height: 16px; margin-right: 6px; vertical-align: -3px; border-radius: 4px; }
 .stars { color: #f59e0b; letter-spacing: 1px; }
 .gbp-one { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 14px; }
 .gbp-one .nm { display: inline-flex; align-items: center; gap: 10px; min-width: 0; }
@@ -2017,6 +2017,8 @@ td.wrap { white-space: normal; min-width: 180px; }
     'Application contact': ['', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>'],
     Application: ['', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>']
   }
+  // app-style icons for the three ways people get in touch
+  var CONTACT_APP = { 'Phone click': 'app-phone', 'Email click': 'app-mail', 'WhatsApp click': 'app-whatsapp' }
   var LEAD_TITLE = { 'Form submit': 'Anfrage über Formular', 'Phone click': 'Anruf-Klick', 'Email click': 'E-Mail-Klick', 'WhatsApp click': 'WhatsApp-Klick', Application: 'Bewerbung', 'Application contact': 'Bewerbung per Telefon/Mail' }
   function timeAgo(ts) {
     var s = Math.round((Date.now() - ts) / 1000)
@@ -2038,7 +2040,7 @@ td.wrap { white-space: normal; min-width: 180px; }
       var chips = el('div', 'chips')
       Object.keys(d.by_type).forEach(function (k) {
         var c = el('span')
-        if (k === 'WhatsApp click') c.append(brandIcon('whatsapp'))
+        if (CONTACT_APP[k]) c.append(brandIcon(CONTACT_APP[k]))
         c.append(document.createTextNode(LEAD_TITLE[k] || k), el('b', null, d.by_type[k]))
         chips.append(c)
       })
@@ -2047,7 +2049,7 @@ td.wrap { white-space: normal; min-width: 180px; }
       d.results.slice(0, section.dataset.expanded ? 60 : 8).forEach(function (r) {
         var row = el('div', 'lead'), ic = LEAD_ICON[r.type] || LEAD_ICON['Form submit']
         var icon = el('div', 'ic ' + ic[0])
-        if (r.type === 'WhatsApp click') { icon.classList.add('brand'); icon.append(brandIcon('whatsapp')) } else icon.append(html(ic[1]))
+        if (CONTACT_APP[r.type]) { icon.className = 'ic appic'; icon.append(brandIcon(CONTACT_APP[r.type])) } else icon.append(html(ic[1]))
         var body = el('div'), t = el('b', null, LEAD_TITLE[r.type] || r.type)
         body.append(t)
         // the clicked text only adds something when it is not just the channel name again
