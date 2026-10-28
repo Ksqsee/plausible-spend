@@ -137,11 +137,17 @@ a { color: inherit; }
 .burger { display: none; width: 38px; height: 38px; border-radius: 11px; border: 0; background: var(--card); box-shadow: var(--card-shadow); cursor: pointer; align-items: center; justify-content: center; flex-shrink: 0; }
 .burger svg { width: 18px; height: 18px; }
 .right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.period { position: relative; display: inline-flex; align-items: center; background: var(--card); border-radius: 999px; box-shadow: var(--card-shadow); transition: box-shadow .2s; }
-.period:hover { box-shadow: var(--card-hover); }
-.period svg { width: 15px; height: 15px; stroke: var(--text-2); position: absolute; left: 13px; pointer-events: none; }
-.period select { appearance: none; -webkit-appearance: none; border: 0; background: transparent; padding: 8px 34px 8px 36px; cursor: pointer; font-weight: 500; font-size: 13px; border-radius: 999px; }
-.period::after { content: ""; position: absolute; right: 15px; top: 50%; width: 5px; height: 5px; border-right: 1.5px solid var(--text-3); border-bottom: 1.5px solid var(--text-3); transform: translateY(-70%) rotate(45deg); pointer-events: none; }
+.pick { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; max-width: 100%; }
+.quick { display: inline-flex; align-items: center; gap: 2px; padding: 3px; border-radius: 12px; background: var(--seg); max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+.quick button { border: 0; background: none; padding: 7px 13px; border-radius: 9px; font-size: 13px; font-weight: 500; color: var(--text-2); cursor: pointer; white-space: nowrap; transition: background .2s var(--ease), color .2s, box-shadow .2s; }
+.quick button:hover { color: var(--text); }
+.quick button.on { background: var(--seg-on); color: var(--text); box-shadow: var(--seg-on-shadow); }
+.period { position: relative; display: inline-flex; align-items: center; border-radius: 9px; flex-shrink: 0; }
+.period.on { background: var(--seg-on); box-shadow: var(--seg-on-shadow); }
+.period select { field-sizing: content; appearance: none; -webkit-appearance: none; border: 0; background: transparent; padding: 7px 28px 7px 13px; cursor: pointer; font-weight: 500; font-size: 13px; color: var(--text-2); border-radius: 9px; }
+.period.on select { color: var(--text); }
+.period::after { content: ""; position: absolute; right: 12px; top: 50%; width: 5px; height: 5px; border-right: 1.5px solid var(--text-3); border-bottom: 1.5px solid var(--text-3); transform: translateY(-70%) rotate(45deg); pointer-events: none; }
+.cmp { font-size: 12.5px; color: var(--text-3); padding-right: 4px; white-space: nowrap; }
 .custom { display: none; gap: 6px; align-items: center; font-size: 13px; }
 .custom.on { display: inline-flex; }
 .custom input { border: 0; box-shadow: var(--card-shadow); border-radius: 999px; background: var(--card); padding: 6px 10px; }
@@ -169,7 +175,7 @@ a { color: inherit; }
 .card { background: var(--card); border-radius: 22px; box-shadow: var(--card-shadow); }
 .mainc { padding: 18px 22px 22px; }
 .stats { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; }
-.stat { position: relative; text-align: left; background: transparent; border: 0; border-radius: 14px; padding: 12px 14px 13px; cursor: default; transition: background .25s var(--ease); }
+.stat { position: relative; display: flex; flex-direction: column; align-items: flex-start; text-align: left; background: transparent; border: 0; border-radius: 14px; padding: 12px 14px 13px; cursor: default; transition: background .25s var(--ease); }
 .stat.pick { cursor: pointer; } .stat.pick:hover { background: var(--hover); }
 .stat.sel { background: var(--sel); }
 .stat .k { font-size: 13px; color: var(--text-3); white-space: nowrap; }
@@ -225,6 +231,25 @@ a { color: inherit; }
 :root[data-theme="dark"] img.mono { filter: invert(1); }
 .row .nums span { font-weight: 500; font-variant-numeric: tabular-nums; }
 .row .nums span.m { color: var(--text-3); font-weight: 400; }
+/* (i) explanations */
+.stat .k, .kpi .k, .total .k { display: flex; align-items: center; gap: 6px; }
+.qi { display: inline-flex; width: 18px; height: 18px; border-radius: 50%; align-items: center; justify-content: center; color: var(--text-3); cursor: help; flex-shrink: 0; transition: color .15s, background .15s; }
+.qi svg { width: 15px; height: 15px; }
+.qi:hover, .qi[aria-expanded="true"] { color: var(--text); background: var(--sel); }
+.pop { position: absolute; z-index: 60; display: none; background: var(--raise); color: var(--text); border-radius: 14px; padding: 14px 16px; box-shadow: 0 0 0 1px var(--line), 0 18px 40px -12px rgba(0,0,0,.28); font-size: 13.5px; line-height: 1.5; animation: pop .18s var(--ease); }
+.pop.on { display: block; }
+.pop b { display: block; font: 600 15px/1.3 var(--display); letter-spacing: -.01em; margin-bottom: 4px; }
+.pop p { margin: 0 0 10px; color: var(--text-2); }
+.pop .pr { display: flex; flex-direction: column; gap: 1px; padding-top: 8px; margin-top: 8px; border-top: 1px solid var(--line-soft); }
+.pop .pr em { font-style: normal; font-size: 12px; font-weight: 600; color: var(--text-3); }
+/* one sentence that says what a panel shows */
+.lede { margin: 10px 0 0; font: 500 15px/1.45 var(--display); letter-spacing: -.008em; color: var(--text); max-width: 72ch; }
+/* Gut / Okay / Schwach */
+.rate { display: inline-flex; align-items: center; gap: 5px; margin-top: 6px; font-size: 12px; font-weight: 600; }
+.rate::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.rate.good { color: color-mix(in srgb, var(--up) 85%, var(--text)); }
+.rate.ok { color: color-mix(in srgb, var(--warn) 70%, var(--text)); }
+.rate.weak { color: var(--down); }
 .foot { margin-top: 12px; padding: 0 10px; font-size: 13px; color: var(--text-3); }
 .empty { flex: 1; display: flex; align-items: center; justify-content: center; text-align: center; color: var(--text-3); padding: 44px 12px; font-size: 13px; }
 .skl { display: flex; flex-direction: column; gap: 8px; margin-top: 18px; }
@@ -318,6 +343,15 @@ td.m { color: var(--text-3); font-weight: 400; }
 .total .k { font-size: 13px; color: var(--text-3); }
 .total .n { font: 600 36px/1.1 var(--display); letter-spacing: -.035em; margin-top: 8px; font-variant-numeric: tabular-nums; }
 .total .d { margin-top: 6px; white-space: normal; }
+.brief { padding: 26px 28px 24px; margin-bottom: 24px; }
+.brief h2 { margin: 0; font: 600 26px/1.15 var(--display); letter-spacing: -.028em; }
+.brief .bsub { margin: 4px 0 0; color: var(--text-3); font-size: 14px; }
+.blist { list-style: none; margin: 18px 0 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.blist li { display: flex; align-items: flex-start; gap: 12px; font: 500 16px/1.45 var(--display); letter-spacing: -.01em; }
+.blist li i { width: 8px; height: 8px; border-radius: 50%; margin-top: 8px; flex-shrink: 0; background: var(--text-3); }
+.blist li.b-up i { background: var(--up); box-shadow: 0 0 0 4px color-mix(in srgb, var(--up) 18%, transparent); }
+.blist li.b-down i { background: var(--down); box-shadow: 0 0 0 4px color-mix(in srgb, var(--down) 18%, transparent); }
+@media (max-width: 560px) { .brief { padding: 20px; } .brief h2 { font-size: 22px; } .blist li { font-size: 15px; } }
 .cohead { display: flex; align-items: center; gap: 12px; margin: 56px 0 18px; flex-wrap: wrap; }
 .cohead img, .cohead .fallback { width: 28px; height: 28px; border-radius: 8px; box-shadow: var(--card-shadow); }
 .cohead h2 { margin: 0; font: 600 20px/1.2 var(--display); letter-spacing: -.02em; }
@@ -386,6 +420,25 @@ td.m { color: var(--text-3); font-weight: 400; }
 .ins details { margin-top: 6px; font-size: 12px; color: var(--text-2); }
 .ins details summary { cursor: pointer; color: var(--text-3); }
 .ins details ul { margin: 6px 0 0; padding-left: 18px; columns: 2; column-gap: 24px; }
+.ins-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 12px; }
+.ib { border: 0; border-radius: 999px; padding: 6px 13px; font-size: 13px; font-weight: 500; cursor: pointer; transition: background .2s, transform .15s var(--ease); }
+.ib:active { transform: scale(.97); }
+.ib.done { background: var(--sel); color: var(--text); }
+.ib.done::before { content: "✓ "; color: var(--up); font-weight: 700; }
+.ib.done:hover { background: var(--ink); color: var(--bg); }
+.ib.done:hover::before { color: inherit; }
+.ib.hide, .ib.reopen { background: var(--sel); color: var(--text-2); }
+.ib.hide:hover, .ib.reopen:hover { background: var(--line); color: var(--text); }
+.ins-acts .was { font-size: 13px; color: var(--text-3); }
+.ins-acts .again { font-size: 12px; font-weight: 600; color: var(--warn); }
+.ins.closed h3 { text-decoration: line-through; text-decoration-color: var(--text-3); color: var(--text-2); }
+.ins.closed .dot { background: var(--text-3); box-shadow: none; }
+.ins.leaving { opacity: .35; pointer-events: none; transition: opacity .25s; }
+.progress { display: flex; align-items: center; gap: 12px; margin-top: 14px; font-size: 13px; font-weight: 500; color: var(--text-2); }
+.progress .pbar { flex: 1; max-width: 220px; height: 6px; border-radius: 3px; background: var(--line-soft); overflow: hidden; }
+.progress .pbar i { display: block; height: 100%; background: var(--up); border-radius: 3px; transition: width .6s var(--ease); }
+.closed-list { margin-top: 18px; }
+.closed-list summary { cursor: pointer; font-size: 14px; font-weight: 500; color: var(--text-2); padding: 8px 0; }
 .more { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; font-size: 13px; font-weight: 500; color: var(--text); text-decoration: none; padding: 7px 14px; border-radius: 999px; background: var(--sel); transition: background .2s; }
 .more:hover { background: var(--line); }
 .seg { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 24px; }
@@ -524,6 +577,8 @@ td.wrap { white-space: normal; min-width: 180px; }
   .ttl h1, .top.stuck .ttl h1 { font-size: 20px; }
   .total .n { font-size: 26px; }
   .right { width: 100%; }
+  .pick { align-items: stretch; width: 100%; }
+  .cmp { white-space: normal; }
 }
 </style>
 </head>
@@ -565,19 +620,28 @@ td.wrap { white-space: normal; min-width: 180px; }
         </div>
         <div class="right">
           <span class="custom" id="custom"><input type="date" id="from" aria-label="Von"> – <input type="date" id="to" aria-label="Bis"></span>
-          <label class="period">
-            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg>
-            <select id="period" aria-label="Zeitraum">
-              <option value="today">Heute</option>
-              <option value="yesterday">Gestern</option>
-              <option value="7d">Letzte 7 Tage</option>
-              <option value="30d" selected>Letzte 30 Tage</option>
-              <option value="month">Dieser Monat</option>
-              <option value="lastmonth">Letzter Monat</option>
-              <option value="12mo">Letzte 12 Monate</option>
-              <option value="custom">Eigener Zeitraum</option>
-            </select>
-          </label>
+          <div class="pick" id="pick">
+            <div class="quick" id="quick" role="group" aria-label="Zeitraum">
+              <button type="button" data-p="today">Heute</button>
+              <button type="button" data-p="7d">7 Tage</button>
+              <button type="button" data-p="30d">30 Tage</button>
+              <button type="button" data-p="month">Monat</button>
+              <label class="period">
+                <select id="period" aria-label="Weitere Zeiträume">
+                  <option value="" disabled>Mehr</option>
+                  <option value="today" hidden>Heute</option>
+                  <option value="yesterday">Gestern</option>
+                  <option value="7d" hidden>Letzte 7 Tage</option>
+                  <option value="30d" hidden>Letzte 30 Tage</option>
+                  <option value="month" hidden>Dieser Monat</option>
+                  <option value="lastmonth">Letzter Monat</option>
+                  <option value="12mo">Letzte 12 Monate</option>
+                  <option value="custom">Eigener Zeitraum</option>
+                </select>
+              </label>
+            </div>
+            <div class="cmp" id="cmp"></div>
+          </div>
         </div>
       </div>
       <div class="filters" id="filters"></div>
@@ -617,6 +681,32 @@ td.wrap { white-space: normal; min-width: 180px; }
     ['visitors', 'Besucher', true], ['visits', 'Besuche', true], ['pageviews', 'Seitenaufrufe', true],
     ['bounce_rate', 'Absprungrate', false], ['visit_duration', 'Besuchsdauer', false], ['leads', 'Anfragen', false]
   ]
+  // What each number means, how it is counted and what is good: shown behind the (i) next to it.
+  var HELP = {
+    'Besucher': ['Verschiedene Menschen, die eine Website geöffnet haben.', 'Ohne Cookies: dasselbe Gerät zählt pro Tag einmal. Wer an drei Tagen kommt, zählt im Zeitraum dreimal.', 'Mehr als im Zeitraum davor. Wichtiger als die Menge ist, ob daraus Anfragen werden.'],
+    'Besuche': ['Wie oft eine Website geöffnet wurde. Ein Mensch kann mehrmals kommen.', 'Ein Besuch endet nach 30 Minuten ohne Klick.', 'Etwas mehr Besuche als Besucher heißt: Leute kommen wieder. Gutes Zeichen.'],
+    'Seitenaufrufe': ['Jede einzelne geöffnete Seite.', 'Wer Startseite und Kontaktseite öffnet, zählt 2 Seitenaufrufe.', 'Mehr als 2 pro Besuch heißt: die Leute schauen sich um.'],
+    'Absprungrate': ['Anteil der Besuche, bei denen nur eine einzige Seite geöffnet wurde.', 'Besuche mit genau einer Seite ÷ alle Besuche. Wer direkt auf der ersten Seite anruft, zählt trotzdem als Absprung.', 'Unter 50 % gut, 50–70 % normal, darüber schwach. Bei einseitigen Landingpages sind höhere Werte normal.'],
+    'Besuchsdauer': ['Wie lange ein Besuch im Schnitt dauert.', 'Zeit zwischen dem ersten und dem letzten Lebenszeichen eines Besuchs.', 'Über 1 Minute gut, 30–60 Sekunden okay, darunter wird kaum gelesen.'],
+    'Anfragen': ['Menschen, die angerufen, eine E-Mail geschrieben, WhatsApp genutzt oder ein Formular abgeschickt haben.', 'Klick auf Telefonnummer, E-Mail-Adresse oder WhatsApp, oder ein erfolgreich gesendetes Formular. Jede Person zählt einmal.', 'Im Handwerk sind 2–5 % der Besucher gut, über 5 % sehr gut.'],
+    'Werbeausgaben': ['Was Google Ads im Zeitraum gekostet hat.', 'Direkt aus Google Ads übernommen, alle Konten zusammen.', 'Gut ist, wenn jede Anfrage deutlich weniger kostet, als ein Auftrag einbringt.'],
+    'Ausgegeben': ['Was die Anzeigen im Zeitraum gekostet haben.', 'Direkt aus Google Ads. Google rechnet pro Klick ab, nicht pro Einblendung.', 'Gut ist, wenn daraus Anfragen werden. Ohne Anfragen ist auch wenig Geld zu viel.'],
+    'Preis pro Klick': ['Was ein Klick auf eine Anzeige im Schnitt gekostet hat.', 'Ausgaben ÷ Klicks.', 'Im Handwerk in Hamburg sind 1–3 € üblich. Darüber lohnt ein Blick auf die Keywords.'],
+    'Preis pro Anfrage': ['Was eine Anfrage über Anzeigen im Schnitt gekostet hat.', 'Ausgaben ÷ Anfragen über Anzeigen.', 'Im Handwerk sind 20–60 € pro Anfrage üblich. Entscheidend ist, was ein Auftrag wert ist.'],
+    'Einblendungen': ['Wie oft das Google-Profil in Maps oder der Suche angezeigt wurde.', 'Von Google gemeldet, mit 3–5 Tagen Verzögerung.', 'Mehr als im Vormonat. Bewertungen und Fotos erhöhen die Einblendungen.'],
+    'Anrufe': ['Anrufe direkt über den Anruf-Knopf im Google-Profil.', 'Von Google gemeldet. Sie tauchen in keiner Website-Statistik auf.', 'Jeder Anruf ist eine echte Anfrage.'],
+    'Website-Klicks': ['Wie oft jemand im Google-Profil auf „Website“ getippt hat.', 'Von Google gemeldet. Diese Besucher erscheinen auf der Website als „Google-Profil“.', 'Je mehr, desto besser: das Profil führt Menschen zur Website.'],
+    'Aktionsrate': ['Wie oft aus einer Einblendung eine Aktion wurde (Anruf, Website oder Route).', '(Anrufe + Website-Klicks + Routen) ÷ Einblendungen.', 'Über 5 % gut. Ein hoher Wert heißt: wer das Profil sieht, will auch Kontakt.'],
+    'Bewertungen': ['Anzahl der Google-Bewertungen.', 'Aktueller Stand laut Google.', 'Mindestens 20 Bewertungen mit 4,5 Sternen. Bewertungen sind der wichtigste Hebel in Google Maps.'],
+    'Klicks aus Google': ['Wie oft jemand in der normalen Google-Suche (ohne Anzeige) auf die Website geklickt hat.', 'Von der Google Search Console gemeldet, mit 2–3 Tagen Verzögerung.', 'Mehr als im Zeitraum davor. Diese Klicks kosten nichts.'],
+    'Impressionen': ['Wie oft die Website in den Google-Suchergebnissen aufgetaucht ist.', 'Von der Google Search Console gemeldet. Zählt auch, wenn niemand klickt.', 'Steigend heißt: Google zeigt die Website zu mehr Suchen.'],
+    'Klickrate': ['Wie oft aus einer Einblendung in der Google-Suche ein Klick wurde.', 'Klicks ÷ Impressionen.', 'Über 5 % gut. Wenig Klicks bei vielen Impressionen heißt: Titel und Beschreibung überarbeiten.'],
+    'Ø Position': ['Auf welchem Platz die Website in der Google-Suche im Schnitt steht.', 'Durchschnitt über alle Suchen, gewichtet nach Impressionen.', 'Platz 1–3 sehr gut, bis 10 ist Seite 1, darüber sieht kaum jemand die Seite.'],
+    'Dringend': ['Punkte, die gerade Geld oder Anfragen kosten.', 'Automatisch erkannt aus Anzeigen, Suche, Google-Profil und Website.', 'Null. Diese Punkte zuerst angehen.'],
+    'Wichtig': ['Verbesserungen mit spürbarer Wirkung.', 'Automatisch erkannt.', 'Diese Woche angehen.'],
+    'Hinweise': ['Beobachtungen zur Einordnung.', 'Automatisch erkannt.', 'Kein Handlungsdruck.'],
+    'Ads ohne Ergebnis': ['Was Keywords und Suchbegriffe ohne Anfrage im Monat kosten.', 'Hochgerechnet auf 30 Tage.', 'So nah an 0 € wie möglich.']
+  }
   var METRIC_LABEL = { visitors: 'Besucher', visits: 'Besuche', pageviews: 'Seitenaufrufe' }
   // Official brand marks served by the worker under /i/{name}.svg; anything else falls back to the site's favicon.
   var BRAND_ICONS = {
@@ -981,15 +1071,37 @@ td.wrap { white-space: normal; min-width: 180px; }
     logo.append(img)
     $('ttl').textContent = title
     document.title = (state.view === 'overview' ? '' : title + ' · ') + 'Gruppenwerk Analytics'
-    $('period').parentNode.style.display = state.view === 'tracking' ? 'none' : ''
+    $('pick').style.display = state.view === 'tracking' ? 'none' : ''
     if (state.view === 'dash') {
       var live = el('span', 'live'); live.id = 'live'
       live.append(el('i'), el('span', null, '…'))
       sub.append(live)
     }
-    $('period').value = state.period
+    syncPicker()
     $('custom').classList.toggle('on', state.period === 'custom')
     var r = range(); $('from').value = r[0]; $('to').value = r[1]
+  }
+  var QUICK = ['today', '7d', '30d', 'month']
+  function fmtDay(d, year) { return new Date(d + 'T00:00:00').toLocaleDateString('de-DE', year ? { day: 'numeric', month: 'short', year: 'numeric' } : { day: 'numeric', month: 'short' }).replace(/\.$/, '') }
+  function syncPicker() {
+    Array.prototype.forEach.call($('quick').querySelectorAll('button'), function (b) { b.classList.toggle('on', b.dataset.p === state.period); b.setAttribute('aria-pressed', b.dataset.p === state.period) })
+    var sel = $('period'), isQuick = QUICK.indexOf(state.period) >= 0
+    sel.value = isQuick ? '' : state.period
+    sel.parentNode.classList.toggle('on', !isQuick)
+    // say exactly which days are shown and what the arrows compare against
+    var r = range(), n = Math.round((new Date(r[1]) - new Date(r[0])) / 86400000) + 1
+    var pf = iso(addDays(new Date(r[0] + 'T00:00:00'), -n)), pt = iso(addDays(new Date(r[0] + 'T00:00:00'), -1))
+    $('cmp').textContent = (r[0] === r[1] ? fmtDay(r[0], true) : fmtDay(r[0]) + ' – ' + fmtDay(r[1], true)) + ' · verglichen mit ' + (pf === pt ? fmtDay(pf) : fmtDay(pf) + ' – ' + fmtDay(pt))
+  }
+  function setPeriod(p) {
+    state.period = p
+    $('custom').classList.toggle('on', state.period === 'custom')
+    if (state.period === 'custom') { state.from = $('from').value; state.to = $('to').value }
+    else { var r = range(); $('from').value = r[0]; $('to').value = r[1] }
+    saveUrl()
+    syncPicker()
+    if (state.view === 'dash') { renderHeader(); refreshDash() } else render()
+    loadInsightCount()
   }
 
   // ---------- filters ----------
@@ -1096,11 +1208,13 @@ td.wrap { white-space: normal; min-width: 180px; }
       var key = s[0], cur = data.current[key], prev = data.previous[key]
       var b = el('button', 'stat' + (s[2] ? ' pick' : '') + (state.metric === key ? ' sel' : ''))
       b.type = 'button'
-      b.append(el('div', 'k', s[1]))
+      b.append(labelWithInfo('k', s[1]))
       var v = el('div', 'v'), n = el('span', 'n'), ch = changeEl(cur, prev, key === 'bounce_rate')
-      if (prev) ch.title = 'Vorzeitraum: ' + fmtStat(key, prev)
+      if (prev) ch.title = 'Zeitraum davor: ' + fmtStat(key, prev)
       v.append(n, ch)
       b.append(v)
+      var rt = rating(key, data.current)
+      if (rt) b.append(el('span', 'rate ' + rt[1], rt[0]))
       countUp(n, cur, function (x) { return fmtStat(key, x) })
       if (s[2]) b.onclick = function () {
         state.metric = key
@@ -1109,6 +1223,17 @@ td.wrap { white-space: normal; min-width: 180px; }
       }
       box.append(b)
     })
+  }
+
+  // Gut / Okay / Schwach for the numbers where a benchmark exists; nothing below 20 visits.
+  function rating(key, c) {
+    if (!c || (c.visits || 0) < 20) return null
+    var landing = state.site && SITE_BY_DOMAIN[state.site] && SITE_BY_DOMAIN[state.site].config && SITE_BY_DOMAIN[state.site].config.kind === 'landing'
+    var r = function (good, ok) { return good ? ['Gut', 'good'] : ok ? ['Okay', 'ok'] : ['Schwach', 'weak'] }
+    if (key === 'bounce_rate' && !landing) return r(c.bounce_rate < 50, c.bounce_rate < 70)
+    if (key === 'visit_duration') return r(c.visit_duration >= 60, c.visit_duration >= 30)
+    if (key === 'leads' && c.visitors) { var q = (c.leads / c.visitors) * 100; return r(q >= 3, q >= 1) }
+    return null
   }
 
   // Monotone cubic curve through the points, so lines never overshoot below zero.
@@ -1331,10 +1456,86 @@ td.wrap { white-space: normal; min-width: 180px; }
       })
       section.append(list)
       if (untagged) section.append(el('div', 'foot', '+ ' + nf.format(untagged) + ' Besucher ohne markierten Link'))
+      lede(section, panelSentence(tab, rows, isGoal))
       growBars(list)
-    }).catch(function () { sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
+    }).catch(function (e) { console.error(e); sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
   }
 
+  var pop = null, popFor = null, popTimer = null
+  function closePop() { if (pop) { pop.classList.remove('on'); if (popFor) popFor.setAttribute('aria-expanded', 'false') } popFor = null }
+  function openPop(btn, label) {
+    var h = HELP[label]
+    if (!h) return
+    if (!pop) { pop = el('div', 'pop'); pop.setAttribute('role', 'tooltip'); document.body.append(pop); pop.onmouseenter = function () { clearTimeout(popTimer) }; pop.onmouseleave = function () { popTimer = setTimeout(closePop, 200) } }
+    pop.replaceChildren(el('b', null, label), el('p', null, h[0]))
+    ;[['So wird gezählt', h[1]], ['Was ist gut?', h[2]]].forEach(function (x) { var d = el('div', 'pr'); d.append(el('em', null, x[0]), el('span', null, x[1])); pop.append(d) })
+    if (popFor) popFor.setAttribute('aria-expanded', 'false')
+    popFor = btn; btn.setAttribute('aria-expanded', 'true')
+    pop.classList.add('on')
+    var r = btn.getBoundingClientRect(), w = Math.min(320, window.innerWidth - 24)
+    pop.style.width = w + 'px'
+    var left = Math.max(12, Math.min(r.left + r.width / 2 - w / 2, window.innerWidth - w - 12))
+    var top = r.bottom + 8 + window.scrollY
+    if (r.bottom + pop.offsetHeight + 16 > window.innerHeight && r.top > pop.offsetHeight + 16) top = r.top - pop.offsetHeight - 8 + window.scrollY
+    pop.style.left = left + 'px'; pop.style.top = top + 'px'
+  }
+  // (i) next to a number; hover on desktop, tap on phones
+  function infoBtn(label) {
+    if (!HELP[label]) return null
+    var b = el('span', 'qi'); b.setAttribute('role', 'button'); b.tabIndex = 0
+    b.setAttribute('aria-label', 'Was bedeutet „' + label + '“?'); b.setAttribute('aria-expanded', 'false')
+    b.append(html(ICON_INFO))
+    b.onclick = function (e) { e.stopPropagation(); e.preventDefault(); if (popFor === b) closePop(); else openPop(b, label) }
+    b.onkeydown = function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); b.onclick(e) } }
+    b.onmouseenter = function () { if (matchMedia('(hover: hover)').matches) { clearTimeout(popTimer); openPop(b, label) } }
+    b.onmouseleave = function () { if (matchMedia('(hover: hover)').matches) popTimer = setTimeout(closePop, 200) }
+    return b
+  }
+  function labelWithInfo(cls, label) {
+    var k = el('div', cls)
+    k.append(el('span', null, label))
+    var i = infoBtn(label); if (i) k.append(i)
+    return k
+  }
+  document.addEventListener('click', function (e) { if (pop && !pop.contains(e.target)) closePop() })
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closePop() })
+  window.addEventListener('scroll', closePop, { passive: true })
+  // one plain sentence under a panel title that says what the data shows
+  function lede(section, text) {
+    var old = section.querySelector(':scope > .lede'); if (old) old.remove()
+    if (!text) return
+    var p = el('p', 'lede', text), ph = section.querySelector(':scope > .ph')
+    if (ph) ph.after(p); else section.prepend(p)
+  }
+  function share(part, whole) { return whole ? Math.round((part / whole) * 100) : 0 }
+  var DEVICE_WHERE = { Mobile: 'auf dem Handy', Desktop: 'am Computer', Tablet: 'auf dem Tablet' }
+  function panelSentence(tab, rows, isGoal) {
+    var top = rows[0]
+    if (!top) return ''
+    var total = Math.max(state.totalVisitors || 0, rows.reduce(function (a, r) { return a + r.visitors }, 0))
+    var p = share(top.visitors, total), name = displayName(tab, top.name), second = rows[1]
+    switch (tab) {
+      case 'source': {
+        var t = top.name === 'Direct / None' ? 'Die meisten kommen direkt, über die eingetippte Adresse oder ein Lesezeichen (' + p + ' %).' : 'Die meisten Besucher kommen über ' + name + ' (' + p + ' %).'
+        if (second && share(second.visitors, total) >= 15) t += ' Danach ' + (second.name === 'Direct / None' ? 'direkte Besuche' : displayName(tab, second.name)) + ' (' + share(second.visitors, total) + ' %).'
+        return t
+      }
+      case 'utm_source': case 'utm_medium': case 'utm_campaign': return '„' + name + '“ hat die meisten markierten Besuche gebracht (' + nf.format(top.visitors) + ').'
+      case 'page': return 'Am häufigsten geöffnet: ' + name + ' (' + nf.format(top.pageviews) + ' Aufrufe).'
+      case 'entry_page': return 'Die meisten landen zuerst auf ' + name + '.'
+      case 'exit_page': return 'Die meisten verlassen die Website auf ' + name + '.'
+      case 'city': return p + ' % der Besucher kommen aus ' + name + '.'
+      case 'region': return p + ' % der Besucher kommen aus ' + name + '.'
+      case 'country': return p + ' % der Besucher kommen aus ' + name + '.'
+      case 'browser': return p + ' % nutzen ' + name + '.'
+      case 'os': return p + ' % nutzen ' + name + '.'
+      case 'device': return p + ' % surfen ' + (DEVICE_WHERE[top.name] || name) + '.'
+      case 'event': return 'Häufigste Aktion: ' + name + ' (' + nf.format(top.visitors) + (top.visitors === 1 ? ' Besucher' : ' Besucher') + ').'
+      case 'label': return 'Am häufigsten geklickt: „' + name + '“.'
+      case 'site': return 'Die meisten Besucher hatte ' + name + ' (' + nf.format(top.visitors) + ').'
+    }
+    return ''
+  }
   function hint(text) {
     var h = el('div', 'hint')
     h.append(html(ICON_INFO), el('span', null, text))
@@ -1342,7 +1543,7 @@ td.wrap { white-space: normal; min-width: 180px; }
   }
   function kpi(k, v, s) {
     var t = el('div', 'kpi')
-    t.append(el('div', 'k', k), el('div', 'n', v))
+    t.append(labelWithInfo('k', k), el('div', 'n', v))
     if (s) t.append(el('div', 's', s))
     return t
   }
@@ -1487,7 +1688,7 @@ td.wrap { white-space: normal; min-width: 180px; }
       if (tab === 'campaigns') {
         section.append(adsSummary(t, results, fromGoogle))
         var kpis = el('div', 'kpis'), spendN = el('div', 'n')
-        var k1 = el('div', 'kpi'); k1.append(el('div', 'k', 'Ausgegeben'), spendN, el('div', 's', 'für ' + nf.format(t.clicks) + (t.clicks === 1 ? ' Klick' : ' Klicks')))
+        var k1 = el('div', 'kpi'); k1.append(labelWithInfo('k', 'Ausgegeben'), spendN, el('div', 's', 'für ' + nf.format(t.clicks) + (t.clicks === 1 ? ' Klick' : ' Klicks')))
         countUp(spendN, t.spend, function (v) { return money.format(v) })
         kpis.append(
           k1,
@@ -1614,8 +1815,22 @@ td.wrap { white-space: normal; min-width: 180px; }
   var DEVICE_NAMES = { MOBILE: 'Smartphone', DESKTOP: 'Computer', TABLET: 'Tablet', CONNECTED_TV: 'TV', OTHER: 'Sonstige' }
 
   // ---------- opportunities ----------
-  function insightEl(r) {
-    var row = el('div', 'ins ' + r.severity)
+  function setInsightState(key, st) {
+    return fetch('/api/insight-state', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: key, state: st }) })
+      .then(function (x) { if (!x.ok) throw new Error('HTTP ' + x.status); loadInsightCount() })
+      .catch(function (e) { console.error(e) })
+  }
+  function insightProgress(all) {
+    var done = all.filter(function (r) { return r.state === 'done' }).length
+    if (!done) return null
+    var box = el('div', 'progress'), bar = el('div', 'pbar'), fill = el('i')
+    fill.style.width = Math.round((done / all.length) * 100) + '%'
+    bar.append(fill)
+    box.append(el('span', null, done + ' von ' + all.length + ' erledigt'), bar)
+    return box
+  }
+  function insightEl(r, onChange) {
+    var row = el('div', 'ins ' + r.severity + (r.state && r.state !== 'open' ? ' closed' : ''))
     row.append(el('span', 'dot'))
     var body = el('div'), meta = el('div', 'meta')
     meta.append(el('span', 'sev', SEVERITY[r.severity]), el('span', 'sep', '·'), el('span', null, r.area))
@@ -1635,6 +1850,21 @@ td.wrap { white-space: normal; min-width: 180px; }
       body.append(items)
     }
     body.append(el('div', 'act', r.action))
+    if (r.key) {
+      var acts = el('div', 'ins-acts')
+      var btn = function (cls, label, next) {
+        var b = el('button', 'ib ' + cls, label); b.type = 'button'
+        b.onclick = function () {
+          row.classList.add('leaving')
+          setInsightState(r.key, next).then(function () { if (onChange) onChange() })
+        }
+        return b
+      }
+      if (r.state === 'open') acts.append(btn('done', 'Erledigt', 'done'), btn('hide', 'Ausblenden', 'hidden'))
+      else acts.append(el('span', 'was', (r.state === 'done' ? 'Erledigt am ' : 'Ausgeblendet am ') + new Date(r.state_at).toLocaleDateString('de-DE', { day: 'numeric', month: 'short' })), btn('reopen', 'Wieder öffnen', 'open'))
+      if (r.reopened) acts.prepend(el('span', 'again', 'Wieder aufgetaucht'))
+      body.append(acts)
+    }
     if (r.terms && r.terms.length) {
       var det = el('details'), sum = el('summary', null, r.terms.length + ' Begriffe anzeigen'), ul = el('ul')
       r.terms.forEach(function (t) {
@@ -1658,16 +1888,21 @@ td.wrap { white-space: normal; min-width: 180px; }
       if (token !== renderToken) return
       sk.remove()
       var list = el('div', 'ins-list')
-      var top = d.results.filter(function (r) { return r.severity !== 'info' }).slice(0, 4)
-      if (!top.length) top = d.results.slice(0, 3)
-      if (!top.length) { section.append(el('div', 'empty', 'Keine offenen Punkte in diesem Zeitraum')); return }
-      top.forEach(function (r) { list.append(insightEl(r)) })
+      var open = d.results.filter(function (r) { return r.state === 'open' })
+      var high = open.filter(function (r) { return r.severity === 'high' }).length
+      lede(section, !open.length ? 'Alles erledigt. Neue Punkte erscheinen hier automatisch.' : high ? high + (high === 1 ? ' Punkt kostet' : ' Punkte kosten') + ' gerade Geld oder Anfragen. Diese zuerst angehen.' : 'Nichts Dringendes. ' + open.length + (open.length === 1 ? ' Verbesserung wartet.' : ' Verbesserungen warten.'))
+      var pg = insightProgress(d.results); if (pg) section.append(pg)
+      var top = open.filter(function (r) { return r.severity !== 'info' }).slice(0, 4)
+      if (!top.length) top = open.slice(0, 3)
+      if (!top.length) return
+      top.forEach(function (r) { list.append(insightEl(r, function () { renderInsightsPanel(section) })) })
       section.append(list)
+      if (open.length <= top.length) return
       var more = el('a', 'more'); more.href = '#'; more.dataset.nav = ''; more.dataset.view = 'insights'
       if (state.site) more.dataset.site = state.site; else more.dataset.scope = state.scope
-      more.textContent = 'Alle ' + d.results.length + ' Chancen ansehen →'
+      more.textContent = 'Alle ' + open.length + ' offenen Chancen ansehen →'
       section.append(more)
-    }).catch(function () { sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
+    }).catch(function (e) { console.error(e); sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
   }
   var insFilter = 'all'
   function renderInsightsPage(view) {
@@ -1689,13 +1924,16 @@ td.wrap { white-space: normal; min-width: 180px; }
     api('insights').then(function (d) {
       if (token !== renderToken) return
       sk.remove()
+      var all = d.results
+      var closedItems = all.filter(function (r) { return r.state !== 'open' })
+      d = { results: all.filter(function (r) { return r.state === 'open' }) }
       var counts = { high: 0, medium: 0, info: 0 }, areaCount = {}
       d.results.forEach(function (r) { counts[r.severity]++; areaCount[r.area] = (areaCount[r.area] || 0) + 1 })
       var adsWaste = d.results.filter(function (r) { return r.area === 'Google Ads' && /ohne (Anfrage|Conversion)|Kaufabsicht/.test(r.title) && !/^Zielseite/.test(r.title) }).reduce(function (a, r) { return a + (r.value || 0) }, 0)
       ;[['Dringend', counts.high, 'sofort angehen'], ['Wichtig', counts.medium, 'diese Woche'], ['Hinweise', counts.info, 'zur Einordnung'], ['Ads ohne Ergebnis', money0.format(adsWaste), 'pro Monat, Keywords & Suchbegriffe']].forEach(function (t, i) {
         var c = el('div', 'card total'), n = el('div', 'n', t[1])
         if (i === 0) n.style.color = 'var(--down)'
-        c.append(el('div', 'k', t[0]), n, el('div', 'd', t[2]))
+        c.append(labelWithInfo('k', t[0]), n, el('div', 'd', t[2]))
         totals.append(c)
       })
       var areas = [['all', 'Alle', d.results.length]].concat(AREAS.filter(function (a) { return areaCount[a] }).map(function (a) { return [a, a, areaCount[a]] }))
@@ -1707,18 +1945,26 @@ td.wrap { white-space: normal; min-width: 180px; }
         segA.append(b)
       })
       card.append(segA)
+      var pg = insightProgress(all); if (pg) card.append(pg)
       var list = el('div', 'ins-list')
       var rows = d.results.filter(function (r) { return insFilter === 'all' || r.area === insFilter })
-      rows.forEach(function (r, i) { var e = insightEl(r); if (!REDUCED) e.style.animation = 'rise .4s ' + Math.min(i * 0.03, 0.5) + 's cubic-bezier(.2,.8,.2,1) both'; list.append(e) })
-      if (!rows.length) list.append(el('div', 'empty', 'Nichts in dieser Kategorie'))
+      rows.forEach(function (r, i) { var e = insightEl(r, render); if (!REDUCED) e.style.animation = 'rise .4s ' + Math.min(i * 0.03, 0.5) + 's cubic-bezier(.2,.8,.2,1) both'; list.append(e) })
+      if (!rows.length) list.append(el('div', 'empty', d.results.length ? 'Nichts in dieser Kategorie' : 'Alles erledigt. Neue Punkte erscheinen hier automatisch.'))
       card.append(list)
+      if (closedItems.length) {
+        var det = el('details', 'closed-list'), sum = el('summary', null, 'Erledigt und ausgeblendet (' + closedItems.length + ')')
+        var cl = el('div', 'ins-list')
+        closedItems.forEach(function (r) { cl.append(insightEl(r, render)) })
+        det.append(sum, cl)
+        card.append(det)
+      }
       card.append(hint('Euro-Beträge sind auf einen Monat hochgerechnet. Sie können sich überschneiden, weil ein Keyword auch auf einer der genannten Zielseiten landen kann.'))
-    }).catch(function () { sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
+    }).catch(function (e) { console.error(e); sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
   }
   function loadInsightCount() {
     var r = range()
     fetch('/api/insights?scope=all&from=' + r[0] + '&to=' + r[1]).then(function (x) { return x.json() }).then(function (d) {
-      var n = (d.results || []).filter(function (x) { return x.severity === 'high' }).length
+      var n = (d.results || []).filter(function (x) { return x.severity === 'high' && x.state === 'open' }).length
       $('insCount').textContent = n ? n : ''
       $('insCount').title = n + ' dringende Chancen'
     }).catch(function () {})
@@ -1750,8 +1996,13 @@ td.wrap { white-space: normal; min-width: 180px; }
         requestAnimationFrame(function () { requestAnimationFrame(function () { fill.style.transitionDelay = (i * 90) + 'ms'; fill.style.width = Math.max(st.rate, st.sessions ? 1 : 0) + '%' }) })
       })
       section.append(box)
+      var first = d.steps[0].sessions, last = d.steps[d.steps.length - 1].sessions, worst = null
+      d.steps.forEach(function (st, i) { if (i && st.drop !== null && d.steps[i - 1].sessions >= 5 && (!worst || st.drop > worst.drop)) worst = st })
+      var per100 = Math.round((last / first) * 100)
+      lede(section, (first < 20 ? 'Noch wenige Besuche, die Zahlen sind vorläufig. ' : '') + (per100 ? 'Von 100 Besuchen ' + (per100 === 1 ? 'endet 1' : 'enden ' + per100) + ' mit einer Anfrage.' : 'Bisher hat kein Besuch zu einer Anfrage geführt.') +
+        (worst && worst.drop >= 30 ? ' Die meisten steigen vor „' + worst.label + '“ aus.' : ''))
       section.append(hint(state.site ? 'So viele Besuche haben jeden Schritt erreicht. Ein Abschnitt zählt, sobald er auf dem Bildschirm zu sehen war.' : 'Alle Websites zusammen. Wer eine einzelne Website öffnet, sieht deren eigene Schritte.'))
-    }).catch(function () { sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
+    }).catch(function (e) { console.error(e); sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
   }
 
   // ---------- lead feed ----------
@@ -1782,6 +2033,9 @@ td.wrap { white-space: normal; min-width: 180px; }
       if (!d.results.length) { section.append(el('div', 'empty', 'Noch keine Anfragen in diesem Zeitraum')); return }
       var chips = el('div', 'chips')
       Object.keys(d.by_type).forEach(function (k) { var c = el('span', null, LEAD_TITLE[k] || k); c.append(el('b', null, d.by_type[k])); chips.append(c) })
+      var nLeads = Object.keys(d.by_type).reduce(function (a, k) { return a + d.by_type[k] }, 0)
+      var topType = Object.keys(d.by_type).sort(function (a, b) { return d.by_type[b] - d.by_type[a] })[0]
+      lede(section, nf.format(nLeads) + (nLeads === 1 ? ' Kontakt' : ' Kontakte') + ' im Zeitraum' + (topType ? ', am häufigsten ' + (LEAD_TITLE[topType] || topType) + ' (' + d.by_type[topType] + ').' : '.'))
       var split = el('div', 'split'), left = el('div'), right = el('div')
       var feed = el('div', 'feed')
       d.results.slice(0, section.dataset.expanded ? 60 : 8).forEach(function (r) {
@@ -1816,7 +2070,7 @@ td.wrap { white-space: normal; min-width: 180px; }
       }
       split.append(left, right)
       section.append(split)
-    }).catch(function () { sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
+    }).catch(function (e) { console.error(e); sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
   }
 
   // ---------- forms & content ----------
@@ -1830,6 +2084,9 @@ td.wrap { white-space: normal; min-width: 180px; }
       if (token !== renderToken) return
       sk.remove()
       if (!d.results.length) { section.append(el('div', 'empty', 'Noch keine Formular-Interaktionen')); return }
+      var fStarts = d.results.reduce(function (a, f) { return a + (f.starts || f.application_starts || 0) }, 0)
+      var fSent = d.results.reduce(function (a, f) { return a + (f.leads || f.applications || 0) }, 0)
+      lede(section, fStarts ? nf.format(fSent) + ' von ' + nf.format(fStarts) + ' begonnenen Formularen wurden abgeschickt (' + share(fSent, fStarts) + ' %).' : '')
       d.results.slice(0, 4).forEach(function (f) {
         var isJob = f.application_starts || f.applications
         section.append(el('div', 'sub-h', (isJob && !f.starts ? 'Bewerbung · ' : 'Formular · ') + '#' + f.form))
@@ -1845,7 +2102,7 @@ td.wrap { white-space: normal; min-width: 180px; }
         growBars(list)
       })
       section.append(hint('Bei Formularen mit mehreren Schritten zählt jeder „Weiter“-Klick einzeln. Als Anfrage zählt erst das erfolgreiche Absenden.'))
-    }).catch(function () { sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
+    }).catch(function (e) { console.error(e); sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
   }
   function renderContent() {
     var section = $('content'), token = renderToken
@@ -1880,7 +2137,7 @@ td.wrap { white-space: normal; min-width: 180px; }
       }
       section.append(cols, list)
       growBars(list)
-    }).catch(function () { sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
+    }).catch(function (e) { console.error(e); sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
   }
 
   // ---------- Google Business Profile ----------
@@ -1921,6 +2178,7 @@ td.wrap { white-space: normal; min-width: 180px; }
           : kpi('Bewertungen', nf.format(d.locations.reduce(function (a, l) { return a + (l.reviews || 0) }, 0)), d.locations.length + ' Profile')
       )
       section.append(kpis)
+      lede(section, (t.maps + t.search) ? nf.format(t.maps + t.search) + ' Mal bei Google gezeigt. Daraus wurden ' + nf.format(t.calls) + (t.calls === 1 ? ' Anruf, ' : ' Anrufe, ') + nf.format(t.website) + ' Website-Besuche und ' + nf.format(t.directions) + ' Routenplanungen.' : '')
       if (!single) {
         section.append(richTable(['Profil', 'Maps', 'Suche', 'Anrufe', 'Website', 'Routen', 'Bewertungen'], d.locations.map(function (l) {
           var flags = !l.reporting ? [flagEl('keine Zahlen', 'warn')] : (l.reviews || 0) < 10 ? [flagEl('wenige Bewertungen', 'warn')] : []
@@ -1940,7 +2198,7 @@ td.wrap { white-space: normal; min-width: 180px; }
         section.append(chips)
       }
       section.append(hint('Anrufe direkt aus dem Google-Profil sind echte Anfragen, die in keiner Website-Statistik auftauchen.'))
-    }).catch(function () { sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
+    }).catch(function (e) { console.error(e); sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
   }
 
   // Warns when a site that used to send data has gone quiet, e.g. the snippet was removed while editing.
@@ -2055,6 +2313,9 @@ td.wrap { white-space: normal; min-width: 180px; }
       cols.append(el('span', null, 'Suchbegriff'), nums)
       section.append(cols)
       var rows = d.results.slice(0, section.dataset.expanded ? 100 : 10)
+      var topQ = d.results[0]
+      lede(section, 'Am häufigsten gefunden über „' + topQ.name + '“' + (topQ.position !== null ? ', dort im Schnitt auf Platz ' + Math.round(topQ.position) : '') + '.' +
+        (t.position !== null ? (t.position <= 10 ? ' Insgesamt meist auf Seite 1.' : ' Insgesamt meist erst ab Seite 2, dort klickt kaum jemand.') : ''))
       var max = Math.max.apply(null, rows.map(function (r) { return r.impressions }))
       var list = el('div', 'list')
       rows.forEach(function (r) {
@@ -2062,9 +2323,8 @@ td.wrap { white-space: normal; min-width: 180px; }
           [[nf.format(r.clicks), true], [nf.format(r.impressions)], [r.position === null ? '–' : pct.format(r.position)]], null))
       })
       section.append(list)
-      if (untagged) section.append(el('div', 'foot', '+ ' + nf.format(untagged) + ' Besucher ohne markierten Link'))
       growBars(list)
-    }).catch(function () { sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
+    }).catch(function (e) { console.error(e); sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
   }
   function loadLive() {
     if (state.view !== 'dash') return
@@ -2093,19 +2353,37 @@ td.wrap { white-space: normal; min-width: 180px; }
     root.append(path)
     return { root: root, path: path }
   }
+  // Three to four plain sentences: how many came, what came of it, where it happened.
+  function briefList(rows, sum) {
+    var ul = el('ul', 'blist')
+    var item = function (kind, text) { var li = el('li', 'b-' + kind); li.append(el('i'), el('span', null, text)); ul.append(li) }
+    var name = function (d) { return (SITE_BY_DOMAIN[d] || {}).name || d }
+    var ch = sum.previous_visitors ? Math.round(((sum.visitors - sum.previous_visitors) / sum.previous_visitors) * 100) : null
+    item(ch === null ? 'n' : ch >= 0 ? 'up' : 'down', nf.format(sum.visitors) + ' Besucher auf allen Websites' + (ch === null ? '.' : ch === 0 ? ', genauso viele wie davor.' : ', ' + Math.abs(ch) + ' % ' + (ch > 0 ? 'mehr' : 'weniger') + ' als im Zeitraum davor.'))
+    var byLeads = rows.filter(function (x) { return x.leads }).sort(function (a, b) { return b.leads - a.leads })
+    if (sum.leads) item('up', nf.format(sum.leads) + (sum.leads === 1 ? ' Anfrage' : ' Anfragen') + ' über die Websites' + (byLeads[0] ? ', die meisten bei ' + name(byLeads[0].domain) + ' (' + byLeads[0].leads + ').' : '.'))
+    else item('n', 'Noch keine Anfrage über die Websites in diesem Zeitraum.')
+    var busiest = rows.slice().sort(function (a, b) { return b.visitors - a.visitors })[0]
+    if (busiest && busiest.visitors) item('n', 'Am meisten los war bei ' + name(busiest.domain) + ' (' + nf.format(busiest.visitors) + ' Besucher).')
+    if (sum.spend) item(sum.leads ? 'n' : 'down', money0.format(sum.spend) + ' für Google-Anzeigen ausgegeben' + (sum.leads ? '.' : ', bisher ohne Anfrage über die Website.'))
+    return ul
+  }
   function renderOverview(view) {
     var r = range(), token = renderToken
     var totals = el('div', 'totals')
     var tiles = [['Besucher', 'visitors'], ['Seitenaufrufe', 'pageviews'], ['Anfragen', 'leads'], ['Werbeausgaben', 'spend']].map(function (t) {
       var c = el('div', 'card total'), n = el('div', 'n'), s = el('div', 'sk'); s.style.height = '30px'; s.style.marginTop = '6px'
-      c.append(el('div', 'k', t[0]), s)
+      c.append(labelWithInfo('k', t[0]), s)
       totals.append(c)
       return { key: t[1], card: c, n: n, sk: s }
     })
     var groups = el('div')
     var ins = el('section', 'card panel wide'); ins.id = 'insp'; ins.style.cssText = 'min-height:0;margin:16px 0 0'
-    var alert = el('div')
-    view.append(alert, totals, ins, groups)
+    var alert = el('div'), brief = el('section', 'card brief')
+    var hour = Number(new Intl.DateTimeFormat('de-DE', { timeZone: 'Europe/Berlin', hour: 'numeric', hour12: false }).format(new Date()))
+    brief.append(el('h2', null, hour < 11 ? 'Guten Morgen' : hour < 18 ? 'Guten Tag' : 'Guten Abend'), el('p', 'bsub', 'Das Wichtigste auf einen Blick · ' + PERIOD_TEXT[state.period]))
+    var bsk = el('div', 'sk'); bsk.style.height = '64px'; bsk.style.marginTop = '14px'; brief.append(bsk)
+    view.append(alert, brief, totals, ins, groups)
     renderSilentSites(alert)
     renderInsightsPanel(ins)
     COMPANIES.forEach(function (c) {
@@ -2126,6 +2404,7 @@ td.wrap { white-space: normal; min-width: 180px; }
         by[x.domain] = x
         sum.visitors += x.visitors; sum.pageviews += x.pageviews; sum.leads += x.leads; sum.spend += x.spend; sum.previous_visitors += x.previous_visitors
       })
+      bsk.replaceWith(briefList(rows, sum))
       tiles.forEach(function (t) {
         t.sk.replaceWith(t.n)
         countUp(t.n, sum[t.key], t.key === 'spend' ? function (x) { return money0.format(x) } : function (x) { return nf.format(Math.round(x)) })
@@ -2160,7 +2439,7 @@ td.wrap { white-space: normal; min-width: 180px; }
           requestAnimationFrame(function () { drawLine(sp.path) })
         })
       })
-    }).catch(function () { groups.replaceChildren(el('div', 'empty', 'Fehler beim Laden')) })
+    }).catch(function (e) { console.error(e); groups.replaceChildren(el('div', 'empty', 'Fehler beim Laden')) })
     timers.push(setInterval(function () { if (state.view === 'overview') render() }, 120000))
   }
 
@@ -2189,19 +2468,13 @@ td.wrap { white-space: normal; min-width: 180px; }
   }
 
   // ---------- controls ----------
-  $('period').onchange = function () {
-    state.period = this.value
-    $('custom').classList.toggle('on', state.period === 'custom')
-    if (state.period === 'custom') { state.from = $('from').value; state.to = $('to').value }
-    else { var r = range(); $('from').value = r[0]; $('to').value = r[1] }
-    saveUrl()
-    if (state.view === 'dash') { renderHeader(); refreshDash() } else render()
-    loadInsightCount()
-  }
+  $('period').onchange = function () { if (this.value) setPeriod(this.value) }
+  Array.prototype.forEach.call($('quick').querySelectorAll('button'), function (b) { b.onclick = function () { if (state.period !== b.dataset.p) setPeriod(b.dataset.p) } })
   $('from').onchange = $('to').onchange = function () {
     if ($('from').value && $('to').value && $('from').value <= $('to').value) {
       state.from = $('from').value; state.to = $('to').value
       saveUrl()
+      syncPicker()
       if (state.view === 'dash') refreshDash(); else render()
     }
   }

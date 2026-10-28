@@ -1,7 +1,7 @@
 // Deeper read-side views: leads, funnels, forms, content, keyword level Ads, Business Profile,
 // and the opportunities that come from putting those sources side by side.
 
-import { LEAD_EVENTS, latestWindow, where } from './stats.js'
+import { BadRequest, LEAD_EVENTS, latestWindow, where } from './stats.js'
 
 const inList = (col, list) => `${col} IN (${list.map(() => '?').join(',')})`
 const round = (n, d = 2) => (n === null || n === undefined || Number.isNaN(n) ? null : Math.round(n * 10 ** d) / 10 ** d)
@@ -953,5 +953,48 @@ export async function insights(db, q) {
 
   const order = { high: 0, medium: 1, info: 2 }
   out.sort((a, b) => order[a.severity] - order[b.severity] || (b.value || 0) - (a.value || 0))
+  await attachStates(db, out)
   return { results: out, sites: Object.fromEntries(names) }
+}
+
+// A ticked-off item comes back after this long if the rule still fires.
+const DONE_FOR_MS = 30 * 86400000
+
+export function insightKey(r) {
+  return [r.area, r.site || '', r.title.replace(/[\d.,€%]+/g, '#')].join('|').slice(0, 300)
+}
+
+async function attachStates(db, items) {
+  for (const r of items) r.key = insightKey(r)
+  if (!items.length) return
+  // D1 allows at most 100 bound values per statement
+  const keys = [...new Set(items.map((r) => r.key))]
+  const states = new Map()
+  for (let i = 0; i < keys.length; i += 90) {
+    const chunk = keys.slice(i, i + 90)
+    const { results } = await db.prepare(`SELECT key, state, at FROM insight_state WHERE ${inList('key', chunk)}`).bind(...chunk).all()
+    for (const x of results) states.set(x.key, x)
+  }
+  for (const r of items) {
+    const st = states.get(r.key)
+    r.state = 'open'
+    if (!st) continue
+    if (st.state === 'done' && Date.now() - st.at > DONE_FOR_MS) r.reopened = true
+    else {
+      r.state = st.state
+      r.state_at = st.at
+    }
+  }
+}
+
+export async function setInsightState(db, key, state) {
+  if (typeof key !== 'string' || !key || key.length > 300) throw new BadRequest('key required')
+  if (state === 'open') await db.prepare('DELETE FROM insight_state WHERE key = ?').bind(key).run()
+  else if (state === 'done' || state === 'hidden') {
+    await db
+      .prepare('INSERT INTO insight_state (key, state, at) VALUES (?, ?, ?) ON CONFLICT(key) DO UPDATE SET state = excluded.state, at = excluded.at')
+      .bind(key, state, Date.now())
+      .run()
+  } else throw new BadRequest('state must be open, done or hidden')
+  return { key, state }
 }

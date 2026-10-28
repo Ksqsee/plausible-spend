@@ -6,7 +6,7 @@ import icons from './icons.js'
 import { handleEvent } from './ingest.js'
 import { BadRequest, ads, breakdown, overview, parseQuery, realtime, resolveSites, search, sitesSummary, timeseries } from './stats.js'
 import { syncAll } from './sync.js'
-import { adsDeep, content, forms, funnel, gbp, insights, leads } from './deep.js'
+import { adsDeep, content, forms, funnel, gbp, insights, leads, setInsightState } from './deep.js'
 
 const json = (data, status = 200) =>
   new Response(JSON.stringify(data), {
@@ -80,6 +80,15 @@ async function api(request, env, url) {
     const days = Math.min(Math.max(Number(url.searchParams.get('days')) || 30, 1), 400)
     const detail = url.searchParams.has('detail') ? Math.min(Math.max(Number(url.searchParams.get('detail')) || 0, 0), 90) : Math.min(days, 30)
     return json(await syncAll(env, days, detail))
+  }
+  if (path === 'insight-state' && request.method === 'POST') {
+    let body
+    try {
+      body = await request.json()
+    } catch {
+      throw new BadRequest('JSON body required')
+    }
+    return json(await setInsightState(db, body.key, body.state))
   }
   if (path === 'sync-log') {
     const { results } = await db.prepare('SELECT * FROM sync_log ORDER BY ts DESC LIMIT 40').all()
