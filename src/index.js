@@ -14,7 +14,7 @@ const FONTS = { 'inter.woff2': interFont, 'inter-tight.woff2': interTightFont, '
 import { handleEvent } from './ingest.js'
 import { BadRequest, Forbidden, MAX_RANGE_DAYS, ads, breakdown, overview, parseQuery, realtime, resolveSites, search, sitesSummary, timeseries } from './stats.js'
 import { syncAll } from './sync.js'
-import { adsDeep, content, forms, funnel, gbp, insights, leads, setInsightState } from './deep.js'
+import { adsDeep, content, forms, funnel, gbp, insights, leads, paths, setInsightState, when, xray } from './deep.js'
 import { MIN_PASSWORD_LENGTH, checkPassword, currentUser, ensureAdmin, generatePassword, login, logout, setPassword } from './auth.js'
 
 // Headers every dashboard response carries: no framing, no MIME sniffing, no referrer to third parties.
@@ -221,6 +221,12 @@ async function api(request, env, url, user) {
       return json(await forms(db, q))
     case 'content':
       return json(await content(db, q))
+    case 'xray':
+      return json(await xray(db, q, url.searchParams.get('xpage')))
+    case 'when':
+      return json(await when(db, q))
+    case 'paths':
+      return json(await paths(db, q))
     case 'ads-deep':
       return json(await adsDeep(db, q))
     case 'gbp':

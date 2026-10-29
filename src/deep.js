@@ -361,6 +361,106 @@ export async function content(db, q) {
 }
 
 // ---------------------------------------------------------------------------------------------
+// Page x-ray: one page from top to bottom, how many reach each section and where people get in touch.
+
+export async function xray(db, q, page) {
+  const w = where(q)
+  const { results: top } = await db
+    .prepare(`SELECT page, COUNT(DISTINCT session_id) AS visits FROM events WHERE ${w.sql} AND name = 'Engagement' GROUP BY page ORDER BY visits DESC LIMIT 8`)
+    .bind(...w.params)
+    .all()
+  const target = page && top.some((t) => t.page === page) ? page : top.length ? top[0].page : null
+  if (!target) return { pages: [], page: null, sections: [], visits: 0 }
+  const leadList = LEAD_EVENTS.map(() => '?').join(',')
+  const [eng, clicks, names] = await Promise.all([
+    db.prepare(`SELECT session_id, props FROM events WHERE ${w.sql} AND name = 'Engagement' AND page = ?`).bind(...w.params, target).all(),
+    db
+      .prepare(
+        `SELECT name, label, json_extract(props, '$.section') AS section, COUNT(DISTINCT session_id) AS n FROM events
+         WHERE ${w.sql} AND page = ? AND name IN (${leadList}) GROUP BY name, label, section`
+      )
+      .bind(...w.params, target, ...LEAD_EVENTS)
+      .all(),
+    sectionNames(db, q.sites)
+  ])
+  const visits = new Set()
+  const reach = new Map()
+  const pos = new Map()
+  for (const r of eng.results) {
+    visits.add(r.session_id)
+    const sec = (parse(r.props) || {}).sec
+    if (!Array.isArray(sec)) continue
+    sec.forEach((id, i) => {
+      if (!reach.has(id)) reach.set(id, new Set())
+      reach.get(id).add(r.session_id)
+      const x = pos.get(id) || { sum: 0, n: 0 }
+      x.sum += i
+      x.n++
+      pos.set(id, x)
+    })
+  }
+  const contacts = new Map()
+  let unplaced = 0
+  for (const r of clicks.results) {
+    // a sent form belongs to the section it sits in, which is its key
+    const id = r.section || (r.name === 'Form submit' && reach.has(r.label) ? r.label : null)
+    if (!id || !reach.has(id)) { unplaced += r.n; continue }
+    if (!contacts.has(id)) contacts.set(id, {})
+    const c = contacts.get(id)
+    c[r.name] = (c[r.name] || 0) + r.n
+  }
+  // sections are seen top to bottom, so their usual position in the list is their place on the page
+  const ids = new Set([...reach.keys(), ...contacts.keys()])
+  const sections = [...ids]
+    .map((id) => {
+      const p = pos.get(id)
+      return {
+        id,
+        name: names[id] || null,
+        order: p ? p.sum / p.n : 99,
+        reach: visits.size ? round(((reach.get(id) || new Set()).size / visits.size) * 100, 1) : 0,
+        contacts: contacts.get(id) || {}
+      }
+    })
+    .sort((a, b) => a.order - b.order)
+  return { pages: top, page: target, visits: visits.size, sections, unplaced }
+}
+
+// ---------------------------------------------------------------------------------------------
+// When people get in touch: weekday x hour.
+
+export async function when(db, q) {
+  const w = where(q)
+  const { results } = await db
+    .prepare(
+      `SELECT CAST(strftime('%w', date) AS INTEGER) AS dow, hour, name, COUNT(DISTINCT session_id) AS n FROM events
+       WHERE ${w.sql} AND name IN (${LEAD_EVENTS.map(() => '?').join(',')}) GROUP BY dow, hour, name`
+    )
+    .bind(...w.params, ...LEAD_EVENTS)
+    .all()
+  // Monday first
+  return { cells: results.map((r) => ({ day: (r.dow + 6) % 7, hour: r.hour, type: r.name, n: r.n })) }
+}
+
+// ---------------------------------------------------------------------------------------------
+// Path to contact: where the visit came from, where it landed, how it got in touch.
+
+export async function paths(db, q) {
+  const w = where(q)
+  const { results } = await db
+    .prepare(
+      `SELECT s.source, s.entry_page, e.name, COUNT(DISTINCT e.session_id) AS n
+       FROM (SELECT session_id, MIN(ts) AS ts FROM events WHERE ${w.sql} AND name IN (${LEAD_EVENTS.map(() => '?').join(',')}) GROUP BY session_id) f
+       JOIN events e ON e.session_id = f.session_id AND e.ts = f.ts
+       JOIN sessions s ON s.id = f.session_id
+       GROUP BY s.source, s.entry_page, e.name ORDER BY n DESC`
+    )
+    .bind(...w.params, ...LEAD_EVENTS)
+    .all()
+  return { paths: results.map((r) => ({ source: r.source || 'Direct / None', entry: r.entry_page || '/', type: r.name, n: r.n })) }
+}
+
+// ---------------------------------------------------------------------------------------------
 // Google Ads, keyword level, cross-referenced with on-site leads and organic rankings.
 
 async function organicPositions(db, sites, from, to) {

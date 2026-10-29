@@ -511,6 +511,43 @@ td.m { color: var(--text-3); font-weight: 400; }
 
 /* ---------- funnel ---------- */
 .funnel { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+/* page x-ray */
+.xr-pages { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+.xr-pages button { border: 1px solid var(--line); background: none; border-radius: 999px; padding: 5px 11px; font: 500 12.5px var(--sans, inherit); color: var(--text-2); cursor: pointer; }
+.xr-pages button.on { background: var(--ink); border-color: var(--ink); color: var(--card); }
+.xr-body { display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 18px; margin-top: 16px; }
+.xr-phone { border: 1.5px solid var(--line); border-radius: 14px; padding: 6px; display: flex; flex-direction: column; gap: 4px; align-self: start; }
+.xr-phone i { display: block; border-radius: 4px; background: var(--bar); }
+.xr-phone i.hot { background: color-mix(in srgb, var(--up) 45%, transparent); }
+.xr-rows { display: flex; flex-direction: column; gap: 4px; font-variant-numeric: tabular-nums; min-width: 0; }
+.xr-key, .xr-row { display: grid; grid-template-columns: minmax(0, 1fr) 64px minmax(90px, 30%); gap: 12px; align-items: center; }
+.xr-key { font-size: 11.5px; color: var(--text-3); padding: 0 10px 4px; letter-spacing: .02em; }
+.xr-key span:not(:first-child), .xr-row span:not(:first-child) { text-align: right; }
+.xr-row { position: relative; padding: 8px 10px; border-radius: 9px; font-size: 13.5px; }
+.xr-row::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: var(--w); background: var(--bar); border-radius: 9px; transition: width .8s var(--ease); }
+.xr-row > * { position: relative; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.xr-row b { font-weight: 600; }
+.xr-row .c { color: var(--up); font-size: 12.5px; }
+.xr-row .c.none { color: var(--text-3); }
+/* weekday grid */
+.wk { display: grid; grid-template-columns: 26px repeat(17, minmax(0, 1fr)); gap: 3px; margin-top: 16px; font-size: 10.5px; color: var(--text-3); font-variant-numeric: tabular-nums; }
+.wk .h { text-align: center; }
+.wk .d { align-self: center; }
+.wk .c { aspect-ratio: 1; border-radius: 4px; background: var(--bar); }
+.wk .l1 { background: color-mix(in srgb, var(--accent) 22%, transparent); }
+.wk .l2 { background: color-mix(in srgb, var(--accent) 45%, transparent); }
+.wk .l3 { background: color-mix(in srgb, var(--accent) 70%, transparent); }
+.wk .l4 { background: var(--accent); }
+/* path to contact */
+.pf { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 16px; }
+.pf .col { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.pf .col > span { font-size: 11.5px; color: var(--text-3); padding-bottom: 2px; }
+.pf button { display: flex; align-items: center; justify-content: space-between; gap: 6px; border: 0; border-radius: 9px; padding: 8px 9px; background: var(--bar); color: var(--text); font: inherit; font-size: 12.5px; text-align: left; cursor: pointer; min-width: 0; transition: opacity .2s, background .2s; }
+.pf button span { display: flex; align-items: center; gap: 6px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pf button span img { flex: none; width: 16px; height: 16px; object-fit: contain; }
+.pf button b { font-weight: 600; font-variant-numeric: tabular-nums; }
+.pf button.sel { background: color-mix(in srgb, var(--up) 18%, transparent); }
+.pf button.dim { opacity: .35; }
 .fnote { margin: 12px 0 0; font-size: 13px; line-height: 1.45; color: var(--text-3); }
 .fblock { display: flex; flex-direction: column; gap: 12px; margin-top: 18px; }
 .fblock + .fblock { padding-top: 18px; border-top: 1px solid var(--line-soft); }
@@ -1243,7 +1280,8 @@ td.wrap { white-space: normal; min-width: 180px; }
     var wide = function (id, cls) { var x = el('section', 'card panel wide' + (cls ? ' ' + cls : '')); x.id = id; grid.append(x); return x }
     var panel = function (k, isWide, into) { var x = el('section', 'card panel' + (isWide ? ' wide' : '')); x.dataset.panel = k; (into || grid).append(x); return x }
     if (combined) panel('sites', true)
-    wide('leads'); wide('funnel')
+    wide('leads'); wide('funnel'); wide('xray')
+    ;['when', 'paths'].forEach(function (id) { var x = el('section', 'card panel'); x.id = id; grid.append(x) })
     // Google Ads, Business Profile and Search share one card
     var g = wide('google', 'gcard'), gt = el('div', 'gtabs')
     ;[['ads', 'Anzeigen'], ['gbp', 'Google-Profil'], ['search', 'Google-Suche']].forEach(function (t) {
@@ -1308,6 +1346,9 @@ td.wrap { white-space: normal; min-width: 180px; }
     renderLeads()
     renderForms()
     renderContent()
+    renderXray()
+    renderWhen()
+    renderPaths()
     loadLive()
   }
 
@@ -2268,6 +2309,174 @@ td.wrap { white-space: normal; min-width: 180px; }
       }
       section.append(cols, list)
       growBars(list)
+    }).catch(function (e) { console.error(e); sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
+  }
+
+  // ---------- page x-ray ----------
+  var CONTACT_WORD = { 'Phone click': ['Anruf', 'Anrufe'], 'WhatsApp click': ['WhatsApp', 'WhatsApp'], 'Email click': ['E-Mail', 'E-Mails'], 'Form submit': ['Formular', 'Formulare'] }
+  function contactText(c) {
+    return Object.keys(c).sort(function (a, b) { return c[b] - c[a] }).map(function (k) { var w = CONTACT_WORD[k] || [k, k]; return c[k] + ' ' + (c[k] === 1 ? w[0] : w[1]) }).join(' · ')
+  }
+  function pageName(p) { return p === '/' ? 'Startseite' : p }
+  function renderXray() {
+    var section = $('xray'), token = renderToken
+    if (!section) return
+    section.replaceChildren()
+    header(section, [['x', 'Seiten-Röntgen']], 'x', null, null)
+    var sk = skeletonRows(5); section.append(sk)
+    api('xray', state.xpage ? { xpage: state.xpage } : null).then(function (d) {
+      if (token !== renderToken) return
+      sk.remove()
+      if (!d.page || !d.sections.length) { section.hidden = true; return }
+      section.hidden = false
+      section.append(el('p', 'fnote', 'Die Seite von oben nach unten: wie viele Besucher jeden Abschnitt erreichen und wo sie Kontakt aufnehmen.'))
+      if (d.pages.length > 1) {
+        var pick = el('div', 'xr-pages')
+        d.pages.slice(0, 6).forEach(function (pg) {
+          var b = el('button', pg.page === d.page ? 'on' : '', pageName(pg.page)); b.type = 'button'
+          b.onclick = function () { state.xpage = pg.page; renderXray() }
+          pick.append(b)
+        })
+        section.append(pick)
+      }
+      var total = function (c) { return Object.keys(c).reduce(function (a, k) { return a + c[k] }, 0) }
+      var best = d.sections.reduce(function (a, x) { return total(x.contacts) > (a ? total(a.contacts) : 0) ? x : a }, null)
+      if (best) {
+        var v = el('div', 'verdict good'), nm = best.name || best.id
+        var txt = 'Die meisten Kontakte entstehen bei „' + nm + '“ (' + contactText(best.contacts) + ').'
+        // only advise moving a section once a few contacts back it up
+        if (total(best.contacts) >= 3 && best.reach > 0 && best.reach < 50 && d.sections.indexOf(best) > 0) { txt += ' Den Abschnitt erreichen nur ' + pct.format(best.reach) + ' % der Besucher. Weiter oben bringt er vermutlich mehr.'; v.className = 'verdict' }
+        v.append(el('span', 'vdot'), el('span', null, txt))
+        section.append(v)
+      }
+      var body = el('div', 'xr-body'), phone = el('div', 'xr-phone'), rows = el('div', 'xr-rows')
+      phone.setAttribute('aria-hidden', 'true')
+      var key = el('div', 'xr-key'); key.append(el('span', null, 'Abschnitt'), el('span', null, 'erreicht'), el('span', null, 'Kontakte'))
+      rows.append(key)
+      d.sections.forEach(function (x) {
+        var i = el('i'); i.style.height = Math.max(8, Math.min(30, 8 + x.reach / 4)) + 'px'
+        if (total(x.contacts)) i.className = 'hot'
+        phone.append(i)
+        var r = el('div', 'xr-row'); r.style.setProperty('--w', '0%')
+        var c = total(x.contacts)
+        r.append(el('span', null, x.name || x.id), el('b', null, pct.format(x.reach) + ' %'), el('span', 'c' + (c ? '' : ' none'), c ? contactText(x.contacts) : '–'))
+        r.title = (x.name || x.id) + ': ' + pct.format(x.reach) + ' % erreicht' + (c ? ', ' + contactText(x.contacts) : '')
+        rows.append(r)
+        requestAnimationFrame(function () { requestAnimationFrame(function () { r.style.setProperty('--w', Math.max(2, x.reach) + '%') }) })
+      })
+      body.append(phone, rows)
+      section.append(body)
+      var foot = ['Grundlage: ' + nf.format(d.visits) + (d.visits === 1 ? ' Besuch' : ' Besuche') + ' auf ' + pageName(d.page)]
+      if (d.unplaced) foot.push(d.unplaced + (d.unplaced === 1 ? ' weiterer Kontakt' : ' weitere Kontakte') + ' ohne festen Abschnitt, etwa aus Kopf- oder Fußzeile')
+      section.append(el('p', 'fnote', foot.join(' · ')))
+    }).catch(function (e) { console.error(e); sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
+  }
+
+  // ---------- weekday x hour ----------
+  var WEEKDAYS = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So']
+  var WEEKDAYS_LONG = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag']
+  function renderWhen() {
+    var section = $('when'), token = renderToken
+    if (!section) return
+    var tab = state.tabs.when || 'all'
+    section.replaceChildren()
+    header(section, [['all', 'Alle Kontakte'], ['Phone click', 'Anruf'], ['WhatsApp click', 'WhatsApp'], ['Form submit', 'Formular']], tab, function (t) { state.tabs.when = t; renderWhen() }, null)
+    var sk = skeletonRows(4); section.append(sk)
+    api('when').then(function (d) {
+      if (token !== renderToken) return
+      sk.remove()
+      if (!d.cells.length) { section.hidden = true; return }
+      section.hidden = false
+      var grid = {}, max = 0, sum = 0
+      d.cells.forEach(function (c) {
+        if (tab !== 'all' && c.type !== tab) return
+        var k = c.day + '-' + c.hour
+        grid[k] = (grid[k] || 0) + c.n
+        max = Math.max(max, grid[k]); sum += c.n
+      })
+      var H0 = 6, H1 = 22
+      var top = Object.keys(grid).sort(function (a, b) { return grid[b] - grid[a] })[0]
+      var v = el('div', 'verdict' + (sum ? '' : ' muted')), txt
+      if (!sum) txt = 'Noch keine Kontakte dieser Art im Zeitraum.'
+      else {
+        var p = top.split('-').map(Number)
+        txt = 'Am häufigsten ' + WEEKDAYS_LONG[p[0]] + ' zwischen ' + p[1] + ' und ' + (p[1] + 1) + ' Uhr (' + grid[top] + (grid[top] === 1 ? ' Kontakt' : ' Kontakte') + ').'
+        var late = 0
+        Object.keys(grid).forEach(function (k) { var h = Number(k.split('-')[1]); if (h >= 18 || h < 7) late += grid[k] })
+        if (late) txt += ' ' + late + ' von ' + sum + ' kamen abends oder früh morgens.'
+      }
+      v.append(el('span', 'vdot'), el('span', null, txt))
+      section.append(v)
+      var wk = el('div', 'wk')
+      wk.setAttribute('role', 'img'); wk.setAttribute('aria-label', 'Kontakte nach Wochentag und Uhrzeit')
+      wk.append(el('span'))
+      for (var h = H0; h <= H1; h++) wk.append(el('span', 'h', h % 3 === 0 ? String(h) : ''))
+      for (var dd = 0; dd < 7; dd++) {
+        wk.append(el('span', 'd', WEEKDAYS[dd]))
+        for (h = H0; h <= H1; h++) {
+          var n = grid[dd + '-' + h] || 0
+          var lvl = !n ? '' : max <= 1 ? ' l3' : ' l' + Math.max(1, Math.ceil((n / max) * 4))
+          var c = el('span', 'c' + lvl)
+          c.title = WEEKDAYS_LONG[dd] + ', ' + h + '–' + (h + 1) + ' Uhr: ' + n + (n === 1 ? ' Kontakt' : ' Kontakte')
+          wk.append(c)
+        }
+      }
+      section.append(wk)
+      section.append(el('p', 'fnote', 'Uhrzeit des ersten Kontakts je Besuch, 6 bis 23 Uhr. Gut für Telefonzeiten und den Anzeigen-Zeitplan.'))
+    }).catch(function (e) { console.error(e); sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
+  }
+
+  // ---------- path to contact ----------
+  var TYPE_SHORT = { 'Phone click': 'Anruf', 'WhatsApp click': 'WhatsApp', 'Email click': 'E-Mail', 'Form submit': 'Formular' }
+  function renderPaths() {
+    var section = $('paths'), token = renderToken
+    if (!section) return
+    section.replaceChildren()
+    header(section, [['p', 'Weg zum Kontakt']], 'p', null, null)
+    var sk = skeletonRows(4); section.append(sk)
+    api('paths').then(function (d) {
+      if (token !== renderToken) return
+      sk.remove()
+      if (!d.paths.length) { section.hidden = true; return }
+      section.hidden = false
+      var sel = null
+      var cols = [['source', 'Quelle'], ['entry', 'Einstieg'], ['type', 'Kontakt']]
+      var note = el('p', 'fnote', 'Tippen Sie auf einen Eintrag, um seine Wege hervorzuheben.')
+      var flow = el('div', 'pf')
+      function label(col, key) {
+        if (col === 'type') return TYPE_SHORT[key] || key
+        if (col === 'entry') return pageName(key)
+        return key === 'Direct / None' ? 'Direkt' : key
+      }
+      function draw() {
+        flow.replaceChildren()
+        var match = function (p) { return !sel || p[sel.col] === sel.key }
+        cols.forEach(function (c) {
+          var box = el('div', 'col'), totals = {}, shown = {}
+          d.paths.forEach(function (p) {
+            totals[p[c[0]]] = (totals[p[c[0]]] || 0) + p.n
+            if (match(p)) shown[p[c[0]]] = (shown[p[c[0]]] || 0) + p.n
+          })
+          box.append(el('span', null, c[1]))
+          Object.keys(totals).sort(function (a, b) { return totals[b] - totals[a] }).slice(0, 6).forEach(function (k) {
+            var b = el('button'), on = sel && sel.col === c[0] && sel.key === k
+            b.type = 'button'
+            if (on) b.className = 'sel'
+            else if (sel && !shown[k]) b.className = 'dim'
+            var name = el('span')
+            if (c[0] === 'source') { var ic = iconFor('source', k); if (ic) name.append(ic) }
+            if (c[0] === 'type' && CONTACT_APP[k]) name.append(brandIcon(CONTACT_APP[k]))
+            name.append(document.createTextNode(label(c[0], k)))
+            name.title = label(c[0], k)
+            b.append(name, el('b', null, nf.format(sel ? shown[k] || 0 : totals[k])))
+            b.onclick = function () { sel = on ? null : { col: c[0], key: k }; draw() }
+            box.append(b)
+          })
+          flow.append(box)
+        })
+      }
+      draw()
+      section.append(flow, note)
     }).catch(function (e) { console.error(e); sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
   }
 
