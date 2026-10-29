@@ -1720,7 +1720,8 @@ td.wrap { white-space: normal; min-width: 180px; }
   function adsSummary(t, results, fromGoogle) {
     var days = rangeDays(), box = el('div', 'verdict'), dot = el('span', 'vdot')
     var txt
-    if (!t.spend) { txt = 'In diesem Zeitraum wurde nichts für Anzeigen ausgegeben.'; box.classList.add('muted') }
+    var withToday = range()[1] === iso(berlinToday())
+    if (!t.spend) { txt = withToday ? 'Bis heute früh wurde nichts für Anzeigen ausgegeben.' : 'In diesem Zeitraum wurde nichts für Anzeigen ausgegeben.'; box.classList.add('muted') }
     else if (results > 0) {
       txt = money.format(t.spend) + ' für ' + nf.format(t.clicks) + ' Klicks ausgegeben. Daraus wurden ' + nf.format(results) + (results === 1 ? ' Anfrage' : ' Anfragen') +
         (fromGoogle ? ' (laut Google)' : '') + ', also ' + money.format(t.spend / results) + ' pro Anfrage.'
@@ -1734,7 +1735,7 @@ td.wrap { white-space: normal; min-width: 180px; }
     }
     var body = el('span', null, txt)
     // Windsor's plan refreshes a day's figures once, early that day: today is a snapshot, not live
-    if (range()[1] === iso(berlinToday())) {
+    if (withToday) {
       body.append(el('span', 'vnote', 'Die Werbezahlen von heute sind ein Zwischenstand vom frühen Morgen. Vollständig sind sie ab morgen.'))
     }
     box.append(dot, body)
