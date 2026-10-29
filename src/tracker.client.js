@@ -6,7 +6,8 @@
 // Events:
 //   pageview, Engagement (scroll depth, seconds visible, named sections seen)
 //   Phone / Email / WhatsApp / Maps click, Review click, Outbound link, File download, Button click
-//   FAQ open, Copy contact, Video play
+//   FAQ open, Copy contact, Video play, Rage click (several quick clicks on something that does nothing)
+//   Engagement also carries the page's load time (largest contentful paint) on the first page of a visit
 //   Form start, Form step, Form submit (a lead the CRM accepted), Form abandon (left with the form
 //   half filled: which field came last, never what was typed), Application start, Application,
 //   Application contact (call or mail about a job), Cancellation (withdrawal form, not a lead)
@@ -129,7 +130,10 @@
     if (t < 1 && !seen.length) return
     engagementSent = true
     var bucket = depth >= 90 ? '100%' : depth >= 75 ? '75%' : depth >= 50 ? '50%' : depth >= 25 ? '25%' : '0%'
-    send('Engagement', { label: bucket, d: depth, t: Math.min(t, 3600), sec: seen.slice(0, 40), sn: sectionHeadings(seen.slice(0, 40)) })
+    var p = { label: bucket, d: depth, t: Math.min(t, 3600), sec: seen.slice(0, 40), sn: sectionHeadings(seen.slice(0, 40)) }
+    // load time only exists for a real page load, not for in-page navigation
+    if (lcp && !lcpSent) { p.lcp = Math.min(Math.round(lcp), 60000); lcpSent = true }
+    send('Engagement', p)
   }
 
   document.addEventListener('visibilitychange', function () {
@@ -141,6 +145,18 @@
     }
   })
   window.addEventListener('pagehide', function () { flushEngagement(); flushForms() })
+
+  // ---- load time: when the biggest element of the first screen was painted ----
+  var lcp = 0
+  var lcpSent = false
+  if (window.PerformanceObserver) {
+    try {
+      new PerformanceObserver(function (list) {
+        var entries = list.getEntries()
+        if (entries.length) lcp = entries[entries.length - 1].startTime
+      }).observe({ type: 'largest-contentful-paint', buffered: true })
+    } catch (e) {}
+  }
 
   // ---- page views ----
 
@@ -230,6 +246,33 @@
       }
       if (el.closest('form')) return // covered by Form start / Form step / Form submit
       if (custom || BUTTON_RE.test(el.className || '')) return send('Button click', props({}))
+    },
+    true
+  )
+
+  // ---- rage clicks: three or more quick clicks on the same spot that is not a control ----
+  var CONTROL = 'a, button, input, select, textarea, label, summary, [role="button"], [role="link"], [role="tab"], [onclick], [data-track]'
+  var rage = { n: 0, x: 0, y: 0, t: 0, sent: false }
+  document.addEventListener(
+    'click',
+    function (e) {
+      var target = e.target
+      if (!target || !target.closest || target.closest(CONTROL)) { rage.n = 0; return }
+      var now = Date.now()
+      var near = Math.abs(e.clientX - rage.x) < 30 && Math.abs(e.clientY - rage.y) < 30
+      if (near && now - rage.t < 800) rage.n++
+      else rage = { n: 1, x: e.clientX, y: e.clientY, t: now, sent: false }
+      rage.t = now
+      if (rage.n < 3 || rage.sent) return
+      // triple clicks that select text are reading, not frustration
+      var sel = window.getSelection && String(window.getSelection())
+      if (sel && sel.trim()) return
+      rage.sent = true
+      var what = target.tagName === 'IMG' ? 'Bild' + (target.alt ? ': ' + clip(target.alt, 40) : '') : clip(target.innerText || target.textContent, 40) || target.tagName.toLowerCase()
+      var p = { label: what }
+      var where = sectionName(target)
+      if (where) p.section = where
+      send('Rage click', p)
     },
     true
   )

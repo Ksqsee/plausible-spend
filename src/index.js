@@ -14,7 +14,8 @@ const FONTS = { 'inter.woff2': interFont, 'inter-tight.woff2': interTightFont, '
 import { handleEvent } from './ingest.js'
 import { BadRequest, Forbidden, MAX_RANGE_DAYS, ads, breakdown, overview, parseQuery, realtime, resolveSites, search, sitesSummary, timeseries } from './stats.js'
 import { syncAll } from './sync.js'
-import { adsDeep, content, forms, funnel, gbp, insights, leads, paths, setInsightState, when, xray } from './deep.js'
+import { addChange, adsDeep, changelog, content, forms, funnel, gbp, insights, leads, months, paths, rollupMonths, setInsightState, when, xray } from './deep.js'
+import { localParts } from './ingest.js'
 import { MIN_PASSWORD_LENGTH, checkPassword, currentUser, ensureAdmin, generatePassword, login, logout, setPassword } from './auth.js'
 
 // Headers every dashboard response carries: no framing, no MIME sniffing, no referrer to third parties.
@@ -148,6 +149,25 @@ async function api(request, env, url, user) {
     return json(await setInsightState(db, body.key, body.state, own || 'admin'))
   }
 
+  // --- logbook ---
+  if (path === 'changelog' && request.method === 'POST') {
+    adminOnly(user)
+    const body = await readJson(request)
+    if (body.site && !(await db.prepare('SELECT 1 FROM sites WHERE domain = ?').bind(body.site).first())) throw new BadRequest('unknown site')
+    await addChange(db, body, user.username)
+    return json({ ok: true })
+  }
+  if (path === 'changelog' && request.method === 'DELETE') {
+    adminOnly(user)
+    await db.prepare('DELETE FROM changelog WHERE id = ?').bind(Number(url.searchParams.get('id')) || 0).run()
+    return json({ ok: true })
+  }
+  if (path === 'rollup' && request.method === 'POST') {
+    adminOnly(user)
+    await rollupMonths(db, recentMonths(Math.min(Math.max(Number(url.searchParams.get('months')) || 2, 1), 30)))
+    return json({ ok: true })
+  }
+
   // --- accounts ---
   if (path === 'me/password' && request.method === 'POST') {
     const body = await readJson(request)
@@ -227,6 +247,10 @@ async function api(request, env, url, user) {
       return json(await when(db, q))
     case 'paths':
       return json(await paths(db, q))
+    case 'changelog':
+      return json(await changelog(db, q, localParts(Date.now()).date))
+    case 'months':
+      return json(await months(db, q))
     case 'ads-deep':
       return json(await adsDeep(db, q))
     case 'gbp':
@@ -236,6 +260,20 @@ async function api(request, env, url, user) {
     default:
       return json({ error: 'not found' }, 404)
   }
+}
+
+// This month and the ones before it, as YYYY-MM.
+function recentMonths(n) {
+  const today = localParts(Date.now()).date
+  const out = []
+  let y = Number(today.slice(0, 4))
+  let m = Number(today.slice(5, 7))
+  for (let i = 0; i < n; i++) {
+    out.push(y + '-' + String(m).padStart(2, '0'))
+    m--
+    if (!m) { m = 12; y-- }
+  }
+  return out
 }
 
 const RETENTION_DAYS = 760
@@ -328,6 +366,10 @@ export default {
     const nightly = new Date(event.scheduledTime).getUTCHours() < 6
     ctx.waitUntil(syncAll(env, 30, nightly ? 30 : 3))
     // visit data is kept for 25 months, then deleted (data minimisation)
-    if (nightly) ctx.waitUntil(purgeOld(env.DB))
+    if (nightly) {
+      ctx.waitUntil(purgeOld(env.DB))
+      // the monthly memory: this month so far and last month, kept for good
+      ctx.waitUntil(rollupMonths(env.DB, recentMonths(2)))
+    }
   }
 }

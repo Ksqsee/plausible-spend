@@ -305,8 +305,8 @@ export async function forms(db, q) {
 
 export async function content(db, q) {
   const w = where(q)
-  const [eng, faq, clicks, names] = await Promise.all([
-    db.prepare(`SELECT page, session_id, props FROM events WHERE ${w.sql} AND name = 'Engagement'`).bind(...w.params).all(),
+  const [eng, faq, clicks, names, rage] = await Promise.all([
+    db.prepare(`SELECT page, session_id, device, props FROM events WHERE ${w.sql} AND name = 'Engagement'`).bind(...w.params).all(),
     db
       .prepare(
         `SELECT label AS name, COUNT(DISTINCT session_id) AS visitors, COUNT(*) AS events FROM events
@@ -322,8 +322,16 @@ export async function content(db, q) {
       )
       .bind(...w.params)
       .all(),
-    sectionNames(db, q.sites)
+    sectionNames(db, q.sites),
+    db
+      .prepare(
+        `SELECT page, label, json_extract(props, '$.section') AS section, COUNT(DISTINCT session_id) AS visitors, COUNT(*) AS events FROM events
+         WHERE ${w.sql} AND name = 'Rage click' GROUP BY page, label, section ORDER BY visitors DESC LIMIT 15`
+      )
+      .bind(...w.params)
+      .all()
   ])
+  const speed = new Map()
   const pages = new Map()
   const sectionSessions = new Map()
   const sessions = new Set()
@@ -335,6 +343,11 @@ export async function content(db, q) {
     pg.depth += Number(p.d) || 0
     pg.time += Number(p.t) || 0
     pages.set(r.page, pg)
+    if (typeof p.lcp === 'number' && p.lcp > 0) {
+      const sp = speed.get(r.page) || { mobile: [], desktop: [] }
+      ;(r.device === 'Mobile' ? sp.mobile : sp.desktop).push(p.lcp)
+      speed.set(r.page, sp)
+    }
     for (const id of Array.isArray(p.sec) ? p.sec : []) {
       if (!sectionSessions.has(id)) sectionSessions.set(id, new Set())
       sectionSessions.get(id).add(r.session_id)
@@ -356,6 +369,11 @@ export async function content(db, q) {
       .sort((a, b) => b.sessions - a.sessions)
       .slice(0, 25),
     faq: faq.results,
+    speed: [...speed.entries()]
+      .map(([page, sp]) => ({ page, mobile: median(sp.mobile), desktop: median(sp.desktop), n: sp.mobile.length + sp.desktop.length }))
+      .sort((a, b) => b.n - a.n)
+      .slice(0, 12),
+    rage: rage.results.map((r) => ({ ...r, section_name: r.section ? names[r.section] || null : null })),
     sessions: sessions.size
   }
 }
@@ -458,6 +476,121 @@ export async function paths(db, q) {
     .bind(...w.params, ...LEAD_EVENTS)
     .all()
   return { paths: results.map((r) => ({ source: r.source || 'Direct / None', entry: r.entry_page || '/', type: r.name, n: r.n })) }
+}
+
+// ---------------------------------------------------------------------------------------------
+// Logbook: each change with the two weeks before and after it, side by side.
+
+const WINDOW_DAYS = 14
+const addDays = (date, n) => {
+  const d = new Date(date + 'T00:00:00Z')
+  d.setUTCDate(d.getUTCDate() + n)
+  return d.toISOString().slice(0, 10)
+}
+
+async function windowStats(db, sites, from, to) {
+  const leadList = LEAD_EVENTS.map(() => '?').join(',')
+  const row = await db
+    .prepare(
+      `SELECT COUNT(DISTINCT date) AS days, COUNT(DISTINCT session_id) AS visits,
+              COUNT(DISTINCT CASE WHEN name IN (${leadList}) THEN session_id END) AS contacts
+       FROM events WHERE ${inList('site', sites)} AND date >= ? AND date <= ?`
+    )
+    .bind(...LEAD_EVENTS, ...sites, from, to)
+    .first()
+  return { days: row.days || 0, visits: row.visits || 0, contacts: row.contacts || 0 }
+}
+
+export async function changelog(db, q, today) {
+  const { results } = await db
+    .prepare(`SELECT * FROM changelog WHERE site IS NULL OR ${inList('site', q.sites)} ORDER BY date DESC, id DESC LIMIT 60`)
+    .bind(...q.sites)
+    .all()
+  const since = (await db.prepare(`SELECT MIN(date) AS d FROM events WHERE ${inList('site', q.sites)}`).bind(...q.sites).first() || {}).d
+  const entries = []
+  for (const r of results) {
+    const sites = r.site ? [r.site] : q.sites
+    const before = await windowStats(db, sites, addDays(r.date, -WINDOW_DAYS), addDays(r.date, -1))
+    const afterTo = addDays(r.date, WINDOW_DAYS - 1) < today ? addDays(r.date, WINDOW_DAYS - 1) : today
+    const after = r.date <= today ? await windowStats(db, sites, r.date, afterTo) : { days: 0, visits: 0, contacts: 0 }
+    entries.push({
+      id: r.id,
+      site: r.site,
+      date: r.date,
+      text: r.text,
+      author: r.author,
+      // a comparison needs the tracker to have run before the change
+      comparable: !!since && addDays(r.date, -WINDOW_DAYS) >= since,
+      window: WINDOW_DAYS,
+      before,
+      after
+    })
+  }
+  return { entries }
+}
+
+export async function addChange(db, { site, date, text }, author) {
+  const t = String(text || '').replace(/\s+/g, ' ').trim().slice(0, 300)
+  if (!t || !/^\d{4}-\d{2}-\d{2}$/.test(String(date || ''))) throw new BadRequest('date and text are required')
+  await db.prepare('INSERT INTO changelog (site, date, text, author, created_ts) VALUES (?, ?, ?, ?, ?)').bind(site || null, date, t, author, Date.now()).run()
+}
+
+// ---------------------------------------------------------------------------------------------
+// Monthly memory: one row per site and month, never deleted.
+
+export async function rollupMonths(db, months) {
+  const leadList = LEAD_EVENTS.map(() => '?').join(',')
+  for (const month of months) {
+    const from = month + '-01'
+    const to = month + '-31'
+    const { results } = await db
+      .prepare(
+        `SELECT site, COUNT(DISTINCT date) AS days, COUNT(DISTINCT visitor_id) AS visitors, COUNT(DISTINCT session_id) AS visits,
+                SUM(name = 'pageview') AS pageviews,
+                COUNT(DISTINCT CASE WHEN name IN (${leadList}) THEN session_id END) AS contacts,
+                COUNT(DISTINCT CASE WHEN name = 'Phone click' THEN session_id END) AS calls,
+                COUNT(DISTINCT CASE WHEN name = 'WhatsApp click' THEN session_id END) AS whatsapp,
+                COUNT(DISTINCT CASE WHEN name = 'Email click' THEN session_id END) AS emails,
+                COUNT(DISTINCT CASE WHEN name = 'Form submit' THEN session_id END) AS forms,
+                COUNT(DISTINCT CASE WHEN name = 'Form start' THEN session_id END) AS form_starts
+         FROM events WHERE date >= ? AND date <= ? GROUP BY site`
+      )
+      .bind(...LEAD_EVENTS, from, to)
+      .all()
+    const { results: ads } = await db
+      .prepare('SELECT site, SUM(spend) AS spend, SUM(clicks) AS clicks FROM ads_spend WHERE date >= ? AND date <= ? GROUP BY site')
+      .bind(from, to)
+      .all()
+    const adBy = new Map(ads.map((a) => [a.site, a]))
+    const sites = new Set([...results.map((r) => r.site), ...ads.map((a) => a.site)])
+    const statements = []
+    for (const site of sites) {
+      const r = results.find((x) => x.site === site) || {}
+      const a = adBy.get(site) || {}
+      statements.push(
+        db
+          .prepare(
+            'INSERT OR REPLACE INTO monthly_stats (site, month, days, visitors, visits, pageviews, contacts, calls, whatsapp, emails, forms, form_starts, ad_spend, ad_clicks, updated_ts) ' +
+              'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+          )
+          .bind(site, month, r.days || 0, r.visitors || 0, r.visits || 0, r.pageviews || 0, r.contacts || 0, r.calls || 0, r.whatsapp || 0, r.emails || 0, r.forms || 0, r.form_starts || 0, round(a.spend || 0), a.clicks || 0, Date.now())
+      )
+    }
+    for (let i = 0; i < statements.length; i += 50) await db.batch(statements.slice(i, i + 50))
+  }
+}
+
+export async function months(db, q) {
+  const { results } = await db
+    .prepare(
+      `SELECT month, SUM(days) AS days, SUM(visitors) AS visitors, SUM(visits) AS visits, SUM(contacts) AS contacts, SUM(calls) AS calls,
+              SUM(whatsapp) AS whatsapp, SUM(emails) AS emails, SUM(forms) AS forms, SUM(form_starts) AS form_starts,
+              SUM(ad_spend) AS ad_spend, SUM(ad_clicks) AS ad_clicks
+       FROM monthly_stats WHERE ${inList('site', q.sites)} GROUP BY month ORDER BY month DESC LIMIT 36`
+    )
+    .bind(...q.sites)
+    .all()
+  return { months: results.map((r) => ({ ...r, ad_spend: round(r.ad_spend || 0) })) }
 }
 
 // ---------------------------------------------------------------------------------------------
