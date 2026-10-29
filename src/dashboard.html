@@ -73,7 +73,7 @@
   --sk: rgba(255,255,255,.06); --sk-hi: rgba(255,255,255,.03);
   --glass: rgba(0,0,0,.66);
 }
-:root { --bar-sources: var(--bar); --bar-pages: var(--bar); --bar-locations: var(--bar); --bar-devices: var(--bar); --bar-goals: var(--bar); --bar-search: var(--bar); --bar-sites: var(--bar); }
+:root { --bar-bad: color-mix(in srgb, var(--down) 22%, transparent); --bar-sources: var(--bar); --bar-pages: var(--bar); --bar-locations: var(--bar); --bar-devices: var(--bar); --bar-goals: var(--bar); --bar-search: var(--bar); --bar-sites: var(--bar); }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 html, body { margin: 0; min-height: 100%; }
@@ -511,6 +511,14 @@ td.m { color: var(--text-3); font-weight: 400; }
 
 /* ---------- funnel ---------- */
 .funnel { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+.fnote { margin: 12px 0 0; font-size: 13px; line-height: 1.45; color: var(--text-3); }
+.fblock { display: flex; flex-direction: column; gap: 12px; margin-top: 18px; }
+.fblock + .fblock { padding-top: 18px; border-top: 1px solid var(--line-soft); }
+.fhead { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.fhead b { font: 600 15px/1.3 var(--display); letter-spacing: -.01em; }
+.fhead span { font-size: 13px; color: var(--text-3); font-variant-numeric: tabular-nums; }
+.fblock .verdict { margin-top: 0; font-size: 14px; }
+.ffun .lbl em.fx { font-style: normal; font-size: 12px; color: var(--down); margin-left: 8px; white-space: nowrap; }
 .fstep { display: grid; grid-template-columns: minmax(120px, 220px) minmax(0, 1fr) 150px; gap: 14px; align-items: center; }
 .fstep .lbl { font-size: 13px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .fstep .lbl small { display: block; font-weight: 400; color: var(--text-3); font-size: 12.5px; }
@@ -1309,7 +1317,7 @@ td.wrap { white-space: normal; min-width: 180px; }
     if (!box) return
     box.replaceChildren()
     STATS.forEach(function (s) {
-      var key = s[0], cur = data.current[key], prev = data.previous[key]
+      var key = s[0], cur = data.current[key], prev = data.previous ? data.previous[key] : null
       var b = el('button', 'stat' + (s[2] ? ' pick' : '') + (state.metric === key ? ' sel' : ''))
       b.type = 'button'
       b.append(labelWithInfo('k', s[1]))
@@ -1358,7 +1366,10 @@ td.wrap { white-space: normal; min-width: 180px; }
     var W = box.clientWidth, H = box.clientHeight
     var padL = 40, padB = 28, padT = 6, padR = 4
     var iw = W - padL - padR, ih = H - padT - padB
-    var max = niceMax(Math.max.apply(null, series.map(function (p) { return p.value }).concat([1])))
+    var max = niceMax(Math.max.apply(null, series.map(function (p) { return p.value || 0 }).concat([1])))
+    // first measured point; everything left of it is shown as "not measured yet"
+    var first = 0
+    while (first < series.length - 1 && series[first].unmeasured) first++
     var grid = cssVar('--line-soft'), muted = cssVar('--text-3'), accent = cssVar('--ink'), card = cssVar('--card'), axis = cssVar('--line')
     var root = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': METRIC_LABEL[state.metric] + ' im Zeitverlauf' })
     var ticks = 4
@@ -1381,15 +1392,23 @@ td.wrap { white-space: normal; min-width: 180px; }
       root.append(t)
       root.append(svg('line', { x1: x(i), x2: x(i), y1: padT + ih, y2: padT + ih + 4, stroke: axis }))
     })
-    var d = smoothPath(series.map(function (p, i) { return [x(i), yv(p.value)] }))
-    var areaD = d + ' L' + x(n - 1).toFixed(1) + ' ' + (padT + ih) + ' L' + x(0).toFixed(1) + ' ' + (padT + ih) + ' Z'
+    if (first > 0) {
+      var gap = svg('rect', { x: padL, y: padT, width: Math.max(0, x(first) - padL), height: ih, fill: grid, opacity: 0.6 })
+      var mark = svg('line', { x1: x(first), x2: x(first), y1: padT, y2: padT + ih, stroke: muted, 'stroke-dasharray': '3 4', 'stroke-width': 1 })
+      var note = svg('text', { x: x(first) - 8, y: padT + 16, 'text-anchor': 'end', 'font-size': 12, fill: muted })
+      note.textContent = 'Messung ab ' + new Date(series.since + 'T00:00:00').toLocaleDateString('de-DE', { day: 'numeric', month: 'short' })
+      root.append(gap, mark)
+      if (x(first) - padL > 130) root.append(note)
+    }
+    var d = smoothPath(series.slice(first).map(function (p, i) { return [x(i + first), yv(p.value || 0)] }))
+    var areaD = d + ' L' + x(n - 1).toFixed(1) + ' ' + (padT + ih) + ' L' + x(first).toFixed(1) + ' ' + (padT + ih) + ' Z'
     var defs = svg('defs'), grad = svg('linearGradient', { id: 'fill', x1: 0, x2: 0, y1: 0, y2: 1 })
     grad.append(svg('stop', { offset: '0%', 'stop-color': accent, 'stop-opacity': 0.12 }), svg('stop', { offset: '100%', 'stop-color': accent, 'stop-opacity': 0.02 }))
     defs.append(grad); root.append(defs)
     var area = svg('path', { d: areaD, fill: 'url(#fill)', class: 'area' })
     var line = svg('path', { d: d, fill: 'none', stroke: accent, 'stroke-width': 2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round', class: 'line' })
     root.append(area, line)
-    if (n === 1) root.append(svg('circle', { cx: x(0), cy: yv(series[0].value), r: 4, fill: accent }))
+    if (n - first === 1) root.append(svg('circle', { cx: x(first), cy: yv(series[first].value || 0), r: 4, fill: accent }))
     var hair = svg('line', { y1: padT, y2: padT + ih, stroke: muted, 'stroke-opacity': 0.5, 'stroke-width': 1, visibility: 'hidden' })
     var dot = svg('circle', { r: 4.5, fill: accent, stroke: card, 'stroke-width': 2, visibility: 'hidden' })
     root.append(hair, dot)
@@ -1403,9 +1422,9 @@ td.wrap { white-space: normal; min-width: 180px; }
       current = i
       var p = series[i]
       hair.setAttribute('x1', x(i)); hair.setAttribute('x2', x(i)); hair.setAttribute('visibility', 'visible')
-      dot.setAttribute('cx', x(i)); dot.setAttribute('cy', yv(p.value)); dot.setAttribute('visibility', 'visible')
+      dot.setAttribute('cx', x(i)); dot.setAttribute('cy', yv(p.value || 0)); dot.setAttribute('visibility', p.unmeasured ? 'hidden' : 'visible')
       var row = el('div', 'r')
-      row.append(el('span', null, p.long), el('b', null, nf.format(p.value)))
+      row.append(el('span', null, p.long), el('b', null, p.unmeasured ? 'noch nicht gemessen' : nf.format(p.value)))
       tip.replaceChildren(el('div', 't', METRIC_LABEL[state.metric]), row)
       if (p.day) tip.append(el('div', 'h', 'Klicken, um den Tag anzuzeigen'))
       tip.style.display = 'block'
@@ -1413,7 +1432,7 @@ td.wrap { white-space: normal; min-width: 180px; }
       var left = x(i) + 14
       if (left + tw > W) left = x(i) - tw - 14
       tip.style.left = Math.max(0, left) + 'px'
-      tip.style.top = Math.max(0, yv(p.value) - 40) + 'px'
+      tip.style.top = Math.max(0, yv(p.value || 0) - 40) + 'px'
       hit.style.cursor = p.day ? 'pointer' : 'default'
     }
     function hide() { hair.setAttribute('visibility', 'hidden'); dot.setAttribute('visibility', 'hidden'); tip.style.display = 'none'; current = -1 }
@@ -1453,13 +1472,18 @@ td.wrap { white-space: normal; min-width: 180px; }
           var row2 = map[iso(d)]
           if (row2) buckets[key].value += row2[metric] || 0
         }
+        var since = data.tracking_since
         series = order.map(function (k) {
           var b = buckets[k]
+          // before the tracker went live there is no zero, only no data
+          var lastDay = monthly ? iso(new Date(b.date.getFullYear(), b.date.getMonth() + 1, 0)) : k
+          if (since && lastDay < since) return { value: null, unmeasured: true, short: monthly ? b.date.toLocaleDateString('de-DE', { month: 'short' }) : b.date.toLocaleDateString('de-DE', { day: 'numeric', month: 'short' }), long: (monthly ? b.date.toLocaleDateString('de-DE', { month: 'long', year: 'numeric' }) : b.date.toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric', month: 'short' })) }
           return monthly
             ? { value: b.value, short: b.date.toLocaleDateString('de-DE', { month: 'short' }), long: b.date.toLocaleDateString('de-DE', { month: 'long', year: 'numeric' }) }
             : { value: b.value, day: k, short: b.date.toLocaleDateString('de-DE', { day: 'numeric', month: 'short' }), long: b.date.toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric', month: 'short' }) }
         })
       }
+      series.since = data.tracking_since
       lastSeries = series
       renderChart(series, true)
     })
@@ -1717,14 +1741,26 @@ td.wrap { white-space: normal; min-width: 180px; }
     b.title = 'Qualitätsfaktor ' + q + ' von 10: wie gut Anzeige und Seite zur Suche passen'
     return cellNode(b)
   }
-  function adsSummary(t, results, fromGoogle) {
+  // Spend that can be set against leads: Google's own conversions cover the whole range,
+  // the website's leads only the days since the tracker went live.
+  function leadSpend(t, fromGoogle) { return fromGoogle || t.spend_tracked === undefined ? t.spend : t.spend_tracked }
+  // "27. Okt. (9,02 € Ausgaben)" when only part of the spend falls into the measured days
+  function sinceNote(t, fromGoogle, since) {
+    if (fromGoogle || t.spend_tracked === undefined || t.spend_tracked >= t.spend || !since) return ''
+    return new Date(since + 'T00:00:00').toLocaleDateString('de-DE', { day: 'numeric', month: 'short' }) + ' (' + money.format(t.spend_tracked) + ' Ausgaben)'
+  }
+  function adsSummary(t, results, fromGoogle, since) {
     var days = rangeDays(), box = el('div', 'verdict'), dot = el('span', 'vdot')
     var txt
     var withToday = range()[1] === iso(berlinToday())
     if (!t.spend) { txt = withToday ? 'Bis heute früh wurde nichts für Anzeigen ausgegeben.' : 'In diesem Zeitraum wurde nichts für Anzeigen ausgegeben.'; box.classList.add('muted') }
     else if (results > 0) {
-      txt = money.format(t.spend) + ' für ' + nf.format(t.clicks) + ' Klicks ausgegeben. Daraus wurden ' + nf.format(results) + (results === 1 ? ' Anfrage' : ' Anfragen') +
-        (fromGoogle ? ' (laut Google)' : '') + ', also ' + money.format(t.spend / results) + ' pro Anfrage.'
+      var n = nf.format(results) + (results === 1 ? ' Anfrage' : ' Anfragen') + (fromGoogle ? ' (laut Google)' : '')
+      var per = money.format(leadSpend(t, fromGoogle) / results) + ' pro Anfrage.'
+      var partial = sinceNote(t, fromGoogle, since)
+      txt = money.format(t.spend) + ' für ' + nf.format(t.clicks) + ' Klicks ausgegeben. ' + (partial
+        ? 'Seit Messbeginn am ' + partial + ' ' + (results === 1 ? 'wurde' : 'wurden') + ' daraus ' + n + ', also ' + per
+        : 'Daraus ' + (results === 1 ? 'wurde ' : 'wurden ') + n + ', also ' + per)
       box.classList.add('good')
     } else if (days < 7 || t.clicks < 20) {
       txt = money.format(t.spend) + ' für ' + nf.format(t.clicks) + (t.clicks === 1 ? ' Klick' : ' Klicks') + ' ausgegeben, noch keine Anfrage. Für ein Urteil ist es noch zu früh.'
@@ -1761,7 +1797,7 @@ td.wrap { white-space: normal; min-width: 180px; }
       if (!results && t.conversions) { results = t.conversions; fromGoogle = true }
 
       if (tab === 'campaigns') {
-        section.append(adsSummary(t, results, fromGoogle))
+        section.append(adsSummary(t, results, fromGoogle, d.tracking_since))
         var kpis = el('div', 'kpis'), spendN = el('div', 'n')
         var k1 = el('div', 'kpi'); k1.append(labelWithInfo('k', 'Ausgegeben'), spendN, el('div', 's', 'für ' + nf.format(t.clicks) + (t.clicks === 1 ? ' Klick' : ' Klicks')))
         countUp(spendN, t.spend, function (v) { return money.format(v) })
@@ -1769,7 +1805,7 @@ td.wrap { white-space: normal; min-width: 180px; }
           k1,
           kpi('Preis pro Klick', t.clicks ? money.format(t.spend / t.clicks) : '–', t.impressions ? nf.format(t.impressions) + '× gezeigt, ' + pct.format((t.clicks / t.impressions) * 100) + ' % geklickt' : ''),
           kpi('Anfragen', nf.format(results), fromGoogle ? 'laut Google (Website zählt noch keine)' : 'Google zählt ' + nf.format(t.conversions) + ' Conversions'),
-          kpi('Preis pro Anfrage', results ? money.format(t.spend / results) : '–', results ? 'Ausgaben ÷ Anfragen' : 'erst mit der ersten Anfrage')
+          kpi('Preis pro Anfrage', results ? money.format(leadSpend(t, fromGoogle) / results) : '–', results ? (leadSpend(t, fromGoogle) < t.spend ? 'Ausgaben seit Messbeginn ÷ Anfragen' : 'Ausgaben ÷ Anfragen') : 'erst mit der ersten Anfrage')
         )
         section.append(kpis)
         var shareBy = {}
@@ -2058,6 +2094,9 @@ td.wrap { white-space: normal; min-width: 180px; }
         requestAnimationFrame(function () { requestAnimationFrame(function () { fill.style.transitionDelay = (i * 90) + 'ms'; fill.style.width = Math.max(st.rate, st.sessions ? 1 : 0) + '%' }) })
       })
       section.append(box)
+      if (d.shortcut) section.append(el('p', 'fnote', d.shortcut === 1
+        ? '1 Kontakt kam ohne die Schritte davor, zum Beispiel per Anruf direkt von der Startseite.'
+        : d.shortcut + ' Kontakte kamen ohne die Schritte davor, zum Beispiel per Anruf direkt von der Startseite.'))
     }).catch(function (e) { console.error(e); sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
   }
 
@@ -2138,6 +2177,7 @@ td.wrap { white-space: normal; min-width: 180px; }
   }
 
   // ---------- forms & content ----------
+  function fmtSecs(t) { return t === null || t === undefined ? '–' : t < 60 ? t + ' Sek.' : Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0') + ' Min.' }
   function renderForms() {
     var section = $('forms'), token = renderToken
     if (!section) return
@@ -2150,18 +2190,46 @@ td.wrap { white-space: normal; min-width: 180px; }
       if (!d.results.length) { section.hidden = true; return }
       section.hidden = false
       d.results.slice(0, 4).forEach(function (f) {
-        var isJob = f.application_starts || f.applications
-        section.append(el('div', 'sub-h', (isJob && !f.starts ? 'Bewerbung · ' : 'Formular · ') + '#' + f.form))
-        var steps = [{ label: 'Begonnen', sessions: f.starts || f.application_starts }].concat(f.steps).concat([{ label: isJob && !f.starts ? 'Bewerbung gesendet' : 'Anfrage gesendet', sessions: f.leads || f.applications }])
-        var max = Math.max.apply(null, steps.map(function (x) { return x.sessions }).concat([1]))
-        var list = el('div', 'list')
+        var isJob = (f.application_starts || f.applications) && !f.starts
+        var starts = f.starts || f.application_starts, sent = f.starts ? f.leads : f.applications
+        var block = el('div', 'fblock')
+        var head = el('div', 'fhead')
+        head.append(el('b', null, (isJob ? 'Bewerbung · ' : '') + (f.name || 'Formular „' + f.form + '“')))
+        head.append(el('span', null, nf.format(starts) + ' begonnen · ' + nf.format(sent) + ' gesendet'))
+        block.append(head)
+        if (f.worst) {
+          var v = el('div', 'verdict bad'), dot = el('span', 'vdot')
+          v.append(dot, el('span', null, 'Die meisten geben beim Feld „' + f.worst.label + '“ auf: ' + f.worst.gave_up + ' von ' + f.worst.of + ' Abbrüchen.'))
+          block.append(v)
+        }
+        var steps
+        if (f.fields.length) {
+          steps = [{ label: 'Begonnen', n: starts }].concat(f.fields.map(function (x) { return { label: x.label, n: x.reached, gave: x.gave_up, err: x.errors } })).concat([{ label: isJob ? 'Bewerbung gesendet' : 'Gesendet', n: sent }])
+        } else {
+          steps = [{ label: 'Begonnen', n: starts }].concat(f.steps.map(function (x) { return { label: x.label, n: x.sessions } })).concat([{ label: isJob ? 'Bewerbung gesendet' : 'Gesendet', n: sent }])
+        }
+        var max = Math.max.apply(null, steps.map(function (x) { return x.n }).concat([1]))
+        var list = el('div', 'list ffun')
         steps.forEach(function (st, i) {
-          var prev = i ? steps[i - 1].sessions : null
-          var drop = prev ? Math.round((1 - st.sessions / prev) * 100) : null
-          list.append(barRow(st.label, null, (st.sessions / max) * 100, 'var(--bar-sites)', [[drop !== null && drop > 0 ? '−' + drop + ' %' : '', true], [nf.format(st.sessions)]], null))
+          var prev = i ? steps[i - 1].n : null
+          var drop = prev ? Math.round((1 - st.n / prev) * 100) : null
+          var isWorst = f.worst && st.label === f.worst.label && st.gave
+          var row = barRow(st.label, null, (st.n / max) * 100, isWorst ? 'var(--bar-bad)' : 'var(--bar-sites)', [[drop !== null && drop > 0 ? '−' + drop + ' %' : '', true], [nf.format(st.n)]], null)
+          var extra = []
+          if (st.gave) extra.push(st.gave + '× hier aufgehört')
+          if (st.err) extra.push(st.err + '× Fehlermeldung')
+          if (extra.length) row.title = extra.join(' · ')
+          if (extra.length) row.querySelector('.lbl').append(el('em', 'fx', extra.join(' · ')))
+          list.append(row)
         })
-        section.append(list)
+        block.append(list)
         growBars(list)
+        var meta = []
+        if (f.time_submit !== null) meta.push('Zeit bis zum Absenden: ' + fmtSecs(f.time_submit))
+        if (f.time_abandon !== null) meta.push('Zeit bis zum Abbruch: ' + fmtSecs(f.time_abandon))
+        if (!f.fields.length) meta.push('Die Auswertung pro Feld läuft seit dem 29. Okt. und füllt sich mit den nächsten Besuchen.')
+        if (meta.length) block.append(el('p', 'fnote', meta.join(' · ')))
+        section.append(block)
       })
     }).catch(function (e) { console.error(e); sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
   }
@@ -2184,7 +2252,7 @@ td.wrap { white-space: normal; min-width: 180px; }
         cols.append(el('span', null, 'Abschnitt'), nums)
         d.sections.slice(0, 12).forEach(function (r) {
           var acts = Object.keys(r.actions).reduce(function (a, k) { return a + r.actions[k] }, 0)
-          list.append(barRow('#' + r.section, null, r.reach, 'var(--bar-sites)', [[acts ? nf.format(acts) : '', true], [pct.format(r.reach) + ' %']], null))
+          list.append(barRow(r.name || r.section, null, r.reach, 'var(--bar-sites)', [[acts ? nf.format(acts) : '', true], [pct.format(r.reach) + ' %']], null))
         })
       } else if (tab === 'depth') {
         if (!d.pages.length) { section.append(el('div', 'empty', 'Noch keine Daten')); return }

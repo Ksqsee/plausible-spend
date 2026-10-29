@@ -152,67 +152,152 @@ function matches(step, s) {
   }
 }
 
+// Each step counts every visit that reached it, whatever came before: someone who calls straight
+// from the start page is a contact even though they never opened the form.
 export async function funnel(db, q) {
   const sites = await siteRows(db, q.sites)
   const steps = (sites.length === 1 && sites[0].config.funnel) || DEFAULT_FUNNEL
   const sessions = await sessionFacts(db, q)
   const counts = steps.map(() => 0)
+  let skipped = 0
+  const last = steps.length - 1
   for (const s of sessions.values()) {
-    for (let i = 0; i < steps.length; i++) {
-      if (!matches(steps[i], s)) break
-      counts[i]++
-    }
+    const hit = steps.map((st) => matches(st, s))
+    hit.forEach((h, i) => { if (h) counts[i]++ })
+    // reached the last step without passing every step before it
+    if (hit[last] && hit.slice(0, last).some((h) => !h)) skipped++
   }
   return {
     steps: steps.map((st, i) => ({
       label: st.label,
       sessions: counts[i],
       rate: counts[0] ? round((counts[i] / counts[0]) * 100, 1) : 0,
-      drop: i && counts[i - 1] ? round(100 - (counts[i] / counts[i - 1]) * 100, 1) : null
-    }))
+      drop: i && counts[i - 1] && counts[i] <= counts[i - 1] ? round(100 - (counts[i] / counts[i - 1]) * 100, 1) : null
+    })),
+    shortcut: skipped
   }
 }
 
 // ---------------------------------------------------------------------------------------------
 // Forms: starts, steps reached and leads per form.
 
+async function sectionNames(db, sites) {
+  const { results } = await db.prepare(`SELECT id, name FROM section_names WHERE ${inList('site', sites)}`).bind(...sites).all()
+  const out = {}
+  for (const r of results) if (!out[r.id]) out[r.id] = r.name
+  return out
+}
+
+const median = (list) => {
+  if (!list.length) return null
+  const s = [...list].sort((a, b) => a - b)
+  return s[Math.floor(s.length / 2)]
+}
+
+// Forms: starts, leads, and per field how far visitors got and where they gave up.
 export async function forms(db, q) {
   const w = where(q)
-  const { results } = await db
-    .prepare(
-      `SELECT name, label, props, COUNT(DISTINCT session_id) AS sessions FROM events
-       WHERE ${w.sql} AND name IN ('Form start', 'Form step', 'Form submit', 'Application start', 'Application')
-       GROUP BY name, label, props`
-    )
-    .bind(...w.params)
-    .all()
+  const [{ results }, names] = await Promise.all([
+    db
+      .prepare(
+        `SELECT session_id, name, label, props FROM events
+         WHERE ${w.sql} AND name IN ('Form start', 'Form step', 'Form submit', 'Form abandon', 'Application start', 'Application')
+         ORDER BY ts`
+      )
+      .bind(...w.params)
+      .all(),
+    sectionNames(db, q.sites)
+  ])
   const byForm = new Map()
   const get = (key) => {
-    if (!byForm.has(key)) byForm.set(key, { form: key, starts: 0, steps: {}, leads: 0, applications: 0, application_starts: 0 })
+    if (!byForm.has(key))
+      byForm.set(key, { form: key, name: null, starts: new Set(), appStarts: new Set(), leads: new Set(), apps: new Set(), steps: {}, paths: new Map() })
     return byForm.get(key)
+  }
+  const path = (f, sid) => {
+    if (!f.paths.has(sid)) f.paths.set(sid, { fs: null, last: null, err: [], t: null, submitted: false, abandoned: false })
+    return f.paths.get(sid)
   }
   for (const r of results) {
     const props = parse(r.props) || {}
-    if (r.name === 'Form start') get(r.label || 'form').starts += r.sessions
-    else if (r.name === 'Application start') get(r.label || 'form').application_starts += r.sessions
-    else if (r.name === 'Form submit') get(r.label || 'form').leads += r.sessions
-    else if (r.name === 'Application') get(r.label || 'form').applications += r.sessions
-    else if (r.name === 'Form step') {
-      const f = get(props.form || 'form')
-      f.steps[r.label] = (f.steps[r.label] || 0) + r.sessions
+    const key = (r.name === 'Form step' ? props.form : r.label) || 'form'
+    const f = get(key)
+    if (r.name === 'Form start' || r.name === 'Application start') {
+      ;(r.name === 'Form start' ? f.starts : f.appStarts).add(r.session_id)
+      if (props.fn) f.name = props.fn
+    } else if (r.name === 'Form step') {
+      if (!f.steps[r.label]) f.steps[r.label] = new Set()
+      f.steps[r.label].add(r.session_id)
+    } else if (r.name === 'Form submit' || r.name === 'Application') {
+      ;(r.name === 'Form submit' ? f.leads : f.apps).add(r.session_id)
+      const p = path(f, r.session_id)
+      p.submitted = true
+      if (Array.isArray(props.fs) && props.fs.length) p.fs = props.fs
+      if (Array.isArray(props.err)) p.err = props.err
+      if (typeof props.t === 'number') p.t = props.t
+    } else if (r.name === 'Form abandon') {
+      const p = path(f, r.session_id)
+      if (p.submitted) continue
+      // the latest abandon of a visit is the furthest it got
+      p.abandoned = true
+      p.fs = Array.isArray(props.fs) ? props.fs : p.fs
+      p.last = props.last || (p.fs && p.fs[p.fs.length - 1]) || null
+      p.err = Array.isArray(props.err) ? props.err : p.err
+      if (typeof props.t === 'number') p.t = props.t
     }
   }
-  return {
-    results: [...byForm.values()]
-      .map((f) => ({
-        ...f,
-        steps: Object.entries(f.steps)
-          .map(([label, sessions]) => ({ label, sessions }))
-          .sort((a, b) => a.label.localeCompare(b.label, 'de', { numeric: true })),
-        completion: f.starts ? round((f.leads / f.starts) * 100, 1) : null
-      }))
-      .sort((a, b) => b.starts + b.application_starts - (a.starts + a.application_starts))
+
+  const out = []
+  for (const f of byForm.values()) {
+    // field order: where a field usually comes in the visitors' paths
+    const pos = new Map()
+    for (const p of f.paths.values()) {
+      ;(p.fs || []).forEach((name, i) => {
+        const x = pos.get(name) || { sum: 0, n: 0 }
+        x.sum += i
+        x.n++
+        pos.set(name, x)
+      })
+    }
+    const order = [...pos.entries()].sort((a, b) => a[1].sum / a[1].n - b[1].sum / b[1].n || b[1].n - a[1].n).map(([name]) => name).slice(0, 14)
+    const rank = new Map(order.map((n, i) => [n, i]))
+    const fields = order.map((label) => ({ label, reached: 0, gave_up: 0, errors: 0 }))
+    let measured = 0
+    const tSubmit = []
+    const tAbandon = []
+    for (const p of f.paths.values()) {
+      if (p.submitted && typeof p.t === 'number') tSubmit.push(p.t)
+      if (p.abandoned && typeof p.t === 'number') tAbandon.push(p.t)
+      if (!p.fs && !p.submitted) continue
+      measured++
+      const furthest = p.submitted ? fields.length - 1 : Math.max(-1, ...(p.fs || []).map((n) => (rank.has(n) ? rank.get(n) : -1)))
+      for (let i = 0; i <= furthest; i++) fields[i].reached++
+      if (p.abandoned && p.last && rank.has(p.last)) fields[rank.get(p.last)].gave_up++
+      for (const e of p.err || []) if (rank.has(e)) fields[rank.get(e)].errors++
+    }
+    const abandons = [...f.paths.values()].filter((p) => p.abandoned).length
+    const worst = fields.reduce((a, x) => (x.gave_up && (!a || x.gave_up > a.gave_up) ? x : a), null)
+    const starts = f.starts.size
+    out.push({
+      form: f.form,
+      name: f.name || names[f.form] || null,
+      starts,
+      application_starts: f.appStarts.size,
+      leads: f.leads.size,
+      applications: f.apps.size,
+      abandons,
+      measured,
+      fields,
+      worst: worst ? { label: worst.label, gave_up: worst.gave_up, of: abandons } : null,
+      time_submit: median(tSubmit),
+      time_abandon: median(tAbandon),
+      steps: Object.entries(f.steps)
+        .map(([label, set]) => ({ label, sessions: set.size }))
+        .sort((a, b) => a.label.localeCompare(b.label, 'de', { numeric: true })),
+      completion: starts ? round((f.leads.size / starts) * 100, 1) : null
+    })
   }
+  return { results: out.filter((f) => f.starts || f.application_starts).sort((a, b) => b.starts + b.application_starts - (a.starts + a.application_starts)) }
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -220,7 +305,7 @@ export async function forms(db, q) {
 
 export async function content(db, q) {
   const w = where(q)
-  const [eng, faq, clicks] = await Promise.all([
+  const [eng, faq, clicks, names] = await Promise.all([
     db.prepare(`SELECT page, session_id, props FROM events WHERE ${w.sql} AND name = 'Engagement'`).bind(...w.params).all(),
     db
       .prepare(
@@ -236,7 +321,8 @@ export async function content(db, q) {
          GROUP BY section, name`
       )
       .bind(...w.params)
-      .all()
+      .all(),
+    sectionNames(db, q.sites)
   ])
   const pages = new Map()
   const sectionSessions = new Map()
@@ -266,7 +352,7 @@ export async function content(db, q) {
       .sort((a, b) => b.views - a.views)
       .slice(0, 20),
     sections: [...sectionSessions.entries()]
-      .map(([id, set]) => ({ section: id, sessions: set.size, reach: sessions.size ? round((set.size / sessions.size) * 100, 1) : 0, actions: actions.get(id) || {} }))
+      .map(([id, set]) => ({ section: id, name: names[id] || null, sessions: set.size, reach: sessions.size ? round((set.size / sessions.size) * 100, 1) : 0, actions: actions.get(id) || {} }))
       .sort((a, b) => b.sessions - a.sessions)
       .slice(0, 25),
     faq: faq.results,
@@ -896,19 +982,16 @@ export async function insights(db, q, owner = 'admin') {
   // --- Website: forms, questions, what leads ask for ---
   for (const f of formData.results) {
     if (f.starts >= 5 && f.completion !== null && f.completion < 35) {
-      const steps = f.steps
-      let worst = null
-      for (let i = 1; i < steps.length; i++) {
-        const drop = steps[i - 1].sessions ? 1 - steps[i].sessions / steps[i - 1].sessions : 0
-        if (!worst || drop > worst.drop) worst = { from: steps[i - 1].label, to: steps[i].label, drop }
-      }
+      const title = f.name ? `„${f.name}“` : `„${f.form}“`
+      let detail = 'Viele beginnen, wenige senden ab.'
+      if (f.worst && f.worst.of) detail = `Die meisten geben beim Feld „${f.worst.label}“ auf (${f.worst.gave_up} von ${f.worst.of}).`
       add({
         severity: 'high',
         area: 'Website',
         site: q.sites.length === 1 ? q.sites[0] : null,
-        title: `Formular „${f.form}“: ${f.starts} begonnen, ${f.leads} gesendet (${f.completion} %)`,
-        detail: worst ? `Größter Abbruch zwischen „${worst.from}“ und „${worst.to}“ (${Math.round(worst.drop * 100)} %).` : 'Viele beginnen, wenige senden ab.',
-        action: 'Den Schritt mit dem größten Abbruch kürzen; Telefon oder E-Mail genügt, Rest beim Rückruf klären.',
+        title: `Formular ${title}: ${f.starts} begonnen, ${f.leads} gesendet (${f.completion} %)`,
+        detail,
+        action: f.worst ? `Das Feld „${f.worst.label}“ vereinfachen, optional machen oder später im Rückruf klären.` : 'Den Schritt mit dem größten Abbruch kürzen; Telefon oder E-Mail genügt, Rest beim Rückruf klären.',
         value: null
       })
     }

@@ -143,9 +143,18 @@ async function totals(db, q, range) {
   }
 }
 
+// The first day the tracker counted anything on these sites. Before it, "0 visitors" means "not measured".
+export async function trackingSince(db, sites) {
+  if (!sites.length) return null
+  const row = await db.prepare(`SELECT MIN(date) AS d FROM events WHERE ${inList(sites)}`).bind(...sites).first()
+  return row ? row.d : null
+}
+
 export async function overview(db, q) {
-  const [current, previous] = await Promise.all([totals(db, q, [q.from, q.to]), totals(db, q, previousRange(q))])
-  return { current, previous }
+  const prev = previousRange(q)
+  const [current, previous, since] = await Promise.all([totals(db, q, [q.from, q.to]), totals(db, q, prev), trackingSince(db, q.sites)])
+  // a comparison with a period that was not (fully) measured would only show made-up growth
+  return { current, previous: since && prev[0] >= since ? previous : null, tracking_since: since }
 }
 
 export async function timeseries(db, q) {
@@ -160,7 +169,7 @@ export async function timeseries(db, q) {
     )
     .bind(...w.params)
     .all()
-  return { interval: byHour ? 'hour' : 'day', results }
+  return { interval: byHour ? 'hour' : 'day', results, tracking_since: await trackingSince(db, q.sites) }
 }
 
 export async function breakdown(db, q, dim, limit = 50) {
@@ -280,7 +289,8 @@ export async function ads(db, q) {
   const { results: campaigns } = await db
     .prepare(
       `SELECT campaign_id, campaign, SUM(spend) AS spend, SUM(clicks) AS clicks,
-              SUM(impressions) AS impressions, SUM(conversions) AS conversions
+              SUM(impressions) AS impressions, SUM(conversions) AS conversions,
+              SUM(CASE WHEN date >= (SELECT MIN(e.date) FROM events e WHERE e.site = ads_spend.site) THEN spend ELSE 0 END) AS spend_tracked
        FROM ads_spend WHERE ${inList(q.sites)} AND date >= ? AND date <= ?
        GROUP BY campaign_id, campaign ORDER BY spend DESC`
     )
@@ -314,6 +324,7 @@ export async function ads(db, q) {
   const rows = campaigns.map((c) => {
     const match = visitorsByKey.get(normalize(c.campaign)) || visitorsByKey.get(normalize(c.campaign_id))
     const spend = Math.round(c.spend * 100) / 100
+    const tracked = Math.round((c.spend_tracked || 0) * 100) / 100
     return {
       campaign: c.campaign,
       campaign_id: c.campaign_id,
@@ -323,13 +334,18 @@ export async function ads(db, q) {
       conversions: Math.round(c.conversions * 10) / 10,
       visitors: match ? match.visitors : null,
       leads: match ? match.leads : null,
-      cost_per_lead: match && match.leads ? Math.round((spend / match.leads) * 100) / 100 : null
+      spend_tracked: tracked,
+      // the website counts leads only since the tracker went live, so only that part of the spend counts
+      cost_per_lead: match && match.leads ? Math.round((tracked / match.leads) * 100) / 100 : null
     }
   })
 
   const spend = Math.round(rows.reduce((a, r) => a + r.spend, 0) * 100) / 100
   const conversions = rows.reduce((a, r) => a + r.conversions, 0)
+  const spendTracked = Math.round(rows.reduce((a, r) => a + r.spend_tracked, 0) * 100) / 100
+  const since = await trackingSince(db, q.sites)
   return {
+    tracking_since: since,
     results: rows,
     totals: {
       spend,
@@ -339,7 +355,8 @@ export async function ads(db, q) {
       cost_per_conversion: conversions ? Math.round((spend / conversions) * 100) / 100 : null,
       visitors: adVisitors,
       leads: adLeads,
-      cost_per_lead: adLeads ? Math.round((spend / adLeads) * 100) / 100 : null
+      spend_tracked: spendTracked,
+      cost_per_lead: adLeads ? Math.round((spendTracked / adLeads) * 100) / 100 : null
     }
   }
 }

@@ -335,6 +335,17 @@ export async function handleEvent(request, env) {
       )
   )
 
+  for (const [id, heading] of sectionHeadings(payload.p)) {
+    statements.push(
+      db
+        .prepare(
+          'INSERT INTO section_names (site, id, name, updated_ts) VALUES (?, ?, ?, ?) ' +
+            'ON CONFLICT(site, id) DO UPDATE SET name = excluded.name, updated_ts = excluded.updated_ts WHERE name != excluded.name'
+        )
+        .bind(site, id, heading, now)
+    )
+  }
+
   await db.batch(statements)
   return accepted()
 }
@@ -358,6 +369,18 @@ function capitalizeSource(source) {
 
 // Event properties are kept small and flat: strings, numbers, a list of strings (sections seen)
 // and one level of string choices (form answers).
+const LIST_PROPS = { sec: 40, fs: 20, err: 20 }
+
+// Section id -> visible heading, as sent with engagement events.
+export function sectionHeadings(raw) {
+  const sn = raw && typeof raw === 'object' ? raw.sn : null
+  if (!sn || typeof sn !== 'object' || Array.isArray(sn)) return []
+  return Object.entries(sn)
+    .slice(0, 40)
+    .filter(([id, name]) => /^[a-z][a-z0-9-]{1,40}$/.test(id) && typeof name === 'string' && name.trim())
+    .map(([id, name]) => [id, name.replace(/\s+/g, ' ').trim().slice(0, 60)])
+}
+
 export function sanitizeProps(raw) {
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null
   const out = {}
@@ -365,10 +388,11 @@ export function sanitizeProps(raw) {
   for (const [k, v] of Object.entries(raw)) {
     if (keys >= 12) break
     const key = String(k).slice(0, 40)
-    // "sec" (sections seen) is the only list; the dashboard iterates it, so it must be one
-    if (key === 'sec') {
+    // lists: sections seen, form fields touched in order, form fields that showed an error
+    if (key === 'sn') continue // section headings go to their own table
+    if (LIST_PROPS[key]) {
       if (!Array.isArray(v)) continue
-      out.sec = v.filter((x) => typeof x === 'string').slice(0, 40).map((x) => x.slice(0, 60))
+      out[key] = v.filter((x) => typeof x === 'string').slice(0, LIST_PROPS[key]).map((x) => x.slice(0, 60))
     } else if (typeof v === 'string') out[key] = v.slice(0, 200)
     else if (typeof v === 'number' && Number.isFinite(v)) out[key] = v
     else if (Array.isArray(v)) continue

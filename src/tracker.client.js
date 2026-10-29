@@ -7,7 +7,8 @@
 //   pageview, Engagement (scroll depth, seconds visible, named sections seen)
 //   Phone / Email / WhatsApp / Maps click, Review click, Outbound link, File download, Button click
 //   FAQ open, Copy contact, Video play
-//   Form start, Form step, Form submit (a lead the CRM accepted), Application start, Application,
+//   Form start, Form step, Form submit (a lead the CRM accepted), Form abandon (left with the form
+//   half filled: which field came last, never what was typed), Application start, Application,
 //   Application contact (call or mail about a job), Cancellation (withdrawal form, not a lead)
 (function () {
   'use strict'
@@ -60,6 +61,27 @@
     return s && NAMED_SECTION.test(s.id) && !SKIP_SECTION.test(s.id) ? s.id : null
   }
 
+  // The visible heading of a section, so the dashboard can say "Leistungen" instead of "#leistungen".
+  function headingOf(root) {
+    var h = root && root.querySelector && root.querySelector('h1, h2, h3, [class*="title"], [class*="Title"]')
+    return h ? tidy(clip(h.innerText || h.textContent, 60)) : ''
+  }
+  function tidy(t) {
+    t = String(t || '').replace(/\s*\*\s*$/, '').replace(/[:\s]+$/, '')
+    // labels set in capitals by CSS read better in sentence case
+    if (t.length > 3 && t === t.toUpperCase() && /[A-ZÄÖÜ]/.test(t)) t = t.charAt(0) + t.slice(1).toLowerCase()
+    return t.replace(/\be-mail\b/i, 'E-Mail')
+  }
+  function sectionHeadings(ids) {
+    var out = {}
+    for (var i = 0; i < ids.length; i++) {
+      var el = document.getElementById(ids[i])
+      var h = headingOf(el)
+      if (h) out[ids[i]] = h
+    }
+    return out
+  }
+
   function resetEngagement() {
     seen = []
     depth = 0
@@ -107,14 +129,18 @@
     if (t < 1 && !seen.length) return
     engagementSent = true
     var bucket = depth >= 90 ? '100%' : depth >= 75 ? '75%' : depth >= 50 ? '50%' : depth >= 25 ? '25%' : '0%'
-    send('Engagement', { label: bucket, d: depth, t: Math.min(t, 3600), sec: seen.slice(0, 40) })
+    send('Engagement', { label: bucket, d: depth, t: Math.min(t, 3600), sec: seen.slice(0, 40), sn: sectionHeadings(seen.slice(0, 40)) })
   }
 
   document.addEventListener('visibilitychange', function () {
-    if (document.visibilityState === 'hidden') flushEngagement()
-    else if (!engagementSent) visibleSince = Date.now()
+    if (document.visibilityState === 'hidden') { flushEngagement(); flushForms() }
+    else {
+      if (!engagementSent) visibleSince = Date.now()
+      // back from another app: a later abandon may replace the one just sent
+      for (var k in forms) forms[k].sent = false
+    }
   })
-  window.addEventListener('pagehide', flushEngagement)
+  window.addEventListener('pagehide', function () { flushEngagement(); flushForms() })
 
   // ---- page views ----
 
@@ -123,8 +149,10 @@
   function pageview() {
     if (lastPath === location.pathname) return
     flushEngagement()
+    flushForms()
     lastPath = location.pathname
     formsStarted = {}
+    forms = {}
     resetEngagement()
     send('pageview')
   }
@@ -212,6 +240,60 @@
 
   var lastForm = null
   var lastStep = {}
+  // per form on this page: fields touched in order, fields that showed an error, start time
+  var forms = {}
+  var FIELD_WRAP = '[class*="field"], [class*="Field"], [class*="question"], [class*="Question"], fieldset'
+  var FIELD_EL = 'input, textarea, select, button, [role="radio"], [role="checkbox"], [role="combobox"], [role="option"]'
+
+  function cssEscape(v) {
+    return window.CSS && CSS.escape ? CSS.escape(v) : String(v).replace(/["\\]/g, '\\$&')
+  }
+
+  // The field's label as the visitor reads it. Never its value.
+  function fieldName(el, form) {
+    var t = ''
+    try {
+      var lab = el.id && document.querySelector('label[for="' + cssEscape(el.id) + '"]')
+      if (lab) t = lab.innerText
+    } catch (e) {}
+    if (!t) {
+      var own = el.closest('label')
+      if (own && form.contains(own)) t = own.innerText
+    }
+    if (!t) {
+      var wrap = el.closest(FIELD_WRAP)
+      if (wrap && wrap !== form && form.contains(wrap)) {
+        var head = wrap.querySelector('legend, label, [class*="label"], [class*="Label"]')
+        t = (head || wrap).innerText
+      }
+    }
+    t = String(t || '').split('\n')[0]
+    if (!t.trim()) t = el.getAttribute('aria-label') || el.getAttribute('placeholder') || el.getAttribute('name') || ''
+    return tidy(clip(t, 50))
+  }
+
+  function formState(form, key) {
+    if (!forms[key]) forms[key] = { t0: Date.now(), seq: [], err: [], done: false, sent: false }
+    return forms[key]
+  }
+
+  function noteField(el, form, key) {
+    if (!el || el === form || !el.matches || !el.matches(FIELD_EL)) return
+    if (el.type === 'submit' || el.type === 'hidden') return
+    var f = formState(form, key)
+    var name = fieldName(el, form)
+    if (name && f.seq.indexOf(name) < 0 && f.seq.length < 20) f.seq.push(name)
+  }
+
+  // Leaving the page with a started, unsent form: say how far the visitor got.
+  function flushForms() {
+    for (var key in forms) {
+      var f = forms[key]
+      if (f.done || f.sent || !f.seq.length) continue
+      f.sent = true
+      send('Form abandon', { label: key, last: f.seq[f.seq.length - 1], fs: f.seq.slice(0, 20), err: f.err.slice(0, 20), t: Math.min(Math.round((Date.now() - f.t0) / 1000), 3600) })
+    }
+  }
 
   function formKey(form) {
     return sectionName(form) || form.getAttribute('data-track') || form.id || form.getAttribute('name') || 'form'
@@ -226,31 +308,65 @@
     if (!form || inConsentBanner(form)) return
     var key = formKey(form)
     lastForm = key
+    if (CANCEL_RE.test(key + ' ' + location.pathname)) return
+    var field = e.target.closest(FIELD_EL)
+    if (field && form.contains(field)) noteField(field, form, key)
     if (formsStarted[key]) return
     formsStarted[key] = true
-    if (CANCEL_RE.test(key + ' ' + location.pathname)) return
-    send(isApplication(key) ? 'Application start' : 'Form start', { label: key })
+    send(isApplication(key) ? 'Application start' : 'Form start', { label: key, fn: headingOf(form.closest('section') || form) })
+  }
+
+  // the browser's own "please fill in this field" and the site's error styling both count
+  document.addEventListener(
+    'invalid',
+    function (e) {
+      var form = e.target && e.target.closest && e.target.closest('form')
+      if (!form || inConsentBanner(form)) return
+      var key = formKey(form)
+      var f = formState(form, key)
+      var name = fieldName(e.target, form)
+      if (name && f.err.indexOf(name) < 0) f.err.push(name)
+    },
+    true
+  )
+  function noteErrors(form, key) {
+    var bad = form.querySelectorAll('[aria-invalid="true"]')
+    var f = formState(form, key)
+    for (var i = 0; i < bad.length && f.err.length < 20; i++) {
+      var name = fieldName(bad[i], form)
+      if (name && f.err.indexOf(name) < 0) f.err.push(name)
+    }
   }
   document.addEventListener('pointerdown', onFormTouch, true)
   document.addEventListener('focusin', onFormTouch, true)
 
-  function stepInfo(root) {
-    var num = root && root.querySelector('[class*="stepNum"], [class*="step-num"], [aria-current="step"]')
+  // Only progress markers inside the form count; a numbered "how it works" list next to it is not a step.
+  function stepInfo(form) {
+    var num = form.querySelector('[class*="stepNum"], [class*="step-num"], [aria-current="step"]')
     if (!num) return null
-    var name = root.querySelector('[class*="stepName"], [class*="step-name"]')
-    return clip(num.textContent, 12) + (name ? ' · ' + clip(name.textContent, 40) : '')
+    var n = parseInt(String(num.textContent).replace(/[^\d]/g, ''), 10)
+    var name = form.querySelector('[class*="stepName"], [class*="step-name"]')
+    var text = name ? clip(name.textContent, 40) : ''
+    if (!text) {
+      // name the step after its first visible field
+      var fields = form.querySelectorAll(FIELD_EL)
+      for (var i = 0; i < fields.length; i++) {
+        if (fields[i].offsetParent !== null && fields[i].type !== 'submit') { text = fieldName(fields[i], form); break }
+      }
+    }
+    return (isNaN(n) ? clip(num.textContent, 12) : 'Schritt ' + n) + (text ? ' · ' + tidy(text) : '')
   }
 
   // Read the progress label after the site has rendered the next step. Some steps advance on a
   // tap without submitting, so taps inside a form are checked as well.
   function checkStep(form) {
     var key = formKey(form)
-    var root = form.closest('section') || form.parentNode
     lastForm = key
     var check = function () {
-      var step = stepInfo(root)
+      noteErrors(form, key)
+      var step = stepInfo(form)
       if (step && step !== lastStep[key]) {
-        var first = lastStep[key] === undefined && /^1\s*\//.test(step)
+        var first = lastStep[key] === undefined && /^Schritt 1\b/.test(step)
         lastStep[key] = step
         if (!first) send('Form step', { label: step, form: key })
       }
@@ -308,7 +424,15 @@
     leadAt = Date.now()
     var where = key + ' ' + labels + ' ' + location.pathname
     var name = CANCEL_RE.test(where) ? 'Cancellation' : isApplication(where) ? 'Application' : 'Form submit'
-    send(name, { label: key, c: name === 'Form submit' ? choices(fields) : {} })
+    var f = forms[key]
+    var props = { label: key, c: name === 'Form submit' ? choices(fields) : {} }
+    if (f) {
+      f.done = true
+      props.fs = f.seq.slice(0, 20)
+      props.err = f.err.slice(0, 20)
+      props.t = Math.min(Math.round((Date.now() - f.t0) / 1000), 3600)
+    }
+    send(name, props)
   }
 
   // Fallback for forms that keep their own reference to fetch and so bypass the wrapper below:
