@@ -440,6 +440,81 @@ td.m { color: var(--text-3); font-weight: 400; }
 .sitecard .meta { display: flex; gap: 14px; flex-wrap: wrap; font-size: 13px; color: var(--text-3); border-top: 1px solid var(--line-soft); padding-top: 12px; }
 .sitecard .meta b { color: var(--text); font-weight: 600; }
 
+/* ---------- opportunities v2 ---------- */
+.ipage { display: flex; flex-direction: column; gap: 24px; margin-top: 16px; }
+.isum { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 0; }
+.isum-c { padding: 22px 24px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.isum-c + .isum-c { border-left: 1px solid var(--line-soft); }
+.isum-c .k { font-size: 13px; color: var(--text-3); font-weight: 500; }
+.isum-c .n { font: 600 34px/1.05 var(--display); letter-spacing: -.035em; font-variant-numeric: tabular-nums; }
+.isum-c .d { font-size: 12.5px; color: var(--text-3); white-space: normal; }
+.isev-bar { display: flex; gap: 3px; height: 6px; margin-top: 4px; max-width: 220px; }
+.isev-bar i { border-radius: 3px; background: var(--info); }
+.isev-bar i.high { background: var(--down); } .isev-bar i.medium { background: var(--warn); }
+.ihd { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+.ihd h2, .igh h2 { margin: 0; font: 600 20px/1.2 var(--display); letter-spacing: -.02em; display: flex; align-items: center; gap: 10px; }
+.ihd span, .igh > span { font-size: 13.5px; color: var(--text-3); }
+.itops { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.itop { background: var(--card); border-radius: 20px; box-shadow: var(--card-shadow); padding: 20px 22px; display: flex; flex-direction: column; gap: 10px; position: relative; overflow: hidden; min-width: 0; }
+.itop::before { content: ""; position: absolute; left: 0; top: 0; right: 0; height: 4px; background: var(--info); }
+.itop.high::before { background: var(--down); } .itop.medium::before { background: var(--warn); }
+.itop-meta { display: flex; gap: 6px; flex-wrap: wrap; }
+.itop-big { font: 600 28px/1 var(--display); letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+.itop-big small { font: 500 13px var(--display); color: var(--text-3); letter-spacing: 0; }
+.itop h3 { margin: 0; font: 600 16px/1.35 var(--display); letter-spacing: -.012em; text-wrap: balance; }
+.itop p { margin: 0; font-size: 13.5px; line-height: 1.45; color: var(--text-2); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.itop-foot { display: flex; gap: 8px; margin-top: auto; padding-top: 6px; }
+.itop.leaving { opacity: .35; pointer-events: none; transition: opacity .25s; }
+.ichip { display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: var(--sel); font-size: 12.5px; font-weight: 500; color: var(--text-2); white-space: nowrap; }
+.ichip .ico, .igh h2 .ico, .ifilter .seg .ico { width: 15px; height: 15px; flex: none; }
+.ichip.eff { font-variant-numeric: tabular-nums; }
+.ifilter { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.ifilter .seg button { display: inline-flex; align-items: center; gap: 7px; }
+.iquick { border: 1px solid var(--line); background: none; border-radius: 999px; padding: 7px 14px; font: inherit; font-size: 13px; font-weight: 500; color: var(--text-2); cursor: pointer; }
+.iquick.on { background: var(--ink); color: var(--card); border-color: var(--ink); }
+.igroup { padding: 8px 24px 10px; }
+.igh { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 16px 0 10px; }
+.irow { border-top: 1px solid var(--line-soft); }
+.ihead { width: 100%; display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; gap: 16px; align-items: center; padding: 15px 0; border: 0; background: none; text-align: left; font: inherit; color: inherit; cursor: pointer; }
+.ihead:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 8px; }
+.idot { width: 10px; height: 10px; border-radius: 50%; background: var(--info); }
+.irow.high .idot { background: var(--down); box-shadow: 0 0 0 4px color-mix(in srgb, var(--down) 16%, transparent); }
+.irow.medium .idot { background: var(--warn); }
+.irow.closed .idot { background: var(--text-3); box-shadow: none; }
+.irow.closed .ititle { text-decoration: line-through; text-decoration-color: var(--text-3); color: var(--text-2); }
+.imain { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.ititle { font: 600 15px/1.35 var(--display); letter-spacing: -.01em; }
+.isub { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; font-size: 12.5px; color: var(--text-3); }
+.isev { font-weight: 600; color: var(--info); }
+.irow.high .isev { color: var(--down); } .irow.medium .isev { color: color-mix(in srgb, var(--warn) 75%, var(--text)); }
+.isites { display: inline-flex; flex-wrap: wrap; gap: 4px 10px; }
+.isites span { display: inline-flex; align-items: center; gap: 5px; }
+.isites img, .isites .fallback { width: 14px; height: 14px; border-radius: 3px; }
+.iright { display: flex; align-items: center; gap: 14px; }
+.ival { font: 600 15px var(--display); letter-spacing: -.01em; min-width: 64px; text-align: right; font-variant-numeric: tabular-nums; }
+.ichev { width: 8px; height: 8px; border-right: 1.6px solid var(--text-3); border-bottom: 1.6px solid var(--text-3); transform: rotate(45deg); margin: 0 4px 4px 0; transition: transform .25s var(--ease); }
+.ihead[aria-expanded="true"] .ichev { transform: rotate(-135deg); margin: 4px 4px 0 0; }
+.ibody { padding: 0 0 18px 26px; display: flex; flex-direction: column; gap: 12px; }
+.idetail { margin: 0; font-size: 14px; line-height: 1.5; color: var(--text-2); max-width: 75ch; }
+.ievi { overflow-x: auto; border-radius: 12px; background: var(--sel); padding: 4px 14px; }
+.ievi table { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
+.ievi th { text-align: right; font-weight: 500; font-size: 11.5px; color: var(--text-3); padding: 8px 0 6px 14px; white-space: nowrap; }
+.ievi td { text-align: right; padding: 8px 0 8px 14px; border-top: 1px solid var(--line-soft); white-space: nowrap; }
+.ievi th:first-child, .ievi td:first-child { text-align: left; padding-left: 0; white-space: normal; }
+.ievi tr:nth-child(2) td { border-top: 0; }
+.ievi table:not(:has(th)) tr:first-child td { border-top: 0; }
+.ievi td:first-child { display: flex; align-items: center; gap: 8px; }
+.ievi td:first-child img, .ievi td:first-child .fallback { width: 15px; height: 15px; border-radius: 3px; flex: none; }
+.ievi td small { color: var(--text-3); margin-left: auto; padding-left: 10px; white-space: nowrap; }
+.ihow { display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line); font-size: 14px; line-height: 1.45; max-width: 80ch; }
+.ihow-k { font-size: 11.5px; font-weight: 600; color: var(--text-3); letter-spacing: .02em; }
+.inote { margin: 0; font-size: 12px; color: var(--text-3); }
+.irow.leaving { opacity: .35; pointer-events: none; transition: opacity .25s; }
+.iempty { padding: 28px 24px; color: var(--text-2); font-size: 14.5px; }
+.closed-list.igroup > summary { padding: 16px 0; cursor: pointer; font-weight: 600; font-size: 14px; color: var(--text-2); }
+@media (max-width: 1000px) { .itops { grid-template-columns: minmax(0, 1fr); } .isum { grid-template-columns: repeat(2, minmax(0, 1fr)); } .isum-c:nth-child(3) { border-left: 0; } .isum-c:nth-child(n+3) { border-top: 1px solid var(--line-soft); } }
+@media (max-width: 560px) { .igroup { padding: 4px 16px 8px; } .ihead { grid-template-columns: 10px minmax(0, 1fr); } .iright { grid-column: 2; justify-content: flex-start; } .ival { min-width: 0; text-align: left; } .ibody { padding-left: 0; } .isum-c .n { font-size: 28px; } }
+
 /* ---------- opportunities ---------- */
 .badge-n { margin-left: auto; min-width: 19px; height: 19px; padding: 0 6px; border-radius: 10px; background: var(--down); color: #fff; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
 .badge-n:empty { display: none; }
@@ -2066,10 +2141,136 @@ td.wrap { white-space: normal; min-width: 180px; }
       section.hidden = false
     }).catch(function (e) { console.error(e) })
   }
-  var insFilter = 'all'
+  var insFilter = 'all', insQuick = false, insOpen = {}
+  var OWNERS = ['Google Ads', 'Website', 'Google-Profil', 'Team']
+  var OWNER_NOTE = { 'Google Ads': 'im Werbekonto', Website: 'auf der Website', 'Google-Profil': 'im Unternehmensprofil', Team: 'im Betrieb' }
+  function effortLabel(m) { return m === null || m === undefined ? 'laufend' : m < 60 ? m + ' Min' : m === 60 ? '1 Std' : m <= 240 ? '½ Tag' : 'Projekt' }
+  function ownerIcon(o) {
+    if (o === 'Google Ads') return brandIcon('googleads')
+    if (o === 'Google-Profil') return brandIcon('gbp')
+    if (o === 'Website') return html('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="ico"><rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M3 9h18M7 6.5h.01M10 6.5h.01"/></svg>')
+    return html('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="ico"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0M16 5.2a3.2 3.2 0 0 1 0 6M17.5 14a5.5 5.5 0 0 1 3 5"/></svg>')
+  }
+  function chip(cls, content) { var c = el('span', 'ichip ' + (cls || '')); content.forEach(function (x) { if (x) c.append(typeof x === 'string' ? document.createTextNode(x) : x) }); return c }
+  function siteChips(r) {
+    var sites = []
+    if (r.site) sites.push(r.site)
+    ;(r.table ? r.table.rows : r.items || []).forEach(function (x) { if (x.site && sites.indexOf(x.site) < 0) sites.push(x.site) })
+    var box = el('span', 'isites')
+    sites.slice(0, 4).forEach(function (d) { if (SITE_BY_DOMAIN[d]) { var c = el('span'); c.append(siteLogo(d), document.createTextNode(SITE_BY_DOMAIN[d].name)); box.append(c) } })
+    if (sites.length > 4) box.append(el('span', 'more2', '+' + (sites.length - 4)))
+    return sites.length ? box : null
+  }
+  // evidence: a small table of the rows behind a finding
+  function evidence(r) {
+    var t = r.table
+    if (!t && r.items && r.items.length) t = { cols: ['', ''], rows: r.items.map(function (it) { return { site: it.site, cells: [it.label, it.value], note: it.note } }) }
+    if (!t && r.terms && r.terms.length) t = { cols: ['Begriff', ''], rows: r.terms.map(function (x) { return { site: x.site, cells: [x.term, x.spend !== undefined ? money.format(x.spend) : x.impressions !== undefined ? nf.format(x.impressions) + '×' : ''] } }) }
+    if (!t || !t.rows.length) return null
+    var wrap = el('div', 'ievi'), tb = el('table')
+    if (t.cols.some(function (c) { return c })) {
+      var hr = el('tr'); t.cols.forEach(function (c) { hr.append(el('th', null, c)) }); tb.append(hr)
+    }
+    var multi = !state.site && t.rows.some(function (x) { return x.site })
+    t.rows.forEach(function (x) {
+      var tr = el('tr')
+      x.cells.forEach(function (c, i) {
+        var td = el('td')
+        if (i === 0) {
+          if (multi && x.site && SITE_BY_DOMAIN[x.site]) { var lg = siteLogo(x.site); lg.title = SITE_BY_DOMAIN[x.site].name; td.append(lg) }
+          td.append(el('span', null, String(c)))
+          if (x.note) td.append(el('small', null, x.note))
+        } else td.textContent = c === null || c === undefined ? '–' : String(c)
+        tr.append(td)
+      })
+      tb.append(tr)
+    })
+    wrap.append(tb)
+    return wrap
+  }
+  function markDone(r, done) {
+    return setInsightState(r.key, done).then(function () {
+      // a finished task goes into the logbook, so its effect shows up two weeks later
+      if (done === 'done' && isAdmin()) {
+        return fetch('/api/changelog?' + qs(), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ date: iso(berlinToday()), site: r.site || '', text: 'Chance umgesetzt: ' + r.title }) }).catch(function () {})
+      }
+    })
+  }
+  function actButtons(r, onChange, holder) {
+    var acts = el('div', 'ins-acts')
+    var btn = function (cls, label, next) {
+      var b = el('button', 'ib ' + cls, label); b.type = 'button'
+      b.onclick = function (ev) {
+        ev.stopPropagation()
+        holder.classList.add('leaving')
+        markDone(r, next).then(function () { if (onChange) onChange() })
+      }
+      return b
+    }
+    if (r.state === 'open') acts.append(btn('done', 'Erledigt', 'done'), btn('hide', 'Ausblenden', 'hidden'))
+    else acts.append(el('span', 'was', (r.state === 'done' ? 'Erledigt am ' : 'Ausgeblendet am ') + new Date(r.state_at).toLocaleDateString('de-DE', { day: 'numeric', month: 'short' }) + (r.state === 'done' ? ' · steht im Logbuch' : '')), btn('reopen', 'Wieder öffnen', 'open'))
+    if (r.reopened) acts.prepend(el('span', 'again', 'Wieder aufgetaucht'))
+    return acts
+  }
+  // one compact line that opens into detail, evidence and the how-to
+  function insightRow(r, onChange) {
+    var row = el('div', 'irow ' + r.severity + (r.state !== 'open' ? ' closed' : ''))
+    row.id = 'ins-' + btoa(unescape(encodeURIComponent(r.key))).replace(/[^a-zA-Z0-9]/g, '').slice(0, 40)
+    var head = el('button', 'ihead'); head.type = 'button'
+    head.setAttribute('aria-expanded', insOpen[r.key] ? 'true' : 'false')
+    var main = el('span', 'imain')
+    main.append(el('span', 'ititle', r.title))
+    var sub = el('span', 'isub')
+    sub.append(el('span', 'isev', SEVERITY[r.severity]))
+    var sc = siteChips(r); if (sc) sub.append(sc)
+    main.append(sub)
+    var right = el('span', 'iright')
+    right.append(chip('eff', [effortLabel(r.minutes)]))
+    right.append(el('span', 'ival', r.value ? '≈ ' + money0.format(r.value) : ''))
+    right.append(el('span', 'ichev', ''))
+    head.append(el('span', 'idot'), main, right)
+    var body = el('div', 'ibody')
+    body.hidden = !insOpen[r.key]
+    body.append(el('p', 'idetail', r.detail))
+    var ev = evidence(r); if (ev) body.append(ev)
+    var how = el('div', 'ihow')
+    how.append(el('span', 'ihow-k', 'So geht’s · ' + (OWNER_NOTE[r.owner] || r.owner)), el('span', null, r.action))
+    body.append(how)
+    if (r.value) body.append(el('p', 'inote', 'Der Betrag ist auf einen Monat hochgerechnet: so viel kostet das ohne Änderung.'))
+    if (r.key) body.append(actButtons(r, onChange, row))
+    head.onclick = function () {
+      insOpen[r.key] = !insOpen[r.key]
+      body.hidden = !insOpen[r.key]
+      head.setAttribute('aria-expanded', insOpen[r.key] ? 'true' : 'false')
+    }
+    row.append(head, body)
+    return row
+  }
+  function topCard(r, onChange) {
+    var c = el('article', 'itop ' + r.severity)
+    var meta = el('div', 'itop-meta')
+    meta.append(chip('own', [ownerIcon(r.owner), r.owner]), chip('eff', [effortLabel(r.minutes)]))
+    c.append(meta)
+    if (r.value) { var big = el('div', 'itop-big'); big.append(document.createTextNode('≈ ' + money0.format(r.value)), el('small', null, ' pro Monat')); c.append(big) }
+    c.append(el('h3', null, r.title), el('p', null, r.action))
+    var sc = siteChips(r); if (sc) c.append(sc)
+    var foot = el('div', 'itop-foot')
+    var more = el('button', 'ib hide', 'Details'); more.type = 'button'
+    more.onclick = function () {
+      insOpen[r.key] = true
+      insFilter = 'all'; insQuick = false
+      render()
+      setTimeout(function () { var target = document.getElementById('ins-' + btoa(unescape(encodeURIComponent(r.key))).replace(/[^a-zA-Z0-9]/g, '').slice(0, 40)); if (target) target.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'center' }) }, 400)
+    }
+    var done = el('button', 'ib done', 'Erledigt'); done.type = 'button'
+    done.onclick = function () { c.classList.add('leaving'); markDone(r, 'done').then(function () { if (onChange) onChange() }) }
+    foot.append(done, more)
+    c.append(foot)
+    return c
+  }
   function renderInsightsPage(view) {
     var token = renderToken
-    var seg = el('div', 'seg'), segA = el('div', 'seg')
+    var seg = el('div', 'seg')
     var scopes = [['all', 'Alle Unternehmen', null]].concat(COMPANIES.map(function (c) { return ['company:' + c.id, c.name, c] }))
     scopes.forEach(function (sc) {
       var b = el('button', (state.site ? '' : state.scope === sc[0] ? 'on' : ''))
@@ -2079,46 +2280,89 @@ td.wrap { white-space: normal; min-width: 180px; }
       b.onclick = function () { state.site = null; state.scope = sc[0]; saveUrl(); render() }
       seg.append(b)
     })
-    var totals = el('div', 'totals')
-    var card = el('section', 'card panel wide'); card.style.minHeight = '0'; card.style.marginTop = '16px'
-    var sk = skeletonRows(6); card.append(sk)
-    view.append(isAdmin() ? seg : el('div'), totals, card)
+    var wrap = el('div', 'ipage'), sk = skeletonRows(6)
+    wrap.append(sk)
+    view.append(isAdmin() ? seg : el('div'), wrap)
     api('insights').then(function (d) {
       if (token !== renderToken) return
       sk.remove()
       var all = d.results
-      var closedItems = all.filter(function (r) { return r.state !== 'open' })
-      d = { results: all.filter(function (r) { return r.state === 'open' }) }
-      var counts = { high: 0, medium: 0, info: 0 }, areaCount = {}
-      d.results.forEach(function (r) { counts[r.severity]++; areaCount[r.area] = (areaCount[r.area] || 0) + 1 })
-      var adsWaste = d.results.filter(function (r) { return r.area === 'Google Ads' && /ohne (Anfrage|Conversion)|Kaufabsicht/.test(r.title) && !/^Zielseite/.test(r.title) }).reduce(function (a, r) { return a + (r.value || 0) }, 0)
-      ;[['Dringend', counts.high, 'sofort angehen'], ['Wichtig', counts.medium, 'diese Woche'], ['Hinweise', counts.info, 'zur Einordnung'], ['Ads ohne Ergebnis', money0.format(adsWaste), 'pro Monat, Keywords & Suchbegriffe']].forEach(function (t, i) {
-        var c = el('div', 'card total'), n = el('div', 'n', t[1])
-        if (i === 0) n.style.color = 'var(--down)'
-        c.append(labelWithInfo('k', t[0]), n, el('div', 'd', t[2]))
-        totals.append(c)
+      var open = all.filter(function (r) { return r.state === 'open' })
+      var closed = all.filter(function (r) { return r.state !== 'open' })
+      var counts = { high: 0, medium: 0, info: 0 }
+      open.forEach(function (r) { counts[r.severity]++ })
+      // only findings where money buys nothing; landing pages see the same clicks as keywords, so they are left out
+      var WASTE = ['keyword_waste', 'junk_terms', 'tail_terms', 'off_hours']
+      var lost = open.filter(function (r) { return WASTE.indexOf(r.kind) >= 0 }).reduce(function (a, r) { return a + (r.value || 0) }, 0)
+      var quick = open.filter(function (r) { return r.minutes !== null && r.minutes !== undefined && r.minutes <= 15 && r.severity !== 'info' })
+      var doneRecent = closed.filter(function (r) { return r.state === 'done' && Date.now() - r.state_at < 30 * 86400000 }).length
+
+      // summary
+      var sum = el('section', 'card isum')
+      var s1 = el('div', 'isum-c'), bar = el('div', 'isev-bar')
+      ;['high', 'medium', 'info'].forEach(function (k) { if (counts[k]) { var i = el('i', k); i.style.flex = counts[k]; bar.append(i) } })
+      s1.append(el('div', 'k', 'Offene Punkte'), el('div', 'n', nf.format(open.length)), bar,
+        el('div', 'd', [counts.high && counts.high + ' dringend', counts.medium && counts.medium + ' wichtig', counts.info && counts.info + ' Hinweise'].filter(Boolean).join(' · ')))
+      var s2 = el('div', 'isum-c')
+      s2.append(el('div', 'k', 'Werbung ohne Anfrage'), el('div', 'n', lost ? '≈ ' + money0.format(lost) : '–'), el('div', 'd', 'pro Monat: Keywords, Suchbegriffe und Nachtstunden ohne Ergebnis'))
+      var s3 = el('div', 'isum-c')
+      s3.append(el('div', 'k', 'Schnell erledigt'), el('div', 'n', nf.format(quick.length)), el('div', 'd', 'Punkte unter 15 Minuten'))
+      var s4 = el('div', 'isum-c')
+      s4.append(el('div', 'k', 'Erledigt'), el('div', 'n', nf.format(doneRecent)), el('div', 'd', 'in den letzten 30 Tagen'))
+      sum.append(s1, s2, s3, s4)
+      wrap.append(sum)
+
+      if (!open.length) { wrap.append(el('section', 'card iempty', 'Alles erledigt. Neue Punkte erscheinen hier automatisch, sobald die Daten etwas zeigen.')) }
+      // the three with the biggest effect
+      var top = open.filter(function (r) { return r.severity !== 'info' }).slice(0, 3)
+      if (top.length) {
+        var tw = el('section', 'itops-wrap')
+        var th = el('div', 'ihd'); th.append(el('h2', null, 'Zuerst angehen'), el('span', null, 'Die ' + (top.length === 1 ? 'wichtigste Sache' : top.length + ' Punkte mit der größten Wirkung')))
+        var grid = el('div', 'itops')
+        top.forEach(function (r) { grid.append(topCard(r, render)) })
+        tw.append(th, grid)
+        wrap.append(tw)
+      }
+
+      // filters
+      var bar2 = el('div', 'ifilter'), segO = el('div', 'seg')
+      var ownerCount = {}
+      open.forEach(function (r) { ownerCount[r.owner] = (ownerCount[r.owner] || 0) + 1 })
+      ;[['all', 'Alle', open.length]].concat(OWNERS.filter(function (o) { return ownerCount[o] }).map(function (o) { return [o, o, ownerCount[o]] })).forEach(function (o) {
+        var b = el('button', insFilter === o[0] ? 'on' : ''); b.type = 'button'
+        if (o[0] !== 'all') b.append(ownerIcon(o[0]))
+        b.append(document.createTextNode(o[1]), el('span', 'c', o[2]))
+        b.onclick = function () { insFilter = o[0]; render() }
+        segO.append(b)
       })
-      var areas = [['all', 'Alle', d.results.length]].concat(AREAS.filter(function (a) { return areaCount[a] }).map(function (a) { return [a, a, areaCount[a]] }))
-      areas.forEach(function (a) {
-        var b = el('button', insFilter === a[0] ? 'on' : '')
-        b.type = 'button'
-        b.append(document.createTextNode(a[1]), el('span', 'c', a[2]))
-        b.onclick = function () { insFilter = a[0]; render() }
-        segA.append(b)
+      var qb = el('button', 'iquick' + (insQuick ? ' on' : '')); qb.type = 'button'
+      qb.append(document.createTextNode('Nur schnelle (≤ 15 Min)'))
+      qb.setAttribute('aria-pressed', insQuick ? 'true' : 'false')
+      qb.onclick = function () { insQuick = !insQuick; render() }
+      bar2.append(segO, qb)
+      wrap.append(bar2)
+
+      // grouped list
+      var rows = open.filter(function (r) { return (insFilter === 'all' || r.owner === insFilter) && (!insQuick || (r.minutes !== null && r.minutes !== undefined && r.minutes <= 15)) })
+      var groups = OWNERS.filter(function (o) { return rows.some(function (r) { return r.owner === o }) })
+      if (!rows.length) wrap.append(el('section', 'card iempty', 'Nichts in dieser Auswahl.'))
+      groups.forEach(function (o) {
+        var list = rows.filter(function (r) { return r.owner === o })
+        var g = el('section', 'card igroup')
+        var gh = el('div', 'igh'), ttl = el('h2')
+        ttl.append(ownerIcon(o), document.createTextNode(o))
+        var gval = list.reduce(function (a, r) { return a + (r.value || 0) }, 0)
+        gh.append(ttl, el('span', null, list.length + (list.length === 1 ? ' Punkt' : ' Punkte') + (gval ? ' · ≈ ' + money0.format(gval) + ' pro Monat' : '')))
+        g.append(gh)
+        list.forEach(function (r, i) { var e = insightRow(r, render); if (!REDUCED) e.style.animation = 'rise .4s ' + Math.min(i * 0.03, 0.4) + 's cubic-bezier(.2,.8,.2,1) both'; g.append(e) })
+        wrap.append(g)
       })
-      card.append(segA)
-      var pg = insightProgress(all); if (pg) card.append(pg)
-      var list = el('div', 'ins-list')
-      var rows = d.results.filter(function (r) { return insFilter === 'all' || r.area === insFilter })
-      rows.forEach(function (r, i) { var e = insightEl(r, render); if (!REDUCED) e.style.animation = 'rise .4s ' + Math.min(i * 0.03, 0.5) + 's cubic-bezier(.2,.8,.2,1) both'; list.append(e) })
-      if (!rows.length) list.append(el('div', 'empty', d.results.length ? 'Nichts in dieser Kategorie' : 'Alles erledigt. Neue Punkte erscheinen hier automatisch.'))
-      card.append(list)
-      if (closedItems.length) {
-        var det = el('details', 'closed-list'), sum = el('summary', null, 'Erledigt und ausgeblendet (' + closedItems.length + ')')
-        var cl = el('div', 'ins-list')
-        closedItems.forEach(function (r) { cl.append(insightEl(r, render)) })
-        det.append(sum, cl)
-        card.append(det)
+
+      if (closed.length) {
+        var det = el('details', 'card closed-list igroup'), su = el('summary', null, 'Erledigt und ausgeblendet (' + closed.length + ')')
+        det.append(su)
+        closed.forEach(function (r) { det.append(insightRow(r, render)) })
+        wrap.append(det)
       }
     }).catch(function (e) { console.error(e); sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
   }

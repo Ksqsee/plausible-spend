@@ -846,14 +846,56 @@ function scaleToMonth(value, q) {
   return round((value / days) * 30, 0)
 }
 
+// Who acts on a finding and roughly how long it takes. minutes: null means ongoing or just for context.
+const KIND = {
+  zero_conversions: { owner: 'Google Ads', minutes: 15 },
+  tracker_missing: { owner: 'Website', minutes: 5 },
+  no_keyword: { owner: 'Google Ads', minutes: 5 },
+  keyword_waste: { owner: 'Google Ads', minutes: 15 },
+  junk_terms: { owner: 'Google Ads', minutes: 5 },
+  tail_terms: { owner: 'Google Ads', minutes: 15 },
+  winner_terms: { owner: 'Google Ads', minutes: 10 },
+  budget_lost: { owner: 'Google Ads', minutes: 5 },
+  rank_lost: { owner: 'Google Ads', minutes: 60 },
+  route_landing: { owner: 'Google Ads', minutes: 30 },
+  off_hours: { owner: 'Google Ads', minutes: 5 },
+  device: { owner: 'Google Ads', minutes: 5 },
+  landing_waste: { owner: 'Website', minutes: 60 },
+  seo_gap: { owner: 'Website', minutes: 240 },
+  organic_overlap: { owner: 'Google Ads', minutes: 5 },
+  gbp_silent: { owner: 'Google-Profil', minutes: 15 },
+  gbp_reviews: { owner: 'Team', minutes: null },
+  gbp_calls: { owner: 'Google-Profil', minutes: null },
+  gbp_untagged: { owner: 'Google-Profil', minutes: 5 },
+  gbp_keywords: { owner: 'Google Ads', minutes: 30 },
+  form_drop: { owner: 'Website', minutes: 30 },
+  faq_top: { owner: 'Website', minutes: 15 },
+  choices: { owner: 'Google Ads', minutes: 15 },
+  sister: { owner: 'Website', minutes: 30 },
+  slow_page: { owner: 'Website', minutes: 60 },
+  rage: { owner: 'Website', minutes: 30 },
+  xray_section: { owner: 'Website', minutes: 30 },
+  contact_drop: { owner: 'Team', minutes: 15 },
+  silent_traffic: { owner: 'Website', minutes: 30 },
+  evening: { owner: 'Team', minutes: null }
+}
+const SEVERITY_WEIGHT = { high: 3, medium: 2, info: 1 }
+
+// The site a landing page URL belongs to.
+function siteOfUrl(url, domains) {
+  const host = String(url || '').replace(/^https?:\/\//, '').split(/[/?#]/)[0].replace(/^www\./, '').toLowerCase()
+  return domains.find((d) => d.replace(/^www\./, '') === host) || null
+}
+
 export async function insights(db, q, owner = 'admin') {
   const sites = await siteRows(db, q.sites)
   const names = new Map(sites.map((s) => [s.domain, s.name]))
   const scope = `${inList('site', q.sites)} AND date >= ? AND date <= ?`
   const range = [...q.sites, q.from, q.to]
   const out = []
-  const add = (o) => out.push(o)
+  const add = (o) => out.push({ ...(KIND[o.kind] || { owner: o.area, minutes: null }), ...o })
   const eur = (n) => `${Math.round(n).toLocaleString('de-DE')} €`
+  const pctOf = (a, b) => (b ? Math.round((a / b) * 100) : 0)
 
   const [spendRows, trackerRows, adsSessions, ads, gbpData, gscRows, formData, leadData, faqRows, outbound, trackedRows] = await Promise.all([
     db.prepare(`SELECT site, SUM(spend) AS spend, SUM(clicks) AS clicks, SUM(conversions) AS conversions FROM ads_spend WHERE ${scope} GROUP BY site`).bind(...range).all(),
@@ -905,6 +947,7 @@ export async function insights(db, q, owner = 'admin') {
       const a = adSess.get(s.site)
       add({
         severity: 'high',
+        kind: 'zero_conversions',
         area: 'Tracking',
         site: s.site,
         title: `${name}: Google Ads meldet 0 Conversions bei ${eur(s.spend)} Ausgaben`,
@@ -914,13 +957,15 @@ export async function insights(db, q, owner = 'admin') {
             : '') +
           'Google zählt Conversions nur bei Besuchern, die Cookies zustimmen; ohne Zustimmung gehen sie bei kleinem Volumen verloren. Für Berichte gelten die Anfragen aus diesem Dashboard.',
         action: 'In Google Ads die Anruf-Conversion als primär markieren und im Google-Tag url_passthrough aktivieren. Vor einem Wechsel auf Conversion-Gebote erst prüfen, ob Google genug Conversions sieht.',
-        value: scaleToMonth(s.spend, q)
+        // a counting problem, not lost money: the spend may well bring enquiries Google cannot see
+        value: null
       })
     }
     if ((!t || !t.visitors) && !everTracked.has(s.site)) {
       // never a single event: either just installed or the snippet is missing
       add({
         severity: 'info',
+        kind: 'tracker_missing',
         area: 'Tracking',
         site: s.site,
         title: `${name}: noch kein Besuch im eigenen Tracker`,
@@ -934,6 +979,7 @@ export async function insights(db, q, owner = 'admin') {
   if (noTerm.length) {
     add({
       severity: 'medium',
+      kind: 'no_keyword',
       area: 'Tracking',
       site: noTerm.length === 1 ? noTerm[0].site : null,
       title: `Anzeigenbesuche ohne Keyword auf ${noTerm.length} Website${noTerm.length > 1 ? 's' : ''}`,
@@ -945,17 +991,26 @@ export async function insights(db, q, owner = 'admin') {
     })
   }
 
-  // --- Ads: keywords without results ---
-  const keywordWaste = ads.keywords.filter((k) => k.spend >= 15 && !k.conversions && !k.site_leads).slice(0, 6)
-  for (const k of keywordWaste) {
+  // --- Ads: keywords without results, one finding with a table ---
+  const keywordWaste = ads.keywords.filter((k) => k.spend >= 15 && !k.conversions && !k.site_leads).slice(0, 10)
+  if (keywordWaste.length) {
+    const total = keywordWaste.reduce((a, k) => a + k.spend, 0)
+    const lowQs = keywordWaste.filter((k) => k.quality_score && k.quality_score <= 4).length
     add({
-      severity: k.spend >= 40 ? 'high' : 'medium',
+      kind: 'keyword_waste',
+      severity: keywordWaste.some((k) => k.spend >= 40) ? 'high' : 'medium',
       area: 'Google Ads',
-      site: k.site,
-      title: `Keyword „${k.keyword}“: ${eur(k.spend)} ohne Anfrage`,
-      detail: `${k.clicks} Klicks, CTR ${k.ctr ?? '–'} %, Qualitätsfaktor ${k.quality_score ?? '–'}${k.organic_impressions >= 10 ? `, organisch Position ${k.organic_position}` : ''} (${k.campaign}).`,
-      action: k.quality_score && k.quality_score <= 4 ? 'Gebot senken oder pausieren; Anzeige und Zielseite enger auf den Begriff zuschneiden.' : 'Gebot senken oder pausieren und Suchbegriffe dahinter prüfen.',
-      value: scaleToMonth(k.spend, q)
+      site: new Set(keywordWaste.map((k) => k.site)).size === 1 ? keywordWaste[0].site : null,
+      title: keywordWaste.length === 1
+        ? `Keyword „${keywordWaste[0].keyword}“ kostet ${eur(total)} ohne Anfrage`
+        : `${keywordWaste.length} Keywords kosten ${eur(total)} ohne Anfrage`,
+      detail: 'Klicks ohne eine einzige Anfrage, weder laut Google noch laut Website.' + (lowQs ? ` ${lowQs} davon mit schwachem Qualitätsfaktor (≤ 4): Anzeige oder Zielseite passt nicht zur Suche.` : ''),
+      action: 'Gebote senken oder pausieren. Vorher unter „Suchbegriffe“ prüfen, welche Suchen dahinter stecken.',
+      value: scaleToMonth(total, q),
+      table: {
+        cols: ['Keyword', 'Klicks', 'Qualität', 'Kosten'],
+        rows: keywordWaste.map((k) => ({ site: k.site, cells: [k.keyword, k.clicks, k.quality_score ?? '–', eur(k.spend)] }))
+      }
     })
   }
 
@@ -964,11 +1019,13 @@ export async function insights(db, q, owner = 'admin') {
   if (junk.length) {
     const total = junk.reduce((a, t) => a + t.spend, 0)
     add({
+      kind: 'junk_terms',
       severity: 'high',
       area: 'Google Ads',
       site: junk[0].site,
       title: `${junk.length} Suchbegriffe ohne Kaufabsicht kosten ${eur(total)}`,
-      detail: junk.slice(0, 8).map((t) => `„${t.term}“ ${eur(t.spend)}`).join(', '),
+      detail: 'Suchen nach Jobs, Anleitungen oder Kostenlosem. Daraus wird kein Auftrag.',
+      table: { cols: ['Suchbegriff', 'Kosten'], rows: junk.slice(0, 12).map((t) => ({ site: t.site, cells: [t.term, eur(t.spend)] })) },
       action: 'Als ausschließende Keywords hinzufügen (Phrase): ' + [...new Set(junk.map((t) => (t.term.match(JUNK_TERMS) || [])[0]).filter(Boolean))].join(', '),
       value: scaleToMonth(total, q),
       terms: junk.slice(0, 20).map((t) => ({ site: t.site, campaign: t.campaign, term: t.term, spend: t.spend }))
@@ -978,11 +1035,13 @@ export async function insights(db, q, owner = 'admin') {
   if (tail.length >= 3) {
     const total = tail.reduce((a, t) => a + t.spend, 0)
     add({
+      kind: 'tail_terms',
       severity: 'medium',
       area: 'Google Ads',
-      site: null,
-      title: `${tail.length} Suchbegriffe mit je ≥ 3 € und ohne Conversion: ${eur(total)}`,
-      detail: tail.slice(0, 10).map((t) => `„${t.term}“ ${eur(t.spend)}`).join(', '),
+      site: new Set(tail.map((t) => t.site)).size === 1 ? tail[0].site : null,
+      title: `${tail.length} Suchbegriffe kosten ${eur(total)} ohne Conversion`,
+      detail: 'Suchen, für die keine eigene Anzeige gedacht war und die je mindestens 3 € gekostet haben.',
+      table: { cols: ['Suchbegriff', 'Kosten'], rows: tail.slice(0, 12).map((t) => ({ site: t.site, cells: [t.term, eur(t.spend)] })) },
       action: 'Einzeln prüfen: passende als exakte Keywords mit eigener Anzeige, unpassende ausschließen.',
       value: scaleToMonth(total, q),
       terms: tail.slice(0, 30).map((t) => ({ site: t.site, campaign: t.campaign, term: t.term, spend: t.spend }))
@@ -991,11 +1050,13 @@ export async function insights(db, q, owner = 'admin') {
   const winners = ads.search_terms.filter((t) => t.conversions > 0 && !t.is_keyword)
   if (winners.length) {
     add({
+      kind: 'winner_terms',
       severity: 'medium',
       area: 'Google Ads',
-      site: winners[0].site,
-      title: `${winners.length} Suchbegriffe bringen Conversions, sind aber keine Keywords`,
-      detail: winners.slice(0, 10).map((t) => `„${t.term}“ (${t.conversions} Conv. für ${eur(t.spend)})`).join(', '),
+      site: new Set(winners.map((t) => t.site)).size === 1 ? winners[0].site : null,
+      title: `${winners.length} Suchbegriffe bringen Anfragen, sind aber keine Keywords`,
+      detail: 'Diese Suchen funktionieren. Als eigenes Keyword bekommen sie ein passendes Gebot und eine passende Anzeige.',
+      table: { cols: ['Suchbegriff', 'Conversions', 'Kosten'], rows: winners.slice(0, 12).map((t) => ({ site: t.site, cells: [t.term, round(t.conversions, 1), eur(t.spend)] })) },
       action: 'Als exakte Keywords übernehmen, damit Gebot und Anzeige gezielt darauf laufen.',
       value: null,
       terms: winners.slice(0, 20).map((t) => ({ site: t.site, campaign: t.campaign, term: t.term, spend: t.spend, conversions: t.conversions }))
@@ -1003,29 +1064,40 @@ export async function insights(db, q, owner = 'admin') {
   }
 
   // --- Ads: impression share ---
+  const budgetLost = []
   for (const c of ads.share) {
     const conv = ads.keywords.filter((k) => k.campaign === c.campaign).reduce((a, k) => a + (k.conversions || 0), 0)
-    if (c.lost_budget >= 0.2 && conv > 0) {
+    if (c.lost_budget >= 0.2 && conv > 0) budgetLost.push({ ...c, conv })
+    else if (c.lost_rank >= 0.5 && c.impressions >= 200) {
       add({
-        severity: 'high',
-        area: 'Google Ads',
-        site: c.site,
-        title: `${c.campaign}: ${Math.round(c.lost_budget * 100)} % der Einblendungen wegen Budget verloren`,
-        detail: `Die Kampagne bringt Conversions (${round(conv, 1)}), wird aber vorzeitig abgeschaltet. Impression-Share ${Math.round((c.impression_share || 0) * 100)} %.`,
-        action: 'Tagesbudget erhöhen oder Budget aus Keywords ohne Anfrage hierher verschieben.',
-        value: null
-      })
-    } else if (c.lost_rank >= 0.5 && c.impressions >= 200) {
-      add({
+        kind: 'rank_lost',
         severity: 'medium',
         area: 'Google Ads',
         site: c.site,
         title: `${c.campaign}: ${Math.round(c.lost_rank * 100)} % der Einblendungen wegen Anzeigenrang verloren`,
-        detail: 'Qualitätsfaktor oder Gebot reichen nicht. Schlechter Rang verteuert jeden Klick.',
+        detail: 'Qualitätsfaktor oder Gebot reichen nicht. Ein schlechter Rang verteuert jeden Klick.',
         action: 'Keywords mit Qualitätsfaktor ≤ 4 auf eine passende Landingpage leiten und Anzeigentexte enger an die Suchbegriffe anlehnen.',
         value: null
       })
     }
+  }
+  if (budgetLost.length) {
+    add({
+      kind: 'budget_lost',
+      severity: 'high',
+      area: 'Google Ads',
+      site: budgetLost.length === 1 ? budgetLost[0].site : null,
+      title: budgetLost.length === 1
+        ? `${budgetLost[0].campaign} geht vorzeitig das Budget aus`
+        : `${budgetLost.length} Kampagnen mit Anfragen geht vorzeitig das Budget aus`,
+      detail: 'Diese Kampagnen bringen Anfragen, werden aber täglich abgeschaltet, bevor alle passenden Suchen eine Anzeige sehen.',
+      action: 'Tagesbudget erhöhen oder Budget von Keywords ohne Anfrage hierher verschieben.',
+      value: null,
+      table: {
+        cols: ['Kampagne', 'Gezeigt', 'Verloren (Budget)', 'Conversions'],
+        rows: budgetLost.map((c) => ({ site: c.site, cells: [c.campaign, Math.round((c.impression_share || 0) * 100) + ' %', Math.round(c.lost_budget * 100) + ' %', round(c.conv, 1)] }))
+      }
+    })
   }
 
   // --- Ads ↔ landing pages: route keywords to the landing page that matches them ---
@@ -1048,15 +1120,24 @@ export async function insights(db, q, owner = 'admin') {
     if (k.quality_score && k.quality_score <= 5) r.lowQs++
     routed.set(lp.domain, r)
   }
-  for (const r of routed.values()) {
+  if (routed.size) {
+    const list = [...routed.values()].sort((a, b) => b.spend - a.spend)
+    const total = list.reduce((a, r) => a + r.spend, 0)
     add({
+      kind: 'route_landing',
       severity: 'medium',
       area: 'Synergie',
-      site: r.lp.domain,
-      title: `${eur(r.spend)} für „${r.lp.config.service}“-Keywords landen nicht auf der passenden Landingpage`,
-      detail: `${[...new Set(r.keywords)].slice(0, 8).join(', ')}${r.lowQs ? ` – davon ${r.lowQs} mit Qualitätsfaktor ≤ 5` : ''}. Die Seite ${r.lp.name} ist genau für diese Suche gebaut (mehrstufiges Formular, Preisangaben, FAQ).`,
-      action: `Nach dem Livegang: eigene Anzeigengruppe mit diesen Keywords und finaler URL ${r.lp.domain}.`,
-      value: null
+      site: list.length === 1 ? list[0].lp.domain : null,
+      title: list.length === 1
+        ? `${eur(total)} für „${list[0].lp.config.service}“-Suchen landen nicht auf der passenden Landingpage`
+        : `${eur(total)} für Suchen, zu denen es schon eine eigene Landingpage gibt`,
+      detail: 'Für diese Suchen gibt es schon eine Seite, die genau dafür gebaut ist. Die Anzeigen führen aber noch auf die allgemeine Website.',
+      action: 'Nach dem Livegang der Landingpage: eigene Anzeigengruppe mit diesen Keywords und der Landingpage als Ziel.',
+      value: null,
+      table: {
+        cols: ['Landingpage', 'Keywords', 'Kosten'],
+        rows: list.map((r) => ({ site: r.lp.domain, cells: [r.lp.name, [...new Set(r.keywords)].slice(0, 4).join(', '), eur(r.spend)] }))
+      }
     })
   }
 
@@ -1066,6 +1147,7 @@ export async function insights(db, q, owner = 'admin') {
   const offConv = off.reduce((a, h) => a + h.conversions, 0)
   if (offSpend >= 10 && !offConv) {
     add({
+      kind: 'off_hours',
       severity: 'medium',
       area: 'Google Ads',
       site: null,
@@ -1081,6 +1163,7 @@ export async function insights(db, q, owner = 'admin') {
     const worst = cpa.filter((d) => d.spend >= 30 && !d.conversions)
     for (const d of worst) {
       add({
+        kind: 'device',
         severity: 'medium',
         area: 'Google Ads',
         site: null,
@@ -1091,15 +1174,25 @@ export async function insights(db, q, owner = 'admin') {
       })
     }
   }
-  for (const u of ads.segments.url.filter((u) => u.spend >= 20 && !u.conversions).slice(0, 4)) {
+  const wasteUrls = ads.segments.url.filter((u) => u.spend >= 20 && !u.conversions).slice(0, 8)
+  if (wasteUrls.length) {
+    const total = wasteUrls.reduce((a, u) => a + u.spend, 0)
+    const sitesOf = wasteUrls.map((u) => siteOfUrl(u.key, q.sites))
     add({
+      kind: 'landing_waste',
       severity: 'medium',
       area: 'Google Ads',
-      site: null,
-      title: `Zielseite ${u.key.replace(/^https?:\/\//, '')}: ${eur(u.spend)} ohne Conversion`,
-      detail: `${u.clicks} Anzeigenklicks landen hier und keiner wird zur Anfrage.`,
-      action: 'Seite auf Anfrage optimieren (Formular über dem Falz, Telefonnummer, Preise) oder Klicks auf eine Landingpage leiten.',
-      value: scaleToMonth(u.spend, q)
+      site: new Set(sitesOf).size === 1 ? sitesOf[0] : null,
+      title: wasteUrls.length === 1
+        ? `Zielseite ${wasteUrls[0].key.replace(/^https?:\/\/(www\.)?/, '')}: ${eur(total)} ohne Anfrage`
+        : `${wasteUrls.length} Zielseiten bekommen ${eur(total)} Anzeigenklicks ohne Anfrage`,
+      detail: 'Die Besucher kommen aus der Anzeige an, finden dort aber nicht schnell genug den Weg zum Kontakt.',
+      action: 'Telefonnummer und WhatsApp in den ersten Bildschirm, Formular kurz halten, oder die Anzeige auf eine passendere Seite leiten.',
+      value: scaleToMonth(total, q),
+      table: {
+        cols: ['Seite', 'Klicks', 'Kosten'],
+        rows: wasteUrls.map((u, i) => ({ site: sitesOf[i], cells: [u.key.replace(/^https?:\/\/(www\.)?[^/]+/, '') || '/', u.clicks, eur(u.spend)] }))
+      }
     })
   }
 
@@ -1109,11 +1202,13 @@ export async function insights(db, q, owner = 'admin') {
   const gaps = gscRows.results.filter((r) => r.position > 7 && r.impressions >= 15 && !brand.test(r.query) && !covered.has(norm(r.query)))
   if (gaps.length) {
     add({
+      kind: 'seo_gap',
       severity: 'medium',
       area: 'SEO',
-      site: gaps[0].site,
-      title: `${gaps.length} Suchanfragen mit Nachfrage, aber Seite 2+ und ohne Anzeige`,
-      detail: gaps.slice(0, 8).map((r) => `„${r.query}“ ${r.impressions}× · Pos. ${round(r.position, 1)}`).join(', '),
+      site: new Set(gaps.map((g) => g.site)).size === 1 ? gaps[0].site : null,
+      title: `${gaps.length} gefragte Suchen finden uns erst auf Seite 2`,
+      detail: 'Diese Suchen kommen regelmäßig vor, aber die Website steht dafür hinter Platz 7 und es läuft keine Anzeige.',
+      table: { cols: ['Suche', 'Einblendungen', 'Position'], rows: gaps.slice(0, 12).map((r) => ({ site: r.site, cells: [r.query, r.impressions, round(r.position, 1)] })) },
       action: 'Für die stärksten Begriffe: eigene Abschnitte/Seiten mit dem Begriff in Titel und H1, oder als Keyword testen.',
       value: null,
       terms: gaps.slice(0, 20).map((r) => ({ site: r.site, term: r.query, impressions: r.impressions, position: round(r.position, 1) }))
@@ -1122,6 +1217,7 @@ export async function insights(db, q, owner = 'admin') {
   const overlap = ads.keywords.filter((k) => k.organic_position && k.organic_position <= 3 && k.organic_impressions >= 20 && k.spend >= 10)
   for (const k of overlap.slice(0, 3)) {
     add({
+      kind: 'organic_overlap',
       severity: 'info',
       area: 'SEO',
       site: k.site,
@@ -1138,6 +1234,7 @@ export async function insights(db, q, owner = 'admin') {
   const silentProfiles = gbpData.locations.filter((l) => !l.reporting)
   if (silentProfiles.length) {
     add({
+      kind: 'gbp_silent',
       severity: 'medium',
       area: 'Google Business',
       site: silentProfiles.length === 1 ? silentProfiles[0].site : null,
@@ -1154,6 +1251,7 @@ export async function insights(db, q, owner = 'admin') {
   if (fewReviews.length) {
     const seen = fewReviews.reduce((a, l) => a + l.maps + l.search, 0)
     add({
+      kind: 'gbp_reviews',
       severity: fewReviews.some((l) => (l.reviews ?? 0) < 5 && l.maps + l.search >= 50) ? 'high' : 'medium',
       area: 'Google Business',
       site: fewReviews.length === 1 ? fewReviews[0].site : null,
@@ -1174,6 +1272,7 @@ export async function insights(db, q, owner = 'admin') {
   for (const l of gbpData.locations) {
     if (l.calls >= 5) {
       add({
+        kind: 'gbp_calls',
         severity: 'info',
         area: 'Google Business',
         site: l.site,
@@ -1187,6 +1286,7 @@ export async function insights(db, q, owner = 'admin') {
   const untagged = gbpData.locations.filter((l) => l.website >= 3 && !l.website_tagged && !l.tracked_visits)
   if (untagged.length) {
     add({
+      kind: 'gbp_untagged',
       severity: 'medium',
       area: 'Tracking',
       site: untagged.length === 1 ? untagged[0].site : null,
@@ -1202,11 +1302,13 @@ export async function insights(db, q, owner = 'admin') {
   )
   if (gbpKeywordsNoAds.length) {
     add({
+      kind: 'gbp_keywords',
       severity: 'info',
       area: 'Synergie',
       site: null,
-      title: `${gbpKeywordsNoAds.length} Begriffe finden das Profil, aber keine Anzeige`,
-      detail: gbpKeywordsNoAds.slice(0, 10).map((k) => `„${k.keyword}“ (${k.location_name})`).join(', '),
+      title: `${gbpKeywordsNoAds.length} Suchbegriffe finden das Google-Profil, aber keine Anzeige`,
+      detail: 'So suchen Leute, die das Profil in Maps finden. Gute Ideen für Keywords und Überschriften.',
+      table: { cols: ['Suchbegriff', 'Profil'], rows: gbpKeywordsNoAds.slice(0, 12).map((k) => ({ site: k.site || null, cells: [k.keyword, k.location_name] })) },
       action: 'Als Keyword-Ideen für Anzeigen und Abschnitte auf den Landingpages nutzen.',
       value: null
     })
@@ -1215,10 +1317,11 @@ export async function insights(db, q, owner = 'admin') {
   // --- Website: forms, questions, what leads ask for ---
   for (const f of formData.results) {
     if (f.starts >= 5 && f.completion !== null && f.completion < 35) {
-      const title = f.name ? `„${f.name}“` : `„${f.form}“`
+      const title = `„${String(f.name || f.form).replace(/[.:\s]+$/, '')}“`
       let detail = 'Viele beginnen, wenige senden ab.'
       if (f.worst && f.worst.of) detail = `Die meisten geben beim Feld „${f.worst.label}“ auf (${f.worst.gave_up} von ${f.worst.of}).`
       add({
+        kind: 'form_drop',
         severity: 'high',
         area: 'Website',
         site: q.sites.length === 1 ? q.sites[0] : null,
@@ -1232,10 +1335,11 @@ export async function insights(db, q, owner = 'admin') {
   if (faqRows.results.length) {
     const f = faqRows.results[0]
     add({
+      kind: 'faq_top',
       severity: 'info',
       area: 'Website',
       site: f.site,
-      title: `Meistgeöffnete Frage: „${f.label}“`,
+      title: `Meistgeöffnete Frage: „${String(f.label || '').replace(/^Q\.\s*/, '')}“`,
       detail: `${f.n} Besuche haben sie aufgeklappt. Was oft gefragt wird, gehört in die Anzeige und weiter nach oben.`,
       action: 'Antwort als Anzeigentext-Zeile oder Hero-Unterzeile testen.',
       value: null
@@ -1244,6 +1348,7 @@ export async function insights(db, q, owner = 'admin') {
   if (leadData.choices.length) {
     const top = leadData.choices.slice(0, 4)
     add({
+      kind: 'choices',
       severity: 'info',
       area: 'Synergie',
       site: null,
@@ -1257,6 +1362,7 @@ export async function insights(db, q, owner = 'admin') {
   if (sister.length) {
     const n = sister.reduce((a, o) => a + o.n, 0)
     add({
+      kind: 'sister',
       severity: 'info',
       area: 'Synergie',
       site: null,
@@ -1267,8 +1373,111 @@ export async function insights(db, q, owner = 'admin') {
     })
   }
 
-  const order = { high: 0, medium: 1, info: 2 }
-  out.sort((a, b) => order[a.severity] - order[b.severity] || (b.value || 0) - (a.value || 0))
+  // --- Website: what the new measurements show ---
+  const [contentData, timing] = await Promise.all([content(db, q), when(db, q)])
+  const slow = contentData.speed.filter((r) => r.n >= 3 && Math.max(r.mobile || 0, r.desktop || 0) > 4000)
+  if (slow.length) {
+    add({
+      kind: 'slow_page',
+      severity: 'medium',
+      area: 'Website',
+      site: q.sites.length === 1 ? q.sites[0] : null,
+      title: slow.length === 1 ? `${slow[0].page === '/' ? 'Die Startseite' : slow[0].page} lädt zu langsam` : `${slow.length} Seiten laden zu langsam`,
+      detail: 'Über 4 Sekunden, bis der erste Bildschirm steht. Gerade Besucher aus Anzeigen springen dann ab, bevor sie die Telefonnummer sehen.',
+      action: 'Große Bilder im ersten Bildschirm verkleinern (WebP, max. 1600 px breit) und Videos erst nach dem Laden starten.',
+      value: null,
+      table: { cols: ['Seite', 'Handy', 'Computer'], rows: slow.map((r) => ({ site: null, cells: [r.page, r.mobile ? (r.mobile / 1000).toFixed(1).replace('.', ',') + ' s' : '–', r.desktop ? (r.desktop / 1000).toFixed(1).replace('.', ',') + ' s' : '–'] })) }
+    })
+  }
+  const rage = contentData.rage.filter((r) => r.visitors >= 2)
+  if (rage.length) {
+    add({
+      kind: 'rage',
+      severity: 'medium',
+      area: 'Website',
+      site: q.sites.length === 1 ? q.sites[0] : null,
+      title: `Besucher klicken wiederholt auf „${rage[0].label}“, und nichts passiert`,
+      detail: 'Mehrere schnelle Klicks auf etwas, das kein Link ist. Die Seite verspricht dort etwas, das sie nicht hält.',
+      action: 'Das Element anklickbar machen (Großansicht, Link, Telefonnummer als Link) oder so gestalten, dass es nicht nach Knopf aussieht.',
+      value: null,
+      table: { cols: ['Element', 'Ort', 'Besucher'], rows: rage.slice(0, 8).map((r) => ({ site: null, cells: [r.label, r.section_name || r.section || r.page, r.visitors] })) }
+    })
+  }
+  if (q.sites.length === 1) {
+    const x = await xray(db, q, null)
+    const total = (c) => Object.values(c).reduce((a, n) => a + n, 0)
+    const best = x.sections.reduce((a, s2) => (total(s2.contacts) > (a ? total(a.contacts) : 0) ? s2 : a), null)
+    if (best && total(best.contacts) >= 3 && best.reach > 0 && best.reach < 50 && x.sections.indexOf(best) > 0) {
+      add({
+        kind: 'xray_section',
+        severity: 'medium',
+        area: 'Website',
+        site: q.sites[0],
+        title: `„${best.name || best.id}“ bringt die meisten Kontakte, wird aber nur von ${Math.round(best.reach)} % gesehen`,
+        detail: `Auf ${x.page === '/' ? 'der Startseite' : x.page} entstehen hier ${total(best.contacts)} Kontakte, obwohl die meisten Besucher vorher aufhören zu scrollen.`,
+        action: 'Den Abschnitt oder seinen Kontakt-Knopf weiter nach oben holen und den Effekt im Logbuch festhalten.',
+        value: null
+      })
+    }
+  }
+  const lateContacts = timing.cells.filter((c) => c.hour >= 18 || c.hour < 7).reduce((a, c) => a + c.n, 0)
+  const allContacts = timing.cells.reduce((a, c) => a + c.n, 0)
+  if (allContacts >= 5 && lateContacts / allContacts >= 0.3) {
+    add({
+      kind: 'evening',
+      severity: 'info',
+      area: 'Website',
+      site: q.sites.length === 1 ? q.sites[0] : null,
+      title: `${lateContacts} von ${allContacts} Kontakten kommen abends oder früh morgens`,
+      detail: 'Dann ist meist niemand am Telefon. Wer abends anruft und niemanden erreicht, ruft oft den nächsten Betrieb an.',
+      action: 'Abends WhatsApp und Rückruf-Formular hervorheben und den Rückruf am nächsten Morgen fest zusagen.',
+      value: null
+    })
+  }
+  // visitors without a single contact, and contacts falling off week on week
+  const since = (await db.prepare(`SELECT site, MIN(date) AS d FROM events WHERE ${inList('site', q.sites)} GROUP BY site`).bind(...q.sites).all()).results
+  const sinceOf = new Map(since.map((r) => [r.site, r.d]))
+  for (const t of trackerRows.results) {
+    if (t.visitors >= 40 && !t.leads) {
+      add({
+        kind: 'silent_traffic',
+        severity: 'medium',
+        area: 'Website',
+        site: t.site,
+        title: `${names.get(t.site) || t.site}: ${t.visitors} Besucher, kein einziger Kontakt`,
+        detail: 'Niemand hat angerufen, geschrieben oder das Formular geschickt.',
+        action: 'Auf dem Handy prüfen: Ist die Telefonnummer im ersten Bildschirm anklickbar, gibt es einen WhatsApp-Knopf, ist das Formular kurz?',
+        value: null
+      })
+    }
+  }
+  const weekAgo = addDays(q.to, -6)
+  const twoWeeksAgo = addDays(q.to, -13)
+  for (const site of q.sites) {
+    if (!sinceOf.get(site) || sinceOf.get(site) > twoWeeksAgo) continue
+    const row = await db
+      .prepare(
+        `SELECT COUNT(DISTINCT CASE WHEN date >= ? THEN session_id END) AS now, COUNT(DISTINCT CASE WHEN date < ? THEN session_id END) AS before
+         FROM events WHERE site = ? AND date >= ? AND date <= ? AND name IN (${LEAD_EVENTS.map(() => '?').join(',')})`
+      )
+      .bind(weekAgo, weekAgo, site, twoWeeksAgo, q.to, ...LEAD_EVENTS)
+      .first()
+    if (row.before >= 4 && row.now <= row.before / 2) {
+      add({
+        kind: 'contact_drop',
+        severity: 'high',
+        area: 'Website',
+        site,
+        title: `${names.get(site) || site}: Kontakte halbiert (${row.before} → ${row.now} pro Woche)`,
+        detail: 'Die letzten 7 Tage im Vergleich zu den 7 Tagen davor. Häufige Ursachen: Anzeigen pausiert, Budget leer, Formular oder Telefonlink defekt.',
+        action: 'Website auf dem Handy testen (Anruf-Knopf, Formular), Google-Ads-Status und Budget prüfen.',
+        value: null
+      })
+    }
+  }
+
+  for (const r of out) r.score = SEVERITY_WEIGHT[r.severity] * 1000 + (r.value || 0)
+  out.sort((a, b) => b.score - a.score)
   await attachStates(db, out, owner)
   return { results: out, sites: Object.fromEntries(names) }
 }
