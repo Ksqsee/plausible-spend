@@ -315,6 +315,7 @@ td.m { color: var(--text-3); font-weight: 400; }
 .datapill em::before { content: "·"; margin-right: 8px; color: var(--text-3); }
 /* Google Ads */
 .verdict { display: flex; align-items: flex-start; gap: 12px; margin-top: 20px; padding: 16px 18px; border-radius: 14px; font: 500 15.5px/1.45 var(--display); letter-spacing: -.01em; background: var(--sel); color: var(--text); }
+.verdict .vnote { display: block; margin-top: 4px; font: 400 13.5px/1.4 Inter, ui-sans-serif, system-ui, sans-serif; letter-spacing: 0; color: var(--text-3); }
 .verdict .vdot { width: 10px; height: 10px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; background: var(--text-3); }
 .verdict.good { background: color-mix(in srgb, var(--up) 10%, transparent); } .verdict.good .vdot { background: var(--up); box-shadow: 0 0 0 4px color-mix(in srgb, var(--up) 20%, transparent); }
 .verdict.bad { background: color-mix(in srgb, var(--down) 9%, transparent); } .verdict.bad .vdot { background: var(--down); box-shadow: 0 0 0 4px color-mix(in srgb, var(--down) 20%, transparent); }
@@ -1731,7 +1732,12 @@ td.wrap { white-space: normal; min-width: 180px; }
       txt = money.format(t.spend) + ' für ' + nf.format(t.clicks) + ' Klicks ausgegeben, aber keine einzige Anfrage. Unter „Keywords“ steht, wo das Geld hingeht.'
       box.classList.add('bad')
     }
-    box.append(dot, el('span', null, txt))
+    var body = el('span', null, txt)
+    // Windsor's plan refreshes a day's figures once, early that day: today is a snapshot, not live
+    if (range()[1] === iso(berlinToday())) {
+      body.append(el('span', 'vnote', 'Die Werbezahlen von heute sind ein Zwischenstand vom frühen Morgen. Vollständig sind sie ab morgen.'))
+    }
+    box.append(dot, body)
     return box
   }
   function renderAds() {
