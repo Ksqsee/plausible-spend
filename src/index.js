@@ -16,6 +16,7 @@ import { BadRequest, Forbidden, MAX_RANGE_DAYS, ads, breakdown, overview, parseQ
 import { syncAll } from './sync.js'
 import { adsDeep, content, forms, funnel, gbp, insights, leads, months, paths, rollupMonths, setInsightState, when, xray } from './deep.js'
 import { localParts } from './ingest.js'
+import { summary } from './summary.js'
 import { MIN_PASSWORD_LENGTH, checkPassword, currentUser, ensureAdmin, generatePassword, login, logout, setPassword } from './auth.js'
 
 // Headers every dashboard response carries: no framing, no MIME sniffing, no referrer to third parties.
@@ -235,6 +236,8 @@ async function api(request, env, url, user) {
       return json(await when(db, q))
     case 'paths':
       return json(await paths(db, q))
+    case 'summary':
+      return json(await summary(db, q))
     case 'months':
       return json(await months(db, q))
     case 'ads-deep':
