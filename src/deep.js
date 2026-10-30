@@ -478,61 +478,10 @@ export async function paths(db, q) {
   return { paths: results.map((r) => ({ source: r.source || 'Direct / None', entry: r.entry_page || '/', type: r.name, n: r.n })) }
 }
 
-// ---------------------------------------------------------------------------------------------
-// Logbook: each change with the two weeks before and after it, side by side.
-
-const WINDOW_DAYS = 14
 const addDays = (date, n) => {
   const d = new Date(date + 'T00:00:00Z')
   d.setUTCDate(d.getUTCDate() + n)
   return d.toISOString().slice(0, 10)
-}
-
-async function windowStats(db, sites, from, to) {
-  const leadList = LEAD_EVENTS.map(() => '?').join(',')
-  const row = await db
-    .prepare(
-      `SELECT COUNT(DISTINCT date) AS days, COUNT(DISTINCT session_id) AS visits,
-              COUNT(DISTINCT CASE WHEN name IN (${leadList}) THEN session_id END) AS contacts
-       FROM events WHERE ${inList('site', sites)} AND date >= ? AND date <= ?`
-    )
-    .bind(...LEAD_EVENTS, ...sites, from, to)
-    .first()
-  return { days: row.days || 0, visits: row.visits || 0, contacts: row.contacts || 0 }
-}
-
-export async function changelog(db, q, today) {
-  const { results } = await db
-    .prepare(`SELECT * FROM changelog WHERE site IS NULL OR ${inList('site', q.sites)} ORDER BY date DESC, id DESC LIMIT 60`)
-    .bind(...q.sites)
-    .all()
-  const since = (await db.prepare(`SELECT MIN(date) AS d FROM events WHERE ${inList('site', q.sites)}`).bind(...q.sites).first() || {}).d
-  const entries = []
-  for (const r of results) {
-    const sites = r.site ? [r.site] : q.sites
-    const before = await windowStats(db, sites, addDays(r.date, -WINDOW_DAYS), addDays(r.date, -1))
-    const afterTo = addDays(r.date, WINDOW_DAYS - 1) < today ? addDays(r.date, WINDOW_DAYS - 1) : today
-    const after = r.date <= today ? await windowStats(db, sites, r.date, afterTo) : { days: 0, visits: 0, contacts: 0 }
-    entries.push({
-      id: r.id,
-      site: r.site,
-      date: r.date,
-      text: r.text,
-      author: r.author,
-      // a comparison needs the tracker to have run before the change
-      comparable: !!since && addDays(r.date, -WINDOW_DAYS) >= since,
-      window: WINDOW_DAYS,
-      before,
-      after
-    })
-  }
-  return { entries }
-}
-
-export async function addChange(db, { site, date, text }, author) {
-  const t = String(text || '').replace(/\s+/g, ' ').trim().slice(0, 300)
-  if (!t || !/^\d{4}-\d{2}-\d{2}$/.test(String(date || ''))) throw new BadRequest('date and text are required')
-  await db.prepare('INSERT INTO changelog (site, date, text, author, created_ts) VALUES (?, ?, ?, ?, ?)').bind(site || null, date, t, author, Date.now()).run()
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -558,7 +507,11 @@ export async function rollupMonths(db, months) {
       .bind(...LEAD_EVENTS, from, to)
       .all()
     const { results: ads } = await db
-      .prepare('SELECT site, SUM(spend) AS spend, SUM(clicks) AS clicks FROM ads_spend WHERE date >= ? AND date <= ? GROUP BY site')
+      .prepare(
+        `SELECT site, SUM(spend) AS spend, SUM(clicks) AS clicks,
+                SUM(CASE WHEN date >= (SELECT MIN(e.date) FROM events e WHERE e.site = ads_spend.site) THEN spend ELSE 0 END) AS spend_tracked
+         FROM ads_spend WHERE date >= ? AND date <= ? GROUP BY site`
+      )
       .bind(from, to)
       .all()
     const adBy = new Map(ads.map((a) => [a.site, a]))
@@ -570,10 +523,10 @@ export async function rollupMonths(db, months) {
       statements.push(
         db
           .prepare(
-            'INSERT OR REPLACE INTO monthly_stats (site, month, days, visitors, visits, pageviews, contacts, calls, whatsapp, emails, forms, form_starts, ad_spend, ad_clicks, updated_ts) ' +
-              'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+            'INSERT OR REPLACE INTO monthly_stats (site, month, days, visitors, visits, pageviews, contacts, calls, whatsapp, emails, forms, form_starts, ad_spend, ad_clicks, ad_spend_tracked, updated_ts) ' +
+              'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
           )
-          .bind(site, month, r.days || 0, r.visitors || 0, r.visits || 0, r.pageviews || 0, r.contacts || 0, r.calls || 0, r.whatsapp || 0, r.emails || 0, r.forms || 0, r.form_starts || 0, round(a.spend || 0), a.clicks || 0, Date.now())
+          .bind(site, month, r.days || 0, r.visitors || 0, r.visits || 0, r.pageviews || 0, r.contacts || 0, r.calls || 0, r.whatsapp || 0, r.emails || 0, r.forms || 0, r.form_starts || 0, round(a.spend || 0), a.clicks || 0, round(a.spend_tracked || 0), Date.now())
       )
     }
     for (let i = 0; i < statements.length; i += 50) await db.batch(statements.slice(i, i + 50))
@@ -585,12 +538,12 @@ export async function months(db, q) {
     .prepare(
       `SELECT month, SUM(days) AS days, SUM(visitors) AS visitors, SUM(visits) AS visits, SUM(contacts) AS contacts, SUM(calls) AS calls,
               SUM(whatsapp) AS whatsapp, SUM(emails) AS emails, SUM(forms) AS forms, SUM(form_starts) AS form_starts,
-              SUM(ad_spend) AS ad_spend, SUM(ad_clicks) AS ad_clicks
+              SUM(ad_spend) AS ad_spend, SUM(ad_clicks) AS ad_clicks, SUM(ad_spend_tracked) AS ad_spend_tracked
        FROM monthly_stats WHERE ${inList('site', q.sites)} GROUP BY month ORDER BY month DESC LIMIT 36`
     )
     .bind(...q.sites)
     .all()
-  return { months: results.map((r) => ({ ...r, ad_spend: round(r.ad_spend || 0) })) }
+  return { months: results.map((r) => ({ ...r, ad_spend: round(r.ad_spend || 0), ad_spend_tracked: round(r.ad_spend_tracked || 0) })) }
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -1415,7 +1368,7 @@ export async function insights(db, q, owner = 'admin') {
         site: q.sites[0],
         title: `„${best.name || best.id}“ bringt die meisten Kontakte, wird aber nur von ${Math.round(best.reach)} % gesehen`,
         detail: `Auf ${x.page === '/' ? 'der Startseite' : x.page} entstehen hier ${total(best.contacts)} Kontakte, obwohl die meisten Besucher vorher aufhören zu scrollen.`,
-        action: 'Den Abschnitt oder seinen Kontakt-Knopf weiter nach oben holen und den Effekt im Logbuch festhalten.',
+        action: 'Den Abschnitt oder seinen Kontakt-Knopf weiter nach oben holen.',
         value: null
       })
     }

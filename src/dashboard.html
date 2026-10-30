@@ -623,26 +623,11 @@ td.m { color: var(--text-3); font-weight: 400; }
 .pf button b { font-weight: 600; font-variant-numeric: tabular-nums; }
 .pf button.sel { background: color-mix(in srgb, var(--up) 18%, transparent); }
 .pf button.dim { opacity: .35; }
-/* logbook */
-.lb-add { display: grid; grid-template-columns: 150px minmax(140px, 220px) minmax(0, 1fr) auto; gap: 8px; margin-top: 16px; }
-.lb-add input, .lb-add select { font: inherit; font-size: 13.5px; padding: 8px 10px; border-radius: 9px; border: 1px solid var(--line); background: var(--card); color: var(--text); min-width: 0; }
-.lb-add button { font: inherit; font-size: 13.5px; font-weight: 500; padding: 8px 14px; border-radius: 9px; border: 0; background: var(--ink); color: var(--card); cursor: pointer; }
-.lb-list { display: flex; flex-direction: column; margin-top: 12px; }
-.lb { display: grid; grid-template-columns: 74px minmax(0, 1fr) auto; gap: 14px; align-items: baseline; padding: 13px 0; border-bottom: 1px solid var(--line-soft); }
-.lb:last-child { border-bottom: 0; }
-.lb time { font: 500 12.5px var(--mono); color: var(--text-3); }
-.lb .t { font-size: 14px; line-height: 1.4; }
-.lb .t small { display: block; font-size: 12.5px; color: var(--text-3); margin-top: 2px; }
-.lb .eff { text-align: right; font-size: 13px; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.lb .eff b { display: block; font: 600 14px var(--display); }
-.lb .eff .up { color: var(--up); } .lb .eff .down { color: var(--down); } .lb .eff .wait { color: var(--text-3); }
-.lb .del { border: 0; background: none; color: var(--text-3); cursor: pointer; font-size: 12px; padding: 0 0 0 8px; }
 .mtab { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 13.5px; font-variant-numeric: tabular-nums; }
 .mtab th { text-align: right; font-weight: 500; font-size: 12px; color: var(--text-3); padding: 6px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
 .mtab td { text-align: right; padding: 9px 8px; border-bottom: 1px solid var(--line-soft); white-space: nowrap; }
 .mtab th:first-child, .mtab td:first-child { text-align: left; }
 .mtab-wrap { overflow-x: auto; }
-@media (max-width: 760px) { .lb-add { grid-template-columns: 1fr 1fr; } .lb-add input[type=text] { grid-column: 1 / -1; } .lb { grid-template-columns: minmax(0, 1fr) auto; } .lb time { grid-column: 1 / -1; } }
 .fnote { margin: 12px 0 0; font-size: 13px; line-height: 1.45; color: var(--text-3); }
 .fblock { display: flex; flex-direction: column; gap: 12px; margin-top: 18px; }
 .fblock + .fblock { padding-top: 18px; border-top: 1px solid var(--line-soft); }
@@ -1377,7 +1362,7 @@ td.wrap { white-space: normal; min-width: 180px; }
     if (combined) panel('sites', true)
     wide('leads'); wide('funnel'); wide('xray')
     ;['when', 'paths'].forEach(function (id) { var x = el('section', 'card panel'); x.id = id; grid.append(x) })
-    wide('logbook')
+    wide('months')
     // Google Ads, Business Profile and Search share one card
     var g = wide('google', 'gcard'), gt = el('div', 'gtabs')
     ;[['ads', 'Anzeigen'], ['gbp', 'Google-Profil'], ['search', 'Google-Suche']].forEach(function (t) {
@@ -1445,7 +1430,7 @@ td.wrap { white-space: normal; min-width: 180px; }
     renderXray()
     renderWhen()
     renderPaths()
-    renderLogbook()
+    renderMonths()
     loadLive()
   }
 
@@ -2188,14 +2173,7 @@ td.wrap { white-space: normal; min-width: 180px; }
     wrap.append(tb)
     return wrap
   }
-  function markDone(r, done) {
-    return setInsightState(r.key, done).then(function () {
-      // a finished task goes into the logbook, so its effect shows up two weeks later
-      if (done === 'done' && isAdmin()) {
-        return fetch('/api/changelog?' + qs(), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ date: iso(berlinToday()), site: r.site || '', text: 'Chance umgesetzt: ' + r.title }) }).catch(function () {})
-      }
-    })
-  }
+  function markDone(r, done) { return setInsightState(r.key, done) }
   function actButtons(r, onChange, holder) {
     var acts = el('div', 'ins-acts')
     var btn = function (cls, label, next) {
@@ -2208,7 +2186,7 @@ td.wrap { white-space: normal; min-width: 180px; }
       return b
     }
     if (r.state === 'open') acts.append(btn('done', 'Erledigt', 'done'), btn('hide', 'Ausblenden', 'hidden'))
-    else acts.append(el('span', 'was', (r.state === 'done' ? 'Erledigt am ' : 'Ausgeblendet am ') + new Date(r.state_at).toLocaleDateString('de-DE', { day: 'numeric', month: 'short' }) + (r.state === 'done' ? ' · steht im Logbuch' : '')), btn('reopen', 'Wieder öffnen', 'open'))
+    else acts.append(el('span', 'was', (r.state === 'done' ? 'Erledigt am ' : 'Ausgeblendet am ') + new Date(r.state_at).toLocaleDateString('de-DE', { day: 'numeric', month: 'short' })), btn('reopen', 'Wieder öffnen', 'open'))
     if (r.reopened) acts.prepend(el('span', 'again', 'Wieder aufgetaucht'))
     return acts
   }
@@ -2769,96 +2747,33 @@ td.wrap { white-space: normal; min-width: 180px; }
     }).catch(function (e) { console.error(e); sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
   }
 
-  // ---------- logbook & monthly memory ----------
-  function perWeek(w) { return w.days ? (w.contacts / w.days) * 7 : 0 }
-  function effectNode(e) {
-    var box = el('div', 'eff')
-    if (!e.comparable) { box.append(el('span', 'wait', 'vorher nicht gemessen')); return box }
-    var b = perWeek(e.before), a = perWeek(e.after)
-    var fmt = function (v) { return v.toLocaleString('de-DE', { maximumFractionDigits: 1 }) }
-    if (e.after.days < e.window) {
-      box.append(el('b', 'wait', 'misst noch'), el('span', 'wait', 'Tag ' + e.after.days + ' von ' + e.window))
-      return box
-    }
-    var change = b ? Math.round(((a - b) / b) * 100) : null
-    var head = el('b', change === null ? '' : change > 0 ? 'up' : change < 0 ? 'down' : '', change === null ? fmt(a) + ' / Woche' : (change > 0 ? '+' : '') + change + ' % Kontakte')
-    box.append(head, el('span', 'wait', fmt(b) + ' → ' + fmt(a) + ' pro Woche'))
-    return box
-  }
-  function renderLogbook() {
-    var section = $('logbook'), token = renderToken
+  // ---------- monthly memory ----------
+  function renderMonths() {
+    var section = $('months'), token = renderToken
     if (!section) return
-    var tab = state.tabs.logbook || 'log'
     section.replaceChildren()
-    header(section, [['log', 'Logbuch'], ['months', 'Monate']], tab, function (t) { state.tabs.logbook = t; renderLogbook() }, null)
+    header(section, [['m', 'Monatsverlauf']], 'm', null, null)
     var sk = skeletonRows(4); section.append(sk)
-    if (tab === 'months') {
-      api('months').then(function (d) {
-        if (token !== renderToken) return
-        sk.remove()
-        section.append(el('p', 'fnote', 'Eine Zeile pro Monat. Diese Zusammenfassung bleibt dauerhaft, auch wenn einzelne Besuche nach 25 Monaten gelöscht werden.'))
-        if (!d.months.length) { section.append(el('div', 'empty', 'Die erste Monatszeile entsteht in der nächsten Nacht.')); return }
-        var wrap = el('div', 'mtab-wrap'), t = el('table', 'mtab'), hr = el('tr')
-        ;['Monat', 'Besucher', 'Kontakte', 'Anteil', 'Anrufe', 'WhatsApp', 'Formulare', 'Werbekosten', 'pro Kontakt'].forEach(function (h) { hr.append(el('th', null, h)) })
-        t.append(hr)
-        d.months.forEach(function (m) {
-          var tr = el('tr'), dt = new Date(m.month + '-01T00:00:00')
-          var label = dt.toLocaleDateString('de-DE', { month: 'long', year: 'numeric' })
-          // months before the tracker ran only have ad figures
-          var site = m.days ? function (v) { return nf.format(v) } : function () { return '–' }
-          ;[label, site(m.visitors), site(m.contacts), m.days && m.visits ? pct.format((m.contacts / m.visits) * 100) + ' %' : '–', site(m.calls), site(m.whatsapp), site(m.forms),
-            m.ad_spend ? money.format(m.ad_spend) : '–', m.days && m.ad_spend && m.contacts ? money.format(m.ad_spend / m.contacts) : '–'].forEach(function (v) { tr.append(el('td', null, v)) })
-          t.append(tr)
-        })
-        wrap.append(t)
-        section.append(wrap)
-      }).catch(function (e) { console.error(e); sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
-      return
-    }
-    api('changelog').then(function (d) {
+    api('months').then(function (d) {
       if (token !== renderToken) return
       sk.remove()
-      section.append(el('p', 'fnote', 'Jede Änderung an Website oder Werbung mit Datum. Zwei Wochen danach vergleicht das Dashboard die Kontakte mit den zwei Wochen davor.'))
-      if (isAdmin()) {
-        var f = el('form', 'lb-add')
-        var date = el('input'); date.type = 'date'; date.id = 'lbDate'; date.value = iso(berlinToday()); date.required = true
-        var site = el('select'); site.id = 'lbSite'
-        var scoped = state.site ? [state.site] : SITES.filter(function (x) { return !state.scope || x.company === state.scope }).map(function (x) { return x.domain })
-        if (!state.site) site.append(new Option('Alle Websites', ''))
-        scoped.forEach(function (dmn) { site.append(new Option((SITE_BY_DOMAIN[dmn] || {}).name || dmn, dmn)) })
-        var text = el('input'); text.type = 'text'; text.id = 'lbText'; text.placeholder = 'Was wurde geändert? z. B. Formular auf 4 Felder gekürzt'; text.maxLength = 300; text.required = true
-        var btn = el('button', null, 'Eintragen'); btn.type = 'submit'
-        f.append(date, site, text, btn)
-        f.onsubmit = function (ev) {
-          ev.preventDefault()
-          btn.disabled = true
-          fetch('/api/changelog?' + qs(), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ date: date.value, site: site.value, text: text.value }) })
-            .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); renderLogbook() })
-            .catch(function () { btn.disabled = false; btn.textContent = 'Fehler, nochmal' })
-        }
-        section.append(f)
-      }
-      if (!d.entries.length) { section.append(el('div', 'empty', 'Noch keine Einträge')); return }
-      var list = el('div', 'lb-list')
-      d.entries.forEach(function (e) {
-        var row = el('div', 'lb')
-        row.append(el('time', null, new Date(e.date + 'T00:00:00').toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' })))
-        var t = el('div', 't', e.text)
-        t.append(el('small', null, (e.site ? (SITE_BY_DOMAIN[e.site] || {}).name || e.site : 'Alle Websites') + ' · ' + e.author))
-        var eff = effectNode(e)
-        if (isAdmin()) {
-          var del = el('button', 'del', 'löschen'); del.type = 'button'
-          del.onclick = function () {
-            if (del.dataset.armed) {
-              fetch('/api/changelog?id=' + e.id, { method: 'DELETE' }).then(function () { renderLogbook() })
-            } else { del.dataset.armed = '1'; del.textContent = 'wirklich löschen?' }
-          }
-          eff.append(del)
-        }
-        row.append(t, eff)
-        list.append(row)
+      if (!d.months.length) { section.hidden = true; return }
+      section.hidden = false
+      section.append(el('p', 'fnote', 'Eine Zeile pro Monat. Sie bleibt dauerhaft gespeichert, auch wenn einzelne Besuche nach 25 Monaten gelöscht werden. „pro Kontakt“ rechnet nur mit Werbekosten ab Messbeginn.'))
+      var wrap = el('div', 'mtab-wrap'), t = el('table', 'mtab'), hr = el('tr')
+      ;['Monat', 'Besucher', 'Kontakte', 'Anteil', 'Anrufe', 'WhatsApp', 'Formulare', 'Werbekosten', 'pro Kontakt'].forEach(function (h) { hr.append(el('th', null, h)) })
+      t.append(hr)
+      d.months.forEach(function (m) {
+        var tr = el('tr'), dt = new Date(m.month + '-01T00:00:00')
+        var label = dt.toLocaleDateString('de-DE', { month: 'long', year: 'numeric' })
+        // months before the tracker ran only have ad figures
+        var site = m.days ? function (v) { return nf.format(v) } : function () { return '–' }
+        ;[label, site(m.visitors), site(m.contacts), m.days && m.visits ? pct.format((m.contacts / m.visits) * 100) + ' %' : '–', site(m.calls), site(m.whatsapp), site(m.forms),
+          m.ad_spend ? money.format(m.ad_spend) : '–', m.days && m.ad_spend_tracked && m.contacts ? money.format(m.ad_spend_tracked / m.contacts) : '–'].forEach(function (v) { tr.append(el('td', null, v)) })
+        t.append(tr)
       })
-      section.append(list)
+      wrap.append(t)
+      section.append(wrap)
     }).catch(function (e) { console.error(e); sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
   }
 
