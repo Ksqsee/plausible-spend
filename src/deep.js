@@ -265,7 +265,7 @@ export async function forms(db, q) {
   const [{ results }, names] = await Promise.all([
     db
       .prepare(
-        `SELECT session_id, name, label, props FROM events
+        `SELECT session_id, name, label, props, device FROM events
          WHERE ${w.sql} AND name IN ('Form start', 'Form step', 'Form submit', 'Form abandon', 'Application start', 'Application')
          ORDER BY ts`
       )
@@ -276,17 +276,18 @@ export async function forms(db, q) {
   const byForm = new Map()
   const get = (key) => {
     if (!byForm.has(key))
-      byForm.set(key, { form: key, name: null, starts: new Set(), appStarts: new Set(), leads: new Set(), apps: new Set(), steps: {}, paths: new Map() })
+      byForm.set(key, { form: key, name: null, starts: new Set(), appStarts: new Set(), leads: new Set(), apps: new Set(), steps: {}, paths: new Map(), device: new Map() })
     return byForm.get(key)
   }
   const path = (f, sid) => {
-    if (!f.paths.has(sid)) f.paths.set(sid, { fs: null, last: null, err: [], t: null, submitted: false, abandoned: false })
+    if (!f.paths.has(sid)) f.paths.set(sid, { fs: null, last: null, err: [], t: null, idle: null, st: null, fd: null, submitted: false, abandoned: false })
     return f.paths.get(sid)
   }
   for (const r of results) {
     const props = parse(r.props) || {}
     const key = (r.name === 'Form step' ? props.form : r.label) || 'form'
     const f = get(key)
+    if (r.device) f.device.set(r.session_id, r.device === 'Mobile' ? 'mobile' : 'desktop')
     if (r.name === 'Form start' || r.name === 'Application start') {
       ;(r.name === 'Form start' ? f.starts : f.appStarts).add(r.session_id)
       if (props.fn) f.name = props.fn
@@ -300,6 +301,7 @@ export async function forms(db, q) {
       if (Array.isArray(props.fs) && props.fs.length) p.fs = props.fs
       if (Array.isArray(props.err)) p.err = props.err
       if (typeof props.t === 'number') p.t = props.t
+      if (Array.isArray(props.fd)) p.fd = props.fd
     } else if (r.name === 'Form abandon') {
       const p = path(f, r.session_id)
       if (p.submitted) continue
@@ -309,6 +311,9 @@ export async function forms(db, q) {
       p.last = props.last || (p.fs && p.fs[p.fs.length - 1]) || null
       p.err = Array.isArray(props.err) ? props.err : p.err
       if (typeof props.t === 'number') p.t = props.t
+      if (typeof props.idle === 'number') p.idle = props.idle
+      if (props.st) p.st = props.st
+      if (Array.isArray(props.fd)) p.fd = props.fd
     }
   }
 
@@ -326,7 +331,7 @@ export async function forms(db, q) {
     }
     const order = [...pos.entries()].sort((a, b) => a[1].sum / a[1].n - b[1].sum / b[1].n || b[1].n - a[1].n).map(([name]) => name).slice(0, 14)
     const rank = new Map(order.map((n, i) => [n, i]))
-    const fields = order.map((label) => ({ label, reached: 0, gave_up: 0, errors: 0 }))
+    const fields = order.map((label) => ({ label, reached: 0, gave_up: 0, errors: 0, dwell: [] }))
     let measured = 0
     const tSubmit = []
     const tAbandon = []
@@ -339,7 +344,34 @@ export async function forms(db, q) {
       for (let i = 0; i <= furthest; i++) fields[i].reached++
       if (p.abandoned && p.last && rank.has(p.last)) fields[rank.get(p.last)].gave_up++
       for (const e of p.err || []) if (rank.has(e)) fields[rank.get(e)].errors++
+      for (const d of p.fd || []) {
+        const i = d.lastIndexOf(':')
+        const name = d.slice(0, i)
+        const sec = Number(d.slice(i + 1))
+        if (rank.has(name) && Number.isFinite(sec)) fields[rank.get(name)].dwell.push(sec)
+      }
     }
+    for (const x of fields) {
+      x.dwell = x.dwell.length ? median(x.dwell) : null
+    }
+    // visits that started but left nothing to measure: tapped in and went, or the browser never reported back
+    const tappedOnly = [...f.paths.values()].filter((p) => p.abandoned && (!p.fs || !p.fs.length)).length
+    const silent = [...f.starts].filter((sid) => !f.paths.has(sid)).length
+    // how long people stayed before giving up
+    const buckets = { under10: 0, under60: 0, under300: 0, over300: 0 }
+    for (const p of f.paths.values()) {
+      if (!p.abandoned || typeof p.t !== 'number') continue
+      buckets[p.t < 10 ? 'under10' : p.t < 60 ? 'under60' : p.t < 300 ? 'under300' : 'over300']++
+    }
+    // completion on phones and computers
+    const dev = { mobile: { starts: 0, leads: 0 }, desktop: { starts: 0, leads: 0 } }
+    for (const sid of f.starts) {
+      const d = f.device.get(sid) || 'desktop'
+      dev[d].starts++
+      if (f.leads.has(sid)) dev[d].leads++
+    }
+    const stepsLeft = {}
+    for (const p of f.paths.values()) if (p.abandoned && p.st) stepsLeft[p.st] = (stepsLeft[p.st] || 0) + 1
     const abandons = [...f.paths.values()].filter((p) => p.abandoned).length
     const worst = fields.reduce((a, x) => (x.gave_up && (!a || x.gave_up > a.gave_up) ? x : a), null)
     const starts = f.starts.size
@@ -359,7 +391,12 @@ export async function forms(db, q) {
       steps: Object.entries(f.steps)
         .map(([label, set]) => ({ label, sessions: set.size }))
         .sort((a, b) => a.label.localeCompare(b.label, 'de', { numeric: true })),
-      completion: starts ? round((f.leads.size / starts) * 100, 1) : null
+      completion: starts ? round((f.leads.size / starts) * 100, 1) : null,
+      tapped_only: tappedOnly,
+      unknown: silent,
+      abandon_time: buckets,
+      devices: dev,
+      steps_left: stepsLeft
     })
   }
   return { results: out.filter((f) => f.starts || f.application_starts).sort((a, b) => b.starts + b.application_starts - (a.starts + a.application_starts)) }

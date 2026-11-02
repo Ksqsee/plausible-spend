@@ -464,7 +464,7 @@
   }
 
   function formState(form, key) {
-    if (!forms[key]) forms[key] = { t0: Date.now(), seq: [], err: [], done: false, sent: false }
+    if (!forms[key]) forms[key] = { t0: Date.now(), seq: [], err: [], dwell: {}, focus: null, last: Date.now(), done: false, sent: false }
     return forms[key]
   }
 
@@ -475,15 +475,29 @@
     var f = formState(form, key)
     var name = fieldName(el, form)
     if (name && f.seq.indexOf(name) < 0 && f.seq.length < 20) f.seq.push(name)
+    f.last = Date.now()
+  }
+  // seconds spent in each field: long hesitation shows where a form is hard
+  function dwellList(f) {
+    if (f.focus) { f.dwell[f.focus.name] = (f.dwell[f.focus.name] || 0) + (Date.now() - f.focus.at); f.focus.at = Date.now() }
+    var out = []
+    for (var k in f.dwell) if (out.length < 20) out.push(k.slice(0, 60) + ':' + Math.min(Math.round(f.dwell[k] / 1000), 3600))
+    return out
   }
 
   // Leaving the page with a started, unsent form: say how far the visitor got.
   function flushForms() {
     for (var key in forms) {
       var f = forms[key]
-      if (f.done || f.sent || !f.seq.length) continue
+      // also a visit that only tapped into the form counts: that is where many people stop
+      if (f.done || f.sent) continue
       f.sent = true
-      send('Form abandon', { label: key, last: f.seq[f.seq.length - 1], fs: f.seq.slice(0, 20), err: f.err.slice(0, 20), t: Math.min(Math.round((Date.now() - f.t0) / 1000), 3600) })
+      var p = { label: key, last: f.seq[f.seq.length - 1] || '', fs: f.seq.slice(0, 20), err: f.err.slice(0, 20), t: Math.min(Math.round((Date.now() - f.t0) / 1000), 3600) }
+      p.idle = Math.min(Math.round((Date.now() - f.last) / 1000), 3600)
+      if (lastStep[key]) p.st = String(lastStep[key]).slice(0, 40)
+      var fd = dwellList(f)
+      if (fd.length) p.fd = fd
+      send('Form abandon', p)
     }
   }
 
@@ -503,6 +517,13 @@
     if (CANCEL_RE.test(key + ' ' + location.pathname)) return
     var field = e.target.closest(FIELD_EL)
     if (field && form.contains(field)) noteField(field, form, key)
+    var st = formState(form, key)
+    st.last = Date.now()
+    if (e.type === 'focusin' && field && form.contains(field)) {
+      var nm = fieldName(field, form)
+      if (st.focus) st.dwell[st.focus.name] = (st.dwell[st.focus.name] || 0) + (Date.now() - st.focus.at)
+      st.focus = nm ? { name: nm, at: Date.now() } : null
+    }
     if (formsStarted[key]) return
     formsStarted[key] = true
     send(isApplication(key) ? 'Application start' : 'Form start', { label: key, fn: headingOf(form.closest('section') || form) })
@@ -631,6 +652,8 @@
       props.fs = f.seq.slice(0, 20)
       props.err = f.err.slice(0, 20)
       props.t = Math.min(Math.round((Date.now() - f.t0) / 1000), 3600)
+      var fd2 = dwellList(f)
+      if (fd2.length) props.fd = fd2
     }
     send(name, props)
   }

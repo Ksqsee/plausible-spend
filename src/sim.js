@@ -151,3 +151,65 @@ export async function simFunnel(db, q0) {
     }
   }
 }
+
+// The real path of the chosen period (no extrapolation): how many visits reach each step and how
+// many contact the company straight away (a call from the header skips the form entirely).
+export async function journey(db, q) {
+  const w = where(q)
+  const leadIn = LEAD_EVENTS.map(() => '?').join(',')
+  const rows = await db
+    .prepare(
+      `SELECT session_id, name, page, props, device FROM events
+       WHERE ${w.sql} AND name IN ('pageview', 'Engagement', 'Form start', ${leadIn})`
+    )
+    .bind(...w.params, ...LEAD_EVENTS)
+    .all()
+  const s = new Map()
+  let contactSignals = 0
+  for (const r of rows.results) {
+    let x = s.get(r.session_id)
+    if (!x) {
+      x = { looked: false, area: false, form: false, lead: false, formLead: false, mobile: r.device === 'Mobile' }
+      s.set(r.session_id, x)
+    }
+    let p = null
+    try {
+      p = r.props ? JSON.parse(r.props) : null
+    } catch {}
+    if (r.name === 'pageview' && CONTACT_PAGE.test(r.page)) {
+      x.area = true
+      contactSignals++
+    }
+    if (r.name === 'Engagement' && p) {
+      if ((p.d || 0) >= 10 || (p.t || 0) >= 15) x.looked = true
+      if ((p.sec || []).some((id) => CONTACT_SECTION.test(id))) {
+        x.area = true
+        contactSignals++
+      }
+    }
+    if (r.name === 'Form start') {
+      x.form = true
+      contactSignals++
+    }
+    if (r.name === 'Form submit') x.formLead = true
+    if (LEAD_EVENTS.includes(r.name)) x.lead = true
+  }
+  const all = [...s.values()]
+  const count = (f) => all.filter(f).length
+  const steps = [
+    ['visits', all.length],
+    ['looked', count((x) => x.looked || x.area || x.form || x.lead)],
+    ['area', count((x) => x.area || x.form || x.formLead)],
+    ['form', count((x) => x.form || x.formLead)],
+    ['form_lead', count((x) => x.formLead)]
+  ]
+  return {
+    area_measured: contactSignals > 0,
+    steps: Object.fromEntries(steps),
+    // got in touch without the form: call, WhatsApp or mail
+    direct: count((x) => x.lead && !x.formLead),
+    leads: count((x) => x.lead),
+    mobile: { visits: count((x) => x.mobile), leads: count((x) => x.mobile && x.lead) },
+    desktop: { visits: count((x) => !x.mobile), leads: count((x) => !x.mobile && x.lead) }
+  }
+}

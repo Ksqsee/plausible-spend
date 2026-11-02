@@ -18,7 +18,7 @@ import { adsDeep, content, forms, funnel, gbp, insights, leads, months, outcomeS
 import { localParts } from './ingest.js'
 import { summary } from './summary.js'
 import { heat } from './heat.js'
-import { simFunnel } from './sim.js'
+import { journey, simFunnel } from './sim.js'
 import { capture, getShot, shotMeta } from './shots.js'
 import { monitorStatus, runMonitor } from './monitor.js'
 import { AUDIT_MAX_AGE, assess, getAudit, listAudits, liveData, refreshOneAudit, runAudit } from './audit.js'
@@ -322,6 +322,8 @@ async function api(request, env, url, user) {
       return json(await summary(db, q))
     case 'simfunnel':
       return json(await simFunnel(db, q))
+    case 'journey':
+      return json(await journey(db, q))
     case 'heat':
       return json(await heat(db, q, (url.searchParams.get('xpage') || '/').slice(0, 300), url.searchParams.get('device') === 'mobile' ? 'mobile' : 'desktop'))
     case 'months':

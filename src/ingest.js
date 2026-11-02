@@ -393,7 +393,7 @@ function capitalizeSource(source) {
 // Event properties are kept small and flat: strings, numbers, a list of strings (sections seen)
 // and one level of string choices (form answers).
 // list props: max entries and max length per entry
-const LIST_PROPS = { sec: [40, 60], fs: [20, 60], err: [20, 60], hc: [40, 300], sg: [40, 60] }
+const LIST_PROPS = { sec: [40, 60], fs: [20, 60], err: [20, 60], hc: [40, 300], sg: [40, 60], fd: [20, 70] }
 
 // Section id -> visible heading, as sent with engagement events.
 export function sectionHeadings(raw) {
