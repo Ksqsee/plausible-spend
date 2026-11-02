@@ -866,6 +866,7 @@ function scaleToMonth(value, q) {
 
 // Who acts on a finding and roughly how long it takes. minutes: null means ongoing or just for context.
 const KIND = {
+  website_check: { owner: 'Website', minutes: 60 },
   zero_conversions: { owner: 'Google Ads', minutes: 15 },
   tracker_missing: { owner: 'Website', minutes: 5 },
   no_keyword: { owner: 'Google Ads', minutes: 5 },
@@ -905,7 +906,7 @@ function siteOfUrl(url, domains) {
   return domains.find((d) => d.replace(/^www\./, '') === host) || null
 }
 
-export async function insights(db, q, owner = 'admin') {
+export async function insights(db, q, owner = 'admin', extra = []) {
   const sites = await siteRows(db, q.sites)
   const names = new Map(sites.map((s) => [s.domain, s.name]))
   const scope = `${inList('site', q.sites)} AND date >= ? AND date <= ?`
@@ -1499,6 +1500,9 @@ export async function insights(db, q, owner = 'admin') {
       })
     }
   }
+
+  // findings of the website check (measured on the pages themselves)
+  for (const o of extra) add(o)
 
   for (const r of out) r.score = SEVERITY_WEIGHT[r.severity] * 1000 + (r.value || 0)
   out.sort((a, b) => b.score - a.score)

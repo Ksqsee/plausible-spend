@@ -1452,6 +1452,19 @@ a.k-co:hover { background: var(--hover); }
   .k-mon span { display: none; }
   .k-mon.bad span { display: inline; }
 }
+.mlabel { color: var(--text-2) !important; font-size: 13px; font-weight: 600; }
+.mlabel svg, .mlabel img { width: 15px; height: 15px; }
+.sv-mc-h h2, .sv-ins h2, .sv-ih { font-size: 17px !important; letter-spacing: -.012em !important; }
+.sv-sev { border-radius: 6px !important; }
+.hl-h h2, .sv-mc-h h2 { font-size: 17px; letter-spacing: -.012em; font-weight: 600; }
+.sv-mc-grid.sv-four { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; background: var(--card); box-shadow: var(--card-shadow); border-radius: var(--r); overflow: hidden; }
+.sv-four .sv-mc { box-shadow: none !important; border-radius: 0; border-right: 1px solid var(--line-soft); padding: 16px 20px; background: none; transform: none !important; animation: none !important; gap: 4px; }
+.sv-four .sv-mc:last-child { border-right: 0; }
+.sv-four .sv-mc.on { box-shadow: inset 0 -2px 0 var(--accent) !important; }
+.sv-four .sv-mc-num { font: 600 26px/1.15 var(--display) !important; letter-spacing: -.025em; }
+.sv-four .mlabel { font-size: 12.5px; font-weight: 500; color: var(--text-3) !important; }
+.sv-four .sv-mc:first-child .sv-mc-num { color: var(--bad); }
+@media (max-width: 760px) { .sv-mc-grid.sv-four { grid-template-columns: repeat(2, minmax(0, 1fr)); } .sv-four .sv-mc { border-bottom: 1px solid var(--line-soft); } }
 </style>
 </head>
 <body>
@@ -3317,7 +3330,7 @@ a.k-co:hover { background: var(--hover); }
     return acts
   }
   // one compact line that opens into detail, evidence and the how-to
-  var OWNER_COLOR = { 'Google Ads': 'var(--m-orange)', Website: 'var(--m-blue)', 'Google-Profil': 'var(--m-purple)', Team: 'var(--m-green)' }
+  var OWNER_COLOR = { 'Google Ads': 'var(--d1)', Website: 'var(--d1)', 'Google-Profil': 'var(--d1)', Team: 'var(--d1)' }
   var SEV_WORD = { high: 'Dringend', medium: 'Wichtig', info: 'Hinweis' }
   function ownerLabel(o) {
     var l = el('span', 'mlabel'); l.style.setProperty('--mc', OWNER_COLOR[o] || 'var(--text-2)')

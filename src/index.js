@@ -328,7 +328,7 @@ async function api(request, env, url, user) {
     case 'gbp':
       return json(await gbp(db, q))
     case 'insights':
-      return json(await insights(db, q, own || 'admin'))
+      return json(await insights(db, q, own || 'admin', await checkFindings(env, db, q.sites)))
     default:
       return json({ error: 'not found' }, 404)
   }
@@ -362,6 +362,51 @@ async function purgeOld(db) {
 }
 
 const MONITOR_CRON = '*/30 * * * *'
+
+// Website-check findings for the "Chancen" list: measured gaps worth an enquiry or more a month,
+// and missing basics that matter (contact visible, phone tappable, legal pages).
+async function checkFindings(env, db, sites) {
+  const out = []
+  const to = new Date().toISOString().slice(0, 10)
+  const from = new Date(Date.now() - 28 * 86400000).toISOString().slice(0, 10)
+  const names = Object.fromEntries((await db.prepare('SELECT domain, name FROM sites').all()).results.map((r) => [r.domain, r.name]))
+  let budget = 24
+  for (const site of sites) {
+    if (budget <= 0) break
+    const audits = await listAudits(env, site)
+    for (const a of audits) {
+      if (budget-- <= 0) break
+      let g
+      try {
+        g = assess(a, await liveData(db, site, a.page, from, to))
+      } catch (e) {
+        continue
+      }
+      const where = `${names[site] || site}${a.page === '/' ? '' : ' ' + a.page}`
+      for (const m of g.metrics) {
+        if ((m.status !== 'bad' && m.status !== 'warn') || !m.fix) continue
+        const worth = (m.leads || 0) >= 0.5 || (m.visits || 0) >= 10 || m.status === 'bad'
+        if (!worth) continue
+        const gain = (m.leads || 0) >= 0.5 ? `, ≈ +${String(Math.round(m.leads * 10) / 10).replace('.', ',')} Anfragen/Monat` : (m.visits || 0) >= 10 ? `, ≈ +${Math.round(m.visits)} Besucher/Monat` : ''
+        out.push({
+          kind: 'website_check',
+          severity: (m.leads || 0) >= 1 ? 'high' : 'medium',
+          area: 'Website',
+          site,
+          title: `${where}: ${m.title} ${m.display}${m.target ? ' (Ziel ' + m.target + ')' : ''}${gain}`,
+          detail: m.why + ' Grundlage: ' + m.basis + '.',
+          action: m.fix,
+          value: null
+        })
+      }
+      for (const b of g.basics) {
+        if (b.ok || b.weight < 3) continue
+        out.push({ kind: 'website_check', severity: 'medium', area: 'Website', site, title: `${where}: nicht erfüllt: ${b.title}`, detail: b.found + '.', action: b.fix, value: null })
+      }
+    }
+  }
+  return out
+}
 
 export default {
   async fetch(request, env) {

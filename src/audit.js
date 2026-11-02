@@ -543,9 +543,9 @@ export function assess(a, live) {
       add({
         id: 'near',
         group: 'Google',
-        title: 'Suchen knapp hinter den Top 3',
+        title: 'Suchbegriffe knapp hinter den Top 3',
         value: nearList.length,
-        display: String(nearList.length),
+        display: nearList.length + (nearList.length === 1 ? ' Begriff' : ' Begriffe'),
         target: 'Platz 1 bis 3',
         status: near * searchMonth >= 10 ? 'warn' : 'good',
         basis: 'Suchbegriffe auf Platz 4 bis 20 mit echten Einblendungen',
