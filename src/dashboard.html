@@ -1727,6 +1727,18 @@ body { font-size: 14px; line-height: 1.5; }
 .k-pot-l .d, .k-pot-l .v { white-space: normal; }
 @media (max-width: 760px) { .sv-lead .k-lead-h { font-size: 28px !important; } .sv-lead .k-lead-p { font-size: 14px !important; } }
 @media (max-width: 760px) { .sv-sites { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-right: -16px; padding-right: 16px; } .sv-sites::-webkit-scrollbar { display: none; } .sv-sites a { flex: none; } }
+.k-lic.real { background: none; width: 34px; height: 34px; }
+.k-lic.real img { width: 34px; height: 34px; border-radius: 9px; }
+.k-lic.real img.site, .k-lic.real .fallback { width: 34px; height: 34px; border-radius: 9px; box-shadow: 0 0 0 1px var(--line); background: var(--card); object-fit: contain; padding: 4px; }
+.k-src { display: flex; align-items: center; gap: 6px; }
+.k-src img, .k-src svg { width: 14px; height: 14px; flex: none; }
+.k-src img.mono, .k-type img.mono { filter: var(--mono-filter, none); }
+.k-type img { width: 18px; height: 18px; border-radius: 5px; flex: none; }
+@media (prefers-color-scheme: dark) { :root:where(:not([data-theme="light"])) { --mono-filter: invert(1); } }
+:root[data-theme="dark"] { --mono-filter: invert(1); }
+.k-flow { padding: 24px 24px 16px; }
+.k-flow-note { margin: 4px 0 0; font-size: 12px; color: var(--text-3); }
+@media (max-width: 760px) { .k-flow { padding: 16px; } }
 </style>
 </head>
 <body>
@@ -1845,7 +1857,7 @@ body { font-size: 14px; line-height: 1.5; }
     'Einblendungen': ['Wie oft das Google-Profil in Maps oder der Suche angezeigt wurde.', 'Von Google gemeldet, mit 3–5 Tagen Verzögerung.', 'Mehr als im Vormonat. Bewertungen und Fotos erhöhen die Einblendungen.'],
     'Anrufe': ['Anrufe direkt über den Anruf-Knopf im Google-Profil.', 'Von Google gemeldet. Sie tauchen in keiner Website-Statistik auf.', 'Jeder Anruf ist eine echte Anfrage.'],
     'Website-Klicks': ['Wie oft jemand im Google-Profil auf „Website“ getippt hat.', 'Von Google gemeldet. Diese Besucher erscheinen auf der Website als „Google-Profil“.', 'Je mehr, desto besser: das Profil führt Menschen zur Website.'],
-    'Aktionsrate': ['Wie oft aus einer Einblendung eine Aktion wurde (Anruf, Website oder Route).', '(Anrufe + Website-Klicks + Routen) ÷ Einblendungen.', 'Über 5 % gut. Ein hoher Wert heißt: wer das Profil sieht, will auch Kontakt.'],
+    'Routen': ['Wie oft jemand über das Profil eine Route zum Betrieb geplant hat.', 'Von Google gemeldet. Google zählt Routen auch ohne vorherige Einblendung, etwa aus gespeicherten Orten.', 'Kein sauberes Kundensignal: Lieferanten, Mitarbeiter und Stammkunden planen ebenfalls Routen.'],
     'Bewertungen': ['Anzahl der Google-Bewertungen.', 'Aktueller Stand laut Google.', 'Mindestens 20 Bewertungen mit 4,5 Sternen. Bewertungen sind der wichtigste Hebel in Google Maps.'],
     'Klicks aus Google': ['Wie oft jemand in der normalen Google-Suche (ohne Anzeige) auf die Website geklickt hat.', 'Von der Google Search Console gemeldet, mit 2–3 Tagen Verzögerung.', 'Mehr als im Zeitraum davor. Diese Klicks kosten nichts.'],
     'Impressionen': ['Wie oft die Website in den Google-Suchergebnissen aufgetaucht ist.', 'Von der Google Search Console gemeldet. Zählt auch, wenn niemand klickt.', 'Steigend heißt: Google zeigt die Website zu mehr Suchen.'],
@@ -1863,6 +1875,7 @@ body { font-size: 14px; line-height: 1.5; }
     Facebook: 'facebook', Instagram: 'instagram', LinkedIn: 'linkedin', X: 'x', YouTube: 'youtube', TikTok: 'tiktok',
     Pinterest: 'pinterest', ChatGPT: 'openai', Perplexity: 'perplexity', Claude: 'claude', Gemini: 'gemini',
     'Google Business Profile': 'gbp', WhatsApp: 'whatsapp',
+    'chatgpt.com': 'openai', 'chat.openai.com': 'openai', 'perplexity.ai': 'perplexity', 'www.perplexity.ai': 'perplexity', 'claude.ai': 'claude', 'gemini.google.com': 'gemini', 'copilot.microsoft.com': 'bing', 'bing.com': 'bing', 'www.bing.com': 'bing',
     Chrome: 'chrome', Safari: 'safari', Firefox: 'firefox', Edge: 'edge', Opera: 'opera', 'Samsung Internet': 'samsung-internet',
     Windows: 'windows', macOS: 'apple', iOS: 'apple', Android: 'android', Linux: 'linux', ChromeOS: 'chrome'
   }
@@ -2624,8 +2637,10 @@ body { font-size: 14px; line-height: 1.5; }
     form: '<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/>'
   }
   function typeBadge(k, text) {
-    var b = el('span', 'k-type'); b.style.setProperty('--c', TYPE_SHADES[k])
-    b.append(html('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + TYPE_GLYPH[k] + '</svg>'), el('span', null, text))
+    var b = el('span', 'k-type')
+    if (LEAD_APP[k]) b.append(brandIcon(LEAD_APP[k]))
+    else b.append(html('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + TYPE_GLYPH[k] + '</svg>'))
+    b.append(el('span', null, text))
     return b
   }
   // a change is only shown as good or bad when the numbers are large enough to mean something
@@ -2932,10 +2947,13 @@ body { font-size: 14px; line-height: 1.5; }
     return g.items.map(function (r) { return LEAD_SHORT[r.type] || r.type }).filter(function (t) { if (seen[t]) return false; seen[t] = 1; return true })
   }
   var LEAD_KEY = { 'Phone click': 'call', 'WhatsApp click': 'whatsapp', 'Email click': 'email', 'Form submit': 'form', Application: 'form', 'Application contact': 'call' }
+  // real icons: the phone, mail and WhatsApp apps; a form shows the website it was sent from
+  var LEAD_APP = { call: 'app-phone', whatsapp: 'app-whatsapp', email: 'app-mail' }
   function leadIcon(g) {
     var k = LEAD_KEY[g.items[0].type] || 'form'
-    var box = el('span', 'k-lic'); box.style.setProperty('--c', TYPE_SHADES[k])
-    box.append(html('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + TYPE_GLYPH[k] + '</svg>'))
+    var box = el('span', 'k-lic real')
+    if (LEAD_APP[k]) box.append(brandIcon(LEAD_APP[k]))
+    else box.append(siteLogo(g.site, 'site'))
     return box
   }
   function leadRow(g, outcome, onOpen) {
@@ -2946,7 +2964,11 @@ body { font-size: 14px; line-height: 1.5; }
     var meta = [sourceName(g.source)]
     if (g.keyword) meta.push('„' + g.keyword + '“')
     if (!state.site) meta.push((SITE_BY_DOMAIN[g.site] || {}).name || g.site)
-    mid.append(el('span', null, 'über ' + meta.join(' · ')))
+    var src = el('span', 'k-src')
+    var sic = iconFor('source', g.source)
+    if (sic) src.append(sic)
+    src.append(document.createTextNode(meta.join(' · ')))
+    mid.append(src)
     var right = el('span', 'k-lead-r')
     var st = outcome ? outcome.status : 'open'
     var pill = el('span', 'k-pill ' + st, st === 'won' && outcome.value ? money0.format(outcome.value) : OUTCOME_NAME[st])
@@ -4247,7 +4269,8 @@ body { font-size: 14px; line-height: 1.5; }
     var r = range(), f = function (x) { return new Date(x + 'T00:00:00').toLocaleDateString('de-DE', { day: 'numeric', month: 'short' }) }
     return r[0] === r[1] ? f(r[0]) : f(r[0]) + ' – ' + f(r[1])
   }
-  function sourceName(s) { return !s || s === 'Direct / None' ? 'Direkt' : s === 'Google Business Profile' ? 'Google-Profil' : s }
+  var SOURCE_PRETTY = { 'chatgpt.com': 'ChatGPT', 'chat.openai.com': 'ChatGPT', 'perplexity.ai': 'Perplexity', 'www.perplexity.ai': 'Perplexity', 'claude.ai': 'Claude', 'gemini.google.com': 'Gemini', 'copilot.microsoft.com': 'Copilot' }
+  function sourceName(s) { return !s || s === 'Direct / None' ? 'Direkt' : s === 'Google Business Profile' ? 'Google-Profil' : SOURCE_PRETTY[s] || s }
   function plural(n, w) { return nf.format(n) + ' ' + (n === 1 ? w[0] : w[1]) }
   // values for the chosen range, grouped into days, weeks or months; null = not measured yet
   function buckets(series, from, to, since, hourly) {
@@ -4802,54 +4825,98 @@ body { font-size: 14px; line-height: 1.5; }
       var flowSvg = el('div', 'k-band')
       flow.append(flowSvg)
       var stageIdx = SIM_STAGES.map(function (x, i) { return i }).filter(function (i) { return d.area_measured || i !== 2 })
+      // the funnel as one flowing stream: thickness = people, pills = how many go on to the next step
+      var shownVals = null, anim = 0
       var drawFlow = function (vals, base0) {
-        var Wn = flowSvg.clientWidth || 900
-        if (Wn < 560) {
-          // narrow screens: one row per step, the band runs downwards
-          var rowH = 54, n2 = stageIdx.length, H2 = rowH * n2, max2 = Math.max(vals[0], base0[0], 1), bandMax = Wn * 0.46, cx = Wn * 0.72
-          var w2 = function (v) { return Math.max(3, (v / max2) * bandMax) }
-          var sv2 = '<svg viewBox="0 0 ' + Wn + ' ' + H2 + '" width="100%" height="' + H2 + '"><defs><linearGradient id="kbgv" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="var(--d1)" stop-opacity=".28"/><stop offset="1" stop-color="var(--d1)" stop-opacity=".12"/></linearGradient></defs>'
-          stageIdx.forEach(function (si, k) {
-            var y0 = k * rowH + rowH / 2, v = vals[si], wv = w2(v)
-            if (k < n2 - 1) {
-              var sj = stageIdx[k + 1], y1 = y0 + rowH, wn = w2(vals[sj])
-              sv2 += '<path d="M' + (cx - wv / 2) + ' ' + (y0 + 4) + ' C' + (cx - wv / 2) + ' ' + (y0 + rowH / 2) + ' ' + (cx - wn / 2) + ' ' + (y1 - rowH / 2) + ' ' + (cx - wn / 2) + ' ' + (y1 - 4) + ' L' + (cx + wn / 2) + ' ' + (y1 - 4) + ' C' + (cx + wn / 2) + ' ' + (y1 - rowH / 2) + ' ' + (cx + wv / 2) + ' ' + (y0 + rowH / 2) + ' ' + (cx + wv / 2) + ' ' + (y0 + 4) + ' Z" fill="url(#kbgv)"/>'
-            }
-            sv2 += '<rect x="' + (cx - wv / 2) + '" y="' + (y0 - 4) + '" width="' + wv + '" height="8" rx="3" fill="' + (si >= 3 ? 'var(--d2)' : 'var(--d1)') + '"/>'
-            var prev = k ? vals[stageIdx[k - 1]] : null
-            sv2 += '<text x="0" y="' + (y0 - 2) + '" font-size="19" font-weight="500" fill="var(--text)" style="font-variant-numeric:tabular-nums">' + fmtN(v) + '</text>'
-            sv2 += '<text x="0" y="' + (y0 + 16) + '" font-size="12" fill="var(--text-2)">' + SIM_STAGES[si][1] + (prev ? ' · ' + Math.round((v / prev) * 100) + ' %' : '') + '</text>'
-          })
-          flowSvg.innerHTML = sv2 + '</svg>'
-          return
+        var from = shownVals || vals.map(function () { return 0 })
+        var start = performance.now(), dur = REDUCED ? 0 : 450
+        cancelAnimationFrame(anim)
+        var step = function (now) {
+          var t = dur ? Math.min(1, (now - start) / dur) : 1, e = 1 - Math.pow(1 - t, 3)
+          var cur = vals.map(function (v, i) { return from[i] + (v - from[i]) * e })
+          paintFlow(cur, base0, vals)
+          if (t < 1) anim = requestAnimationFrame(step)
+          else shownVals = vals.slice()
         }
-        var W = Math.max(320, Wn), H = 230, top = 74, bandH = H - top - 10
-        var n = stageIdx.length, colW = W / n, barW = Math.min(14, colW * 0.08)
+        anim = requestAnimationFrame(step)
+      }
+      var paintFlow = function (vals, base0, finalVals) {
+        var Wn = flowSvg.clientWidth || 900
+        var vertical = Wn < 560
+        var n = stageIdx.length
         var max = Math.max(vals[0], base0[0], 1)
-        var h = function (v) { return Math.max(3, (v / max) * bandH) }
-        var cy = top + bandH / 2
-        var sv = '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" height="' + H + '">'
-        sv += '<defs><linearGradient id="kbg" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="var(--d1)" stop-opacity=".30"/><stop offset="1" stop-color="var(--d1)" stop-opacity=".12"/></linearGradient></defs>'
-        stageIdx.forEach(function (si, k) {
-          var x0 = colW * k + colW * 0.5
-          var v = vals[si], hv = h(v)
-          if (k < n - 1) {
-            var sj = stageIdx[k + 1], x1 = colW * (k + 1) + colW * 0.5, hn = h(vals[sj])
-            var mx = (x0 + x1) / 2
-            sv += '<path d="M' + (x0 + barW / 2) + ' ' + (cy - hv / 2) + ' C' + mx + ' ' + (cy - hv / 2) + ' ' + mx + ' ' + (cy - hn / 2) + ' ' + (x1 - barW / 2) + ' ' + (cy - hn / 2) + ' L' + (x1 - barW / 2) + ' ' + (cy + hn / 2) + ' C' + mx + ' ' + (cy + hn / 2) + ' ' + mx + ' ' + (cy + hv / 2) + ' ' + (x0 + barW / 2) + ' ' + (cy + hv / 2) + ' Z" fill="url(#kbg)"/>'
-            var lost = vals[si] - vals[sj]
-            if (lost >= 0.5) sv += '<text x="' + mx + '" y="' + (cy + Math.max(hv, hn) / 2 + 16 > H - 2 ? H - 4 : cy + hv / 2 + 16) + '" text-anchor="middle" font-size="11.5" fill="var(--down)">−' + fmtN(lost) + '</text>'
+        var sv = []
+        sv.push('<defs><linearGradient id="kfg" x1="0" x2="' + (vertical ? 0 : 1) + '" y1="0" y2="' + (vertical ? 1 : 0) + '"><stop offset="0" stop-color="var(--d1)"/><stop offset="1" stop-color="var(--d2)"/></linearGradient>'
+          + '<filter id="kfs" x="-10%" y="-30%" width="120%" height="160%"><feGaussianBlur stdDeviation="10"/></filter></defs>')
+        var pts = stageIdx.map(function (si) { return vals[si] })
+        var base = stageIdx.map(function (si) { return base0[si] })
+        var labelsNum = stageIdx.map(function (si) { return fmtN(finalVals[si]) })
+        if (!vertical) {
+          var W = Wn, H = 300, top = 92, band = 150, cy = top + band / 2
+          var colW = W / n, xs = pts.map(function (v, k) { return colW * k + colW / 2 })
+          var hh = function (v) { return Math.max(4, (v / max) * band) }
+          // stream path through all stage centres, flat across each stage, curved between
+          var path = function (arr) {
+            var d = 'M0 ' + (cy - hh(arr[0]) / 2)
+            arr.forEach(function (v, k) {
+              var x0 = k === 0 ? 0 : xs[k] - colW * 0.18, x1 = k === n - 1 ? W : xs[k] + colW * 0.18
+              if (k === 0) d += ' L' + x1 + ' ' + (cy - hh(v) / 2)
+              else { var px = xs[k - 1] + colW * 0.18; d += ' C' + ((px + x0) / 2) + ' ' + (cy - hh(arr[k - 1]) / 2) + ' ' + ((px + x0) / 2) + ' ' + (cy - hh(v) / 2) + ' ' + x0 + ' ' + (cy - hh(v) / 2) + ' L' + x1 + ' ' + (cy - hh(v) / 2) }
+            })
+            for (var k = n - 1; k >= 0; k--) {
+              var v = arr[k], x0 = k === 0 ? 0 : xs[k] - colW * 0.18, x1 = k === n - 1 ? W : xs[k] + colW * 0.18
+              if (k === n - 1) d += ' L' + W + ' ' + (cy + hh(v) / 2) + ' L' + x0 + ' ' + (cy + hh(v) / 2)
+              else { var nx = xs[k + 1] - colW * 0.18; d += ' C' + ((x1 + nx) / 2) + ' ' + (cy + hh(arr[k + 1]) / 2) + ' ' + ((x1 + nx) / 2) + ' ' + (cy + hh(v) / 2) + ' ' + x1 + ' ' + (cy + hh(v) / 2) + ' L' + x0 + ' ' + (cy + hh(v) / 2) }
+            }
+            return d + ' Z'
           }
-          var hb = h(base0[si])
-          if (Math.abs(base0[si] - v) > 0.05 * Math.max(v, 1)) sv += '<rect x="' + (x0 - barW / 2 - 3) + '" y="' + (cy - hb / 2) + '" width="' + (barW + 6) + '" height="' + hb + '" rx="4" fill="none" stroke="var(--text-3)" stroke-dasharray="3 3"/>'
-          sv += '<rect x="' + (x0 - barW / 2) + '" y="' + (cy - hv / 2) + '" width="' + barW + '" height="' + hv + '" rx="3" fill="' + (si >= 3 ? 'var(--d2)' : 'var(--d1)') + '"/>'
-          var prevV = k ? vals[stageIdx[k - 1]] : null
-          sv += '<text x="' + x0 + '" y="22" text-anchor="middle" font-size="22" font-weight="500" fill="var(--text)" style="font-variant-numeric:tabular-nums;letter-spacing:-.02em">' + fmtN(v) + '</text>'
-          sv += '<text x="' + x0 + '" y="42" text-anchor="middle" font-size="12.5" fill="var(--text-2)">' + SIM_STAGES[si][1] + '</text>'
-          if (prevV) sv += '<text x="' + x0 + '" y="59" text-anchor="middle" font-size="11.5" fill="var(--text-3)">' + Math.round((v / prevV) * 100) + ' %' + (si === 4 && o.close_rate === null ? ' · Annahme' : '') + '</text>'
-        })
-        sv += '</svg>'
-        flowSvg.innerHTML = sv
+          var changed = base.some(function (b, k) { return Math.abs(b - pts[k]) > 0.05 * Math.max(pts[k], 1) })
+          sv.push('<path d="' + path(pts) + '" fill="var(--d1)" opacity=".18" filter="url(#kfs)" transform="translate(0 10)"/>')
+          sv.push('<path d="' + path(pts) + '" fill="url(#kfg)"/>')
+          if (changed) sv.push('<path d="' + path(base) + '" fill="none" stroke="var(--text-3)" stroke-width="1.2" stroke-dasharray="4 4"/>')
+          xs.forEach(function (x, k) {
+            var si = stageIdx[k]
+            sv.push('<text x="' + x + '" y="20" text-anchor="middle" font-size="12" font-weight="500" fill="var(--text-3)" letter-spacing=".02em">' + SIM_STAGES[si][1].toUpperCase() + '</text>')
+            sv.push('<text x="' + x + '" y="58" text-anchor="middle" font-size="34" font-weight="600" fill="var(--text)" style="font-variant-numeric:tabular-nums;letter-spacing:-.03em">' + labelsNum[k] + '</text>')
+            if (k) {
+              var gx = (xs[k - 1] + x) / 2, rate = pts[k - 1] ? Math.round((pts[k] / pts[k - 1]) * 100) : 0
+              var lost = finalVals[stageIdx[k - 1]] - finalVals[si]
+              var label = rate + ' %' + (si === 4 && o.close_rate === null ? '*' : '')
+              var pw = label.length * 8 + 22
+              sv.push('<rect x="' + (gx - pw / 2) + '" y="' + (cy - 14) + '" width="' + pw + '" height="28" rx="14" fill="var(--card)" stroke="var(--line)"/>')
+              sv.push('<text x="' + gx + '" y="' + (cy + 5) + '" text-anchor="middle" font-size="13" font-weight="600" fill="var(--text)">' + label + '</text>')
+              if (lost >= 0.5) sv.push('<text x="' + gx + '" y="' + (top + band + 34) + '" text-anchor="middle" font-size="12.5" fill="var(--text-3)">' + fmtN(lost) + ' gehen</text>')
+            }
+          })
+          flowSvg.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" height="' + H + '">' + sv.join('') + '</svg>'
+        } else {
+          // phones: the stream runs downwards, numbers on the left
+          var Wv = Wn, rowH = 76, Hv = rowH * n + 8, bandW = Wv * 0.42, cx = Wv - bandW / 2 - 4
+          var ww = function (v) { return Math.max(4, (v / max) * bandW) }
+          var ys = pts.map(function (v, k) { return rowH * k + rowH / 2 })
+          var d = 'M' + (cx - ww(pts[0]) / 2) + ' 0'
+          pts.forEach(function (v, k) {
+            var y0 = k === 0 ? 0 : ys[k] - rowH * 0.2, y1 = ys[k] + rowH * 0.2
+            if (k === 0) d += ' L' + (cx - ww(v) / 2) + ' ' + y1
+            else { var py = ys[k - 1] + rowH * 0.2; d += ' C' + (cx - ww(pts[k - 1]) / 2) + ' ' + ((py + y0) / 2) + ' ' + (cx - ww(v) / 2) + ' ' + ((py + y0) / 2) + ' ' + (cx - ww(v) / 2) + ' ' + y0 + ' L' + (cx - ww(v) / 2) + ' ' + y1 }
+          })
+          for (var k2 = n - 1; k2 >= 0; k2--) {
+            var v2 = pts[k2], ya = k2 === 0 ? 0 : ys[k2] - rowH * 0.2, yb = ys[k2] + rowH * 0.2
+            if (k2 === n - 1) d += ' L' + (cx + ww(v2) / 2) + ' ' + yb + ' L' + (cx + ww(v2) / 2) + ' ' + ya
+            else { var ny = ys[k2 + 1] - rowH * 0.2; d += ' C' + (cx + ww(pts[k2 + 1]) / 2) + ' ' + ((yb + ny) / 2) + ' ' + (cx + ww(v2) / 2) + ' ' + ((yb + ny) / 2) + ' ' + (cx + ww(v2) / 2) + ' ' + yb + ' L' + (cx + ww(v2) / 2) + ' ' + ya }
+          }
+          d += ' Z'
+          sv.push('<path d="' + d + '" fill="url(#kfg)"/>')
+          ys.forEach(function (y, k) {
+            var si = stageIdx[k]
+            sv.push('<text x="0" y="' + (y - 4) + '" font-size="26" font-weight="600" fill="var(--text)" style="font-variant-numeric:tabular-nums;letter-spacing:-.02em">' + labelsNum[k] + '</text>')
+            var rate = k && pts[k - 1] ? ' · ' + Math.round((pts[k] / pts[k - 1]) * 100) + ' %' + (si === 4 && o.close_rate === null ? '*' : '') : ''
+            sv.push('<text x="0" y="' + (y + 16) + '" font-size="12.5" fill="var(--text-2)">' + SIM_STAGES[si][1] + rate + '</text>')
+          })
+          flowSvg.innerHTML = '<svg viewBox="0 0 ' + Wv + ' ' + Hv + '" width="100%" height="' + Hv + '">' + sv.join('') + '</svg>'
+        }
+        var note = flow.querySelector('.k-flow-note')
+        if (o.close_rate === null && !note) { note = el('p', 'k-flow-note', '* Abschlussquote ist eine Annahme, bis bei den Anfragen Aufträge eingetragen sind.'); flow.append(note) }
       }
       var resEls = {}
       ;[['leads', 'Anfragen pro Monat'], ['customers', 'Aufträge pro Monat'], ['revenue', 'Umsatz pro Monat']].concat(a ? [['cpl', 'Werbung pro Anfrage']] : []).forEach(function (r) {
@@ -5546,9 +5613,9 @@ body { font-size: 14px; line-height: 1.5; }
       kpis.append(
         kpi('Einblendungen', nf.format(t.maps + t.search), nf.format(t.maps) + ' Maps · ' + nf.format(t.search) + ' Suche'),
         kpi('Anrufe', nf.format(t.calls), 'direkt aus dem Profil'),
-        kpi('Website-Klicks', nf.format(t.website), nf.format(t.directions) + ' Routenplanungen'),
+        kpi('Website-Klicks', nf.format(t.website), 'zur Website'),
         single
-          ? kpi('Aktionsrate', t.maps + t.search ? pct.format(((t.calls + t.website + t.directions) / (t.maps + t.search)) * 100) + ' %' : '–', 'Anruf, Website oder Route je Einblendung')
+          ? kpi('Routen', nf.format(t.directions), 'auch Lieferanten und Stammkunden')
           : kpi('Bewertungen', nf.format(d.locations.reduce(function (a, l) { return a + (l.reviews || 0) }, 0)), d.locations.length + ' Profile')
       )
       section.append(kpis)
