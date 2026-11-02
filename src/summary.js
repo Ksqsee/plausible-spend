@@ -85,26 +85,25 @@ export async function summary(db, q) {
        FROM ads_spend WHERE site IN (${siteIn}) AND date >= ? AND date <= ? GROUP BY date`,
       [...sites, q.from, q.to]
     ),
-    db.prepare(`SELECT SUM(spend) AS spend FROM ads_spend WHERE site IN (${siteIn}) AND date >= ? AND date <= ?`).bind(...sites, ...prev).first(),
+    dailySum(db, `SELECT date, SUM(spend) AS spend FROM ads_spend WHERE site IN (${siteIn}) AND date >= ? AND date <= ? GROUP BY date`, [...sites, ...prev]),
     dailySum(
       db,
       `SELECT d.date AS date, SUM(d.calls) AS calls, SUM(d.impressions_maps + d.impressions_search) AS views, SUM(d.website_clicks) AS web, SUM(d.directions) AS directions
        FROM gbp_daily d JOIN gbp_locations l ON l.location = d.location WHERE l.site IN (${siteIn}) AND d.date >= ? AND d.date <= ? GROUP BY d.date`,
       [...sites, q.from, q.to]
     ),
-    db
-      .prepare(
-        `SELECT SUM(d.calls) AS calls, SUM(d.impressions_maps + d.impressions_search) AS views FROM gbp_daily d JOIN gbp_locations l ON l.location = d.location
-         WHERE l.site IN (${siteIn}) AND d.date >= ? AND d.date <= ?`
-      )
-      .bind(...sites, ...prev)
-      .first(),
+    dailySum(
+      db,
+      `SELECT d.date AS date, SUM(d.calls) AS calls, SUM(d.impressions_maps + d.impressions_search) AS views FROM gbp_daily d JOIN gbp_locations l ON l.location = d.location
+       WHERE l.site IN (${siteIn}) AND d.date >= ? AND d.date <= ? GROUP BY d.date`,
+      [...sites, ...prev]
+    ),
     dailySum(
       db,
       `SELECT date, SUM(clicks) AS clicks, SUM(impressions) AS impressions FROM search_queries WHERE site IN (${siteIn}) AND date >= ? AND date <= ? GROUP BY date`,
       [...sites, q.from, q.to]
     ),
-    db.prepare(`SELECT SUM(clicks) AS clicks FROM search_queries WHERE site IN (${siteIn}) AND date >= ? AND date <= ?`).bind(...sites, ...prev).first(),
+    dailySum(db, `SELECT date, SUM(clicks) AS clicks FROM search_queries WHERE site IN (${siteIn}) AND date >= ? AND date <= ? GROUP BY date`, [...sites, ...prev]),
     db.prepare(`SELECT COUNT(*) AS n FROM gbp_locations WHERE site IN (${siteIn})`).bind(...sites).first(),
     db.prepare(`SELECT COUNT(*) AS n FROM sites WHERE domain IN (${siteIn}) AND ads_account IS NOT NULL`).bind(...sites).first(),
     db.prepare(`SELECT COUNT(*) AS n FROM sites WHERE domain IN (${siteIn}) AND gsc_property IS NOT NULL`).bind(...sites).first()
@@ -112,31 +111,36 @@ export async function summary(db, q) {
 
   const sum = (rows, k) => rows.reduce((a, r) => a + (r[k] || 0), 0)
   const by = (rows, k) => Object.fromEntries(rows.map((r) => [r.date, r[k] || 0]))
+  // the period before, moved onto the dates of this period so both lines share one axis
+  const moved = (obj) => (obj ? Object.fromEntries(Object.entries(obj).map(([k, v]) => [/^\d{4}-/.test(k) ? shift(k, days) : k, v])) : null)
+  const prevTotal = (rows, k) => (rows.length ? sum(rows, k) : null)
   const spend = sum(ads, 'spend')
+  const adsPrevSpend = prevTotal(adsPrev, 'spend')
   const tracked = sum(ads, 'tracked')
   return {
     from: q.from,
     to: q.to,
     interval: q.from === q.to ? 'hour' : 'day',
     tracking_since: since,
-    leads: { total: now.leads, prev: before ? before.leads : null, series: now.leadSeries, types: now.typeTotals, type_series: now.typeSeries },
-    visitors: { total: now.visitors, prev: before ? before.visitors : null, series: now.visitorSeries },
+    leads: { total: now.leads, prev: before ? before.leads : null, series: now.leadSeries, prev_series: before ? moved(before.leadSeries) : null, types: now.typeTotals, type_series: now.typeSeries },
+    visitors: { total: now.visitors, prev: before ? before.visitors : null, series: now.visitorSeries, prev_series: before ? moved(before.visitorSeries) : null },
     ads: hasAds.n
       ? {
           spend: Math.round(spend * 100) / 100,
-          prev: adsPrev && adsPrev.spend !== null ? Math.round(adsPrev.spend * 100) / 100 : null,
+          prev: adsPrevSpend !== null ? Math.round(adsPrevSpend * 100) / 100 : null,
+          prev_series: adsPrev.length ? moved(by(adsPrev, 'spend')) : null,
           clicks: sum(ads, 'clicks'),
           series: by(ads, 'spend'),
           // cost per lead only over the days the website counted leads
           per_lead: now.leads && tracked ? Math.round((tracked / now.leads) * 100) / 100 : null,
           spend_tracked: Math.round(tracked * 100) / 100,
-          per_lead_prev: before && before.leads && adsPrev && adsPrev.spend ? Math.round((adsPrev.spend / before.leads) * 100) / 100 : null
+          per_lead_prev: before && before.leads && adsPrevSpend ? Math.round((adsPrevSpend / before.leads) * 100) / 100 : null
         }
       : null,
     gbp: hasGbp.n
-      ? { calls: sum(gbp, 'calls'), views: sum(gbp, 'views'), web: sum(gbp, 'web'), directions: sum(gbp, 'directions'), prev: gbpPrev ? gbpPrev.calls : null, views_prev: gbpPrev ? gbpPrev.views : null, series: by(gbp, 'calls'), view_series: by(gbp, 'views') }
+      ? { calls: sum(gbp, 'calls'), views: sum(gbp, 'views'), web: sum(gbp, 'web'), directions: sum(gbp, 'directions'), prev: prevTotal(gbpPrev, 'calls'), views_prev: prevTotal(gbpPrev, 'views'), series: by(gbp, 'calls'), prev_series: gbpPrev.length ? moved(by(gbpPrev, 'calls')) : null, view_series: by(gbp, 'views') }
       : null,
-    search: hasSearch.n ? { clicks: sum(search, 'clicks'), impressions: sum(search, 'impressions'), prev: searchPrev ? searchPrev.clicks : null, series: by(search, 'clicks') } : null,
+    search: hasSearch.n ? { clicks: sum(search, 'clicks'), impressions: sum(search, 'impressions'), prev: prevTotal(searchPrev, 'clicks'), series: by(search, 'clicks'), prev_series: searchPrev.length ? moved(by(searchPrev, 'clicks')) : null } : null,
     sources: now.sources,
     weekdays: now.weekdays
   }

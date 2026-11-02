@@ -35,10 +35,14 @@ function stages(list) {
   }
 }
 
-export async function simFunnel(db, q) {
+export async function simFunnel(db, q0) {
+  // always the latest four weeks up to the end of the chosen period: a single day says nothing
+  // about a month, and older weeks describe a website that may have changed since
+  const since = await trackingSince(db, q0.sites)
+  const fourWeeks = new Date(new Date(q0.to + 'T00:00:00Z').getTime() - 27 * 86400000).toISOString().slice(0, 10)
+  const from = since && since > fourWeeks ? since : fourWeeks
+  const q = { ...q0, from }
   const w = where(q)
-  const since = await trackingSince(db, q.sites)
-  const from = since && since > q.from ? since : q.from
   const days = Math.max(1, Math.round((new Date(q.to + 'T00:00:00Z') - new Date(from + 'T00:00:00Z')) / 86400000) + 1)
   const leadIn = LEAD_EVENTS.map(() => '?').join(',')
   const siteIn = q.sites.map(() => '?').join(',')
