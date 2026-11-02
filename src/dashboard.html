@@ -32,7 +32,7 @@
   --ease: cubic-bezier(.22,1,.36,1);
   --mono: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   --display: "Inter Tight", Inter, ui-sans-serif, system-ui, sans-serif;
-  --m-green: #34c759; --m-blue: #007aff; --m-orange: #ff9500; --m-pink: #ff2d55; --m-purple: #af52de; --m-indigo: #5856d6; --m-teal: #30b0c7; --m-gray: rgba(120,120,128,.22);
+  --m-green: #34c759; --m-blue: #007aff; --m-orange: #ff9500; --m-pink: #ff2d55; --m-purple: #af52de; --m-indigo: #5856d6; --m-teal: #30b0c7; --m-red: #ff3b30; --m-gray: rgba(120,120,128,.22);
 }
 @media (prefers-color-scheme: dark) {
   :root:where(:not([data-theme="light"])) {
@@ -53,7 +53,7 @@
     --chip: rgba(255,255,255,.08);
     --sk: rgba(255,255,255,.06); --sk-hi: rgba(255,255,255,.03);
     --glass: rgba(0,0,0,.66);
-    --m-green: #30d158; --m-blue: #0a84ff; --m-orange: #ff9f0a; --m-pink: #ff375f; --m-purple: #bf5af2; --m-indigo: #5e5ce6; --m-teal: #40c8e0; --m-gray: rgba(120,120,128,.36);
+    --m-green: #30d158; --m-blue: #0a84ff; --m-orange: #ff9f0a; --m-pink: #ff375f; --m-purple: #bf5af2; --m-indigo: #5e5ce6; --m-teal: #40c8e0; --m-red: #ff453a; --m-gray: rgba(120,120,128,.36);
   }
 }
 :root[data-theme="dark"] {
@@ -74,7 +74,7 @@
   --chip: rgba(255,255,255,.08);
   --sk: rgba(255,255,255,.06); --sk-hi: rgba(255,255,255,.03);
   --glass: rgba(0,0,0,.66);
-  --m-green: #30d158; --m-blue: #0a84ff; --m-orange: #ff9f0a; --m-pink: #ff375f; --m-purple: #bf5af2; --m-indigo: #5e5ce6; --m-teal: #40c8e0; --m-gray: rgba(120,120,128,.36);
+  --m-green: #30d158; --m-blue: #0a84ff; --m-orange: #ff9f0a; --m-pink: #ff375f; --m-purple: #bf5af2; --m-indigo: #5e5ce6; --m-teal: #40c8e0; --m-red: #ff453a; --m-gray: rgba(120,120,128,.36);
 }
 :root { --bar-bad: color-mix(in srgb, var(--down) 22%, transparent); --bar-sources: var(--bar); --bar-pages: var(--bar); --bar-locations: var(--bar); --bar-devices: var(--bar); --bar-goals: var(--bar); --bar-search: var(--bar); --bar-sites: var(--bar); }
 * { box-sizing: border-box; }
@@ -461,7 +461,7 @@ td.m { color: var(--text-3); font-weight: 400; }
 .hl-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 .hlc { background: var(--card); border-radius: 22px; box-shadow: var(--card-shadow); padding: 20px 22px 22px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
 .mlabel { display: inline-flex; align-items: center; gap: 7px; font: 600 15px/1.2 var(--display); letter-spacing: -.01em; color: var(--mc); }
-.mlabel svg { width: 18px; height: 18px; flex: none; }
+.mlabel svg, .mlabel img, .mlabel .ico { width: 18px; height: 18px; flex: none; object-fit: contain; }
 .hlc p { margin: 0; font: 600 19px/1.3 var(--display); letter-spacing: -.018em; text-wrap: pretty; }
 .sv-cmp { display: flex; flex-direction: column; gap: 10px; margin-top: auto; }
 .sv-cmp-r { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; }
@@ -567,6 +567,59 @@ td.m { color: var(--text-3); font-weight: 400; }
 .sv-co .num span { font-size: 12px; color: var(--text-3); margin-top: 3px; }
 .sv-co .chev { width: 8px; height: 8px; border-right: 2px solid var(--text-3); border-top: 2px solid var(--text-3); transform: rotate(45deg); opacity: .6; }
 @media (max-width: 560px) { .sv-co { grid-template-columns: minmax(0, 1fr) 70px 10px; gap: 12px; padding: 12px 16px; } .sv-co .sv-spark { display: none; } }
+/* ---------- Chancen in the simple style ---------- */
+.sv-lead p { margin: 4px 0 0; font: 700 28px/1.2 var(--display); letter-spacing: -.028em; max-width: 34ch; text-wrap: balance; }
+.sv-four { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 22px; }
+.sv-four .sv-mc-num { margin-top: 12px; }
+.sv-mc.on { box-shadow: 0 0 0 2px var(--mc); }
+.sv-top .sv-top-h { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.sv-top > p { font-size: 18px; }
+.sv-top .sv-act { font: 400 14px/1.45 var(--body, inherit); color: var(--text-2); margin: 0; }
+.sv-top-f { display: flex; gap: 8px; margin-top: auto; padding-top: 4px; }
+.sv-top.leaving { opacity: .35; pointer-events: none; transition: opacity .25s; }
+.sv-ival b { font: 700 26px/1 var(--display); letter-spacing: -.03em; color: var(--mc, var(--text)); font-variant-numeric: tabular-nums; }
+.sv-ival span { font-size: 13px; color: var(--text-3); }
+.sv-ebars { display: flex; flex-direction: column; gap: 10px; }
+.sv-ebars .r { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) auto; gap: 10px; align-items: center; font-size: 13.5px; }
+.sv-ebars .n { display: flex; align-items: center; gap: 7px; min-width: 0; }
+.sv-ebars .n span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sv-ebars .n img, .sv-ebars .n .fallback { width: 15px; height: 15px; border-radius: 4px; flex: none; }
+.sv-ebars .t { height: 8px; border-radius: 4px; background: var(--m-gray); overflow: hidden; }
+.sv-ebars .t i { display: block; height: 100%; border-radius: 4px; background: var(--mc); transition: width .9s var(--ease); }
+.sv-ebars b { font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.sv-ebars .more { font-size: 12.5px; color: var(--text-3); }
+.sv-alltitle { margin-top: 36px; }
+.sv-igroup { margin-top: 22px; }
+.sv-igh { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 0 6px 10px; }
+.sv-igh > span { font-size: 13px; color: var(--text-3); }
+.sv-irow { width: 100%; display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 14px 20px; border: 0; background: none; text-align: left; font: inherit; color: inherit; cursor: pointer; transition: background .2s; }
+.sv-irow + .sv-irow { border-top: 1px solid var(--line-soft); }
+.sv-irow:hover { background: var(--hover); }
+.sv-irow:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.sv-irow .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--m-gray); }
+.sv-irow.high .dot { background: var(--m-red); } .sv-irow.medium .dot { background: var(--m-orange); }
+.sv-irow.closed .dot { background: var(--m-gray); }
+.sv-irow .m { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.sv-irow .m b { font: 600 15px/1.35 var(--display); letter-spacing: -.01em; }
+.sv-irow.closed .m b { text-decoration: line-through; text-decoration-color: var(--text-3); color: var(--text-2); }
+.sv-irow .s { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; font-size: 12.5px; color: var(--text-3); }
+.sv-irow .rt { display: flex; align-items: center; gap: 12px; }
+.sv-irow .rt .v { font: 600 15px var(--display); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.sv-irow .chev, .sv-colist .chev { width: 8px; height: 8px; border-right: 2px solid var(--text-3); border-top: 2px solid var(--text-3); transform: rotate(45deg); opacity: .6; }
+.sv-sev { font-weight: 600; font-size: 12.5px; color: var(--text-3); }
+.sv-sev.high { color: var(--m-red); } .sv-sev.medium { color: color-mix(in srgb, var(--m-orange) 85%, var(--text)); }
+.sv-tags { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.sv-tags .sv-sev { height: 26px; display: inline-flex; align-items: center; padding: 0 10px; border-radius: 999px; background: var(--sel); }
+.sv-ititle { margin: 0; font: 700 24px/1.2 var(--display); letter-spacing: -.025em; text-wrap: balance; }
+.sv-idetail { margin: 0; font-size: 15.5px; line-height: 1.5; color: var(--text-2); }
+.sv-full summary { cursor: pointer; font-size: 14px; font-weight: 600; color: var(--accent); }
+.sv-full .ievi { margin-top: 10px; }
+.sv-closed { margin-top: 28px; }
+.sv-closed > summary { cursor: pointer; font: 600 15px var(--display); color: var(--text-2); padding: 6px; }
+.sv-closed[open] > summary { margin-bottom: 10px; }
+@media (max-width: 1000px) { .sv-four { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .sv-lead p { font-size: 23px; } .sv-irow { grid-template-columns: 10px minmax(0, 1fr); padding: 12px 16px; } .sv-irow .rt { grid-column: 2; } .sv-ebars .r { grid-template-columns: minmax(0, 1fr) 70px auto; } }
+
 /* ---------- opportunities v2 ---------- */
 .ipage { display: flex; flex-direction: column; gap: 24px; margin-top: 16px; }
 .isum { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 0; }
@@ -1341,7 +1394,7 @@ td.wrap { white-space: normal; min-width: 180px; }
     if (state.view === 'insights') {
       title = 'Chancen'
       img = brandLogo()
-      sub.append(document.createTextNode('Empfehlungen aus Google Ads, Search Console, Unternehmensprofil und Website-Tracking'))
+      sub.append(document.createTextNode('Was sich verbessern lässt'))
     } else if (state.view === 'tracking') {
       title = 'Snippets'
       img = brandLogo()
@@ -2314,57 +2367,104 @@ td.wrap { white-space: normal; min-width: 180px; }
     return acts
   }
   // one compact line that opens into detail, evidence and the how-to
+  var OWNER_COLOR = { 'Google Ads': 'var(--m-orange)', Website: 'var(--m-blue)', 'Google-Profil': 'var(--m-purple)', Team: 'var(--m-green)' }
+  var SEV_WORD = { high: 'Dringend', medium: 'Wichtig', info: 'Hinweis' }
+  function ownerLabel(o) {
+    var l = el('span', 'mlabel'); l.style.setProperty('--mc', OWNER_COLOR[o] || 'var(--text-2)')
+    var ic = ownerIcon(o); if (ic) l.append(ic)
+    l.append(document.createTextNode(o))
+    return l
+  }
+  // the numbers behind a finding as a few horizontal bars, biggest first
+  function parseNum(x) {
+    var m = String(x === null || x === undefined ? '' : x).replace(/\./g, '').replace(',', '.').match(/-?\d+(\.\d+)?/)
+    return m ? parseFloat(m[0]) : null
+  }
+  function evidenceBars(r, limit, color) {
+    var t = r.table, rows
+    if (t && t.rows.length) {
+      var col = -1
+      t.cols.forEach(function (c, i) { if (i && /Kosten|Werbung|Einblendungen|Klicks|Besucher|Conversions|Verloren/.test(c) && col < 0) col = i })
+      if (col < 0) for (var i = t.cols.length - 1; i > 0; i--) { if (t.rows.every(function (x) { return parseNum(x.cells[i]) !== null })) { col = i; break } }
+      if (col < 0) return null
+      rows = t.rows.map(function (x) { return { site: x.site, label: String(x.cells[0]), v: parseNum(x.cells[col]) || 0, text: String(x.cells[col]) } })
+    } else if (r.items && r.items.length) {
+      rows = r.items.map(function (x) { return { site: x.site, label: x.label, v: parseNum(x.value), text: x.value } }).filter(function (x) { return x.v !== null })
+      if (!rows.length) return null
+    } else return null
+    rows.sort(function (a, b) { return b.v - a.v })
+    var max = Math.max.apply(null, rows.map(function (x) { return x.v }).concat([1]))
+    var box = el('div', 'sv-ebars'); box.style.setProperty('--mc', color)
+    rows.slice(0, limit).forEach(function (x, i) {
+      var row = el('div', 'r'), name = el('span', 'n')
+      if (!state.site && x.site && SITE_BY_DOMAIN[x.site]) name.append(siteLogo(x.site))
+      name.append(el('span', null, x.label))
+      var track = el('span', 't'), fill = el('i'); fill.style.width = '0%'; fill.style.transitionDelay = (150 + i * 70) + 'ms'
+      track.append(fill)
+      row.append(name, track, el('b', null, x.text))
+      box.append(row)
+      animateTo(fill, 'width', Math.max(4, (x.v / max) * 100) + '%')
+    })
+    if (rows.length > limit) box.append(el('div', 'more', '+ ' + (rows.length - limit) + ' weitere'))
+    return box
+  }
+  function insightSheet(r, onChange) {
+    var bg = el('div', 'sheet-bg'), sh = el('div', 'sheet'), opener = document.activeElement
+    sh.setAttribute('role', 'dialog'); sh.setAttribute('aria-modal', 'true'); sh.setAttribute('aria-label', r.title)
+    var onKey = function (e) { if (e.key === 'Escape') close() }
+    var close = function () { bg.remove(); document.removeEventListener('keydown', onKey); if (opener && opener.focus) opener.focus() }
+    document.addEventListener('keydown', onKey)
+    bg.onclick = function (e) { if (e.target === bg) close() }
+    var head = el('div', 'sheet-h'), x = el('button', 'sheet-x', '×'); x.type = 'button'; x.setAttribute('aria-label', 'Schließen'); x.onclick = close
+    head.append(ownerLabel(r.owner), x)
+    var tags = el('div', 'sv-tags')
+    tags.append(el('span', 'sv-sev ' + r.severity, SEV_WORD[r.severity]), chip('eff', [effortLabel(r.minutes)]))
+    var sc = siteChips(r); if (sc) tags.append(sc)
+    var title = el('h2', 'sv-ititle', r.title)
+    sh.append(head, tags, title)
+    if (r.value) { var v = el('div', 'sv-ival'), vb = el('b'); v.append(vb, el('span', null, ' pro Monat, wenn nichts geändert wird')); countTo(vb, r.value, true); sh.append(v) }
+    sh.append(el('p', 'sv-idetail', r.detail))
+    var bars = evidenceBars(r, 6, OWNER_COLOR[r.owner] || 'var(--m-blue)')
+    if (bars) { var card = el('div', 'sheet-chart'); card.append(bars); sh.append(card) }
+    var full = evidence(r)
+    if (full && ((r.table && r.table.rows.length > 6) || (r.table && r.table.cols.length > 2))) {
+      var det = el('details', 'sv-full'); det.append(el('summary', null, 'Alle Zahlen als Tabelle'), full); sh.append(det)
+    }
+    var how = el('div', 'sheet-about'); how.append(el('h3', null, 'So geht’s'), el('p', null, r.action))
+    sh.append(how)
+    if (r.key) sh.append(actButtons(r, function () { close(); if (onChange) onChange() }, sh))
+    bg.append(sh)
+    document.body.append(bg)
+    x.focus()
+  }
   function insightRow(r, onChange) {
-    var row = el('div', 'irow ' + r.severity + (r.state !== 'open' ? ' closed' : ''))
-    row.id = 'ins-' + btoa(unescape(encodeURIComponent(r.key))).replace(/[^a-zA-Z0-9]/g, '').slice(0, 40)
-    var head = el('button', 'ihead'); head.type = 'button'
-    head.setAttribute('aria-expanded', insOpen[r.key] ? 'true' : 'false')
-    var main = el('span', 'imain')
-    main.append(el('span', 'ititle', r.title))
-    var sub = el('span', 'isub')
-    sub.append(el('span', 'isev', SEVERITY[r.severity]))
+    var row = el('button', 'sv-irow ' + r.severity + (r.state !== 'open' ? ' closed' : '')); row.type = 'button'
+    var main = el('span', 'm')
+    main.append(el('b', null, r.title))
+    var sub = el('span', 's'); sub.append(el('span', 'sv-sev ' + r.severity, SEV_WORD[r.severity]))
     var sc = siteChips(r); if (sc) sub.append(sc)
     main.append(sub)
-    var right = el('span', 'iright')
-    right.append(chip('eff', [effortLabel(r.minutes)]))
-    right.append(el('span', 'ival', r.value ? '≈ ' + money0.format(r.value) : ''))
-    right.append(el('span', 'ichev', ''))
-    head.append(el('span', 'idot'), main, right)
-    var body = el('div', 'ibody')
-    body.hidden = !insOpen[r.key]
-    body.append(el('p', 'idetail', r.detail))
-    var ev = evidence(r); if (ev) body.append(ev)
-    var how = el('div', 'ihow')
-    how.append(el('span', 'ihow-k', 'So geht’s · ' + (OWNER_NOTE[r.owner] || r.owner)), el('span', null, r.action))
-    body.append(how)
-    if (r.value) body.append(el('p', 'inote', 'Der Betrag ist auf einen Monat hochgerechnet: so viel kostet das ohne Änderung.'))
-    if (r.key) body.append(actButtons(r, onChange, row))
-    head.onclick = function () {
-      insOpen[r.key] = !insOpen[r.key]
-      body.hidden = !insOpen[r.key]
-      head.setAttribute('aria-expanded', insOpen[r.key] ? 'true' : 'false')
-    }
-    row.append(head, body)
+    var right = el('span', 'rt')
+    if (r.value) right.append(el('span', 'v', '≈ ' + money0.format(r.value)))
+    right.append(chip('eff', [effortLabel(r.minutes)]), el('i', 'chev'))
+    row.append(el('span', 'dot'), main, right)
+    row.onclick = function () { insightSheet(r, onChange) }
     return row
   }
-  function topCard(r, onChange) {
-    var c = el('article', 'itop ' + r.severity)
-    var meta = el('div', 'itop-meta')
-    meta.append(chip('own', [ownerIcon(r.owner), r.owner]), chip('eff', [effortLabel(r.minutes)]))
-    c.append(meta)
-    if (r.value) { var big = el('div', 'itop-big'); big.append(document.createTextNode('≈ ' + money0.format(r.value)), el('small', null, ' pro Monat')); c.append(big) }
-    c.append(el('h3', null, r.title), el('p', null, r.action))
-    var sc = siteChips(r); if (sc) c.append(sc)
-    var foot = el('div', 'itop-foot')
-    var more = el('button', 'ib hide', 'Details'); more.type = 'button'
-    more.onclick = function () {
-      insOpen[r.key] = true
-      insFilter = 'all'; insQuick = false
-      render()
-      setTimeout(function () { var target = document.getElementById('ins-' + btoa(unescape(encodeURIComponent(r.key))).replace(/[^a-zA-Z0-9]/g, '').slice(0, 40)); if (target) target.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'center' }) }, 400)
-    }
+  function topCard(r, onChange, i) {
+    var c = el('article', 'hlc sv-top ' + r.severity); c.style.setProperty('--mc', OWNER_COLOR[r.owner] || 'var(--m-blue)')
+    enter(c, i)
+    var head = el('div', 'sv-top-h'); head.append(ownerLabel(r.owner), chip('eff', [effortLabel(r.minutes)]))
+    c.append(head, el('p', null, r.title))
+    if (r.value) { var v = el('div', 'sv-ival'), vb = el('b'); v.append(vb, el('span', null, ' pro Monat')); countTo(vb, r.value, true); c.append(v) }
+    var bars = evidenceBars(r, 3, OWNER_COLOR[r.owner] || 'var(--m-blue)')
+    if (bars) c.append(bars)
+    else c.append(el('p', 'sv-act', r.action))
+    var foot = el('div', 'sv-top-f')
     var done = el('button', 'ib done', 'Erledigt'); done.type = 'button'
     done.onclick = function () { c.classList.add('leaving'); markDone(r, 'done').then(function () { if (onChange) onChange() }) }
+    var more = el('button', 'ib hide', 'So geht’s'); more.type = 'button'
+    more.onclick = function () { insightSheet(r, onChange) }
     foot.append(done, more)
     c.append(foot)
     return c
@@ -2390,43 +2490,54 @@ td.wrap { white-space: normal; min-width: 180px; }
       var all = d.results
       var open = all.filter(function (r) { return r.state === 'open' })
       var closed = all.filter(function (r) { return r.state !== 'open' })
-      var counts = { high: 0, medium: 0, info: 0 }
-      open.forEach(function (r) { counts[r.severity]++ })
-      // only findings where money buys nothing; landing pages see the same clicks as keywords, so they are left out
+      var high = open.filter(function (r) { return r.severity === 'high' })
       var WASTE = ['keyword_waste', 'junk_terms', 'tail_terms', 'off_hours']
       var lost = open.filter(function (r) { return WASTE.indexOf(r.kind) >= 0 }).reduce(function (a, r) { return a + (r.value || 0) }, 0)
       var quick = open.filter(function (r) { return r.minutes !== null && r.minutes !== undefined && r.minutes <= 15 && r.severity !== 'info' })
       var doneRecent = closed.filter(function (r) { return r.state === 'done' && Date.now() - r.state_at < 30 * 86400000 }).length
-
-      // summary
-      var sum = el('section', 'card isum')
-      var s1 = el('div', 'isum-c'), bar = el('div', 'isev-bar')
-      ;['high', 'medium', 'info'].forEach(function (k) { if (counts[k]) { var i = el('i', k); i.style.flex = counts[k]; bar.append(i) } })
-      s1.append(el('div', 'k', 'Offene Punkte'), el('div', 'n', nf.format(open.length)), bar,
-        el('div', 'd', [counts.high && counts.high + ' dringend', counts.medium && counts.medium + ' wichtig', counts.info && counts.info + ' Hinweise'].filter(Boolean).join(' · ')))
-      var s2 = el('div', 'isum-c')
-      s2.append(el('div', 'k', 'Werbung ohne Anfrage'), el('div', 'n', lost ? '≈ ' + money0.format(lost) : '–'), el('div', 'd', 'pro Monat: Keywords, Suchbegriffe und Nachtstunden ohne Ergebnis'))
-      var s3 = el('div', 'isum-c')
-      s3.append(el('div', 'k', 'Schnell erledigt'), el('div', 'n', nf.format(quick.length)), el('div', 'd', 'Punkte unter 15 Minuten'))
-      var s4 = el('div', 'isum-c')
-      s4.append(el('div', 'k', 'Erledigt'), el('div', 'n', nf.format(doneRecent)), el('div', 'd', 'in den letzten 30 Tagen'))
-      sum.append(s1, s2, s3, s4)
-      wrap.append(sum)
-
-      if (!open.length) { wrap.append(el('section', 'card iempty', 'Alles erledigt. Neue Punkte erscheinen hier automatisch, sobald die Daten etwas zeigen.')) }
-      // the three with the biggest effect
       var top = open.filter(function (r) { return r.severity !== 'info' }).slice(0, 3)
+
+      // one sentence that says where things stand
+      var lead = el('section', 'sv-lead')
+      // the finding where most money is lost, in plain words
+      var richest = open.filter(function (r) { return r.value && WASTE.indexOf(r.kind) >= 0 }).sort(function (a, b) { return b.value - a.value })[0]
+      var sentence = !open.length ? 'Alles erledigt. Neue Punkte erscheinen hier von selbst.'
+        : (high.length ? (high.length === 1 ? 'Eine Sache ist dringend.' : high.length + ' Dinge sind dringend.') : 'Nichts Dringendes, aber ' + plural(open.length, ['Idee', 'Ideen']) + ' zum Besserwerden.')
+          + (richest ? ' Am meisten Geld lässt sich bei „' + richest.title.replace(/\.$/, '') + '“ sparen.' : '')
+      lead.append(el('p', null, sentence))
+      wrap.append(lead)
+
+      // four numbers, the same cards as on the company pages
+      var grid = el('div', 'sv-mc-grid sv-four')
+      ;[['high', 'Dringend', 'var(--m-red)', high.length, null, 'sofort angehen'],
+        ['money', 'Werbung ohne Anfrage', 'var(--m-orange)', lost, true, 'pro Monat'],
+        ['quick', 'Schnell erledigt', 'var(--m-green)', quick.length, null, 'unter 15 Minuten'],
+        ['done', 'Erledigt', 'var(--m-blue)', doneRecent, null, 'in 30 Tagen']].forEach(function (t, i) {
+        var c = el(t[0] === 'quick' ? 'button' : 'div', 'sv-mc' + (t[0] === 'quick' && insQuick ? ' on' : '')); c.style.setProperty('--mc', t[2])
+        if (t[0] === 'quick') { c.type = 'button'; c.title = 'Nur schnelle Punkte zeigen'; c.onclick = function () { insQuick = !insQuick; render() } }
+        else c.style.cursor = 'default'
+        enter(c, i)
+        var lab = el('span', 'mlabel', t[1]); lab.style.setProperty('--mc', t[2])
+        var num = el('div', 'sv-mc-num'), v = el('span'); num.append(v)
+        if (t[4] && t[3]) num.firstChild.textContent = ''
+        countTo(v, t[3], t[4])
+        if (t[4] && !t[3]) v.textContent = '–'
+        c.append(lab, num, el('div', 'sv-mc-delta', t[5] + (t[0] === 'quick' ? (insQuick ? ' · Filter an' : ' · tippen zum Filtern') : '')))
+        grid.append(c)
+      })
+      wrap.append(grid)
+
       if (top.length) {
-        var tw = el('section', 'itops-wrap')
-        var th = el('div', 'ihd'); th.append(el('h2', null, 'Zuerst angehen'), el('span', null, 'Die ' + (top.length === 1 ? 'wichtigste Sache' : top.length + ' Punkte mit der größten Wirkung')))
-        var grid = el('div', 'itops')
-        top.forEach(function (r) { grid.append(topCard(r, render)) })
-        tw.append(th, grid)
+        var tw = el('section', 'hl')
+        var th = el('div', 'hl-h'); th.append(el('h2', null, 'Zuerst angehen'))
+        var tg = el('div', 'hl-grid')
+        top.forEach(function (r, i) { tg.append(topCard(r, render, i)) })
+        tw.append(th, tg)
         wrap.append(tw)
       }
 
-      // filters
-      var bar2 = el('div', 'ifilter'), segO = el('div', 'seg')
+      // the rest, grouped by who does it
+      var bar = el('div', 'ifilter'), segO = el('div', 'seg')
       var ownerCount = {}
       open.forEach(function (r) { ownerCount[r.owner] = (ownerCount[r.owner] || 0) + 1 })
       ;[['all', 'Alle', open.length]].concat(OWNERS.filter(function (o) { return ownerCount[o] }).map(function (o) { return [o, o, ownerCount[o]] })).forEach(function (o) {
@@ -2436,33 +2547,28 @@ td.wrap { white-space: normal; min-width: 180px; }
         b.onclick = function () { insFilter = o[0]; render() }
         segO.append(b)
       })
-      var qb = el('button', 'iquick' + (insQuick ? ' on' : '')); qb.type = 'button'
-      qb.append(document.createTextNode('Nur schnelle (≤ 15 Min)'))
-      qb.setAttribute('aria-pressed', insQuick ? 'true' : 'false')
-      qb.onclick = function () { insQuick = !insQuick; render() }
-      bar2.append(segO, qb)
-      wrap.append(bar2)
-
-      // grouped list
+      bar.append(segO)
+      if (open.length) {
+        var lh = el('div', 'hl-h sv-alltitle'); lh.append(el('h2', null, 'Alle Punkte'))
+        wrap.append(lh, bar)
+      }
       var rows = open.filter(function (r) { return (insFilter === 'all' || r.owner === insFilter) && (!insQuick || (r.minutes !== null && r.minutes !== undefined && r.minutes <= 15)) })
-      var groups = OWNERS.filter(function (o) { return rows.some(function (r) { return r.owner === o }) })
-      if (!rows.length) wrap.append(el('section', 'card iempty', 'Nichts in dieser Auswahl.'))
-      groups.forEach(function (o) {
+      if (open.length && !rows.length) wrap.append(el('section', 'card iempty', 'Nichts in dieser Auswahl.'))
+      OWNERS.filter(function (o) { return rows.some(function (r) { return r.owner === o }) }).forEach(function (o) {
         var list = rows.filter(function (r) { return r.owner === o })
-        var g = el('section', 'card igroup')
-        var gh = el('div', 'igh'), ttl = el('h2')
-        ttl.append(ownerIcon(o), document.createTextNode(o))
-        var gval = list.reduce(function (a, r) { return a + (r.value || 0) }, 0)
-        gh.append(ttl, el('span', null, list.length + (list.length === 1 ? ' Punkt' : ' Punkte') + (gval ? ' · ≈ ' + money0.format(gval) + ' pro Monat' : '')))
-        g.append(gh)
-        list.forEach(function (r, i) { var e = insightRow(r, render); if (!REDUCED) e.style.animation = 'rise .4s ' + Math.min(i * 0.03, 0.4) + 's cubic-bezier(.2,.8,.2,1) both'; g.append(e) })
+        var g = el('section', 'sv-igroup')
+        var gh = el('div', 'sv-igh'), gval = list.reduce(function (a, r) { return a + (r.value || 0) }, 0)
+        gh.append(ownerLabel(o), el('span', null, list.length + (list.length === 1 ? ' Punkt' : ' Punkte') + (gval ? ' · ≈ ' + money0.format(gval) + ' pro Monat' : '')))
+        var box = el('div', 'sv-colist')
+        list.forEach(function (r) { box.append(insightRow(r, render)) })
+        g.append(gh, box)
         wrap.append(g)
       })
-
       if (closed.length) {
-        var det = el('details', 'card closed-list igroup'), su = el('summary', null, 'Erledigt und ausgeblendet (' + closed.length + ')')
-        det.append(su)
-        closed.forEach(function (r) { det.append(insightRow(r, render)) })
+        var det = el('details', 'sv-closed'), su = el('summary', null, 'Erledigt und ausgeblendet (' + closed.length + ')')
+        var box2 = el('div', 'sv-colist')
+        closed.forEach(function (r) { box2.append(insightRow(r, render)) })
+        det.append(su, box2)
         wrap.append(det)
       }
     }).catch(function (e) { console.error(e); sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })

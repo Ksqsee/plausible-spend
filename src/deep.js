@@ -893,27 +893,11 @@ export async function insights(db, q, owner = 'admin') {
   const adSess = new Map(adsSessions.results.map((r) => [r.site, r]))
 
   // --- Tracking ---
+  const uncounted = []
   for (const s of spendRows.results) {
     const name = names.get(s.site)
     const t = tracker.get(s.site)
-    if (s.spend >= 30 && !s.conversions) {
-      const a = adSess.get(s.site)
-      add({
-        severity: 'high',
-        kind: 'zero_conversions',
-        area: 'Tracking',
-        site: s.site,
-        title: `${name}: Google Ads meldet 0 Conversions bei ${eur(s.spend)} Ausgaben`,
-        detail:
-          (a && a.lead_sessions
-            ? `Unser Tracker zählt ${a.lead_sessions} Besuche aus Google Ads mit Anfrage oder Anruf-Klick. `
-            : '') +
-          'Google zählt Conversions nur bei Besuchern, die Cookies zustimmen; ohne Zustimmung gehen sie bei kleinem Volumen verloren. Für Berichte gelten die Anfragen aus diesem Dashboard.',
-        action: 'In Google Ads die Anruf-Conversion als primär markieren und im Google-Tag url_passthrough aktivieren. Vor einem Wechsel auf Conversion-Gebote erst prüfen, ob Google genug Conversions sieht.',
-        // a counting problem, not lost money: the spend may well bring enquiries Google cannot see
-        value: null
-      })
-    }
+    if (s.spend >= 30 && !s.conversions) uncounted.push({ ...s, lead_sessions: (adSess.get(s.site) || {}).lead_sessions || 0 })
     if ((!t || !t.visitors) && !everTracked.has(s.site)) {
       // never a single event: either just installed or the snippet is missing
       add({
@@ -927,6 +911,28 @@ export async function insights(db, q, owner = 'admin') {
         value: null
       })
     }
+  }
+  if (uncounted.length) {
+    add({
+      kind: 'zero_conversions',
+      severity: 'high',
+      area: 'Tracking',
+      site: uncounted.length === 1 ? uncounted[0].site : null,
+      title: uncounted.length === 1
+        ? `${names.get(uncounted[0].site)}: Google zählt keine Anfragen aus den Anzeigen`
+        : `${uncounted.length} Werbekonten zählen keine Anfragen aus den Anzeigen`,
+      detail:
+        (uncounted.some((u) => u.lead_sessions)
+          ? 'Google meldet 0 Conversions, die Website zählt aber Anfragen aus den Anzeigen. '
+          : 'Google meldet 0 Conversions, und auch die Website hat noch keine Anfrage aus den Anzeigen gezählt. ') +
+        'Google zählt nur Besucher, die Cookies zustimmen. Ohne Conversions kann Google die Gebote nicht verbessern.',
+      action: 'In Google Ads die Anruf-Conversion als primär markieren und im Google-Tag url_passthrough aktivieren. Vor einem Wechsel auf Conversion-Gebote prüfen, ob Google genug Conversions sieht.',
+      value: null,
+      table: {
+        cols: ['Website', 'Werbung', 'Anfragen laut Website'],
+        rows: uncounted.map((u) => ({ site: u.site, cells: [names.get(u.site) || u.site, eur(u.spend), u.lead_sessions] }))
+      }
+    })
   }
   const noTerm = adsSessions.results.filter((a) => a.sessions >= 5 && a.without_term / a.sessions > 0.5)
   if (noTerm.length) {
