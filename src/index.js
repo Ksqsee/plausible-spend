@@ -18,6 +18,7 @@ import { adsDeep, content, forms, funnel, gbp, insights, leads, months, paths, r
 import { localParts } from './ingest.js'
 import { summary } from './summary.js'
 import { heat } from './heat.js'
+import { simFunnel } from './sim.js'
 import { capture, getShot, shotMeta } from './shots.js'
 import { MIN_PASSWORD_LENGTH, checkPassword, currentUser, ensureAdmin, generatePassword, login, logout, setPassword } from './auth.js'
 
@@ -269,6 +270,8 @@ async function api(request, env, url, user) {
       return json(await paths(db, q))
     case 'summary':
       return json(await summary(db, q))
+    case 'simfunnel':
+      return json(await simFunnel(db, q))
     case 'heat':
       return json(await heat(db, q, (url.searchParams.get('xpage') || '/').slice(0, 300), url.searchParams.get('device') === 'mobile' ? 'mobile' : 'desktop'))
     case 'months':

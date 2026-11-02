@@ -662,6 +662,36 @@ button.hm-row:hover { box-shadow: inset 0 0 0 1.5px var(--line); }
 .sv-tool span { font-size: 13px; color: var(--text-3); line-height: 1.35; }
 @media (max-width: 1100px) { .hm-grid { grid-template-columns: minmax(0, 1fr); } .hm-side { position: static; } .hm-stage { height: 70vh; } .sv-tool-grid { grid-template-columns: minmax(0, 1fr); } }
 
+/* ---------- funnel simulator ---------- */
+.sim-lead { margin: 4px 0 18px; font: 700 26px/1.25 var(--display); letter-spacing: -.025em; max-width: 36ch; text-wrap: balance; }
+.sim-grid { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 24px; align-items: start; }
+.sim-stage { background: var(--card); border-radius: 22px; box-shadow: var(--card-shadow); padding: 8px; height: 560px; }
+.sim-canvas { width: 100%; height: 100%; display: block; color: var(--text-2); }
+.sim-side { display: flex; flex-direction: column; gap: 12px; }
+.sim-res { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.sim-res .it { background: var(--card); border-radius: 18px; box-shadow: var(--card-shadow); padding: 14px 16px; display: flex; flex-direction: column; gap: 3px; }
+.sim-res .it.big { grid-column: 1 / -1; }
+.sim-res .k { font-size: 12.5px; color: var(--text-3); font-weight: 500; }
+.sim-res b { font: 700 26px/1.1 var(--display); letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+.sim-res .big b { font-size: 40px; color: var(--m-green); }
+.sim-res .dl { font-size: 13px; font-weight: 600; color: var(--text-3); min-height: 17px; }
+.sim-res .dl.up { color: var(--m-green); } .sim-res .dl.down { color: var(--m-red); }
+.sim-sc { display: flex; flex-wrap: wrap; gap: 8px; }
+.sim-chip { border: 0; border-radius: 999px; padding: 9px 14px; background: var(--card); box-shadow: var(--card-shadow); font: inherit; font-size: 13.5px; font-weight: 500; color: var(--text); cursor: pointer; transition: transform .15s var(--ease); }
+.sim-chip:active { transform: scale(.97); }
+.sim-chip.reset { background: none; box-shadow: none; color: var(--accent); }
+.sim-sls { display: flex; flex-direction: column; gap: 6px; background: var(--card); border-radius: 18px; box-shadow: var(--card-shadow); padding: 14px 16px; }
+.sim-sl { display: flex; flex-direction: column; gap: 6px; padding: 6px 0; }
+.sim-sl + .sim-sl { border-top: 1px solid var(--line-soft); }
+.sim-sl .sim-top { display: flex; justify-content: space-between; gap: 10px; font-size: 13.5px; }
+.sim-sl .sim-top b { font-variant-numeric: tabular-nums; }
+.sim-sl .sim-trk { position: relative; display: block; }
+.sim-sl input[type=range] { width: 100%; accent-color: var(--accent); }
+.sim-sl .sim-mark { position: absolute; top: -3px; width: 2px; height: 22px; background: var(--text-3); border-radius: 1px; transform: translateX(-1px); pointer-events: none; opacity: .6; }
+.sim-sl .sim-today { font-size: 11.5px; color: var(--text-3); }
+.sim-foot { margin-top: 14px; max-width: 80ch; }
+@media (max-width: 1100px) { .sim-grid { grid-template-columns: minmax(0, 1fr); } .sim-stage { height: 460px; } }
+
 /* ---------- opportunities v2 ---------- */
 .ipage { display: flex; flex-direction: column; gap: 24px; margin-top: 16px; }
 .isum { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 0; }
@@ -1340,7 +1370,7 @@ td.wrap { white-space: normal; min-width: 180px; }
 
   // ---------- routing ----------
   // tools that work on one website
-  var TOOL_VIEWS = ['heatmap']
+  var TOOL_VIEWS = ['heatmap', 'funnel']
   function readUrl() {
     var p = new URLSearchParams(location.search)
     state.site = p.get('site') && SITE_BY_DOMAIN[p.get('site')] ? p.get('site') : null
@@ -1447,6 +1477,10 @@ td.wrap { white-space: normal; min-width: 180px; }
       title = 'Heatmap'
       img = siteLogo(state.site, 'logo')
       sub.append(document.createTextNode(SITE_BY_DOMAIN[state.site].name + ' · wo Besucher hinschauen, scrollen und klicken'))
+    } else if (state.view === 'funnel') {
+      title = 'Funnel-Simulator'
+      img = siteLogo(state.site, 'logo')
+      sub.append(document.createTextNode(SITE_BY_DOMAIN[state.site].name + ' · was passiert, wenn sich etwas ändert'))
     } else if (state.view === 'account') {
       title = 'Konto'
       img = brandLogo()
@@ -1547,6 +1581,7 @@ td.wrap { white-space: normal; min-width: 180px; }
     else if (state.view === 'tracking') renderTracking(view)
     else if (state.view === 'account') renderAccount(view)
     else if (state.view === 'heatmap') renderHeatmap(view)
+    else if (state.view === 'funnel') renderFunnelSim(view)
     else renderDash(view)
     window.scrollTo(0, 0)
   }
@@ -1608,7 +1643,8 @@ td.wrap { white-space: normal; min-width: 180px; }
     if (toolSite) {
       var th = el('div', 'sv-mc-h'); th.append(el('h2', null, 'Werkzeuge'))
       var tg = el('div', 'sv-tool-grid')
-      ;[['heatmap', 'Heatmap', 'Wie weit Besucher scrollen und wohin sie klicken, direkt auf der Seite.', 'var(--m-red)', '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1 3.5-1.5 5.5-1.5 8a2.5 2.5 0 0 0 5 0c0-1-.3-1.8-.8-2.6C17.4 9 19 11.4 19 14a7 7 0 0 1-14 0c0-4.5 4-7.5 7-12z"/></svg>']].forEach(function (t) {
+      ;[['heatmap', 'Heatmap', 'Wie weit Besucher scrollen und wohin sie klicken, direkt auf der Seite.', 'var(--m-red)', '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1 3.5-1.5 5.5-1.5 8a2.5 2.5 0 0 0 5 0c0-1-.3-1.8-.8-2.6C17.4 9 19 11.4 19 14a7 7 0 0 1-14 0c0-4.5 4-7.5 7-12z"/></svg>'],
+        ['funnel', 'Funnel-Simulator', 'Was passiert, wenn mehr Besucher den Kontaktbereich erreichen oder das Budget steigt.', 'var(--m-indigo)', '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 4h18l-7 8.5V19l-4 2v-8.5z"/></svg>']].forEach(function (t) {
         var a = el('a', 'sv-tool'); a.href = '?view=' + t[0] + '&site=' + encodeURIComponent(toolSite); a.dataset.nav = ''; a.dataset.site = toolSite; a.dataset.view = t[0]
         var ic = el('span', 'ic'); ic.style.background = t[3]; ic.append(html(t[4]))
         var tx = el('div'); tx.append(el('b', null, t[1]), el('span', null, t[2]))
@@ -3282,6 +3318,184 @@ td.wrap { white-space: normal; min-width: 180px; }
       })
     }
     side.append(el('p', 'hm-note', 'Foto der Seite vom ' + new Date(ctx.m.ts).toLocaleDateString('de-DE', { day: 'numeric', month: 'long' }) + ', wird einmal pro Woche neu aufgenommen.'))
+  }
+
+  // ---------- funnel simulator ----------
+  var SIM_STAGES = [['visits', 'Besucher kommen'], ['looked', 'schauen sich um'], ['area', 'erreichen den Kontaktbereich'], ['leads', 'melden sich'], ['customers', 'werden Kunde']]
+  var SIM_COLORS = ['#0a84ff', '#5e5ce6', '#bf5af2', '#30d158', '#34c759']
+  function simStore(site) {
+    try { return JSON.parse(localStorage.getItem('gw_sim_' + site) || '{}') } catch (e) { return {} }
+  }
+  function simSave(site, v) { try { localStorage.setItem('gw_sim_' + site, JSON.stringify(v)) } catch (e) {} }
+  function simCalc(s) {
+    var visits = Math.max(0, s.visits + (s.budget !== null && s.cpc ? (s.budget - s.budget0) / s.cpc : 0))
+    var looked = visits * s.looked, area = looked * s.area, leads = area * s.contact, customers = leads * s.close
+    return { visits: visits, looked: looked, area: area, leads: leads, customers: customers, revenue: customers * s.value }
+  }
+  function renderFunnelSim(view) {
+    var token = renderToken
+    var sk = skeletonRows(6); view.append(sk)
+    api('simfunnel').then(function (d) {
+      if (token !== renderToken) return
+      sk.remove()
+      if (!d.counts.visits) { view.append(el('section', 'card iempty', 'Für diese Website gibt es im Zeitraum noch keine Besuche.')); return }
+      var saved = simStore(state.site)
+      var base = {
+        visits: d.visits_month, looked: d.rates.looked, area: d.rates.area, contact: d.rates.contact,
+        close: saved.close || 0.3, value: saved.value || 1500,
+        budget: d.ads ? d.ads.spend_month : null, budget0: d.ads ? d.ads.spend_month : null, cpc: d.ads ? d.ads.cpc : null
+      }
+      var sim = Object.assign({}, base)
+      var b0 = simCalc(base)
+
+      var lead = el('p', 'sim-lead')
+      var grid = el('div', 'sim-grid')
+      var stage = el('section', 'sim-stage'), cv = el('canvas', 'sim-canvas')
+      stage.append(cv)
+      var side = el('aside', 'sim-side')
+      grid.append(stage, side)
+      view.append(lead, grid, el('p', 'hm-note sim-foot', 'Startwerte sind die echten Zahlen seit ' + new Date(d.since + 'T00:00:00').toLocaleDateString('de-DE', { day: 'numeric', month: 'long' }) + ', hochgerechnet auf einen Monat. Abschlussquote und Auftragswert sind Annahmen und lassen sich einstellen.'))
+
+      // result card
+      var res = el('div', 'sim-res')
+      var rLeads = el('b'), rLeadsD = el('span', 'dl'), rCust = el('b'), rRev = el('b'), rRevD = el('span', 'dl')
+      var c1 = el('div', 'it big'); c1.append(el('span', 'k', 'Anfragen pro Monat'), rLeads, rLeadsD)
+      var c2 = el('div', 'it'); c2.append(el('span', 'k', 'Aufträge'), rCust)
+      var c3 = el('div', 'it'); c3.append(el('span', 'k', 'Umsatz pro Monat'), rRev, rRevD)
+      res.append(c1, c2, c3)
+      side.append(res)
+
+      // ready-made scenarios
+      var sc = el('div', 'sim-sc')
+      var scenarios = [
+        ['Kontaktbereich weiter nach oben', function (s) { s.area = Math.min(1, base.area * 1.3) }],
+        ['Formular kürzen', function (s) { s.contact = Math.min(1, base.contact * 1.25 + 0.01) }],
+        ['Schnellere, klarere Startseite', function (s) { s.looked = Math.min(1, base.looked * 1.15) }]
+      ]
+      if (base.budget !== null) scenarios.push(['Werbebudget +50 %', function (s) { s.budget = Math.round(base.budget * 1.5) }])
+      scenarios.push(['Alles zurücksetzen', null])
+      scenarios.forEach(function (x) {
+        var b = el('button', 'sim-chip' + (x[1] ? '' : ' reset'), x[0]); b.type = 'button'
+        b.onclick = function () {
+          if (!x[1]) { Object.assign(sim, base) } else x[1](sim)
+          syncSliders(); update()
+        }
+        sc.append(b)
+      })
+      side.append(el('h3', 'hm-h', 'Was wäre, wenn …'), sc)
+
+      // sliders
+      var sliders = []
+      var slider = function (key, label, min, max, step, fmt, baseVal) {
+        var row = el('label', 'sim-sl'), top = el('span', 'sim-top'), val = el('b')
+        top.append(el('span', null, label), val)
+        var inp = el('input'); inp.type = 'range'; inp.min = min; inp.max = max; inp.step = step; inp.id = 'sim_' + key
+        var mark = el('span', 'sim-mark'); mark.style.left = ((baseVal - min) / (max - min) * 100) + '%'; mark.title = 'Heute'
+        var track = el('span', 'sim-trk'); track.append(inp, mark)
+        row.append(top, track, el('span', 'sim-today', 'heute ' + fmt(baseVal)))
+        inp.oninput = function () { sim[key] = Number(inp.value); val.textContent = fmt(sim[key]); if (key === 'close' || key === 'value') simSave(state.site, { close: sim.close, value: sim.value }); update() }
+        sliders.push(function () { inp.value = sim[key]; val.textContent = fmt(sim[key]) })
+        return row
+      }
+      var pctF = function (v) { return Math.round(v * 100) + ' %' }
+      var box = el('div', 'sim-sls')
+      if (base.budget !== null) box.append(slider('budget', 'Werbebudget pro Monat', 0, Math.max(500, base.budget * 3), 10, function (v) { return money0.format(v) }, base.budget))
+      else box.append(slider('visits', 'Besucher pro Monat', 0, Math.max(200, base.visits * 3), 10, function (v) { return nf.format(v) }, base.visits))
+      box.append(
+        slider('looked', 'Schauen sich um', 0.05, 1, 0.01, pctF, base.looked),
+        slider('area', 'Erreichen den Kontaktbereich', 0.02, 1, 0.01, pctF, base.area),
+        slider('contact', 'Melden sich dort', 0, 0.8, 0.01, pctF, base.contact),
+        slider('close', 'Werden Kunde (Annahme)', 0.05, 0.9, 0.05, pctF, base.close),
+        slider('value', 'Auftragswert (Annahme)', 100, 10000, 100, function (v) { return money0.format(v) }, base.value)
+      )
+      side.append(el('h3', 'hm-h', 'Selbst einstellen'), box)
+      function syncSliders() { sliders.forEach(function (f) { f() }) }
+      syncSliders()
+
+      var cur = simCalc(sim), shown = Object.assign({}, cur)
+      function update() {
+        cur = simCalc(sim)
+        var dl = cur.leads - b0.leads, dr = cur.revenue - b0.revenue
+        rLeads.textContent = nf.format(Math.round(cur.leads))
+        rLeadsD.textContent = Math.abs(dl) < 0.5 ? 'wie heute' : (dl > 0 ? '+' : '−') + nf.format(Math.round(Math.abs(dl))) + ' gegenüber heute'
+        rLeadsD.className = 'dl ' + (dl > 0.5 ? 'up' : dl < -0.5 ? 'down' : '')
+        rCust.textContent = nf.format(Math.round(cur.customers * 10) / 10)
+        rRev.textContent = money0.format(cur.revenue)
+        rRevD.textContent = Math.abs(dr) < 50 ? '' : (dr > 0 ? '+' : '−') + money0.format(Math.abs(dr))
+        rRevD.className = 'dl ' + (dr > 49 ? 'up' : dr < -49 ? 'down' : '')
+        lead.textContent = Math.abs(dl) < 0.5
+          ? 'Von ' + nf.format(Math.round(cur.visits)) + ' Besuchern im Monat melden sich heute ' + nf.format(Math.round(cur.leads)) + '. Schieb die Regler und sieh, was sich ändert.'
+          : 'So kämen ' + nf.format(Math.round(cur.leads)) + ' Anfragen im Monat, ' + (dl > 0 ? nf.format(Math.round(dl)) + ' mehr' : nf.format(Math.round(-dl)) + ' weniger') + ' als heute.'
+      }
+      update()
+      startSimCanvas(cv, function () { return { cur: cur, base: b0, sim: sim } }, shown)
+    }).catch(function (e) { console.error(e); sk.replaceWith(el('div', 'empty', 'Fehler beim Laden')) })
+  }
+  // the funnel as horizontal bars, with dots flowing down; dots that leave a stage fall away
+  function startSimCanvas(cv, get, shown) {
+    var dots = [], last = performance.now(), spawn = 0
+    var frame = function (now) {
+      if (!cv.isConnected) return
+      var dt = Math.min(50, now - last); last = now
+      var W = cv.clientWidth, H = cv.clientHeight, ratio = window.devicePixelRatio || 1
+      if (cv.width !== Math.round(W * ratio)) { cv.width = W * ratio; cv.height = H * ratio }
+      var g = cv.getContext('2d'); g.setTransform(ratio, 0, 0, ratio, 0, 0)
+      g.clearRect(0, 0, W, H)
+      var st = get(), keys = ['visits', 'looked', 'area', 'leads', 'customers']
+      // ease the drawn numbers toward the simulated ones
+      keys.forEach(function (k) { shown[k] += (st.cur[k] - shown[k]) * Math.min(1, dt / 160) })
+      var top = 34, bandH = (H - top - 20) / keys.length, maxW = W - 40, cx = W / 2
+      var widthOf = function (v) { return Math.max(26, maxW * Math.sqrt(Math.max(0, v) / Math.max(1, Math.max(shown.visits, st.base.visits)))) }
+      var text = getComputedStyle(cv).color, muted = 'rgba(128,128,136,.9)'
+      keys.forEach(function (k, i) {
+        var y = top + i * bandH, w = widthOf(shown[k]), bw = widthOf(st.base[k])
+        // today's size as a faint outline
+        g.strokeStyle = 'rgba(128,128,136,.35)'; g.lineWidth = 1.5; g.setLineDash([5, 5])
+        rr(g, cx - bw / 2, y + 8, bw, bandH - 16, 14); g.stroke(); g.setLineDash([])
+        g.fillStyle = SIM_COLORS[i] + '30'
+        rr(g, cx - w / 2, y + 8, w, bandH - 16, 14); g.fill()
+        g.fillStyle = SIM_COLORS[i]
+        g.font = '700 22px "Inter Tight", Inter, system-ui, sans-serif'
+        g.textAlign = 'center'
+        g.fillText(nf.format(Math.round(shown[k])), cx, y + bandH / 2 + 2)
+        g.font = '500 12.5px Inter, system-ui, sans-serif'; g.fillStyle = text
+        g.fillText(SIM_STAGES[i][1], cx, y + bandH / 2 + 20)
+      })
+      if (!REDUCED) {
+        // a dot per visitor, at a pace that keeps the picture calm
+        spawn += dt
+        var rates = [1, st.sim.looked, st.sim.area, st.sim.contact, st.sim.close]
+        while (spawn > 90) {
+          spawn -= 90
+          var fate = 0
+          for (var j = 1; j < rates.length; j++) { if (Math.random() < rates[j]) fate = j; else break }
+          var w0 = widthOf(shown.visits) * 0.8
+          dots.push({ x: cx + (Math.random() - 0.5) * w0, y: top, vx: 0, fate: fate, alpha: 1, out: false })
+        }
+        dots.forEach(function (p) {
+          var stageIdx = Math.floor((p.y - top) / bandH)
+          if (!p.out && stageIdx > p.fate) { p.out = true; p.vx = (p.x < cx ? -1 : 1) * (0.6 + Math.random()) }
+          if (p.out) { p.x += p.vx * dt * 0.12; p.y += dt * 0.03; p.alpha -= dt / 700 }
+          else {
+            p.y += dt * 0.09
+            var ww = widthOf(shown[keys[Math.min(keys.length - 1, Math.max(0, stageIdx))]]) / 2 - 8
+            if (Math.abs(p.x - cx) > ww) p.x += (cx - p.x) * 0.08
+            if (p.y > top + keys.length * bandH - 10) { p.alpha -= dt / 300 }
+          }
+          g.globalAlpha = Math.max(0, p.alpha)
+          g.fillStyle = p.out ? 'rgba(142,142,147,1)' : SIM_COLORS[Math.min(4, Math.max(0, stageIdx))]
+          g.beginPath(); g.arc(p.x, p.y, 3.2, 0, Math.PI * 2); g.fill()
+          g.globalAlpha = 1
+        })
+        dots = dots.filter(function (p) { return p.alpha > 0 && p.y < H })
+      }
+      requestAnimationFrame(frame)
+    }
+    requestAnimationFrame(frame)
+  }
+  function rr(g, x, y, w, h, r) {
+    g.beginPath()
+    if (g.roundRect) g.roundRect(x, y, w, h, r); else g.rect(x, y, w, h)
   }
 
   // ---------- funnel ----------
