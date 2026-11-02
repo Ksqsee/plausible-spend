@@ -1599,6 +1599,8 @@ body { background: var(--bg); color: var(--text); }
 .expand { border-radius: 8px; }
 .lede, .plede { color: var(--text-2); font-size: 13.5px; }
 .grid { gap: 16px; }
+@media (prefers-color-scheme: dark) { :root:where(:not([data-theme="light"])) .k-sk-link { fill-opacity: .2; } }
+:root[data-theme="dark"] .k-sk-link { fill-opacity: .2; }
 </style>
 </head>
 <body>

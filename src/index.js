@@ -182,6 +182,8 @@ async function api(request, env, url, user) {
     const device = url.searchParams.get('device') === 'mobile' ? 'mobile' : 'desktop'
     if (!site || !sites.includes(site) || !page.startsWith('/')) throw new BadRequest('site and page required')
     if (request.method === 'POST') {
+      const recent = await shotMeta(env, site, page, device)
+      if (recent && recent.v === 2 && Date.now() - recent.ts < 10 * 60000) return json(recent)
       const meta = await capture(env, site, page, device)
       return json(meta)
     }
@@ -222,7 +224,8 @@ async function api(request, env, url, user) {
     const page = (url.searchParams.get('xpage') || '/').slice(0, 300)
     if (!page.startsWith('/')) throw new BadRequest('page required')
     let a = await getAudit(env, site, page)
-    if (request.method === 'POST') a = await runAudit(env, site, page)
+    // each run starts a real browser: at most one per page every ten minutes
+    if (request.method === 'POST' && !(a && Date.now() - a.ts < 10 * 60000)) a = await runAudit(env, site, page)
     if (!a) return json({ audit: null, max_age: AUDIT_MAX_AGE })
     const live = await liveData(db, site, page, from, to)
     const g = assess(a, live)
