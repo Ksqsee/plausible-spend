@@ -116,10 +116,22 @@ async function api(request, env, url, user) {
       )
       .bind(since)
       .all()
-    const { results: last } = await db.prepare('SELECT site, MAX(ts) AS last_ts FROM events GROUP BY site').all()
-    const lastBySite = new Map(last.map((r) => [r.site, r.last_ts]))
-    return json(results.map((r) => ({ ...r, names: r.names ? r.names.split(',') : [] })).concat(
-      last.filter((r) => !results.some((x) => x.site === r.site)).map((r) => ({ site: r.site, last_ts: lastBySite.get(r.site), events: 0, names: [] }))
+    const { results: last } = await db
+      .prepare(
+        `SELECT site, MAX(ts) AS last_ts, MIN(ts) AS first_ts, COUNT(DISTINCT visitor_id || date) AS visits FROM events
+         WHERE name = 'pageview' GROUP BY site`
+      )
+      .all()
+    const lastBySite = new Map(last.map((r) => [r.site, r]))
+    // visits a site usually gets per day, so a quiet test page is not mistaken for a broken snippet
+    const perDay = (site) => {
+      const r = lastBySite.get(site)
+      if (!r) return 0
+      const days = Math.max(1, (Date.now() - r.first_ts) / 86400000)
+      return Math.round((r.visits / days) * 10) / 10
+    }
+    return json(results.map((r) => ({ ...r, per_day: perDay(r.site), names: r.names ? r.names.split(',') : [] })).concat(
+      last.filter((r) => !results.some((x) => x.site === r.site)).map((r) => ({ site: r.site, last_ts: r.last_ts, per_day: perDay(r.site), events: 0, names: [] }))
     ))
   }
   if (path === 'sites-summary') {

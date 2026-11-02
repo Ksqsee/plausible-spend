@@ -128,7 +128,18 @@ a { color: inherit; }
 .sfoot #logout { align-self: center; width: 34px; height: 34px; padding: 0; display: inline-flex; align-items: center; justify-content: center; box-shadow: none; background: none; color: var(--text-3); }
 .sfoot #logout:hover { background: var(--hover); color: var(--text); box-shadow: none; }
 .sfoot #logout svg { width: 17px; height: 17px; }
-.role-company .adm, .role-company #navAll { display: none !important; }
+.role-company .adm { display: none !important; }
+.co-row .sdot { margin-left: auto; width: 8px; height: 8px; border-radius: 50%; background: transparent; flex: none; transition: background .3s; }
+.sdot.ok { background: var(--m-green); } .sdot.warn { background: var(--m-orange); } .sdot.quiet { background: var(--m-gray); }
+.spill { display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12.5px; font-weight: 600; background: var(--sel); color: var(--text-3); white-space: nowrap; }
+.spill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.spill.ok { color: color-mix(in srgb, var(--m-green) 80%, var(--text)); background: color-mix(in srgb, var(--m-green) 13%, transparent); }
+.spill.warn { color: color-mix(in srgb, var(--m-orange) 80%, var(--text)); background: color-mix(in srgb, var(--m-orange) 14%, transparent); }
+.spill:empty { display: none; }
+.sv-sites { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 8px; }
+.sv-sites a { display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 14px; border-radius: 999px; background: var(--card); box-shadow: var(--card-shadow); color: var(--text-2); text-decoration: none; font-size: 14px; font-weight: 500; transition: background .2s, color .2s; }
+.sv-sites a img, .sv-sites a .fallback { width: 18px; height: 18px; border-radius: 5px; }
+.sv-sites a.on { background: var(--ink); color: var(--card); box-shadow: none; }
 .acc { padding: 26px 28px; margin-bottom: 24px; max-width: 760px; }
 .acc h2 { margin: 0; font: 600 20px/1.2 var(--display); letter-spacing: -.02em; }
 .accsub { margin: 6px 0 0; color: var(--text-3); font-size: 14px; }
@@ -462,7 +473,7 @@ td.m { color: var(--text-3); font-weight: 400; }
 .sv-cmp-r.now .bar { background: var(--mc); }
 .sv-share { display: flex; flex-direction: column; gap: 12px; margin-top: auto; }
 .sv-share .sv-sbar { display: flex; gap: 3px; height: 14px; }
-.sv-share .sv-sbar i { border-radius: 4px; min-width: 6px; }
+.sv-share .sv-sbar i { border-radius: 4px; min-width: 6px; transition: flex-grow 1s var(--ease); }
 .sv-share ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 7px; font-size: 14px; }
 .sv-share li { display: flex; align-items: center; gap: 8px; }
 .sv-share li .dt { width: 9px; height: 9px; border-radius: 50%; flex: none; }
@@ -494,7 +505,7 @@ td.m { color: var(--text-3); font-weight: 400; }
 .sv-mc-num small { font: 600 15px var(--display); letter-spacing: -.01em; color: var(--text-3); margin-left: 5px; }
 .sv-mc-delta { font-size: 13px; color: var(--text-3); min-height: 18px; }
 .sv-spark { display: flex; align-items: flex-end; gap: 3px; height: 40px; flex: none; }
-.sv-spark i { display: block; width: 6px; border-radius: 3px; background: var(--m-gray); min-height: 3px; }
+.sv-spark i { display: block; width: 6px; border-radius: 3px; background: var(--m-gray); min-height: 3px; transition: height .7s var(--ease); }
 .sv-spark i.last { background: var(--mc); }
 .sv-spark i.none { opacity: .45; }
 .sv-mc.empty .sv-mc-num { color: var(--text-3); }
@@ -895,19 +906,13 @@ td.wrap { white-space: normal; min-width: 180px; }
       <svg class="i" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
       <span class="lbl">Übersicht</span>
     </a>
-    <a class="nav" href="?scope=all" data-nav data-key="scope:all" id="navAll">
-      <svg class="i" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg>
-      <span class="lbl">Alle Unternehmen</span>
-    </a>
     <a class="nav" href="?view=insights" data-nav data-key="view:insights">
       <svg class="i" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.6.5 1 1.2 1 2V16h5.2v-.2c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"/></svg>
       <span class="lbl">Chancen</span><span class="badge-n" id="insCount"></span>
     </a>
-    <div class="stitle">Unternehmen</div>
+    <div class="stitle">Firmen</div>
     <div id="companies"></div>
     <div class="sfoot">
-      <span id="synced" class="adm"></span>
-      <button id="syncnow" class="adm" type="button">Werbe- &amp; Suchdaten abrufen</button>
       <div class="me">
         <a class="nav" href="?view=account" data-nav data-key="view:account">
           <svg class="i" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
@@ -1287,61 +1292,40 @@ td.wrap { white-space: normal; min-width: 180px; }
   window.addEventListener('popstate', function () { readUrl(); render() })
 
   // ---------- sidebar ----------
-  var openCompanies = {}
-  try { openCompanies = JSON.parse(localStorage.getItem('gw_open') || '{}') } catch (e) {}
-  function saveOpen() { try { localStorage.setItem('gw_open', JSON.stringify(openCompanies)) } catch (e) {} }
-
+  // status per company: 'warn' = an urgent finding is open, 'ok' = enquiries came in, 'quiet' = none yet
+  var COMPANY_STATUS = {}
+  var STATUS_TEXT = { ok: ['Läuft', 'Es kommen Anfragen rein und nichts Dringendes ist offen.'], warn: ['Prüfen', 'Unter „Chancen“ wartet etwas Dringendes.'], quiet: ['Ruhig', 'Im Zeitraum noch keine Anfrage über die Website.'] }
+  function companyOfState() { return state.site ? (SITE_BY_DOMAIN[state.site] || {}).company : state.scope && state.scope.indexOf('company:') === 0 ? state.scope.slice(8) : null }
   function buildSidebar() {
     var box = $('companies')
     box.replaceChildren()
     COMPANIES.forEach(function (c) {
-      var wrap = el('div', 'co' + (openCompanies[c.id] ? ' open' : ''))
-      wrap.dataset.company = c.id
-      var head = el('div', 'co-head')
-      var a = el('a', 'nav')
+      var a = el('a', 'nav co-row')
       a.href = '?scope=company:' + c.id
       a.dataset.nav = ''
       a.dataset.scope = 'company:' + c.id
-      a.dataset.key = 'scope:company:' + c.id
-      a.append(companyLogo(c, 'logo'), el('span', 'lbl', c.name))
-      var tog = el('button', 'tog')
-      tog.type = 'button'
-      tog.setAttribute('aria-label', 'Websites von ' + c.name + ' ein- oder ausklappen')
-      tog.setAttribute('aria-expanded', String(!!openCompanies[c.id]))
-      tog.innerHTML = ICON_CHEVRON
-      tog.onclick = function () {
-        openCompanies[c.id] = !wrap.classList.contains('open')
-        wrap.classList.toggle('open', openCompanies[c.id])
-        tog.setAttribute('aria-expanded', String(openCompanies[c.id]))
-        saveOpen()
+      a.dataset.key = 'company:' + c.id
+      var dot = el('span', 'sdot'); dot.dataset.company = c.id
+      a.append(companyLogo(c, 'logo'), el('span', 'lbl', c.name), dot)
+      box.append(a)
+    })
+    paintStatus()
+  }
+  function paintStatus() {
+    Array.prototype.forEach.call(document.querySelectorAll('[data-company].sdot, [data-company].spill'), function (n) {
+      var st = COMPANY_STATUS[n.dataset.company]
+      n.className = (n.classList.contains('spill') ? 'spill ' : 'sdot ') + (st ? st.state : '')
+      if (st) {
+        n.title = STATUS_TEXT[st.state][1]
+        if (n.classList.contains('spill')) n.textContent = STATUS_TEXT[st.state][0]
+        else n.setAttribute('aria-label', STATUS_TEXT[st.state][0])
       }
-      head.append(a, tog)
-      var sites = el('div', 'co-sites'), inner = el('div')
-      c.sites.forEach(function (s) {
-        var sa = el('a', 'nav')
-        sa.href = '?site=' + encodeURIComponent(s.domain)
-        sa.dataset.nav = ''
-        sa.dataset.site = s.domain
-        sa.dataset.key = 'site:' + s.domain
-        sa.title = s.domain
-        sa.append(siteLogo(s.domain), el('span', 'lbl', s.name))
-        inner.append(sa)
-      })
-      sites.append(inner)
-      wrap.append(head, sites)
-      box.append(wrap)
     })
   }
   function markSidebar() {
-    var key = state.view === 'insights' || state.view === 'tracking' ? 'view:' + state.view : state.site ? 'site:' + state.site : state.scope ? 'scope:' + state.scope : 'overview'
+    var co = companyOfState()
+    var key = state.view === 'insights' || state.view === 'tracking' || state.view === 'account' ? 'view:' + state.view : co ? 'company:' + co : state.view === 'overview' || state.scope === 'all' ? 'overview' : ''
     Array.prototype.forEach.call(document.querySelectorAll('.side .nav[data-key]'), function (n) { n.classList.toggle('on', n.dataset.key === key) })
-    var company = state.site ? (SITE_BY_DOMAIN[state.site] || {}).company : state.scope && state.scope.indexOf('company:') === 0 ? state.scope.slice(8) : null
-    if (company && !openCompanies[company]) {
-      openCompanies[company] = true
-      var w = document.querySelector('.co[data-company="' + company + '"]')
-      if (w) { w.classList.add('open'); w.querySelector('.tog').setAttribute('aria-expanded', 'true') }
-      saveOpen()
-    }
   }
   function closeMenu() { $('app').classList.remove('menu') }
   $('burger').onclick = function () { $('app').classList.add('menu') }
@@ -1383,7 +1367,7 @@ td.wrap { white-space: normal; min-width: 180px; }
       var c = COMPANIES.filter(function (x) { return 'company:' + x.id === state.scope })[0]
       title = c.name
       img = companyLogo(c, 'logo')
-      sub.append(document.createTextNode(c.sites.length === 1 ? '1 Website' : c.sites.length + ' Websites zusammengefasst'))
+      sub.append(document.createTextNode(c.sites.length === 1 ? (c.sites[0].domain || '') : c.sites.length + ' Websites'))
     }
     logo.append(img)
     $('ttl').textContent = title
@@ -1408,7 +1392,8 @@ td.wrap { white-space: normal; min-width: 180px; }
     // say exactly which days are shown and what the arrows compare against
     var r = range(), n = Math.round((new Date(r[1]) - new Date(r[0])) / 86400000) + 1
     var pf = iso(addDays(new Date(r[0] + 'T00:00:00'), -n)), pt = iso(addDays(new Date(r[0] + 'T00:00:00'), -1))
-    $('cmp').textContent = (r[0] === r[1] ? fmtDay(r[0], true) : fmtDay(r[0]) + ' – ' + fmtDay(r[1], true)) + ' · verglichen mit ' + (pf === pt ? fmtDay(pf) : fmtDay(pf) + ' – ' + fmtDay(pt))
+    $('cmp').textContent = r[0] === r[1] ? fmtDay(r[0], true) : fmtDay(r[0]) + ' – ' + fmtDay(r[1], true)
+    $('cmp').title = 'Vergleiche beziehen sich auf ' + (pf === pt ? fmtDay(pf) : fmtDay(pf) + ' – ' + fmtDay(pt))
   }
   function setPeriod(p) {
     state.period = p
@@ -1504,6 +1489,18 @@ td.wrap { white-space: normal; min-width: 180px; }
       // the line chart needs a visible box to measure
       if (more.open && lastSeries.length) renderChart(lastSeries, false)
     })
+    var co = COMPANIES.filter(function (c) { return c.id === companyOfState() })[0]
+    if (co && co.sites.length > 1) {
+      var sw = el('nav', 'sv-sites'); sw.setAttribute('aria-label', 'Website wählen')
+      var all = el('a', state.site ? '' : 'on', 'Alle Websites'); all.href = '?scope=company:' + co.id; all.dataset.nav = ''; all.dataset.scope = 'company:' + co.id
+      sw.append(all)
+      co.sites.forEach(function (s2) {
+        var a = el('a', state.site === s2.domain ? 'on' : ''); a.href = '?site=' + encodeURIComponent(s2.domain); a.dataset.nav = ''; a.dataset.site = s2.domain
+        a.append(siteLogo(s2.domain), document.createTextNode(s2.name))
+        sw.append(a)
+      })
+      view.append(sw)
+    }
     view.append(nudge, hl, cards, top, more)
     showGoogle()
     loadDash()
@@ -2472,10 +2469,21 @@ td.wrap { white-space: normal; min-width: 180px; }
   }
   function loadInsightCount() {
     var r = range()
-    fetch('/api/insights?scope=all&from=' + r[0] + '&to=' + r[1]).then(function (x) { return x.json() }).then(function (d) {
-      var n = (d.results || []).filter(function (x) { return x.severity === 'high' && x.state === 'open' }).length
-      $('insCount').textContent = n ? n : ''
-      $('insCount').title = n + ' dringende Chancen'
+    Promise.all([
+      fetch('/api/insights?scope=all&from=' + r[0] + '&to=' + r[1]).then(function (x) { return x.json() }),
+      fetch('/api/sites-summary?from=' + r[0] + '&to=' + r[1]).then(function (x) { return x.json() })
+    ]).then(function (res) {
+      var open = (res[0].results || []).filter(function (x) { return x.severity === 'high' && x.state === 'open' })
+      $('insCount').textContent = open.length ? open.length : ''
+      $('insCount').title = open.length + ' dringende Chancen'
+      var leads = {}, high = {}
+      ;(res[1] || []).forEach(function (x) { var c = (SITE_BY_DOMAIN[x.domain] || {}).company; if (c) leads[c] = (leads[c] || 0) + x.leads })
+      open.forEach(function (x) {
+        var sites = [x.site].concat((x.table ? x.table.rows : x.items || []).map(function (y) { return y.site }))
+        sites.forEach(function (d) { var c = d && (SITE_BY_DOMAIN[d] || {}).company; if (c) high[c] = (high[c] || 0) + 1 })
+      })
+      COMPANIES.forEach(function (c) { COMPANY_STATUS[c.id] = { state: high[c.id] ? 'warn' : leads[c.id] ? 'ok' : 'quiet', leads: leads[c.id] || 0 } })
+      paintStatus()
     }).catch(function () {})
   }
 
@@ -2544,7 +2552,9 @@ td.wrap { white-space: normal; min-width: 180px; }
     list.forEach(function (b, i) { if (b.v) last = i })
     list.forEach(function (b, i) {
       var bar = el('i', b.v === null ? 'none' : i === last ? 'last' : '')
-      bar.style.height = b.v === null ? '3px' : Math.max(3, (b.v / max) * 40) + 'px'
+      bar.style.height = '3px'
+      bar.style.transitionDelay = (200 + i * 40) + 'ms'
+      if (b.v !== null) animateTo(bar, 'height', Math.max(3, (b.v / max) * 40) + 'px')
       box.append(bar)
     })
     box.style.setProperty('--mc', color)
@@ -2599,8 +2609,11 @@ td.wrap { white-space: normal; min-width: 180px; }
         b.style.setProperty('--mc', m.color)
         var top = el('div', 'sv-mc-top')
         top.append(mlabel(m.key, m.label, m.color), el('span', 'sv-mc-when', periodShort()))
-        var body = el('div', 'sv-mc-body'), num = el('div', 'sv-mc-num', m.num)
+        var body = el('div', 'sv-mc-body'), num = el('div', 'sv-mc-num'), v = el('span', null, m.num)
+        num.append(v)
         if (m.unit) num.append(el('small', null, m.unit))
+        if (typeof m.value === 'number') countTo(v, m.value, m.money)
+        enter(b, grid.children.length)
         body.append(num)
         if (m.series && !hourly) body.append(spark(buckets(m.series, d.from, d.to, m.site ? d.tracking_since : null, false), m.color))
         var dt = deltaText(m.value, m.prev, m.money)
@@ -2612,6 +2625,11 @@ td.wrap { white-space: normal; min-width: 180px; }
       })
       cards.replaceChildren(head, grid)
     }).catch(function (e) { console.error(e); hl.replaceChildren(el('div', 'empty', 'Fehler beim Laden')) })
+  }
+  function enter(node, i) { if (!REDUCED) node.style.animation = 'rise .55s ' + (i * 0.06).toFixed(2) + 's cubic-bezier(.2,.8,.2,1) both' }
+  function countTo(node, value, money) {
+    if (value === null || value === undefined) return
+    countUp(node, value, money ? function (x) { return money0.format(x) } : function (x) { return nf.format(Math.round(x)) })
   }
   function animateTo(node, prop, value) {
     if (REDUCED) { node.style[prop] = value; return }
@@ -2633,7 +2651,8 @@ td.wrap { white-space: normal; min-width: 180px; }
   function shareViz(parts) {
     var box = el('div', 'sv-share'), bar = el('div', 'sv-sbar'), ul = el('ul')
     parts.forEach(function (p) {
-      var i = el('i'); i.style.background = p.color; i.style.flexGrow = p.n; bar.append(i)
+      var i = el('i'); i.style.background = p.color; i.style.flexGrow = '0.0001'; bar.append(i)
+      animateTo(i, 'flexGrow', String(p.n))
       var li = el('li'), dot = el('i', 'dt'); dot.style.background = p.color
       li.append(dot, el('span', null, p.name), el('b', null, nf.format(p.n)))
       ul.append(li)
@@ -2669,6 +2688,7 @@ td.wrap { white-space: normal; min-width: 180px; }
     var cards = []
     var card = function (key, label, color, sentence, viz) {
       var c = el('article', 'hlc'); c.style.setProperty('--mc', color)
+      enter(c, cards.length)
       c.append(mlabel(key, label, color), el('p', null, sentence))
       if (viz) c.append(viz)
       cards.push(c)
@@ -2725,7 +2745,8 @@ td.wrap { white-space: normal; min-width: 180px; }
     var hourly = d.interval === 'hour'
     var bs = m.series ? buckets(m.series, d.from, d.to, m.site ? d.tracking_since : null, hourly) : null
     var big = el('div', 'sheet-big')
-    var tot = el('div'), n1 = el('div', 'n', m.num); if (m.unit) n1.append(el('small', null, m.unit))
+    var tot = el('div'), n1 = el('div', 'n'), n1v = el('span', null, m.num); n1.append(n1v); if (m.unit) n1.append(el('small', null, m.unit))
+    if (typeof m.value === 'number') countTo(n1v, m.value, m.money)
     tot.append(el('div', 'k', 'Insgesamt · ' + periodShort()), n1, el('div', 's', deltaText(m.value, m.prev, m.money)))
     big.append(tot)
     if (bs) {
@@ -2789,11 +2810,11 @@ td.wrap { white-space: normal; min-width: 180px; }
         var sumT = t.call + t.whatsapp + t.email + t.form
         ;['call', 'whatsapp', 'email', 'form'].forEach(function (k) {
           if (!t[k]) return
-          var sp = el('span'); sp.style.background = TYPE_COLOR[k]; sp.style.height = '0%'; col.append(sp)
+          var sp = el('span'); sp.style.background = TYPE_COLOR[k]; sp.style.height = '0%'; sp.style.transitionDelay = (i * 35) + 'ms'; col.append(sp)
           animateTo(sp, 'height', (h * t[k] / sumT) + '%')
         })
       } else if (b.v) {
-        var sp = el('span'); sp.style.background = m.color; sp.style.height = '0%'; col.append(sp)
+        var sp = el('span'); sp.style.background = m.color; sp.style.height = '0%'; sp.style.transitionDelay = (i * 35) + 'ms'; col.append(sp)
         animateTo(sp, 'height', h + '%')
       }
       var show = function () {
@@ -3301,11 +3322,15 @@ td.wrap { white-space: normal; min-width: 180px; }
   var SILENT_DAYS = 3
   function renderSilentSites(box) {
     fetch('/api/tracking').then(function (r) { return r.json() }).then(function (rows) {
-      var silent = rows.filter(function (r) { return r.last_ts && Date.now() - r.last_ts > SILENT_DAYS * 86400000 && SITE_BY_DOMAIN[r.site] })
+      // only sites that normally get visitors: at least 5 visits would have been expected by now
+      var silent = rows.filter(function (r) {
+        var days = r.last_ts ? (Date.now() - r.last_ts) / 86400000 : 0
+        return r.last_ts && days > SILENT_DAYS && (r.per_day || 0) * days >= 5 && SITE_BY_DOMAIN[r.site]
+      })
       if (!silent.length) return
       var card = el('section', 'card warn-card')
       var head = el('div', 'wh')
-      head.append(el('span', 'dot'), el('b', null, silent.length === 1 ? '1 Website sendet keine Daten mehr' : silent.length + ' Websites senden keine Daten mehr'))
+      head.append(el('span', 'dot'), el('b', null, silent.length === 1 ? '1 Website meldet keine Besucher mehr' : silent.length + ' Websites melden keine Besucher mehr'))
       var more = el('a', 'more', 'Snippets prüfen →'); more.href = '?view=tracking'; more.dataset.nav = ''; more.dataset.view = 'tracking'
       head.append(more)
       var list = el('div', 'chips')
@@ -3484,11 +3509,16 @@ td.wrap { white-space: normal; min-width: 180px; }
         nm.append(el('b', null, t.c.name), el('span', null, plural(t.visitors, ['Besucher', 'Besucher']) + (t.spend ? ' · ' + money0.format(t.spend) + ' Werbung' : '') + (t.c.sites.length > 1 ? ' · ' + t.c.sites.length + ' Websites' : '')))
         who.append(companyLogo(t.c), nm)
         var num = el('div', 'num' + (t.leads ? '' : ' zero'))
-        num.append(el('b', null, nf.format(t.leads)), el('span', null, t.leads === 1 ? 'Anfrage' : 'Anfragen'))
+        var nb = el('b', null, '0')
+        num.append(nb, el('span', null, t.leads === 1 ? 'Anfrage' : 'Anfragen'))
+        countTo(nb, t.leads)
         var sp = spark(buckets(t.daily, r[0], r[1], since, false), 'var(--m-blue)')
+        var pill = el('span', 'spill'); pill.dataset.company = t.c.id
+        nm.querySelector('b').append(document.createTextNode(' '), pill)
         a.append(who, sp, num, el('i', 'chev'))
         list.append(a)
       })
+      paintStatus()
     }).catch(function (e) { console.error(e); list.replaceChildren(el('div', 'empty', 'Fehler beim Laden')) })
     timers.push(setInterval(function () { if (state.view === 'overview') render() }, 120000))
   }
@@ -3524,6 +3554,7 @@ td.wrap { white-space: normal; min-width: 180px; }
     pw.append(f)
     view.append(pw)
     if (!isAdmin()) return
+    view.append(syncCard())
 
     var box = el('section', 'card acc')
     box.append(el('h2', null, 'Zugänge der Unternehmen'), el('p', 'accsub', 'Jedes Unternehmen sieht nur seine eigenen Websites. Ein neues Passwort wird nur einmal angezeigt.'))
@@ -3571,28 +3602,27 @@ td.wrap { white-space: normal; min-width: 180px; }
     load()
   }
 
-  // ---------- sync ----------
-  function loadSyncInfo() {
+  // ---------- sync (account page, admin) ----------
+  function loadSyncInfo(label) {
+    if (!label) return
     fetch('/api/sync-log').then(function (r) { return r.json() }).then(function (rows) {
-      var label = $('synced')
       label.title = ''
-      if (!rows.length) { label.textContent = 'Werbe- und Suchdaten noch nicht abgerufen'; return }
+      if (!rows.length) { label.textContent = 'Werbe- und Suchdaten wurden noch nicht abgerufen.'; return }
       var last = rows[0], errors = rows.filter(function (r) { return r.ts >= last.ts - 120000 && r.error })
-      label.textContent = 'Daten abgerufen: ' + new Date(last.ts).toLocaleString('de-DE', { dateStyle: 'short', timeStyle: 'short' }) + (errors.length ? ' (mit Fehlern)' : '')
+      label.textContent = 'Zuletzt abgerufen: ' + new Date(last.ts).toLocaleString('de-DE', { dateStyle: 'short', timeStyle: 'short' }) + (errors.length ? ' (mit Fehlern)' : '') + '. Das passiert automatisch alle 6 Stunden.'
       if (errors.length) label.title = errors.map(function (e) { return e.site + ' · ' + e.source + ': ' + e.error }).join('\n')
     }).catch(function () {})
   }
-  $('syncnow').onclick = function () {
-    var b = $('syncnow')
-    b.disabled = true
-    b.textContent = 'Wird abgerufen…'
-    fetch('/api/sync?days=90', { method: 'POST' }).then(function (r) { return r.json() }).then(function () {
-      b.textContent = 'Fertig'
-      loadSyncInfo()
-      render()
-    }).catch(function () { b.textContent = 'Fehler' }).finally(function () {
-      setTimeout(function () { b.disabled = false; b.textContent = 'Werbe- & Suchdaten abrufen' }, 2500)
-    })
+  function syncCard() {
+    var card = el('section', 'card acc'), label = el('p', 'msg'), b = el('button', 'btn', 'Jetzt abrufen'); b.type = 'button'
+    card.append(el('h2', null, 'Werbe- und Suchdaten'), label, b)
+    b.onclick = function () {
+      b.disabled = true; b.textContent = 'Wird abgerufen…'
+      fetch('/api/sync?days=90', { method: 'POST' }).then(function (r) { return r.json() }).then(function () { b.textContent = 'Fertig'; loadSyncInfo(label) })
+        .catch(function () { b.textContent = 'Fehler' }).finally(function () { setTimeout(function () { b.disabled = false; b.textContent = 'Jetzt abrufen' }, 2500) })
+    }
+    loadSyncInfo(label)
+    return card
   }
 
   // ---------- controls ----------
@@ -3641,7 +3671,6 @@ td.wrap { white-space: normal; min-width: 180px; }
     buildSidebar()
     readUrl()
     render()
-    if (isAdmin()) loadSyncInfo()
     loadInsightCount()
   })
 })()
