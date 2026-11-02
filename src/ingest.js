@@ -1,6 +1,5 @@
 // Receives events from the tracker, counts visitors without cookies.
 
-const SESSION_TIMEOUT_MS = 30 * 60 * 1000
 const TIME_ZONE = 'Europe/Berlin'
 
 const BOT_RE =
@@ -238,68 +237,51 @@ export async function handleEvent(request, env) {
   const propsJson = props ? JSON.stringify(props) : null
 
   const db = env.DB
-  const last = await db
-    .prepare(
-      'SELECT id, source, referrer, utm_source, utm_medium, utm_campaign, utm_content, utm_term FROM sessions ' +
-        'WHERE site = ? AND visitor_id = ? AND last_ts > ? ORDER BY last_ts DESC LIMIT 1'
-    )
-    .bind(site, visitorId, now - SESSION_TIMEOUT_MS)
+  // One visit per visitor and day. The visitor id already changes every day (daily salt), and a
+  // fixed id means events that arrive at the same moment can never open two separate visits.
+  const sessionId = `${visitorId}-${date}`
+  const existing = await db
+    .prepare('SELECT source, referrer, utm_source, utm_medium, utm_campaign, utm_content, utm_term FROM sessions WHERE id = ?')
+    .bind(sessionId)
     .first()
-
-  let sessionId
-  let attrs
-  const statements = []
-
-  if (last) {
-    // Later events keep the attribution of the visit they belong to.
-    sessionId = last.id
-    attrs = last
-    statements.push(
-      db
-        .prepare(
-          'UPDATE sessions SET last_ts = ?, events = events + 1, pageviews = pageviews + ?, ' +
-            'exit_page = CASE WHEN ? THEN ? ELSE exit_page END WHERE id = ?'
-        )
-        .bind(now, isPageview ? 1 : 0, isPageview ? 1 : 0, page, sessionId)
-    )
-  } else {
-    sessionId = crypto.randomUUID()
-    attrs = {
-      source,
-      referrer: refSource ? referrer : null,
-      utm_source: utm.source,
-      utm_medium: utm.medium,
-      utm_campaign: utm.campaign,
-      utm_content: utm.content,
-      utm_term: utm.term
-    }
-    statements.push(
-      db
-        .prepare(
-          'INSERT INTO sessions (id, site, visitor_id, start_ts, last_ts, date, entry_page, exit_page, pageviews, events, ' +
-            'source, referrer, utm_source, utm_medium, utm_campaign, utm_content, utm_term) ' +
-            'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?, ?, ?, ?)'
-        )
-        .bind(
-          sessionId,
-          site,
-          visitorId,
-          now,
-          now,
-          date,
-          page,
-          page,
-          isPageview ? 1 : 0,
-          attrs.source,
-          attrs.referrer,
-          attrs.utm_source,
-          attrs.utm_medium,
-          attrs.utm_campaign,
-          attrs.utm_content,
-          attrs.utm_term
-        )
-    )
+  // later events keep the attribution of the visit they belong to
+  const attrs = existing || {
+    source,
+    referrer: refSource ? referrer : null,
+    utm_source: utm.source,
+    utm_medium: utm.medium,
+    utm_campaign: utm.campaign,
+    utm_content: utm.content,
+    utm_term: utm.term
   }
+  const statements = [
+    db
+      .prepare(
+        'INSERT INTO sessions (id, site, visitor_id, start_ts, last_ts, date, entry_page, exit_page, pageviews, events, ' +
+          'source, referrer, utm_source, utm_medium, utm_campaign, utm_content, utm_term) ' +
+          'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?, ?, ?, ?) ' +
+          'ON CONFLICT(id) DO UPDATE SET last_ts = excluded.last_ts, events = events + 1, pageviews = pageviews + excluded.pageviews, ' +
+          'exit_page = CASE WHEN excluded.pageviews > 0 THEN excluded.exit_page ELSE exit_page END'
+      )
+      .bind(
+        sessionId,
+        site,
+        visitorId,
+        now,
+        now,
+        date,
+        page,
+        page,
+        isPageview ? 1 : 0,
+        attrs.source,
+        attrs.referrer,
+        attrs.utm_source,
+        attrs.utm_medium,
+        attrs.utm_campaign,
+        attrs.utm_content,
+        attrs.utm_term
+      )
+  ]
 
   statements.push(
     db

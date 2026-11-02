@@ -244,7 +244,7 @@
           send('FAQ open', props({}))
         return
       }
-      if (el.closest('form')) return // covered by Form start / Form step / Form submit
+      if (formRoot(el)) return // covered by Form start / Form step / Form submit
       if (custom || BUTTON_RE.test(el.className || '')) return send('Button click', props({}))
     },
     true
@@ -310,9 +310,47 @@
         t = (head || wrap).innerText
       }
     }
+    if (!t && (el.tagName === 'BUTTON' || /radio|checkbox|option/.test(el.getAttribute('role') || ''))) t = questionOf(el, form)
     t = String(t || '').split('\n')[0]
     if (!t.trim()) t = el.getAttribute('aria-label') || el.getAttribute('placeholder') || el.getAttribute('name') || ''
     return tidy(clip(t, 50))
+  }
+
+  // Many builder forms are step-by-step wizards in a plain section, without a <form> element.
+  var NAV_RE = /^\s*(weiter|nächster schritt|zurück|absenden|senden|abschicken|anfrage (senden|absenden|abschicken)|jetzt (senden|anfragen))\b/i
+  var STEP_RE = /Schritt\s+(\d+)\s*(von|\/)\s*(\d+)/i
+  function isWizard(sec) {
+    if (STEP_RE.test(sec.innerText || '')) return true
+    if (sec.querySelector('input:not([type=hidden]):not([type=checkbox]), textarea, select')) return true
+    var bs = sec.querySelectorAll('button')
+    for (var i = 0; i < bs.length; i++) if (NAV_RE.test(bs[i].innerText || '')) return true
+    return false
+  }
+  function formRoot(el) {
+    if (!el || !el.closest) return null
+    var f = el.closest('form')
+    if (f) return inConsentBanner(f) ? null : f
+    if (!el.closest(FIELD_EL)) return null
+    var sec = el.closest('section')
+    return sec && !inConsentBanner(el) && isWizard(sec) ? sec : null
+  }
+  // the question a choice button answers: the nearest heading or label above it
+  function questionOf(el, root) {
+    var node = el.parentElement
+    while (node && node !== root.parentElement) {
+      var heads = node.querySelectorAll('legend, h2, h3, h4, label, [class*="title" i], [class*="label" i], [class*="question" i]')
+      for (var i = 0; i < heads.length; i++) {
+        var h = heads[i]
+        if (h.contains(el) || el.contains(h) || h.closest('button')) continue
+        if (h.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING) {
+          var t = clip(h.innerText || h.textContent, 60)
+          if (t && !STEP_RE.test(t)) return t
+        }
+      }
+      if (node === root) break
+      node = node.parentElement
+    }
+    return ''
   }
 
   function formState(form, key) {
@@ -323,6 +361,7 @@
   function noteField(el, form, key) {
     if (!el || el === form || !el.matches || !el.matches(FIELD_EL)) return
     if (el.type === 'submit' || el.type === 'hidden') return
+    if (el.tagName === 'BUTTON' && NAV_RE.test(el.innerText || '')) return
     var f = formState(form, key)
     var name = fieldName(el, form)
     if (name && f.seq.indexOf(name) < 0 && f.seq.length < 20) f.seq.push(name)
@@ -347,8 +386,8 @@
   }
 
   function onFormTouch(e) {
-    var form = e.target && e.target.closest && e.target.closest('form')
-    if (!form || inConsentBanner(form)) return
+    var form = formRoot(e.target)
+    if (!form) return
     var key = formKey(form)
     lastForm = key
     if (CANCEL_RE.test(key + ' ' + location.pathname)) return
@@ -363,8 +402,8 @@
   document.addEventListener(
     'invalid',
     function (e) {
-      var form = e.target && e.target.closest && e.target.closest('form')
-      if (!form || inConsentBanner(form)) return
+      var form = formRoot(e.target)
+      if (!form) return
       var key = formKey(form)
       var f = formState(form, key)
       var name = fieldName(e.target, form)
@@ -386,7 +425,12 @@
   // Only progress markers inside the form count; a numbered "how it works" list next to it is not a step.
   function stepInfo(form) {
     var num = form.querySelector('[class*="stepNum"], [class*="step-num"], [aria-current="step"]')
-    if (!num) return null
+    if (!num) {
+      var m = STEP_RE.exec(form.innerText || '')
+      if (!m) return null
+      var title = form.querySelector('[class*="stepTitle" i], [class*="step-title" i], legend, h3')
+      return 'Schritt ' + m[1] + (title ? ' · ' + tidy(clip(title.innerText, 40)) : '')
+    }
     var n = parseInt(String(num.textContent).replace(/[^\d]/g, ''), 10)
     var name = form.querySelector('[class*="stepName"], [class*="step-name"]')
     var text = name ? clip(name.textContent, 40) : ''
@@ -405,14 +449,17 @@
   function checkStep(form) {
     var key = formKey(form)
     lastForm = key
+    // a step counts once per number; its title is read after the page has finished switching
     var check = function () {
       noteErrors(form, key)
       var step = stepInfo(form)
-      if (step && step !== lastStep[key]) {
-        var first = lastStep[key] === undefined && /^Schritt 1\b/.test(step)
-        lastStep[key] = step
-        if (!first) send('Form step', { label: step, form: key })
-      }
+      var num = step && (step.match(/^Schritt (\d+)/) || [])[1]
+      var id = num || step
+      if (!step || id === lastStep[key]) return
+      var first = lastStep[key] === undefined && num === '1'
+      lastStep[key] = id
+      if (first) return
+      setTimeout(function () { send('Form step', { label: stepInfo(form) || step, form: key }) }, num ? 500 : 0)
     }
     setTimeout(check, 450)
     setTimeout(check, 1100)
@@ -429,8 +476,8 @@
   document.addEventListener(
     'click',
     function (e) {
-      var form = e.target && e.target.closest && e.target.closest('form')
-      if (form && !inConsentBanner(form)) checkStep(form)
+      var form = formRoot(e.target)
+      if (form) checkStep(form)
     },
     true
   )
