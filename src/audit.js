@@ -320,250 +320,321 @@ export async function listAudits(env, site) {
   return out
 }
 
-// ---------- our own data for the page: real loading times and Google search ----------
+// ---------- our own data for the page: visits, contacts, loading times, Google search ----------
 
 const median = (a) => {
   if (!a.length) return null
   const s = [...a].sort((x, y) => x - y)
   return s[Math.floor(s.length / 2)]
 }
+const CONTACT_SECTION = /anfrage|kontakt|contact|formular|termin|angebot|rueckruf|rückruf/i
+const LEADS = ['Phone click', 'Email click', 'WhatsApp click', 'Form submit']
 
 export async function liveData(db, site, page, from, to) {
-  const [eng, gsc, views, leads, gbp] = await Promise.all([
+  const pageUrls = [`https://${site}${page}`, `https://www.${site}${page}`, `https://${site}${page === '/' ? '' : page}/`, `https://www.${site}${page === '/' ? '' : page}/`]
+  const [eng, gsc, gscDays, views, leads, since] = await Promise.all([
     db
-      .prepare(`SELECT device, props FROM events WHERE site = ? AND page = ? AND name = 'Engagement' AND date >= ? AND date <= ? LIMIT 3000`)
+      .prepare(`SELECT session_id, device, props FROM events WHERE site = ? AND page = ? AND name = 'Engagement' AND date >= ? AND date <= ? LIMIT 5000`)
       .bind(site, page, from, to)
       .all(),
     db
       .prepare(
         `SELECT query, SUM(clicks) AS clicks, SUM(impressions) AS impressions, SUM(position * impressions) / MAX(SUM(impressions), 1) AS position
-         FROM search_pages WHERE site = ? AND date >= ? AND date <= ? AND (page = ? OR page = ? OR page = ? OR page = ?)
-         GROUP BY query ORDER BY impressions DESC LIMIT 40`
+         FROM search_pages WHERE site = ? AND date >= ? AND date <= ? AND page IN (?, ?, ?, ?)
+         GROUP BY query ORDER BY impressions DESC LIMIT 60`
       )
-      .bind(site, from, to, `https://${site}${page}`, `https://www.${site}${page}`, `https://${site}${page === '/' ? '' : page}/`, `https://www.${site}${page === '/' ? '' : page}/`)
+      .bind(site, from, to, ...pageUrls)
       .all(),
+    db.prepare(`SELECT COUNT(DISTINCT date) AS n FROM search_pages WHERE site = ? AND date >= ? AND date <= ?`).bind(site, from, to).first(),
     db
       .prepare(`SELECT COUNT(DISTINCT session_id) AS n FROM events WHERE site = ? AND page = ? AND name = 'pageview' AND date >= ? AND date <= ?`)
       .bind(site, page, from, to)
       .first(),
     db
       .prepare(
-        `SELECT COUNT(DISTINCT session_id) AS n FROM events WHERE site = ? AND date >= ? AND date <= ?
-         AND name IN ('Phone click', 'Email click', 'WhatsApp click', 'Form submit')
+        `SELECT DISTINCT session_id FROM events WHERE site = ? AND date >= ? AND date <= ?
+         AND name IN (${LEADS.map(() => '?').join(',')})
          AND session_id IN (SELECT session_id FROM events WHERE site = ? AND page = ? AND name = 'pageview' AND date >= ? AND date <= ?)`
       )
-      .bind(site, from, to, site, page, from, to)
-      .first(),
-    page === '/'
-      ? db
-          .prepare(
-            `SELECT l.name, r.count, r.rating,
-               (SELECT SUM(calls) FROM gbp_daily d WHERE d.location = l.location AND d.date >= ? AND d.date <= ?) AS calls,
-               (SELECT SUM(website_clicks) FROM gbp_daily d WHERE d.location = l.location AND d.date >= ? AND d.date <= ?) AS clicks,
-               (SELECT SUM(directions) FROM gbp_daily d WHERE d.location = l.location AND d.date >= ? AND d.date <= ?) AS directions,
-               (SELECT SUM(impressions_maps + impressions_search) FROM gbp_daily d WHERE d.location = l.location AND d.date >= ? AND d.date <= ?) AS views
-             FROM gbp_locations l LEFT JOIN gbp_reviews r ON r.location = l.location WHERE l.site = ? ORDER BY views DESC LIMIT 1`
-          )
-          .bind(from, to, from, to, from, to, from, to, site)
-          .first()
-      : null
+      .bind(site, from, to, ...LEADS, site, page, from, to)
+      .all(),
+    db.prepare('SELECT MIN(date) AS d FROM events WHERE site = ?').bind(site).first()
   ])
   const lcp = { mobile: [], desktop: [] }
+  const leadSet = new Set(leads.results.map((r) => r.session_id))
+  const sawArea = new Set()
+  const engaged = new Set()
   for (const r of eng.results) {
+    engaged.add(r.session_id)
     try {
       const p = JSON.parse(r.props)
       if (typeof p.lcp === 'number' && p.lcp > 0) (r.device === 'Mobile' ? lcp.mobile : lcp.desktop).push(p.lcp)
+      if ((p.sec || []).some((id) => CONTACT_SECTION.test(id))) sawArea.add(r.session_id)
     } catch (e) {}
   }
   const q = gsc.results.map((r) => ({ query: r.query, clicks: r.clicks, impressions: r.impressions, position: Math.round(r.position * 10) / 10 }))
   const imp = q.reduce((s, r) => s + r.impressions, 0)
   const clk = q.reduce((s, r) => s + r.clicks, 0)
+  const firstDay = since && since.d && since.d > from ? since.d : from
+  const trackedDays = Math.max(1, Math.round((new Date(to + 'T00:00:00Z') - new Date(firstDay + 'T00:00:00Z')) / 86400000) + 1)
   return {
+    tracked_days: trackedDays,
     speed: { mobile: median(lcp.mobile), mobile_n: lcp.mobile.length, desktop: median(lcp.desktop), desktop_n: lcp.desktop.length },
     search: {
+      days: gscDays ? gscDays.n : 0,
       impressions: imp,
       clicks: clk,
       ctr: imp ? clk / imp : null,
       position: imp ? Math.round((q.reduce((s, r) => s + r.position * r.impressions, 0) / imp) * 10) / 10 : null,
-      queries: q.slice(0, 12),
-      // ranked between 4 and 20: a small push brings these onto the first screen of Google
-      near: q.filter((r) => r.position > 3.5 && r.position <= 20 && r.impressions >= 10).slice(0, 8)
+      queries: q
     },
-    gbp: gbp || null,
     visits: views ? views.n : 0,
-    leads: leads ? leads.n : 0
+    leads: leadSet.size,
+    // of the visits that left an engagement record on this page: how many saw a contact section
+    engaged: engaged.size,
+    saw_contact: sawArea.size,
+    // contacts among visits that saw the contact section, and among those that did not
+    leads_saw: [...sawArea].filter((x) => leadSet.has(x)).length,
+    leads_not: [...engaged].filter((x) => !sawArea.has(x) && leadSet.has(x)).length,
+    contact_section: eng.results.some((r) => /"sec":\[[^\]]*"(anfrage|kontakt|contact|formular|termin|angebot)/i.test(r.props || ''))
   }
 }
 
-// ---------- grading: plain words, one fix per point ----------
+// ---------- assessment: measured numbers, a target for each, and what the gap is worth ----------
 
-export const CATS = {
-  seo: 'Bei Google gefunden werden',
-  speed: 'Tempo & Technik',
-  conv: 'Kontakt & Vertrauen',
-  legal: 'Rechtliches',
-  local: 'Google-Profil'
+// average share of searchers who click a result at a given Google position (rounded figures from
+// public click-through studies of organic results; position 11+ is page two)
+const CTR_CURVE = [0.28, 0.16, 0.11, 0.085, 0.065, 0.05, 0.04, 0.033, 0.028, 0.025]
+export function expectedCtr(pos) {
+  if (!pos || pos < 1) return CTR_CURVE[0]
+  if (pos <= 10) {
+    const lo = Math.floor(pos)
+    const hi = Math.min(10, lo + 1)
+    const f = pos - lo
+    return CTR_CURVE[lo - 1] + (CTR_CURVE[hi - 1] - CTR_CURVE[lo - 1]) * f
+  }
+  if (pos <= 20) return 0.01
+  return 0.003
 }
 
+const MOBILE_MBIT = 10 // a typical real-world mobile connection, in Mbit/s
 const kb = (b) => (b >= 1048576 ? (b / 1048576).toFixed(1).replace('.', ',') + ' MB' : Math.round(b / 1024) + ' KB')
-const sec = (ms) => (ms / 1000).toFixed(1).replace('.', ',') + ' s'
+const de = (x, d = 1) => (Math.round(x * 10 ** d) / 10 ** d).toString().replace('.', ',')
+const pct = (x) => de(x * 100, x < 0.1 ? 1 : 0) + ' %'
 
-export function grade(a, live) {
+export function assess(a, live) {
   const f = a.facts
   const n = a.net || {}
-  const C = []
-  const add = (cat, id, status, title, found, fix, weight = 2, items) => C.push({ cat, id, status, title, found, fix: status === 'good' ? '' : fix, weight, items: status === 'good' ? undefined : items })
+  const month = live ? 30 / Math.min(28, live.tracked_days) : 1
+  const searchMonth = live && live.search.days ? 30 / live.search.days : 1
+  const visitsMonth = live ? live.visits * month : 0
+  const leadsMonth = live ? live.leads * month : 0
+  // contacts per visit on this page; with very few visits the site's typical 3 % is safer
+  const rate = live && live.visits >= 30 ? Math.max(live.leads / live.visits, 0.005) : 0.03
+  const rateNote = live && live.visits >= 30 ? 'gemessene Kontaktquote dieser Seite' : 'angenommene Kontaktquote von 3 %, bis genug Besuche gemessen sind'
 
-  // --- SEO
-  const tl = f.title.length
-  add('seo', 'title', !tl ? 'bad' : tl < 25 || tl > 65 ? 'warn' : 'good', 'Seitentitel',
-    tl ? `„${f.title}" (${tl} Zeichen)` : 'Kein Titel vorhanden',
-    !tl ? 'Einen Titel mit Leistung und Ort setzen, z. B. „Fenster & Türen in Hamburg | Firma".' : tl < 25 ? 'Titel ist kurz. Leistung und Ort ergänzen, 40 bis 60 Zeichen.' : 'Titel ist zu lang und wird bei Google abgeschnitten. Auf 60 Zeichen kürzen, das Wichtigste nach vorn.', 3)
-  const dl = f.description.length
-  add('seo', 'description', !dl ? 'bad' : dl < 70 || dl > 165 ? 'warn' : 'good', 'Beschreibung für Google',
-    dl ? `${dl} Zeichen: „${f.description.slice(0, 120)}${dl > 120 ? '…' : ''}"` : 'Keine Beschreibung. Google nimmt dann irgendeinen Text von der Seite.',
-    !dl ? 'Eine Beschreibung mit 120 bis 155 Zeichen schreiben: was, wo, warum ihr, und eine Aufforderung.' : dl < 70 ? 'Beschreibung ist kurz. Auf 120 bis 155 Zeichen erweitern, mit Ort und Nutzen.' : 'Beschreibung ist zu lang. Auf 155 Zeichen kürzen.', 2)
-  add('seo', 'h1', f.h1.length === 1 ? 'good' : f.h1.length === 0 ? 'bad' : 'warn', 'Hauptüberschrift (H1)',
-    f.h1.length ? f.h1.map((h) => `„${h.slice(0, 70)}"`).join(', ') : 'Keine H1 auf der Seite',
-    f.h1.length === 0 ? 'Genau eine H1 setzen, die sagt, was hier angeboten wird und wo.' : `Es gibt ${f.h1.length} H1. Nur eine behalten, die anderen zu H2 machen.`, 2)
-  add('seo', 'structure', f.h2 >= 2 && !f.skipped ? 'good' : 'warn', 'Gliederung mit Zwischenüberschriften',
-    `${f.h2} Zwischenüberschriften (H2)${f.skipped ? `, ${f.skipped}× wird eine Ebene übersprungen` : ''}`,
-    f.h2 < 2 ? 'Abschnitte mit H2-Überschriften gliedern, die Suchbegriffe enthalten.' : 'Überschriften der Reihe nach verwenden (H2, dann H3), ohne Ebenen zu überspringen.', 1)
-  add('seo', 'words', f.words >= 300 ? 'good' : f.words >= 150 ? 'warn' : 'bad', 'Textmenge',
-    `${f.words} Wörter`, 'Mehr eigener Text hilft Google zu verstehen, worum es geht. Leistungen, Ablauf, Einsatzgebiet und häufige Fragen ergänzen.', 1)
-  const noindex = /noindex/i.test(f.robots)
-  add('seo', 'index', noindex || a.robots.blocksAll ? 'bad' : 'good', 'Darf Google die Seite zeigen?',
-    noindex ? 'Die Seite sagt Google „nicht anzeigen" (noindex).' : a.robots.blocksAll ? 'robots.txt sperrt die ganze Website.' : 'Ja',
-    'Die Sperre entfernen, sonst taucht die Seite nie bei Google auf.', 4)
-  add('seo', 'canonical', f.canonical ? 'good' : 'warn', 'Eindeutige Adresse (Canonical)',
-    f.canonical ? f.canonical : 'Nicht gesetzt', 'Canonical-Link auf die eigene Adresse setzen, damit Google keine Doppelungen zählt.', 1)
-  add('seo', 'sitemap', a.sitemap.status === 200 ? (a.sitemap.inSitemap === false ? 'warn' : 'good') : 'warn', 'Sitemap',
-    a.sitemap.status === 200 ? `${a.sitemap.urls} Seiten gelistet${a.sitemap.inSitemap === false ? ', diese Seite fehlt darin' : ''}` : 'Keine Sitemap gefunden',
-    a.sitemap.status === 200 ? 'Diese Seite in die Sitemap aufnehmen.' : 'Eine sitemap.xml anlegen und in der Search Console einreichen.', 1)
-  const local = f.ld.some((t) => /LocalBusiness|Organization|HomeAndConstructionBusiness|GeneralContractor|RealEstateAgent|Plumber|Electrician|RoofingContractor|HousePainter|Locksmith/i.test(t))
-  add('seo', 'schema', local ? 'good' : f.ld.length ? 'warn' : 'warn', 'Firmendaten für Google (Schema)',
-    f.ld.length ? f.ld.slice(0, 5).join(', ') : 'Keine strukturierten Daten',
-    'LocalBusiness-Daten einbauen (Name, Adresse, Telefon, Öffnungszeiten, Einsatzgebiet). Das hilft bei lokalen Suchen und in Google Maps.', 1)
-  const alts = f.images.total ? (f.images.total - f.images.noAlt) / f.images.total : 1
-  add('seo', 'alt', alts >= 0.9 ? 'good' : alts >= 0.6 ? 'warn' : 'bad', 'Bildbeschreibungen (Alt-Text)',
-    f.images.total ? `${f.images.total - f.images.noAlt} von ${f.images.total} Bildern beschrieben` : 'Keine Bilder',
-    'Jedem Bild einen kurzen Alt-Text geben, der zeigt, was zu sehen ist („Holzfenster nach Einbau in Hamburg-Eimsbüttel").', 1)
-  add('seo', 'share', f.og.image && f.og.title ? 'good' : 'warn', 'Vorschau beim Teilen (WhatsApp, Facebook)',
-    f.og.image ? 'Vorschaubild gesetzt' : 'Kein Vorschaubild', 'Ein Vorschaubild (og:image, 1200×630) und einen Vorschautitel setzen. Geteilte Links sehen sonst leer aus.', 1)
-  if (a.broken) {
-    add('seo', 'links', a.broken.length ? 'bad' : 'good', 'Kaputte Links',
-      a.broken.length ? a.broken.map((b) => `${b.url.replace(/^https?:\/\/(www\.)?/, '')} (${b.status})`).slice(0, 5).join(', ') : `${a.checkedLinks} interne Links geprüft, alle erreichbar`,
-      'Diese Links zeigen auf Seiten, die es nicht gibt. Korrigieren oder entfernen.', 2, a.broken.map((b) => ({ label: b.url.replace(/^https?:\/\/(www\.)?/, '') + ' · ' + b.status })))
-  }
-  if (live && live.search.impressions >= 80 && live.search.ctr !== null) {
-    const ctr = live.search.ctr
-    const expect = live.search.position <= 3 ? 0.08 : live.search.position <= 10 ? 0.025 : 0.005
-    add('seo', 'ctr', ctr >= expect ? 'good' : 'warn', 'Wird der Eintrag bei Google angeklickt?',
-      `${live.search.impressions} Mal gezeigt, ${live.search.clicks} Klicks (${(ctr * 100).toFixed(1).replace('.', ',')} %), Ø Platz ${String(live.search.position).replace('.', ',')}`,
-      'Für diesen Platz klicken zu wenige. Titel und Beschreibung konkreter machen: Ort, Leistung, ein klarer Vorteil.', 2)
-  }
+  const M = []
+  const add = (m) => M.push(m)
 
-  // --- Tempo & Technik
-  const realM = live && live.speed.mobile_n >= 5 ? live.speed.mobile : null
-  const lcp = realM || f.lcp
+  // 1. loading time on a phone
+  const realLcp = live && live.speed.mobile_n >= 5 ? live.speed.mobile : null
+  const lcp = realLcp || f.lcp
   if (lcp) {
-    add('speed', 'lcp', lcp <= 2500 ? 'good' : lcp <= 4000 ? 'warn' : 'bad', 'Ladezeit auf dem Handy',
-      `${sec(lcp)} bis der Hauptinhalt steht${realM ? ` (echte Besucher, ${live.speed.mobile_n} Messungen)` : ' (Test ohne langsames Netz)'}`,
-      'Das größte Bild oben verkleinern und als WebP liefern, Schriften und Skripte reduzieren. Ziel: unter 2,5 Sekunden.', 3)
+    const secs = lcp / 1000
+    const over = Math.max(0, secs - 2.5)
+    // studies on mobile sites: each second of waiting costs roughly 7 % of conversions
+    const lost = Math.min(0.35, over * 0.07)
+    add({
+      id: 'lcp',
+      group: 'Tempo',
+      title: 'Ladezeit auf dem Handy',
+      value: secs,
+      display: de(secs) + ' s',
+      target: '≤ 2,5 s',
+      status: secs <= 2.5 ? 'good' : secs <= 4 ? 'warn' : 'bad',
+      basis: realLcp ? `Median aus ${live.speed.mobile_n} echten Handy-Besuchen` : 'Messung im Test, ohne langsames Netz (echte Werte folgen)',
+      leads: over ? leadsMonth * lost : 0,
+      why: over ? `Jede Sekunde Wartezeit kostet erfahrungsgemäß etwa 7 % der Anfragen. Bei ${de(over)} s über dem Ziel sind das rund ${pct(lost)}.` : 'Die Seite steht schnell.',
+      fix: 'Das große Bild oben verkleinern und als WebP liefern, unnötige Skripte entfernen.'
+    })
   }
-  if (!n.unavailable) {
-    add('speed', 'weight', n.bytes <= 2.5e6 ? 'good' : n.bytes <= 5e6 ? 'warn' : 'bad', 'Datenmenge der Seite',
-      `${kb(n.bytes)} in ${n.requests} Dateien${n.byType && n.byType.Image ? `, davon Bilder ${kb(n.byType.Image)}` : ''}`,
-      'Bilder komprimieren (WebP, höchstens 200 KB pro Bild) und nicht mehr laden als angezeigt wird.', 2)
+  // 2. data volume, as seconds on a normal phone connection
+  if (n.bytes) {
+    const secs = (n.bytes * 8) / (MOBILE_MBIT * 1e6)
+    const heavy = (n.big || []).filter((b) => b.type === 'Image')
+    add({
+      id: 'weight',
+      group: 'Tempo',
+      title: 'Datenmenge pro Aufruf',
+      value: n.bytes,
+      display: kb(n.bytes),
+      target: '≤ 2,5 MB',
+      status: n.bytes <= 2.5e6 ? 'good' : n.bytes <= 5e6 ? 'warn' : 'bad',
+      basis: `${n.requests} Dateien, davon Bilder ${kb((n.byType && n.byType.Image) || 0)}`,
+      leads: 0,
+      why: `Bei normalem Handy-Empfang (${MOBILE_MBIT} Mbit/s) dauert es etwa ${de(secs, 0)} Sekunden, bis alles geladen ist.` + (heavy.length ? ` ${heavy.length} Bilder sind einzeln größer als 250 KB.` : ''),
+      fix: heavy.length ? 'Diese Bilder auf höchstens 200 KB bringen (WebP, passende Breite).' : 'Bilder und Skripte reduzieren.',
+      items: heavy.map((b) => ({ img: b.url, label: kb(b.bytes) }))
+    })
   }
-  const heavy = (n.big || []).filter((b) => b.type === 'Image')
-  add('speed', 'images', !heavy.length && !f.images.oversized.length ? 'good' : heavy.length > 2 ? 'bad' : 'warn', 'Bildgrößen',
-    heavy.length ? `${heavy.length} ${heavy.length === 1 ? 'Bild' : 'Bilder'} über 250 KB, das größte ${kb(heavy[0].bytes)}` : f.images.oversized.length ? `${f.images.oversized.length} ${f.images.oversized.length === 1 ? 'Bild' : 'Bilder'} viel größer als angezeigt` : 'Keine übergroßen Bilder',
-    'Diese Bilder auf die angezeigte Größe verkleinern und komprimieren.', 2,
-    heavy.length ? heavy.map((b) => ({ img: b.url, label: kb(b.bytes) })) : f.images.oversized.map((i) => ({ img: i.src, label: `${i.natural} px statt ${i.shown} px` })))
-  add('speed', 'cls', f.cls <= 0.1 ? 'good' : f.cls <= 0.25 ? 'warn' : 'bad', 'Springt die Seite beim Laden?',
-    f.cls <= 0.1 ? 'Nein, die Seite steht ruhig' : `Ja, Verschiebung ${String(f.cls).replace('.', ',')}`,
-    'Bildern und Einbettungen feste Höhen geben, damit nichts nachrutscht, während man liest oder tippt.', 1)
-  add('speed', 'mobile', f.viewport && !f.overflow ? 'good' : 'bad', 'Passt auf den Handybildschirm',
-    !f.viewport ? 'Keine Handy-Einstellung (viewport)' : f.overflow ? 'Seite ist breiter als der Bildschirm, man kann seitlich wischen' : 'Ja',
-    'Elemente finden, die breiter als der Bildschirm sind, und begrenzen.', 3)
-  const tinyShare = f.textEls ? f.tinyText / f.textEls : 0
-  add('speed', 'text', tinyShare <= 0.05 ? 'good' : tinyShare <= 0.2 ? 'warn' : 'bad', 'Lesbare Schrift auf dem Handy',
-    tinyShare <= 0.05 ? 'Text ist groß genug' : `${Math.round(tinyShare * 100)} % der Texte kleiner als 12 px`, 'Fließtext mindestens 16 px, Kleingedrucktes mindestens 12 px.', 1)
-  add('speed', 'tap', f.smallTargets <= 2 ? 'good' : f.smallTargets <= 8 ? 'warn' : 'bad', 'Knöpfe groß genug zum Tippen',
-    f.smallTargets <= 2 ? 'Ja' : `${f.smallTargets} Knöpfe oder Links kleiner als eine Fingerkuppe`, 'Knöpfe und Links mindestens 44 px hoch machen, mit Abstand zueinander.', 1, (f.smallLabels || []).map((l) => ({ label: l })))
-  const secure = a.https.upgraded || (/^https:/.test(a.https.location || '') && a.https.hops > 0)
-  add('speed', 'https', secure || a.https.status === 0 ? 'good' : 'warn', 'Sichere Verbindung (HTTPS)',
-    secure ? 'http leitet auf https um' : `http antwortet mit ${a.https.status} und bleibt unverschlüsselt`, 'Alle http-Aufrufe dauerhaft (301) auf https umleiten.', 1)
-  add('speed', 'errors', !(a.errors || []).length && !n.failed ? 'good' : 'warn', 'Fehler beim Laden',
-    (a.errors || []).length || n.failed ? `${(a.errors || []).length} Skriptfehler, ${n.failed || 0} Dateien nicht gefunden` : 'Keine',
-    'Die Fehler in der Browser-Konsole prüfen lassen, sie können Formulare oder Knöpfe lahmlegen.', 1, (a.errors || []).map((e) => ({ label: e })))
+  // 3. how many visitors reach the contact section
+  if (live && live.engaged >= 15 && live.contact_section) {
+    const share = live.saw_contact / live.engaged
+    const target = 0.5
+    const notSaw = live.engaged - live.saw_contact
+    const rateSaw = live.saw_contact ? live.leads_saw / live.saw_contact : 0
+    const rateNot = notSaw ? live.leads_not / notSaw : 0
+    const contactGivenArea = rateSaw
+    // only the extra contacts that seeing the section brings, and never more than half of today's
+    const uplift = Math.max(0, rateSaw - rateNot)
+    const gain = share < target && live.leads_saw >= 2 ? Math.min((target - share) * visitsMonth * uplift, leadsMonth * 0.5) : 0
+    add({
+      id: 'reach',
+      group: 'Kontakt',
+      title: 'Besucher, die den Kontaktbereich sehen',
+      value: share,
+      display: pct(share),
+      target: '≥ 50 %',
+      // when the section itself brings no extra contacts, its reach is a fact, not a problem
+      status: share >= target ? 'good' : uplift <= 0 || live.leads_saw < 2 ? 'info' : share >= 0.3 ? 'warn' : 'bad',
+      basis: `${live.saw_contact} von ${live.engaged} Besuchen dieser Seite`,
+      leads: gain,
+      why: share < target && (uplift <= 0 || live.leads_saw < 2)
+        ? `Wer sich meldet, tut das hier meist schon vorher, etwa über die Telefonnummer oben. Der Kontaktbereich selbst brachte bisher ${live.leads_saw} ${live.leads_saw === 1 ? 'Anfrage' : 'Anfragen'}.`
+        : share < target
+        ? `Wer den Kontaktbereich sieht, meldet sich zu ${pct(contactGivenArea)}, die anderen zu ${pct(rateNot)}. Sähen ihn 50 % statt ${pct(share)}, kämen rechnerisch mehr Anfragen.`
+        : 'Die Hälfte der Besucher und mehr kommt bis zum Kontakt.',
+      fix: 'Den Kontaktbereich weiter nach oben holen oder einen Knopf „Anfrage stellen“ früher auf der Seite zeigen.'
+    })
+  }
+  // 4. Google: clicks the page should get at its position, and searches close to page one
+  if (live && live.search.impressions >= 30) {
+    let expected = 0
+    let near = 0
+    const nearList = []
+    for (const r of live.search.queries) {
+      expected += r.impressions * expectedCtr(r.position)
+      if (r.position > 3.5 && r.position <= 20 && r.impressions >= 5) {
+        const extra = r.impressions * (expectedCtr(3) - expectedCtr(r.position))
+        if (extra > 0) {
+          near += extra
+          nearList.push({ label: `${r.query} · Platz ${de(r.position)} · ${r.impressions}× gesehen` })
+        }
+      }
+    }
+    const gap = Math.max(0, expected - live.search.clicks)
+    const ctr = live.search.clicks / live.search.impressions
+    const expCtr = expected / live.search.impressions
+    add({
+      id: 'ctr',
+      group: 'Google',
+      title: 'Klicks aus der Google-Suche',
+      value: ctr,
+      display: pct(ctr),
+      target: '≈ ' + pct(expCtr) + ' auf diesem Platz',
+      status: ctr >= expCtr * 0.8 ? 'good' : ctr >= expCtr * 0.5 ? 'warn' : 'bad',
+      basis: `${live.search.impressions}× gezeigt, ${live.search.clicks} Klicks, Ø Platz ${de(live.search.position)} (${live.search.days} Tage)`,
+      visits: gap * searchMonth,
+      leads: gap * searchMonth * rate,
+      why: gap >= 1 ? `Auf diesem Platz klicken im Schnitt ${pct(expCtr)}. Das wären rund ${de(gap * searchMonth, 0)} Besucher mehr im Monat.` : 'Der Eintrag wird so oft angeklickt, wie es auf diesem Platz üblich ist.',
+      fix: 'Titel und Beschreibung für Google konkreter machen: Leistung, Ort und ein klarer Vorteil.'
+    })
+    if (nearList.length) {
+      add({
+        id: 'near',
+        group: 'Google',
+        title: 'Suchen knapp hinter den Top 3',
+        value: nearList.length,
+        display: String(nearList.length),
+        target: 'Platz 1 bis 3',
+        status: near * searchMonth >= 10 ? 'warn' : 'good',
+        basis: 'Suchbegriffe auf Platz 4 bis 20 mit echten Einblendungen',
+        visits: near * searchMonth,
+        leads: near * searchMonth * rate,
+        why: `Kämen diese Suchen auf Platz 3, brächte das rund ${de(near * searchMonth, 0)} Besucher mehr im Monat.`,
+        fix: 'Zu diesen Begriffen mehr eigenen Text auf die Seite bringen (Leistung, Ort, Fragen) und intern darauf verlinken.',
+        items: nearList.slice(0, 8)
+      })
+    }
+  }
+  // 5. contacts per visit (measured, no target: it is the result of everything above)
+  if (live && live.visits >= 10) {
+    add({
+      id: 'rate',
+      group: 'Kontakt',
+      title: 'Besucher, die sich melden',
+      value: live.leads / live.visits,
+      display: pct(live.leads / live.visits),
+      target: null,
+      status: 'info',
+      basis: `${live.leads} von ${live.visits} Besuchen dieser Seite in ${Math.min(28, live.tracked_days)} Tagen`,
+      leads: 0,
+      why: 'Anruf, WhatsApp, E-Mail oder Formular, irgendwo auf der Website nach dem Besuch dieser Seite.'
+    })
+  }
+  // 6. errors that stop people
+  if (a.broken && a.broken.length) {
+    add({
+      id: 'broken',
+      group: 'Technik',
+      title: 'Kaputte Links',
+      value: a.broken.length,
+      display: String(a.broken.length),
+      target: '0',
+      status: 'bad',
+      basis: `${a.checkedLinks} interne Links geprüft`,
+      leads: 0,
+      why: 'Wer darauf tippt, landet auf einer Fehlerseite.',
+      fix: 'Links korrigieren oder entfernen.',
+      items: a.broken.map((b) => ({ label: b.url.replace(/^https?:\/\/(www\.)?/, '') + ' · Fehler ' + b.status }))
+    })
+  }
+  if ((a.errors || []).length) {
+    add({
+      id: 'errors',
+      group: 'Technik',
+      title: 'Skriptfehler beim Laden',
+      value: a.errors.length,
+      display: String(a.errors.length),
+      target: '0',
+      status: 'warn',
+      basis: 'im Test auf dem Handy',
+      leads: 0,
+      why: 'Fehler in Skripten können Knöpfe oder Formulare lahmlegen.',
+      fix: 'Von der Webagentur in der Browser-Konsole prüfen lassen.',
+      items: a.errors.map((e) => ({ label: e }))
+    })
+  }
 
-  // --- Kontakt & Vertrauen
-  add('conv', 'cta', f.cta.fold ? 'good' : 'bad', 'Kontakt-Knopf im ersten Bildschirm',
-    f.cta.fold ? f.cta.labels.map((l) => `„${l.slice(0, 40)}"`).join(', ') : 'Auf dem Handy ist ohne Scrollen kein Kontakt-Knopf zu sehen',
-    'Oben einen klaren Knopf platzieren: „Kostenlos anfragen" oder „Jetzt anrufen".', 4)
-  add('conv', 'tel', f.tel.count ? (f.tel.fold || f.fixedContact ? 'good' : 'warn') : 'bad', 'Telefonnummer antippbar',
-    f.tel.count ? `${f.tel.count} Anruf-Links${f.tel.fold ? ', einer davon sofort sichtbar' : ', aber erst weiter unten'}` : 'Keine antippbare Telefonnummer',
-    f.tel.count ? 'Die Telefonnummer auch oben oder in einer festen Leiste zeigen. Im Handwerk ist ein Anruf der häufigste Kontakt.' : 'Die Telefonnummer als tel:-Link einbauen, damit ein Tipp genügt.', 3)
-  add('conv', 'whatsapp', f.whatsapp.count ? 'good' : 'warn', 'WhatsApp-Kontakt',
-    f.whatsapp.count ? `${f.whatsapp.count} WhatsApp-Links` : 'Nicht vorhanden',
-    'Einen WhatsApp-Knopf anbieten. Viele schicken lieber ein Foto vom Problem, als anzurufen.', 1)
-  add('conv', 'sticky', f.fixedContact ? 'good' : 'warn', 'Kontakt immer erreichbar',
-    f.fixedContact ? 'Feste Kontaktleiste oder fester Knopf vorhanden' : 'Beim Scrollen verschwindet jeder Kontaktweg',
-    'Auf dem Handy eine feste Leiste unten mit „Anrufen" und „Anfragen" einbauen.', 2)
-  const hasForm = f.form.forms || f.form.fields || f.form.wizard
-  add('conv', 'form', hasForm ? (f.form.fields > 7 ? 'warn' : 'good') : 'info', 'Anfrageformular',
-    hasForm ? `${f.form.wizard ? 'Mehrstufiges Formular' : f.form.forms + ' Formular'}${f.form.fields ? `, ${f.form.fields} Felder sichtbar` : ''}${f.form.required ? `, ${f.form.required} Pflichtfelder` : ''}` : 'Auf dieser Seite kein Formular',
-    hasForm ? 'Weniger Felder bedeuten mehr Anfragen. Alles weglassen, was man auch im Gespräch klären kann.' : 'Kein Fehler, solange der Weg zum Formular kurz ist.', 2)
-  add('conv', 'trust', f.trust ? 'good' : 'warn', 'Bewertungen und Referenzen',
-    f.trust ? 'Bewertungen oder Referenzen erwähnt' : 'Keine Bewertungen oder Kundenstimmen gefunden',
-    'Google-Sterne und zwei, drei echte Kundenstimmen zeigen. Das ist für Fremde der stärkste Grund, sich zu melden.', 2)
-  add('conv', 'nap', f.address ? 'good' : 'warn', 'Adresse sichtbar',
-    f.address ? 'Ja' : 'Keine Postanschrift gefunden', 'Adresse mit PLZ zeigen. Das schafft Vertrauen und hilft bei lokalen Google-Suchen.', 1)
-  if (live && live.visits >= 30) {
-    const rate = live.leads / live.visits
-    add('conv', 'rate', rate >= 0.03 ? 'good' : rate >= 0.01 ? 'warn' : 'bad', 'Melden sich Besucher dieser Seite?',
-      `${live.leads} von ${live.visits} Besuchern haben danach angerufen, geschrieben oder angefragt (${(rate * 100).toFixed(1).replace('.', ',')} %, letzte 4 Wochen)`,
-      'Auf dieser Seite meldet sich kaum jemand. Heatmap ansehen: Kommen die Leute bis zum Kontakt? Ist das Angebot klar?', 3)
-  }
+  // basics: yes or no, things a page simply should have
+  const tl = f.title.length
+  const dl = f.description.length
+  const alts = f.images.total ? (f.images.total - f.images.noAlt) / f.images.total : 1
+  const B = [
+    ['Kontakt-Knopf ohne Scrollen sichtbar', f.cta.fold > 0, f.cta.fold ? f.cta.labels.map((l) => `„${l.slice(0, 30)}"`).join(', ') : 'Auf dem Handy oben kein Kontakt-Knopf', 'Oben einen Knopf „Kostenlos anfragen" oder „Jetzt anrufen" zeigen.', 3],
+    ['Telefonnummer antippbar', f.tel.count > 0, f.tel.count ? f.tel.count + ' Anruf-Links' : 'Keine tel:-Links', 'Die Nummer als tel:-Link einbauen.', 3],
+    ['Kontakt beim Scrollen erreichbar', f.fixedContact, f.fixedContact ? 'Feste Leiste oder fester Knopf' : 'Kein fester Kontaktweg', 'Auf dem Handy eine feste Leiste mit „Anrufen" und „Anfragen" einbauen.', 2],
+    ['Passt auf den Handybildschirm', !!f.viewport && !f.overflow, f.overflow ? 'Seite ist breiter als der Bildschirm' : 'Ja', 'Zu breite Elemente begrenzen.', 3],
+    ['Seitentitel 25–65 Zeichen', tl >= 25 && tl <= 65, tl ? `„${f.title}" (${tl})` : 'Kein Titel', 'Titel mit Leistung und Ort, 40–60 Zeichen.', 2],
+    ['Beschreibung für Google 70–165 Zeichen', dl >= 70 && dl <= 165, dl ? `${dl} Zeichen` : 'Keine Beschreibung', '120–155 Zeichen: was, wo, warum ihr.', 2],
+    ['Genau eine Hauptüberschrift', f.h1.length === 1, f.h1.length ? f.h1.length + '× H1' : 'Keine H1', 'Genau eine H1 mit Leistung und Ort.', 1],
+    ['Google darf die Seite zeigen', !/noindex/i.test(f.robots) && !a.robots.blocksAll, /noindex/i.test(f.robots) ? 'noindex gesetzt' : a.robots.blocksAll ? 'robots.txt sperrt alles' : 'Ja', 'Die Sperre entfernen.', 3],
+    ['Bilder beschrieben (Alt-Text)', alts >= 0.9, `${f.images.total - f.images.noAlt} von ${f.images.total}`, 'Jedem Bild einen kurzen Alt-Text geben.', 1],
+    ['Firmendaten für Google (LocalBusiness)', f.ld.some((t) => /LocalBusiness|Organization|Contractor|Painter|Plumber|Electrician|RealEstate|Locksmith|HomeAndConstruction/i.test(t)), f.ld.length ? f.ld.slice(0, 3).join(', ') : 'Keine', 'Name, Adresse, Telefon und Öffnungszeiten als strukturierte Daten einbauen.', 1],
+    ['Vorschaubild beim Teilen', !!f.og.image, f.og.image ? 'Gesetzt' : 'Fehlt', 'og:image (1200×630) setzen.', 1],
+    ['In der Sitemap', a.sitemap.status === 200 && a.sitemap.inSitemap !== false, a.sitemap.status === 200 ? (a.sitemap.inSitemap === false ? 'Seite fehlt in der Sitemap' : 'Ja') : 'Keine Sitemap', 'Seite in die sitemap.xml aufnehmen.', 1],
+    ['Impressum verlinkt', f.impressum, f.impressum ? 'Ja' : 'Fehlt', 'Pflicht: Impressum von jeder Seite verlinken.', 3],
+    ['Datenschutz verlinkt', f.datenschutz, f.datenschutz ? 'Ja' : 'Fehlt', 'Pflicht: Datenschutzerklärung von jeder Seite verlinken.', 3],
+    ['Sichere Verbindung (HTTPS)', a.https.upgraded || a.https.status === 0 || (/^https:/.test(a.https.location || '') && a.https.hops > 0), 'http → https', 'Alle http-Aufrufe auf https umleiten.', 2]
+  ].map(([title, ok, found, fix, weight]) => ({ title, ok: !!ok, found, fix: ok ? '' : fix, weight }))
 
-  // --- Rechtliches
-  add('legal', 'impressum', f.impressum ? 'good' : 'bad', 'Impressum verlinkt', f.impressum ? 'Ja' : 'Kein Impressum-Link gefunden', 'Pflicht für Firmen-Websites: Impressum von jeder Seite aus verlinken.', 3)
-  add('legal', 'privacy', f.datenschutz ? 'good' : 'bad', 'Datenschutzerklärung verlinkt', f.datenschutz ? 'Ja' : 'Kein Datenschutz-Link gefunden', 'Pflicht: Datenschutzerklärung von jeder Seite aus verlinken.', 3)
-  const trackers = f.thirdParty.filter((h) => /google|facebook|fbcdn|doubleclick|hotjar|tiktok|linkedin|clarity/i.test(h))
-  add('legal', 'consent', !trackers.length ? 'good' : f.cookieBanner ? 'good' : 'warn', 'Fremddienste und Einwilligung',
-    trackers.length ? `Lädt ${trackers.slice(0, 4).join(', ')}${f.cookieBanner ? ', Cookie-Hinweis vorhanden' : ', kein Cookie-Hinweis gefunden'}` : 'Keine Werbe- oder Analysedienste von Dritten',
-    'Dienste wie Google oder Meta erst nach Einwilligung laden. Mit dem Datenschutz-Verantwortlichen prüfen.', 1)
-  add('legal', 'lang', /^de/i.test(f.lang) ? 'good' : 'warn', 'Sprache angegeben', f.lang ? `lang="${f.lang}"` : 'Nicht angegeben', 'lang="de" im HTML setzen, für Vorleseprogramme und Google.', 1)
-
-  // --- Google-Profil: for local trades often the first thing people see
-  const g = live && live.gbp
-  // a profile without any synced numbers is not connected yet; grading it would only add noise
-  if (g && (g.count !== null || g.views)) {
-    const cnt = g.count || 0
-    add('local', 'reviews', cnt >= 20 ? 'good' : cnt >= 5 ? 'warn' : 'bad', 'Anzahl Google-Bewertungen',
-      cnt ? `${cnt} Bewertungen für „${g.name}"` : `„${g.name}" hat noch keine Bewertung`,
-      'Nach jedem Auftrag um eine Bewertung bitten, am besten mit Link oder QR-Code auf Rechnung und Visitenkarte. Ab etwa 20 Bewertungen wirkt ein Profil verlässlich.', 3)
-    if (cnt) add('local', 'rating', g.rating >= 4.5 ? 'good' : g.rating >= 4 ? 'warn' : 'bad', 'Sterne-Durchschnitt',
-      `${String(g.rating).replace('.', ',')} von 5 Sternen`, 'Auf jede Bewertung antworten, auch auf kritische, ruhig und sachlich.', 2)
-    add('local', 'gbpuse', (g.calls || 0) + (g.clicks || 0) + (g.directions || 0) > 0 ? 'good' : 'warn', 'Wird das Profil genutzt?',
-      `${g.views || 0}× gesehen, ${g.calls || 0} Anrufe, ${g.clicks || 0} Klicks zur Website, ${g.directions || 0} Routen (4 Wochen)`,
-      'Das Profil wird gesehen, aber niemand handelt. Fotos von echten Arbeiten, Leistungen und Öffnungszeiten ergänzen und regelmäßig Beiträge posten.', 2)
+  const potential = M.reduce((s, m) => s + (m.leads || 0), 0)
+  const potentialVisits = M.reduce((s, m) => s + (m.visits || 0), 0)
+  return {
+    potential: { leads: Math.round(potential * 10) / 10, visits: Math.round(potentialVisits), rate, rate_note: rateNote, leads_month: Math.round(leadsMonth * 10) / 10, visits_month: Math.round(visitsMonth) },
+    metrics: M,
+    basics: B.sort((x, y) => (x.ok === y.ok ? y.weight - x.weight : x.ok ? 1 : -1)),
+    basics_ok: B.filter((b) => b.ok).length,
+    basics_total: B.length
   }
-
-  const val = { good: 1, warn: 0.5, bad: 0 }
-  const scores = {}
-  for (const cat of Object.keys(CATS)) {
-    const cs = C.filter((c) => c.cat === cat && c.status !== 'info')
-    const w = cs.reduce((s, c) => s + c.weight, 0)
-    scores[cat] = w ? Math.round((cs.reduce((s, c) => s + c.weight * val[c.status], 0) / w) * 100) : null
-  }
-  const all = C.filter((c) => c.status !== 'info')
-  const tw = all.reduce((s, c) => s + c.weight, 0)
-  const score = tw ? Math.round((all.reduce((s, c) => s + c.weight * val[c.status], 0) / tw) * 100) : null
-  // the order to fix things in: heavy and broken first
-  const urgency = (c) => c.weight * (c.status === 'bad' ? 2 : 1)
-  const todo = C.filter((c) => c.status === 'bad' || c.status === 'warn').sort((x, y) => urgency(y) - urgency(x))
-  return { score, scores, checks: C, todo: todo.map((c) => c.id) }
 }

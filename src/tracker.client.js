@@ -54,6 +54,7 @@
   var SKIP_SECTION = /^(main-content|top|faq-a-\d+|root|app|cookie.*)$/
   var seen = []
   var depth = 0
+  var deepest = 0
   var visibleMs = 0
   var visibleSince = 0
   var engagementSent = true
@@ -88,6 +89,7 @@
   function resetEngagement() {
     seen = []
     depth = 0
+    deepest = 0
     visibleMs = 0
     visibleSince = document.visibilityState === 'visible' ? Date.now() : 0
     engagementSent = false
@@ -120,6 +122,8 @@
       var max = Math.max(doc.scrollHeight - window.innerHeight, 1)
       var pct = Math.min(100, Math.round(((window.scrollY || doc.scrollTop) / max) * 100))
       if (pct > depth) depth = pct
+      var bottom = (window.scrollY || doc.scrollTop) + window.innerHeight
+      if (bottom > deepest) deepest = bottom
     },
     { passive: true }
   )
@@ -133,6 +137,9 @@
     engagementSent = true
     var bucket = depth >= 90 ? '100%' : depth >= 75 ? '75%' : depth >= 50 ? '50%' : depth >= 25 ? '25%' : '0%'
     var p = { label: bucket, d: depth, t: Math.min(t, 3600), sec: seen.slice(0, 40), sn: sectionHeadings(seen.slice(0, 40)) }
+    // the lowest point seen, tied to the page's own sections so it maps onto any screen width
+    var sb = sectionAnchor(Math.max(deepest, window.innerHeight))
+    if (sb) p.sb = sb
     // load time only exists for a real page load, not for in-page navigation
     if (lcp && !lcpSent) { p.lcp = Math.min(Math.round(lcp), 60000); lcpSent = true }
     send('Engagement', p)
@@ -162,7 +169,56 @@
     } catch (e) {}
   }
 
+  // ---- anchors: positions tied to the page's structure, not to one screen size ----
+  // The same two functions run when the dashboard photographs the page, so a click or a scroll
+  // position lands on the same element in the picture, whatever screen the visitor had.
+  function topSections() {
+    var all = document.querySelectorAll('section'), out = []
+    for (var i = 0; i < all.length; i++) if (!all[i].parentElement || !all[i].parentElement.closest('section')) out.push(all[i])
+    return out
+  }
+  // "index:per mille" of the top-level section a page position falls in; -2 above the first
+  // section (header), -1 below the last one (footer)
+  function sectionAnchor(pageY) {
+    var list = topSections()
+    if (!list.length) return ''
+    var sy = window.scrollY || document.documentElement.scrollTop
+    var first = list[0].getBoundingClientRect().top + sy
+    if (pageY < first) return '-2:' + Math.round((pageY / Math.max(first, 1)) * 1000)
+    var pick = -1
+    for (var i = 0; i < list.length; i++) {
+      var r = list[i].getBoundingClientRect()
+      if (r.height > 0 && r.top + sy <= pageY) pick = i
+    }
+    var last = list[list.length - 1].getBoundingClientRect()
+    var end = last.bottom + sy
+    if (pick < 0 || (pick === list.length - 1 && pageY >= end)) {
+      var ph = document.documentElement.scrollHeight
+      return '-1:' + Math.round(Math.min(1, (pageY - end) / Math.max(ph - end, 1)) * 1000)
+    }
+    var rr = list[pick].getBoundingClientRect()
+    return pick + ':' + Math.min(9999, Math.round(((pageY - (rr.top + sy)) / Math.max(rr.height, 1)) * 1000))
+  }
+  // a short path to an element from its nearest ancestor with a stable id
+  var STABLE_ID = /^[A-Za-z][\w-]{0,40}$/
+  function pathOf(el) {
+    var parts = []
+    var n = el
+    while (n && n.nodeType === 1 && parts.length < 30) {
+      if (n === document.body) { parts.unshift('body'); break }
+      if (n.id && STABLE_ID.test(n.id) && !/\d{4,}/.test(n.id)) { parts.unshift('#' + n.id); break }
+      var i = 1
+      var s = n
+      while ((s = s.previousElementSibling)) if (s.tagName === n.tagName) i++
+      parts.unshift(n.tagName.toLowerCase() + ':' + i)
+      n = n.parentElement
+    }
+    var out = parts.join('>')
+    return out.length <= 220 ? out : ''
+  }
+
   // ---- heatmap: click positions and page geometry ----
+  var CLICK_TARGET = 'a, button, [role="button"], input, textarea, select, label, img, video, summary, h1, h2, h3, p, li'
   var heat = []
   var heatSent = false
   function describe(t) {
@@ -181,7 +237,13 @@
       var w = Math.max(doc.scrollWidth, 1)
       var x = Math.round((e.pageX / w) * 1000)
       var y = Math.round(e.pageY)
-      heat.push([x, y, sectionName(e.target) || '', describe(e.target)].join('|').replace(/[\n\r]/g, ' ').slice(0, 110))
+      // where inside the clicked element, so the dot lands on that element in the picture
+      var el = (e.target.closest && e.target.closest(CLICK_TARGET)) || e.target
+      var r = el.getBoundingClientRect ? el.getBoundingClientRect() : null
+      var ax = r && r.width ? Math.round(((e.clientX - r.left) / r.width) * 1000) : ''
+      var ay = r && r.height ? Math.round(((e.clientY - r.top) / r.height) * 1000) : ''
+      var label = describe(e.target).replace(/\|/g, '/')
+      heat.push([x, y, sectionName(e.target) || '', label, pathOf(el), ax, ay, sectionAnchor(y)].join('|').replace(/[\n\r]/g, ' ').slice(0, 300))
     },
     true
   )

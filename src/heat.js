@@ -26,7 +26,7 @@ export async function heat(db, q, page, device) {
       .all(),
     db
       .prepare(
-        `SELECT x, y, ph, target, section FROM heat_clicks
+        `SELECT x, y, ph, target, section, anchor, ax, ay, sa FROM heat_clicks
          WHERE site IN (${q.sites.map(() => '?').join(',')}) AND page = ? AND device = ? AND date >= ? AND date <= ? LIMIT 5000`
       )
       .bind(...q.sites, page, device, q.from, q.to)
@@ -50,10 +50,13 @@ export async function heat(db, q, page, device) {
 
   // scroll reach: share of page views that got at least this far, in 2 % steps
   const depths = []
+  // per page view: the lowest point seen, as "section index:per mille" (newer tracker) and/or depth %
+  const bottoms = []
   const seen = new Map()
   for (const r of eng.results) {
     const p = parse(r.props) || {}
     if (typeof p.d === 'number') depths.push(Math.max(0, Math.min(100, p.d)))
+    if (typeof p.d === 'number' || typeof p.sb === 'string') bottoms.push([typeof p.sb === 'string' && /^-?\d{1,3}:\d{1,4}$/.test(p.sb) ? p.sb : null, typeof p.d === 'number' ? Math.max(0, Math.min(100, p.d)) : null])
     for (const id of Array.isArray(p.sec) ? p.sec : []) seen.set(id, (seen.get(id) || 0) + 1)
   }
   const views = depths.length
@@ -61,7 +64,9 @@ export async function heat(db, q, page, device) {
   for (let pct = 0; pct <= 100; pct += 2) reach.push(views ? Math.round((depths.filter((d) => d >= pct).length / views) * 1000) / 10 : 0)
 
   // clicks as relative positions, so they fit any screenshot of the page
-  const points = clicks.results.filter((c) => c.ph > 0).map((c) => ({ x: c.x / 1000, y: Math.min(1, c.y / c.ph), target: c.target, section: c.section }))
+  const points = clicks.results
+    .filter((c) => c.ph > 0)
+    .map((c) => ({ x: c.x / 1000, y: Math.min(1, c.y / c.ph), target: c.target, section: c.section, anchor: c.anchor || null, ax: c.ax, ay: c.ay, sa: c.sa || null }))
   const targets = new Map()
   for (const c of points) if (c.target) targets.set(c.target, (targets.get(c.target) || 0) + 1)
 
@@ -80,6 +85,7 @@ export async function heat(db, q, page, device) {
     device,
     views,
     reach,
+    bottoms,
     fold: g && g.ph ? Math.min(1, g.vh / g.ph) : null,
     clicks: points,
     targets: [...targets.entries()].map(([target, n]) => ({ target, n })).sort((a, b) => b.n - a.n).slice(0, 12),

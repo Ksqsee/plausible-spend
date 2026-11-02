@@ -14,13 +14,14 @@ const FONTS = { 'inter.woff2': interFont, 'inter-tight.woff2': interTightFont, '
 import { handleEvent } from './ingest.js'
 import { BadRequest, Forbidden, MAX_RANGE_DAYS, ads, breakdown, overview, parseQuery, realtime, resolveSites, search, sitesSummary, timeseries } from './stats.js'
 import { syncAll } from './sync.js'
-import { adsDeep, content, forms, funnel, gbp, insights, leads, months, paths, rollupMonths, setInsightState, when, xray } from './deep.js'
+import { adsDeep, content, forms, funnel, gbp, insights, leads, months, outcomeStats, paths, rollupMonths, setInsightState, setOutcome, when, xray } from './deep.js'
 import { localParts } from './ingest.js'
 import { summary } from './summary.js'
 import { heat } from './heat.js'
 import { simFunnel } from './sim.js'
 import { capture, getShot, shotMeta } from './shots.js'
-import { AUDIT_MAX_AGE, CATS, getAudit, grade, listAudits, liveData, refreshOneAudit, runAudit } from './audit.js'
+import { monitorStatus, runMonitor } from './monitor.js'
+import { AUDIT_MAX_AGE, assess, getAudit, listAudits, liveData, refreshOneAudit, runAudit } from './audit.js'
 import { MIN_PASSWORD_LENGTH, checkPassword, currentUser, ensureAdmin, generatePassword, login, logout, setPassword } from './auth.js'
 
 // Headers every dashboard response carries: no framing, no MIME sniffing, no referrer to third parties.
@@ -161,6 +162,13 @@ async function api(request, env, url, user) {
     const { results } = await db.prepare('SELECT * FROM sync_log ORDER BY ts DESC LIMIT 40').all()
     return json(results)
   }
+  if (path === 'outcome' && request.method === 'POST') {
+    const body = await readJson(request)
+    const sites = await resolveSites(db, new URL('https://x/?scope=all'), user)
+    const r = await setOutcome(db, sites, body, user.username)
+    if (r.error) throw new BadRequest(r.error)
+    return json(r)
+  }
   if (path === 'insight-state' && request.method === 'POST') {
     const body = await readJson(request)
     return json(await setInsightState(db, body.key, body.state, own || 'admin'))
@@ -183,6 +191,17 @@ async function api(request, env, url, user) {
     return new Response(shot.image, { headers: { ...BASE_HEADERS, 'Content-Type': 'image/jpeg', 'Cache-Control': 'private, max-age=300' } })
   }
 
+  // --- uptime and snippet watch ---
+  if (path === 'monitor') {
+    const sites = await resolveSites(db, url, user)
+    return json(await monitorStatus(env, sites))
+  }
+  if (path === 'monitor-run' && request.method === 'POST') {
+    adminOnly(user)
+    await runMonitor(env)
+    return json({ ok: true })
+  }
+
   // --- website check ---
   if (path === 'audit' || path === 'audits') {
     const sites = await resolveSites(db, url, user)
@@ -194,20 +213,20 @@ async function api(request, env, url, user) {
       const list = await listAudits(env, site)
       const out = []
       for (const a of list) {
-        const g = grade(a, await liveData(db, site, a.page, from, to))
-        out.push({ page: a.page, ts: a.ts, score: g.score, scores: g.scores, bad: g.checks.filter((c) => c.status === 'bad').length, warn: g.checks.filter((c) => c.status === 'warn').length })
+        const g = assess(a, await liveData(db, site, a.page, from, to))
+        out.push({ page: a.page, ts: a.ts, potential: g.potential.leads, issues: g.metrics.filter((m) => m.status === 'bad' || m.status === 'warn').length + g.basics.filter((x) => !x.ok).length })
       }
       out.sort((x, y) => (x.page === '/' ? -1 : y.page === '/' ? 1 : x.page.localeCompare(y.page)))
-      return json({ pages: out, cats: CATS })
+      return json({ pages: out })
     }
     const page = (url.searchParams.get('xpage') || '/').slice(0, 300)
     if (!page.startsWith('/')) throw new BadRequest('page required')
     let a = await getAudit(env, site, page)
     if (request.method === 'POST') a = await runAudit(env, site, page)
-    if (!a) return json({ audit: null, cats: CATS, max_age: AUDIT_MAX_AGE })
+    if (!a) return json({ audit: null, max_age: AUDIT_MAX_AGE })
     const live = await liveData(db, site, page, from, to)
-    const g = grade(a, live)
-    return json({ ts: a.ts, page, site, cats: CATS, max_age: AUDIT_MAX_AGE, ...g, live, net: a.net, facts: { title: a.facts.title, description: a.facts.description, url: a.facts.url } })
+    const g = assess(a, live)
+    return json({ ts: a.ts, page, site, max_age: AUDIT_MAX_AGE, ...g, live: { tracked_days: live.tracked_days, speed: live.speed, search: { ...live.search, queries: live.search.queries.slice(0, 12) }, visits: live.visits, leads: live.leads }, net: a.net, facts: { title: a.facts.title, description: a.facts.description, url: a.facts.url } })
   }
 
   // --- monthly memory ---
@@ -342,6 +361,8 @@ async function purgeOld(db) {
   ])
 }
 
+const MONITOR_CRON = '*/30 * * * *'
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url)
@@ -416,6 +437,11 @@ export default {
   },
 
   async scheduled(event, env, ctx) {
+    // the half-hourly run only watches whether the sites are up and still carry the snippet
+    if (event.cron === MONITOR_CRON) {
+      ctx.waitUntil(runMonitor(env).catch((e) => console.log('monitor failed', e && e.message)))
+      return
+    }
     // Keyword level tables are large: the full 30 days once a night, the last 3 days otherwise.
     const nightly = new Date(event.scheduledTime).getUTCHours() < 6
     ctx.waitUntil(syncAll(env, 30, nightly ? 30 : 3))

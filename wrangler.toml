@@ -22,8 +22,8 @@ database_id = "9b9fbe90-d23e-4aff-bb3d-53a8944b7962"
 migrations_dir = "migrations"
 
 [triggers]
-# Every 6 hours, Windsor sync (Google Ads + Search Console)
-crons = ["17 */6 * * *"]
+# Every 6 hours, Windsor sync (Google Ads + Search Console); every 30 minutes the uptime watch
+crons = ["17 */6 * * *", "*/30 * * * *"]
 
 [observability]
 enabled = true

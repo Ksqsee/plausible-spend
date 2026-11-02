@@ -36,7 +36,7 @@ export async function leads(db, q, limit = 60) {
   const names = [...LEAD_EVENTS, 'Application', 'Application contact']
   const { results } = await db
     .prepare(
-      `SELECT e.ts, e.site, e.name, e.label, e.props, e.page, e.source, e.utm_campaign, e.utm_term, e.device, e.city,
+      `SELECT e.id, e.ts, e.site, e.session_id, e.name, e.label, e.props, e.page, e.source, e.utm_campaign, e.utm_term, e.device, e.city,
               s.entry_page, s.pageviews, (s.last_ts - s.start_ts) / 1000 AS duration
        FROM (SELECT * FROM events WHERE ${w.sql} AND name IN (${names.map(() => '?').join(',')}) ORDER BY ts DESC LIMIT ?) e
        LEFT JOIN sessions s ON s.id = e.session_id
@@ -64,6 +64,8 @@ export async function leads(db, q, limit = 60) {
   const rows = results.map((r) => {
     const props = parse(r.props) || {}
     return {
+      id: r.id,
+      session: r.session_id,
       ts: r.ts,
       site: r.site,
       type: r.name,
@@ -88,7 +90,70 @@ export async function leads(db, q, limit = 60) {
     })
     .sort((a, b) => b.leads - a.leads)
     .slice(0, 30)
-  return { results: rows, by_type: byType, choices }
+  // what became of each enquiry, and the totals per source over the whole period
+  const [{ results: outs }, { results: bySource }] = await Promise.all([
+    db
+      .prepare(
+        `SELECT o.session_id, o.status, o.value, o.note, o.updated_ts FROM lead_outcomes o
+         WHERE o.session_id IN (SELECT DISTINCT session_id FROM events WHERE ${w.sql} AND name IN (${names.map(() => '?').join(',')}))`
+      )
+      .bind(...w.params, ...names)
+      .all(),
+    db
+      .prepare(
+        `SELECT l.source, COUNT(*) AS leads,
+           SUM(o.status = 'won') AS won, SUM(o.status = 'lost') AS lost, SUM(o.status = 'quote') AS quote, SUM(o.status = 'none') AS none,
+           SUM(CASE WHEN o.status = 'won' THEN o.value ELSE 0 END) AS revenue
+         FROM (SELECT session_id, MIN(source) AS source FROM events WHERE ${w.sql} AND name IN (${LEAD_EVENTS.map(() => '?').join(',')}) GROUP BY session_id) l
+         LEFT JOIN lead_outcomes o ON o.session_id = l.session_id
+         GROUP BY l.source ORDER BY leads DESC`
+      )
+      .bind(...w.params, ...LEAD_EVENTS)
+      .all()
+  ])
+  const outcomes = Object.fromEntries(outs.map((o) => [o.session_id, { status: o.status, value: o.value, note: o.note, ts: o.updated_ts }]))
+  return { results: rows, by_type: byType, choices, outcomes, by_source: bySource }
+}
+
+export const OUTCOME_STATUS = ['open', 'quote', 'won', 'lost', 'none']
+
+// Records what became of an enquiry. The visit must belong to one of the caller's sites.
+export async function setOutcome(db, sites, body, who) {
+  const session = String(body.session || '').slice(0, 120)
+  const status = OUTCOME_STATUS.includes(body.status) ? body.status : null
+  if (!session || !status) return { error: 'session and status required' }
+  const row = await db
+    .prepare(`SELECT site FROM events WHERE session_id = ? AND site IN (${sites.map(() => '?').join(',')}) LIMIT 1`)
+    .bind(session, ...sites)
+    .first()
+  if (!row) return { error: 'unknown enquiry' }
+  const value = status === 'won' && Number.isFinite(Number(body.value)) && Number(body.value) >= 0 ? Math.min(Math.round(Number(body.value) * 100) / 100, 10000000) : null
+  const note = typeof body.note === 'string' ? body.note.slice(0, 300) : null
+  if (status === 'open' && !note) {
+    await db.prepare('DELETE FROM lead_outcomes WHERE session_id = ?').bind(session).run()
+    return { ok: true }
+  }
+  await db
+    .prepare(
+      `INSERT INTO lead_outcomes (session_id, site, status, value, note, updated_ts, updated_by) VALUES (?, ?, ?, ?, ?, ?, ?)
+       ON CONFLICT(session_id) DO UPDATE SET status = excluded.status, value = excluded.value, note = excluded.note, updated_ts = excluded.updated_ts, updated_by = excluded.updated_by`
+    )
+    .bind(session, row.site, status, value, note, Date.now(), who)
+    .run()
+  return { ok: true }
+}
+
+// Close rate and order value from the enquiries whose outcome is known (for the simulator).
+export async function outcomeStats(db, sites) {
+  const r = await db
+    .prepare(
+      `SELECT SUM(status = 'won') AS won, SUM(status = 'lost') AS lost, SUM(status = 'quote') AS quote, SUM(status = 'none') AS none,
+         AVG(CASE WHEN status = 'won' AND value > 0 THEN value END) AS avg_value, COUNT(*) AS n
+       FROM lead_outcomes WHERE site IN (${sites.map(() => '?').join(',')})`
+    )
+    .bind(...sites)
+    .first()
+  return r || {}
 }
 
 // ---------------------------------------------------------------------------------------------

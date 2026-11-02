@@ -73,13 +73,54 @@ export async function capture(env, site, page, device) {
         })
         .filter((x) => x[2] > 120 && x[3])
     )
+    // where every top-level section and every clickable element sits in this picture; clicks and
+    // scroll positions from visitors are tied to these (same rules as the tracker)
+    const layout = await tab.evaluate(() => {
+      window.scrollTo(0, 0)
+      const sy = window.scrollY
+      const tops = [...document.querySelectorAll('section')].filter((s) => !s.parentElement || !s.parentElement.closest('section'))
+      const anchors = tops.map((s) => {
+        const r = s.getBoundingClientRect()
+        return [Math.round(r.top + sy), Math.round(r.height)]
+      })
+      const STABLE_ID = /^[A-Za-z][\w-]{0,40}$/
+      const pathOf = (el) => {
+        const parts = []
+        let n = el
+        while (n && n.nodeType === 1 && parts.length < 30) {
+          if (n === document.body) { parts.unshift('body'); break }
+          if (n.id && STABLE_ID.test(n.id) && !/\d{4,}/.test(n.id)) { parts.unshift('#' + n.id); break }
+          let i = 1
+          let x = n
+          while ((x = x.previousElementSibling)) if (x.tagName === n.tagName) i++
+          parts.unshift(n.tagName.toLowerCase() + ':' + i)
+          n = n.parentElement
+        }
+        const out = parts.join('>')
+        return out.length <= 220 ? out : ''
+      }
+      const els = {}
+      let count = 0
+      for (const el of document.querySelectorAll('a, button, [role="button"], input, textarea, select, label, img, video, summary, h1, h2, h3, p, li')) {
+        if (count >= 1500) break
+        const r = el.getBoundingClientRect()
+        if (r.width < 2 || r.height < 2) continue
+        const cs = getComputedStyle(el)
+        if (cs.visibility === 'hidden' || cs.display === 'none') continue
+        const p = pathOf(el)
+        if (!p || els[p]) continue
+        els[p] = [Math.round(r.left), Math.round(r.top + sy), Math.round(r.width), Math.round(r.height)]
+        count++
+      }
+      return { anchors, els, vh: window.innerHeight }
+    })
     const clipHeight = Math.min(height, MAX_HEIGHT)
     const image = await tab.screenshot({ type: 'jpeg', quality: 62, clip: { x: 0, y: 0, width: spec.width, height: clipHeight }, captureBeyondViewport: true })
     const meta = { ts: Date.now(), width: spec.width, height: clipHeight, page_height: height }
     log('shot ' + image.byteLength)
     await env.SHOTS.put(shotKey(site, page, device), image, { metadata: meta })
-    await env.SHOTS.put(geoKey(site, page, device), JSON.stringify({ ...meta, sections }))
-    return { ...meta, sections }
+    await env.SHOTS.put(geoKey(site, page, device), JSON.stringify({ ...meta, sections, ...layout, v: 2 }))
+    return { ...meta, sections, ...layout, v: 2 }
   } finally {
     await browser.close()
   }

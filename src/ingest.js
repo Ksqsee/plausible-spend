@@ -30,7 +30,7 @@ const SOURCES = [
   [/(^|\.)(wa\.me|whatsapp\.com)$/, 'WhatsApp']
 ]
 
-const MAX_BODY = 8192
+const MAX_BODY = 24576
 const MAX_EVENTS_PER_VISITOR_MINUTE = 120
 const MAX_EVENTS_PER_SITE_MINUTE = 1000
 
@@ -246,14 +246,18 @@ export async function handleEvent(request, env) {
     const ph = Math.min(Math.max(Math.round(Number(p.ph) || 0), 0), 100000)
     const heatRows = []
     for (const c of Array.isArray(p.hc) ? p.hc : []) {
-      const [x, y, sec, target] = c.split('|')
+      const [x, y, sec, target, path, ax, ay, sa] = c.split('|')
       const xi = Math.round(Number(x))
       const yi = Math.round(Number(y))
       if (!Number.isFinite(xi) || !Number.isFinite(yi) || xi < 0 || xi > 1000 || yi < 0 || yi > 100000) continue
+      const anchor = path && /^(#[A-Za-z][\w-]{0,40}|body)(>[a-z0-9-]+:\d{1,4})*$/.test(path) ? path.slice(0, 220) : null
+      const axi = anchor && ax !== '' && Number.isFinite(Number(ax)) ? Math.min(Math.max(Math.round(Number(ax)), 0), 1000) : null
+      const ayi = anchor && ay !== '' && Number.isFinite(Number(ay)) ? Math.min(Math.max(Math.round(Number(ay)), 0), 1000) : null
+      const sai = sa && /^-?\d{1,3}:\d{1,4}$/.test(sa) ? sa : null
       heatRows.push(
         db
-          .prepare('INSERT INTO heat_clicks (site, page, device, date, x, y, ph, target, section) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
-          .bind(site, page, device, date, xi, yi, ph, clean(target, 80), clean(sec, 60))
+          .prepare('INSERT INTO heat_clicks (site, page, device, date, x, y, ph, target, section, anchor, ax, ay, sa) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+          .bind(site, page, device, date, xi, yi, ph, clean(target, 80), clean(sec, 60), anchor, axi, ayi, sai)
       )
     }
     const sections = (Array.isArray(p.sg) ? p.sg : [])
@@ -389,7 +393,7 @@ function capitalizeSource(source) {
 // Event properties are kept small and flat: strings, numbers, a list of strings (sections seen)
 // and one level of string choices (form answers).
 // list props: max entries and max length per entry
-const LIST_PROPS = { sec: [40, 60], fs: [20, 60], err: [20, 60], hc: [40, 110], sg: [40, 60] }
+const LIST_PROPS = { sec: [40, 60], fs: [20, 60], err: [20, 60], hc: [40, 300], sg: [40, 60] }
 
 // Section id -> visible heading, as sent with engagement events.
 export function sectionHeadings(raw) {
