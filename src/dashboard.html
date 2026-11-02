@@ -620,6 +620,48 @@ td.m { color: var(--text-3); font-weight: 400; }
 @media (max-width: 1000px) { .sv-four { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .sv-lead p { font-size: 23px; } .sv-irow { grid-template-columns: 10px minmax(0, 1fr); padding: 12px 16px; } .sv-irow .rt { grid-column: 2; } .sv-ebars .r { grid-template-columns: minmax(0, 1fr) 70px auto; } }
 
+/* ---------- heatmap ---------- */
+.hm-bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 4px 0 18px; }
+.hm-select { font: inherit; font-size: 14px; font-weight: 500; height: 36px; padding: 0 12px; border-radius: 10px; border: 0; background: var(--card); box-shadow: var(--card-shadow); color: var(--text); max-width: 100%; }
+.hm-grid { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 24px; align-items: start; }
+.hm-stage { background: var(--card); border-radius: 22px; box-shadow: var(--card-shadow); padding: 16px; height: calc(100vh - 220px); min-height: 480px; overflow: auto; position: relative; }
+.hm-stage.mobile .hm-wrap { width: 390px; max-width: 100%; margin: 0 auto; }
+.hm-wrap { position: relative; border-radius: 12px; overflow: hidden; }
+.hm-img { display: block; width: 100%; height: auto; }
+.hm-canvas { position: absolute; left: 0; top: 0; pointer-events: none; }
+.hm-tip { position: absolute; z-index: 3; background: var(--tip-bg); color: var(--tip-text); font-size: 13px; font-weight: 500; padding: 7px 10px; border-radius: 9px; pointer-events: none; max-width: 280px; box-shadow: 0 8px 20px rgba(0,0,0,.25); }
+.hm-line { position: absolute; left: 0; right: 0; height: 0; border-top: 2px solid rgba(255,255,255,.9); box-shadow: 0 0 0 1px rgba(0,0,0,.25); pointer-events: none; z-index: 2; }
+.hm-status { display: flex; align-items: center; gap: 10px; padding: 18px; color: var(--text-2); font-size: 14.5px; }
+.hm-status .spin { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--m-gray); border-top-color: var(--accent); animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg) } }
+.hm-side { position: sticky; top: 140px; display: flex; flex-direction: column; gap: 12px; }
+.hm-lead { margin: 0; font: 700 21px/1.3 var(--display); letter-spacing: -.02em; text-wrap: pretty; }
+.hm-tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.hm-tile { background: var(--card); border-radius: 16px; box-shadow: var(--card-shadow); padding: 12px; display: flex; flex-direction: column; gap: 3px; }
+.hm-tile b { font: 700 22px/1.1 var(--display); letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.hm-tile span { font-size: 12px; color: var(--text-3); line-height: 1.3; }
+.hm-legend { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 8px; font-size: 12px; color: var(--text-3); }
+.hm-legend i { height: 8px; border-radius: 4px; background: linear-gradient(90deg, rgb(10,132,255), rgb(48,209,88), rgb(255,214,10), rgb(255,149,0), rgb(255,59,48)); }
+.hm-h { margin: 8px 0 0; font: 600 15px var(--display); }
+.hm-row { position: relative; display: flex; justify-content: space-between; gap: 10px; padding: 9px 12px; border-radius: 10px; font-size: 13.5px; overflow: hidden; background: var(--card); }
+.hm-row > * { position: relative; z-index: 1; }
+.hm-row span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hm-row b { font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+button.hm-row { width: 100%; border: 0; font: inherit; color: inherit; text-align: left; cursor: pointer; }
+button.hm-row:hover { box-shadow: inset 0 0 0 1.5px var(--line); }
+.hm-row i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--sel); z-index: 0; transition: width .8s var(--ease); }
+.hm-note { margin: 0; font-size: 12.5px; color: var(--text-3); line-height: 1.45; }
+.sv-tools { margin-top: 32px; }
+.sv-tool-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.sv-tool { display: flex; gap: 14px; align-items: center; padding: 18px 20px; border-radius: 22px; background: var(--card); box-shadow: var(--card-shadow); color: inherit; text-decoration: none; transition: box-shadow .25s, transform .25s var(--ease); }
+.sv-tool:hover { box-shadow: var(--card-hover); }
+.sv-tool:active { transform: scale(.985); }
+.sv-tool .ic { width: 46px; height: 46px; border-radius: 13px; display: grid; place-items: center; color: #fff; flex: none; }
+.sv-tool .ic svg { width: 24px; height: 24px; }
+.sv-tool b { display: block; font: 600 16px var(--display); letter-spacing: -.01em; }
+.sv-tool span { font-size: 13px; color: var(--text-3); line-height: 1.35; }
+@media (max-width: 1100px) { .hm-grid { grid-template-columns: minmax(0, 1fr); } .hm-side { position: static; } .hm-stage { height: 70vh; } .sv-tool-grid { grid-template-columns: minmax(0, 1fr); } }
+
 /* ---------- opportunities v2 ---------- */
 .ipage { display: flex; flex-direction: column; gap: 24px; margin-top: 16px; }
 .isum { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 0; }
@@ -1297,13 +1339,15 @@ td.wrap { white-space: normal; min-width: 180px; }
   }
 
   // ---------- routing ----------
+  // tools that work on one website
+  var TOOL_VIEWS = ['heatmap']
   function readUrl() {
     var p = new URLSearchParams(location.search)
     state.site = p.get('site') && SITE_BY_DOMAIN[p.get('site')] ? p.get('site') : null
     var scope = p.get('scope')
     state.scope = !state.site && scope && (scope === 'all' || COMPANIES.some(function (c) { return 'company:' + c.id === scope })) ? scope : null
     var v = p.get('view')
-    state.view = v === 'insights' || v === 'account' || (v === 'tracking' && isAdmin()) ? v : state.site || state.scope ? 'dash' : 'overview'
+    state.view = v === 'insights' || v === 'account' || (v === 'tracking' && isAdmin()) || (TOOL_VIEWS.indexOf(v) >= 0 && state.site) ? v : state.site || state.scope ? 'dash' : 'overview'
     if (state.view === 'insights' && !state.site && !state.scope) state.scope = 'all'
     state.period = p.get('period') || '30d'
     state.from = p.get('from')
@@ -1328,7 +1372,7 @@ td.wrap { white-space: normal; min-width: 180px; }
     render()
   }
   function saveUrl() {
-    var view = state.view === 'insights' || state.view === 'tracking' || state.view === 'account' ? state.view : null
+    var view = state.view === 'insights' || state.view === 'tracking' || state.view === 'account' || TOOL_VIEWS.indexOf(state.view) >= 0 ? state.view : null
     history.replaceState(null, '', urlFor({ view: view, site: state.site, scope: view === 'insights' && state.scope === 'all' ? null : state.scope, filters: state.filters }))
   }
 
@@ -1399,6 +1443,10 @@ td.wrap { white-space: normal; min-width: 180px; }
       title = 'Snippets'
       img = brandLogo()
       sub.append(document.createTextNode('Snippets, Status und was je Website gemessen wird'))
+    } else if (state.view === 'heatmap') {
+      title = 'Heatmap'
+      img = siteLogo(state.site, 'logo')
+      sub.append(document.createTextNode(SITE_BY_DOMAIN[state.site].name + ' · wo Besucher hinschauen, scrollen und klicken'))
     } else if (state.view === 'account') {
       title = 'Konto'
       img = brandLogo()
@@ -1498,6 +1546,7 @@ td.wrap { white-space: normal; min-width: 180px; }
     else if (state.view === 'insights') renderInsightsPage(view)
     else if (state.view === 'tracking') renderTracking(view)
     else if (state.view === 'account') renderAccount(view)
+    else if (state.view === 'heatmap') renderHeatmap(view)
     else renderDash(view)
     window.scrollTo(0, 0)
   }
@@ -1554,7 +1603,21 @@ td.wrap { white-space: normal; min-width: 180px; }
       })
       view.append(sw)
     }
-    view.append(nudge, hl, cards, top, more)
+    var tools = el('section', 'sv-tools')
+    var toolSite = state.site || (co && co.sites[0] ? co.sites[0].domain : null)
+    if (toolSite) {
+      var th = el('div', 'sv-mc-h'); th.append(el('h2', null, 'Werkzeuge'))
+      var tg = el('div', 'sv-tool-grid')
+      ;[['heatmap', 'Heatmap', 'Wie weit Besucher scrollen und wohin sie klicken, direkt auf der Seite.', 'var(--m-red)', '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1 3.5-1.5 5.5-1.5 8a2.5 2.5 0 0 0 5 0c0-1-.3-1.8-.8-2.6C17.4 9 19 11.4 19 14a7 7 0 0 1-14 0c0-4.5 4-7.5 7-12z"/></svg>']].forEach(function (t) {
+        var a = el('a', 'sv-tool'); a.href = '?view=' + t[0] + '&site=' + encodeURIComponent(toolSite); a.dataset.nav = ''; a.dataset.site = toolSite; a.dataset.view = t[0]
+        var ic = el('span', 'ic'); ic.style.background = t[3]; ic.append(html(t[4]))
+        var tx = el('div'); tx.append(el('b', null, t[1]), el('span', null, t[2]))
+        a.append(ic, tx)
+        tg.append(a)
+      })
+      tools.append(th, tg)
+    }
+    view.append(nudge, hl, cards, tools, top, more)
     showGoogle()
     loadDash()
     timers.push(setInterval(loadLive, 30000))
@@ -2939,6 +3002,286 @@ td.wrap { white-space: normal; min-width: 180px; }
     wrap.setAttribute('role', 'img')
     wrap.setAttribute('aria-label', m.label + ' im Verlauf')
     return wrap
+  }
+
+  // ---------- heatmap & scroll map ----------
+  var HM_VIEWPORT = { desktop: 900, mobile: 844 }
+  var HM_LAYERS = [['scroll', 'Scrolltiefe'], ['clicks', 'Klicks'], ['sections', 'Abschnitte']]
+  // red where everyone looks, through orange, yellow and green, to blue where hardly anyone gets
+  var HM_STOPS = [[0, [10, 132, 255]], [0.25, [48, 209, 88]], [0.5, [255, 214, 10]], [0.75, [255, 149, 0]], [1, [255, 59, 48]]]
+  function hmColor(t) {
+    t = Math.max(0, Math.min(1, t))
+    for (var i = 1; i < HM_STOPS.length; i++) {
+      if (t <= HM_STOPS[i][0]) {
+        var a = HM_STOPS[i - 1], b = HM_STOPS[i], f = (t - a[0]) / (b[0] - a[0])
+        return [0, 1, 2].map(function (k) { return Math.round(a[1][k] + (b[1][k] - a[1][k]) * f) })
+      }
+    }
+    return HM_STOPS[HM_STOPS.length - 1][1]
+  }
+  // share of visits that saw the point y (px) of a page H px tall on a screen vh px high
+  function reachAt(reach, y, H, vh) {
+    if (y <= vh) return reach[0] || 0
+    var depth = ((y - vh) / Math.max(1, H - vh)) * 100
+    var i = depth / 2, lo = Math.floor(i), hi = Math.min(reach.length - 1, lo + 1)
+    if (lo >= reach.length - 1) return reach[reach.length - 1] || 0
+    return reach[lo] + (reach[hi] - reach[lo]) * (i - lo)
+  }
+  function hmSiteOptions() {
+    var co = COMPANIES.filter(function (c) { return c.id === (SITE_BY_DOMAIN[state.site] || {}).company })[0]
+    return co ? co.sites : [SITE_BY_DOMAIN[state.site]]
+  }
+  function renderHeatmap(view) {
+    var token = renderToken
+    state.hdev = state.hdev || 'desktop'
+    state.hlayer = state.hlayer || 'scroll'
+    state.hpage = state.hpage || '/'
+    var bar = el('div', 'hm-bar')
+    var sites = hmSiteOptions()
+    if (sites.length > 1) {
+      var ss = el('select', 'hm-select'); ss.id = 'hmSite'; ss.setAttribute('aria-label', 'Website')
+      sites.forEach(function (x) { ss.append(new Option(x.name, x.domain, false, x.domain === state.site)) })
+      ss.onchange = function () { state.site = ss.value; state.hpage = '/'; saveUrl(); render() }
+      bar.append(ss)
+    }
+    var ps = el('select', 'hm-select'); ps.id = 'hmPage'; ps.setAttribute('aria-label', 'Seite')
+    ps.append(new Option(pageName(state.hpage), state.hpage))
+    ps.onchange = function () { state.hpage = ps.value; render() }
+    var dev = el('div', 'seg')
+    ;[['desktop', 'Computer'], ['mobile', 'Handy']].forEach(function (d) {
+      var b = el('button', state.hdev === d[0] ? 'on' : '', d[1]); b.type = 'button'
+      b.onclick = function () { state.hdev = d[0]; render() }
+      dev.append(b)
+    })
+    var lay = el('div', 'seg')
+    HM_LAYERS.forEach(function (l) {
+      var b = el('button', state.hlayer === l[0] ? 'on' : '', l[1]); b.type = 'button'
+      b.onclick = function () { state.hlayer = l[0]; lay.querySelectorAll('button').forEach(function (x) { x.classList.toggle('on', x === b) }); if (view._draw) view._draw(true) }
+      lay.append(b)
+    })
+    bar.append(ps, dev, lay)
+    var grid = el('div', 'hm-grid')
+    var stage = el('div', 'hm-stage ' + state.hdev), wrap = el('div', 'hm-wrap'), status = el('div', 'hm-status')
+    status.append(el('span', 'spin'), el('span', null, 'Seite wird geladen…'))
+    stage.append(status, wrap)
+    var side = el('aside', 'hm-side')
+    side.append(skeletonRows(5))
+    grid.append(stage, side)
+    view.append(bar, grid)
+
+    var q = { xpage: state.hpage, device: state.hdev }
+    var shotUrl = function (ts) { return '/api/shot?site=' + encodeURIComponent(state.site) + '&xpage=' + encodeURIComponent(state.hpage) + '&device=' + state.hdev + '&v=' + ts }
+    var metaUrl = '/api/shot?meta=1&site=' + encodeURIComponent(state.site) + '&xpage=' + encodeURIComponent(state.hpage) + '&device=' + state.hdev
+    var getMeta = fetch(metaUrl).then(function (r) { return r.json() }).then(function (m) {
+      if (m && m.ts && Date.now() - m.ts < 7 * 86400000) return m
+      // no picture yet, or an old one: take a new one now
+      status.lastChild.textContent = 'Die Seite wird gerade fotografiert. Das dauert etwa 10 Sekunden…'
+      return fetch(metaUrl.replace('meta=1&', ''), { method: 'POST' }).then(function (r) { if (!r.ok) throw new Error('shot'); return r.json() })
+    })
+    Promise.all([api('heat', q), getMeta]).then(function (res) {
+      if (token !== renderToken) return
+      var d = res[0], m = res[1]
+      // page list for the picker
+      ps.replaceChildren()
+      var pages = d.pages.length ? d.pages : [{ page: state.hpage, visits: 0 }]
+      if (!pages.some(function (p) { return p.page === state.hpage })) pages.unshift({ page: state.hpage, visits: 0 })
+      pages.forEach(function (p) { ps.append(new Option(pageName(p.page) + (p.visits ? ' · ' + plural(p.visits, ['Besuch', 'Besuche']) : ''), p.page, false, p.page === state.hpage)) })
+      var img = el('img', 'hm-img'); img.alt = 'Bildschirmfoto von ' + state.site + state.hpage
+      var cv = el('canvas', 'hm-canvas'), tip = el('div', 'hm-tip'); tip.hidden = true
+      wrap.append(img, cv, tip)
+      img.onload = function () {
+        status.remove()
+        var H = m.page_height || m.height, vh = HM_VIEWPORT[state.hdev]
+        // the picture knows every section; visitors' data adds reach and contacts where the ids match
+        var fromVisits = {}
+        d.sections.forEach(function (x) { fromVisits[x.id] = x })
+        var shotSecs = m.sections || []
+        var sections = shotSecs.length >= d.sections.length
+          ? shotSecs.map(function (x) { var v = fromVisits[x[0]]; return { id: x[0], name: x[3] || (v && v.name) || null, top: x[1], height: x[2], reach: v ? v.reach : null, contacts: v ? v.contacts : {} } })
+          : d.sections.map(function (x) { return { id: x.id, name: x.name, top: x.top * m.height, height: x.height * m.height, reach: x.reach, contacts: x.contacts } })
+        // short names: the first sentence of the heading
+        sections.forEach(function (x) {
+          if (!x.name) return
+          var n = x.name.replace(/\s*\(\d+\)$/, '').split(/(?<=[.!?])\s/)[0].replace(/[.,:\s]+$/, '')
+          x.name = n.length > 42 ? n.slice(0, 40).replace(/\s\S*$/, '') + '…' : n
+        })
+        sections.forEach(function (x) { if (x.reach === null) x.reach = Math.round(reachAt(d.reach, x.top + Math.min(x.height, 200), H, vh)) })
+        var ctx = { d: d, m: m, H: H, vh: vh, sections: sections }
+        renderHmSide(side, ctx)
+        var draw = function (animate) { drawHeat(cv, img, ctx, animate); renderHmSide(side, ctx) }
+        view._draw = draw
+        draw(true)
+        var onResize = function () { if (wrap.isConnected) drawHeat(cv, img, ctx, false); else window.removeEventListener('resize', onResize) }
+        window.addEventListener('resize', onResize)
+        wrap.onpointermove = function (e) { hmHover(e, wrap, img, tip, ctx) }
+        wrap.onpointerleave = function () { tip.hidden = true; wrap.querySelectorAll('.hm-line').forEach(function (n) { n.remove() }) }
+      }
+      img.onerror = function () { status.lastChild.textContent = 'Das Foto der Seite konnte nicht geladen werden.' }
+      img.src = shotUrl(m.ts)
+    }).catch(function (e) { console.error(e); status.replaceChildren(el('span', null, 'Die Seite konnte nicht fotografiert werden. Später noch einmal versuchen.')); side.replaceChildren() })
+  }
+  function drawHeat(cv, img, ctx, animate) {
+    var W = img.clientWidth, Hc = img.clientHeight, ratio = window.devicePixelRatio || 1
+    cv.width = W * ratio; cv.height = Hc * ratio
+    cv.style.width = W + 'px'; cv.style.height = Hc + 'px'
+    var g = cv.getContext('2d'); g.setTransform(ratio, 0, 0, ratio, 0, 0)
+    var scale = Hc / ctx.m.height
+    var layer = state.hlayer
+    var paint = function (progress) {
+      g.clearRect(0, 0, W, Hc)
+      if (layer === 'scroll') {
+        var limit = Hc * progress
+        for (var y = 0; y < limit; y += 3) {
+          var r = reachAt(ctx.d.reach, y / scale, ctx.H, ctx.vh) / 100
+          var c = hmColor(r)
+          g.fillStyle = 'rgba(' + c.join(',') + ',0.42)'
+          g.fillRect(0, y, W, 3)
+        }
+        if (progress >= 1) {
+          // where three quarters, half and a quarter of the visitors are still there
+          ;[75, 50, 25].forEach(function (pct) {
+            var yy = null
+            for (var y2 = 0; y2 < Hc; y2 += 2) if (reachAt(ctx.d.reach, y2 / scale, ctx.H, ctx.vh) < pct) { yy = y2; break }
+            if (yy === null) return
+            g.setLineDash([6, 5]); g.strokeStyle = 'rgba(0,0,0,.55)'; g.lineWidth = 1.5
+            g.beginPath(); g.moveTo(0, yy); g.lineTo(W, yy); g.stroke(); g.setLineDash([])
+            hmPill(g, 12, yy, pct + ' % sehen bis hier', 'rgba(0,0,0,.78)')
+          })
+          var fold = ctx.vh * scale
+          g.strokeStyle = 'rgba(255,255,255,.95)'; g.lineWidth = 2
+          g.beginPath(); g.moveTo(0, fold); g.lineTo(W, fold); g.stroke()
+          hmPill(g, W - 12, fold, 'Ende des ersten Bildschirms', 'rgba(255,255,255,.95)', true)
+        }
+      } else if (layer === 'clicks') {
+        var pts = ctx.d.clicks
+        if (pts.length) {
+          var off = document.createElement('canvas'); off.width = W; off.height = Hc
+          var o = off.getContext('2d'), rad = Math.max(18, W / 34)
+          pts.forEach(function (p) {
+            var x = p.x * W, y2 = p.y * ctx.H * scale
+            var grd = o.createRadialGradient(x, y2, 0, x, y2, rad)
+            grd.addColorStop(0, 'rgba(0,0,0,' + (0.35 * progress) + ')'); grd.addColorStop(1, 'rgba(0,0,0,0)')
+            o.fillStyle = grd; o.fillRect(x - rad, y2 - rad, rad * 2, rad * 2)
+          })
+          // turn the density into heat colours
+          var px = o.getImageData(0, 0, W, Hc), data = px.data
+          for (var i = 0; i < data.length; i += 4) {
+            var a = data[i + 3] / 255
+            if (!a) continue
+            var c2 = hmColor(Math.min(1, a * 1.6))
+            data[i] = c2[0]; data[i + 1] = c2[1]; data[i + 2] = c2[2]; data[i + 3] = Math.min(220, 60 + a * 255)
+          }
+          g.putImageData(px, 0, 0)
+          g.setTransform(ratio, 0, 0, ratio, 0, 0)
+        }
+      } else {
+        ctx.sections.forEach(function (s) {
+          var y3 = s.top * scale, h = s.height * scale, c3 = hmColor(s.reach / 100)
+          g.fillStyle = 'rgba(' + c3.join(',') + ',' + (0.16 * progress) + ')'; g.fillRect(4, y3 + 2, W - 8, h - 4)
+          g.strokeStyle = 'rgba(' + c3.join(',') + ',' + (0.9 * progress) + ')'; g.lineWidth = 2; g.strokeRect(4, y3 + 2, W - 8, h - 4)
+          var nC = Object.keys(s.contacts).reduce(function (a, k) { return a + s.contacts[k] }, 0)
+          hmPill(g, 14, y3 + 22, (s.name || s.id) + ' · ' + Math.round(s.reach) + ' % sehen es' + (nC ? ' · ' + plural(nC, ['Kontakt', 'Kontakte']) : ''), 'rgba(0,0,0,.8)')
+        })
+      }
+    }
+    if (!animate || REDUCED) { paint(1); return }
+    var start = performance.now(), dur = layer === 'scroll' ? 1100 : 700
+    var step = function (now) {
+      var t = Math.min(1, (now - start) / dur), e = 1 - Math.pow(1 - t, 3)
+      paint(layer === 'scroll' ? e : e)
+      if (t < 1 && cv.isConnected) requestAnimationFrame(step)
+    }
+    requestAnimationFrame(step)
+  }
+  function hmPill(g, x, y, text, bg, right) {
+    g.font = '600 12px Inter, system-ui, sans-serif'
+    var w = g.measureText(text).width + 16, h = 22
+    var left = right ? x - w : x
+    g.fillStyle = bg
+    g.beginPath()
+    if (g.roundRect) g.roundRect(left, y - h / 2, w, h, 11); else g.rect(left, y - h / 2, w, h)
+    g.fill()
+    g.fillStyle = /255,255,255/.test(bg) ? '#1d1d1f' : '#fff'
+    g.fillText(text, left + 8, y + 4)
+  }
+  function hmHover(e, wrap, img, tip, ctx) {
+    var r = img.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top
+    if (x < 0 || y < 0 || x > r.width || y > r.height) { tip.hidden = true; return }
+    var scale = r.height / ctx.m.height, pageY = y / scale
+    var text
+    if (state.hlayer === 'clicks') {
+      var near = ctx.d.clicks.filter(function (p) { return Math.abs(p.x * r.width - x) < 30 && Math.abs(p.y * ctx.H * scale - y) < 30 })
+      var t = {}
+      near.forEach(function (p) { if (p.target) t[p.target] = (t[p.target] || 0) + 1 })
+      var top = Object.keys(t).sort(function (a, b) { return t[b] - t[a] })[0]
+      text = near.length ? plural(near.length, ['Klick', 'Klicks']) + ' hier' + (top ? ' · ' + top : '') : 'Hier hat niemand geklickt'
+    } else if (state.hlayer === 'sections') {
+      var s = ctx.sections.filter(function (x2) { return pageY >= x2.top && pageY <= x2.top + x2.height })[0]
+      text = s ? (s.name || s.id) + ': ' + Math.round(s.reach) + ' % der Besucher sehen diesen Abschnitt' : 'Kein benannter Abschnitt'
+    } else {
+      text = Math.round(reachAt(ctx.d.reach, pageY, ctx.H, ctx.vh)) + ' % der Besucher kommen bis hier'
+      var line = wrap.querySelector('.hm-line') || el('div', 'hm-line')
+      line.style.top = y + 'px'
+      if (!line.isConnected) wrap.append(line)
+    }
+    tip.textContent = text
+    tip.hidden = false
+    tip.style.left = Math.min(r.width - 10, x + 14) + 'px'
+    tip.style.top = (y + 14) + 'px'
+  }
+  function renderHmSide(side, ctx) {
+    side.replaceChildren()
+    var d = ctx.d
+    if (!d.views) {
+      side.append(el('p', 'hm-lead', 'Für diese Seite und dieses Gerät gibt es im Zeitraum noch keine Besuche.'))
+      return
+    }
+    // where half of the visitors stop
+    var halfY = null
+    for (var y = 0; y < ctx.H; y += 10) if (reachAt(d.reach, y, ctx.H, ctx.vh) < 50) { halfY = y; break }
+    var halfSec = halfY === null ? null : ctx.sections.filter(function (s) { return halfY >= s.top && halfY <= s.top + s.height })[0]
+    var share = halfY === null ? null : Math.round((halfY / ctx.H) * 100)
+    var lead = halfY === null ? 'Mehr als die Hälfte der Besucher sieht die ganze Seite.'
+      : 'Die Hälfte der Besucher hört ' + (halfSec ? 'beim Abschnitt „' + (halfSec.name || halfSec.id) + '“' : 'nach ' + share + ' % der Seite') + ' auf zu scrollen.'
+    side.append(el('p', 'hm-lead', lead))
+    var tiles = el('div', 'hm-tiles')
+    var endReach = Math.round(d.reach[d.reach.length - 1] || 0)
+    ;[[nf.format(d.views), plural(d.views, ['Besuch', 'Besuche']).replace(/^\S+ /, '')], [endReach + ' %', 'sehen das Seitenende'], [nf.format(d.clicks.length), d.clicks.length === 1 ? 'Klick erfasst' : 'Klicks erfasst']].forEach(function (t) {
+      var c = el('div', 'hm-tile'); c.append(el('b', null, t[0]), el('span', null, t[1])); tiles.append(c)
+    })
+    side.append(tiles)
+    var legend = el('div', 'hm-legend'), bar = el('i')
+    legend.append(el('span', null, 'kaum gesehen'), bar, el('span', null, 'alle sehen es'))
+    side.append(legend)
+    if (state.hlayer === 'clicks') {
+      side.append(el('h3', 'hm-h', 'Am häufigsten angeklickt'))
+      if (!d.targets.length) side.append(el('p', 'hm-note', 'Klicks werden seit dem 2. Nov. gesammelt. Die Karte füllt sich mit jedem Besuch.'))
+      var mx = d.targets.length ? d.targets[0].n : 1
+      d.targets.slice(0, 8).forEach(function (t) {
+        var row = el('div', 'hm-row'), fill = el('i'); fill.style.width = (t.n / mx * 100) + '%'
+        row.append(el('span', null, t.target.replace(/^(a|button|div|span|p|li|h\d): /, '')), el('b', null, nf.format(t.n)), fill)
+        side.append(row)
+      })
+    } else {
+      side.append(el('h3', 'hm-h', 'Abschnitte von oben nach unten'))
+      if (!ctx.sections.length) side.append(el('p', 'hm-note', 'Diese Seite hat keine benannten Abschnitte. Die Scrolltiefe gilt trotzdem.'))
+      ctx.sections.forEach(function (s) {
+        var row = el('button', 'hm-row'), fill = el('i'); fill.style.width = Math.max(2, s.reach) + '%'
+        row.type = 'button'
+        row.title = 'In der Seite zu diesem Abschnitt springen'
+        row.onclick = function () {
+          var stage = document.querySelector('.hm-stage'), img = document.querySelector('.hm-img')
+          if (!stage || !img) return
+          var y = s.top * (img.clientHeight / ctx.m.height)
+          stage.scrollTo({ top: Math.max(0, y - 20), behavior: REDUCED ? 'auto' : 'smooth' })
+        }
+        fill.style.background = 'rgba(' + hmColor(s.reach / 100).join(',') + ',.35)'
+        var nC = Object.keys(s.contacts).reduce(function (a, k) { return a + s.contacts[k] }, 0)
+        row.append(el('span', null, (s.name || s.id) + (nC ? ' · ' + plural(nC, ['Kontakt', 'Kontakte']) : '')), el('b', null, Math.round(s.reach) + ' %'), fill)
+        side.append(row)
+      })
+    }
+    side.append(el('p', 'hm-note', 'Foto der Seite vom ' + new Date(ctx.m.ts).toLocaleDateString('de-DE', { day: 'numeric', month: 'long' }) + ', wird einmal pro Woche neu aufgenommen.'))
   }
 
   // ---------- funnel ----------

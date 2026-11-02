@@ -17,6 +17,8 @@ import { syncAll } from './sync.js'
 import { adsDeep, content, forms, funnel, gbp, insights, leads, months, paths, rollupMonths, setInsightState, when, xray } from './deep.js'
 import { localParts } from './ingest.js'
 import { summary } from './summary.js'
+import { heat } from './heat.js'
+import { capture, getShot, shotMeta } from './shots.js'
 import { MIN_PASSWORD_LENGTH, checkPassword, currentUser, ensureAdmin, generatePassword, login, logout, setPassword } from './auth.js'
 
 // Headers every dashboard response carries: no framing, no MIME sniffing, no referrer to third parties.
@@ -162,6 +164,23 @@ async function api(request, env, url, user) {
     return json(await setInsightState(db, body.key, body.state, own || 'admin'))
   }
 
+  // --- page screenshots for heatmaps ---
+  if (path === 'shot') {
+    const sites = await resolveSites(db, url, user)
+    const site = url.searchParams.get('site')
+    const page = (url.searchParams.get('xpage') || '/').slice(0, 300)
+    const device = url.searchParams.get('device') === 'mobile' ? 'mobile' : 'desktop'
+    if (!site || !sites.includes(site) || !page.startsWith('/')) throw new BadRequest('site and page required')
+    if (request.method === 'POST') {
+      const meta = await capture(env, site, page, device)
+      return json(meta)
+    }
+    if (url.searchParams.get('meta')) return json((await shotMeta(env, site, page, device)) || null)
+    const shot = await getShot(env, site, page, device)
+    if (!shot) return json({ error: 'no screenshot' }, 404)
+    return new Response(shot.image, { headers: { ...BASE_HEADERS, 'Content-Type': 'image/jpeg', 'Cache-Control': 'private, max-age=300' } })
+  }
+
   // --- monthly memory ---
   if (path === 'rollup' && request.method === 'POST') {
     adminOnly(user)
@@ -250,6 +269,8 @@ async function api(request, env, url, user) {
       return json(await paths(db, q))
     case 'summary':
       return json(await summary(db, q))
+    case 'heat':
+      return json(await heat(db, q, (url.searchParams.get('xpage') || '/').slice(0, 300), url.searchParams.get('device') === 'mobile' ? 'mobile' : 'desktop'))
     case 'months':
       return json(await months(db, q))
     case 'ads-deep':

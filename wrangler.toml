@@ -1,6 +1,7 @@
 name = "gw-analytics"
 main = "src/index.js"
 compatibility_date = "2026-10-01"
+compatibility_flags = ["nodejs_compat"]
 account_id = "25346b53f111266024f71046763f6aee"
 workers_dev = true
 
@@ -38,3 +39,11 @@ simple = { limit = 120, period = 60 }
 name = "EVENTS_SITE_RATE"
 namespace_id = "1002"
 simple = { limit = 600, period = 60 }
+
+# Full-page screenshots for heatmaps (Cloudflare Browser Rendering), stored in KV
+[browser]
+binding = "BROWSER"
+
+[[kv_namespaces]]
+binding = "SHOTS"
+id = "817ea2d019dd4d4b906a5ca8739ffd05"
