@@ -18,7 +18,7 @@
   --card-hover: 0 0 0 1px #d6d6df;
   --pop-shadow: 0 0 0 1px #e4e4eb, 0 16px 40px -12px rgba(24,24,48,.18);
   --line: #e8e8ee; --line-soft: #f0f0f4;
-  --text: #17171f; --text-2: #55556a; --text-3: #8b8b9e;
+  --text: #17171f; --text-2: #55556a; --text-3: #6b6b7d;
   --ink: #111113; --ink-soft: rgba(17,17,19,.06);
   --sel: #f1f1f5; --hover: #f5f5f8;
   --seg: #f1f1f5; --seg-on: #ffffff; --seg-on-shadow: 0 0 0 1px #e2e2ea, 0 1px 2px rgba(24,24,48,.06);
@@ -36,7 +36,7 @@
   --display: Inter, ui-sans-serif, system-ui, sans-serif;
   --d1: #5266eb; --d2: #8b98f2; --d3: #bcc4f8; --d4: #e1e5fc; --d0: #d9d9e2;
   --m-green: #1a9a6b; --m-blue: #5266eb; --m-orange: #c47f0a; --m-pink: #5266eb; --m-purple: #5266eb; --m-indigo: #5266eb; --m-teal: #8b98f2; --m-red: #d33f5e; --m-gray: #e6e6ec;
-  --r: 14px;
+  --r: 14px; --t-call: #5266eb; --t-wa: #0e9fb3; --t-mail: #9a52e0; --t-form: #d9721f;
 }
 @media (prefers-color-scheme: dark) {
   :root:where(:not([data-theme="light"])) {
@@ -46,7 +46,7 @@
     --card-hover: 0 0 0 1px #34343f;
     --pop-shadow: 0 0 0 1px #2a2a35, 0 18px 44px -12px rgba(0,0,0,.7);
     --line: #24242e; --line-soft: #1c1c25;
-    --text: #ececf3; --text-2: #b3b3c4; --text-3: #7c7c90;
+    --text: #ececf3; --text-2: #b3b3c4; --text-3: #9a9aae;
     --ink: #ededf0; --ink-soft: rgba(237,237,240,.08);
     --sel: #1d1d27; --hover: #191921;
     --seg: #1a1a22; --seg-on: #272733; --seg-on-shadow: 0 0 0 1px #33333f;
@@ -60,7 +60,7 @@
     --sk: #1b1b1e; --sk-hi: #222226;
     --glass: rgba(13,13,18,.88);
     --d1: #7b8cff; --d2: #5767d6; --d3: #3a469c; --d4: #262d63; --d0: #33333f;
-    --m-green: #3cc48b; --m-blue: #7b8cff; --m-orange: #e7a73c; --m-pink: #7b8cff; --m-purple: #7b8cff; --m-indigo: #7b8cff; --m-teal: #5767d6; --m-red: #f06783; --m-gray: #2a2a35;
+    --m-green: #3cc48b; --m-blue: #7b8cff; --m-orange: #e7a73c; --m-pink: #7b8cff; --m-purple: #7b8cff; --m-indigo: #7b8cff; --m-teal: #5767d6; --m-red: #f06783; --m-gray: #2a2a35; --t-call: #7b8cff; --t-wa: #33c0d3; --t-mail: #b77cf0; --t-form: #f0954a;
   }
 }
 :root[data-theme="dark"] {
@@ -70,7 +70,7 @@
   --card-hover: 0 0 0 1px #34343f;
   --pop-shadow: 0 0 0 1px #2a2a35, 0 18px 44px -12px rgba(0,0,0,.7);
   --line: #24242e; --line-soft: #1c1c25;
-  --text: #ececf3; --text-2: #b3b3c4; --text-3: #7c7c90;
+  --text: #ececf3; --text-2: #b3b3c4; --text-3: #9a9aae;
   --ink: #ededf0; --ink-soft: rgba(237,237,240,.08);
   --sel: #1d1d27; --hover: #191921;
   --seg: #1a1a22; --seg-on: #272733; --seg-on-shadow: 0 0 0 1px #33333f;
@@ -84,7 +84,7 @@
   --sk: #1b1b1e; --sk-hi: #222226;
   --glass: rgba(13,13,18,.88);
   --d1: #7b8cff; --d2: #5767d6; --d3: #3a469c; --d4: #262d63; --d0: #33333f;
-  --m-green: #3cc48b; --m-blue: #7b8cff; --m-orange: #e7a73c; --m-pink: #7b8cff; --m-purple: #7b8cff; --m-indigo: #7b8cff; --m-teal: #5767d6; --m-red: #f06783; --m-gray: #2a2a35;
+  --m-green: #3cc48b; --m-blue: #7b8cff; --m-orange: #e7a73c; --m-pink: #7b8cff; --m-purple: #7b8cff; --m-indigo: #7b8cff; --m-teal: #5767d6; --m-red: #f06783; --m-gray: #2a2a35; --t-call: #7b8cff; --t-wa: #33c0d3; --t-mail: #b77cf0; --t-form: #f0954a;
 }
 :root { --bar-bad: color-mix(in srgb, var(--down) 22%, transparent); --bar-sources: var(--bar); --bar-pages: var(--bar); --bar-locations: var(--bar); --bar-devices: var(--bar); --bar-goals: var(--bar); --bar-search: var(--bar); --bar-sites: var(--bar); }
 * { box-sizing: border-box; }
@@ -1601,6 +1601,132 @@ body { background: var(--bg); color: var(--text); }
 .grid { gap: 16px; }
 @media (prefers-color-scheme: dark) { :root:where(:not([data-theme="light"])) .k-sk-link { fill-opacity: .2; } }
 :root[data-theme="dark"] .k-sk-link { fill-opacity: .2; }
+/* ================= v4: one statement per page, fixed type scale (34/22/17/14/12), 8-px grid ================= */
+body { font-size: 14px; line-height: 1.5; }
+.content { padding: 0 40px 96px; }
+.top { padding: 24px 40px 16px; margin: 0 -40px 24px; }
+.top.has-tabs { padding-bottom: 0; }
+.ttl { gap: 12px; }
+.ttl h1 { font-size: 22px; font-weight: 600; letter-spacing: -.02em; }
+.ttl .sub { font-size: 12px; gap: 8px; }
+.ttl .logo { width: 32px; height: 32px; padding: 4px; border-radius: 8px; }
+.top.stuck .ttl .logo { width: 28px; height: 28px; }
+.top.stuck .ttl h1 { font-size: 17px; }
+.right { gap: 8px; }
+.k-pillwrap { position: relative; }
+.k-pill-btn img.pl, .k-menu img.pl, .k-pill-btn .fallback, .k-menu .fallback { width: 16px; height: 16px; border-radius: 4px; flex: none; }
+.k-menu button { justify-content: flex-start; gap: 8px; }
+.k-menu button span { flex: 1; }
+.k-mon span { display: none; }
+.k-mon.bad span { display: inline; }
+.k-mon { cursor: default; }
+.k-tabs { margin: 16px -8px 0; gap: 0; }
+.k-tab { padding: 8px 12px 12px; font-size: 14px; }
+.k-tab .sm { display: none; }
+.k-subnav { display: inline-flex; gap: 2px; padding: 2px; margin: 0 0 24px; border-radius: 9px; background: var(--seg); }
+.k-subnav a { height: 30px; display: inline-flex; align-items: center; padding: 0 14px; border-radius: 7px; font-size: 14px; font-weight: 500; color: var(--text-2); text-decoration: none; white-space: nowrap; }
+.k-subnav a:hover { color: var(--text); }
+.k-subnav a.on { background: var(--seg-on); color: var(--text); box-shadow: var(--seg-on-shadow); }
+.k-hero { margin: 0 0 24px; }
+.k-hero h2 { margin: 0; font: 600 34px/1.15 var(--display); letter-spacing: -.03em; color: var(--text); }
+.k-hero p { margin: 8px 0 0; font-size: 17px; line-height: 1.45; color: var(--text-2); max-width: 760px; }
+.k-hero.loading h2 { width: 320px; max-width: 70%; border-radius: 8px; background: var(--sk); }
+.k-hero.loading p { width: 460px; max-width: 90%; border-radius: 6px; background: var(--sk); }
+.k-board, .k-card, .k-cols { margin-bottom: 16px; }
+.k-cols { gap: 16px; }
+.k-card { padding: 16px 24px 24px; }
+.k-card-h { margin-bottom: 8px; min-height: 32px; align-items: center; }
+.k-card-h h2 { font-size: 17px; font-weight: 600; letter-spacing: -.012em; }
+.k-link { font-size: 14px; }
+.k-k { padding: 16px; gap: 4px; }
+.k-k .l { font-size: 12px; font-weight: 500; letter-spacing: .01em; }
+.k-k .v { font: 600 22px/1.2 var(--display); letter-spacing: -.02em; }
+.k-k .v small { font-size: 14px; }
+.k-k .d { font-size: 12px; }
+.k-k .d.neutral { color: var(--text-3); }
+.k-kpis { padding: 8px 8px 0; gap: 0; }
+.k-chartbox { padding: 16px 24px 16px; }
+.k-chart-foot { font-size: 12px; gap: 8px 16px; }
+.k-about-i { display: inline-flex; align-items: center; gap: 6px; margin-left: auto; color: var(--text-3); }
+.k-i { width: 18px; height: 18px; border-radius: 50%; border: 0; padding: 0; background: var(--sel); color: var(--text-2); font: 600 11px/18px Georgia, serif; font-style: italic; cursor: pointer; flex: none; vertical-align: middle; }
+.k-i:hover { background: var(--accent-soft); color: var(--accent); }
+.k-tip { position: absolute; z-index: 1100; max-width: 300px; padding: 12px 14px; border-radius: 12px; background: var(--card); box-shadow: var(--pop-shadow); font-size: 14px; line-height: 1.5; color: var(--text); animation: kpop2 .14s var(--ease); }
+@keyframes kpop2 { from { opacity: 0; transform: translateY(-4px); } }
+.k-type { display: inline-flex; align-items: center; gap: 6px; color: var(--text); font-size: 14px; }
+.k-type svg { width: 16px; height: 16px; color: var(--c); flex: none; }
+.k-lic { background: color-mix(in srgb, var(--c) 12%, transparent); color: var(--c); }
+.k-lic svg { width: 16px; height: 16px; }
+.k-leg::before { border-radius: 50%; }
+.k-pathlist { display: flex; flex-direction: column; }
+.k-pl-h, .k-pl-r { display: grid; grid-template-columns: minmax(0, 1fr) 24px minmax(0, 1fr) 32px; gap: 8px; align-items: center; }
+.k-pl-h { font-size: 12px; color: var(--text-3); padding-bottom: 8px; }
+.k-pl-r { padding: 8px 0; border-top: 1px solid var(--line-soft); font-size: 14px; }
+.k-pl-r .n { display: flex; align-items: center; gap: 8px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.k-pl-r .n img, .k-pl-r .n svg { width: 16px; height: 16px; flex: none; }
+.k-pl-r .k-arrow { width: 16px; height: 16px; color: var(--text-3); }
+.k-pl-r b { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+.k-sl-l { display: inline-flex; align-items: center; gap: 8px; }
+.k-tag { font-size: 12px; font-weight: 500; padding: 0 6px; border-radius: 5px; background: color-mix(in srgb, var(--warn) 14%, transparent); color: var(--warn); }
+.k-sl { padding: 16px 0; }
+.k-sl-top { font-size: 14px; }
+.k-row-m b { font-size: 14px; }
+.k-row-m span { font-size: 12px; }
+.k-lead-r time { font-size: 12px; }
+.k-pill { font-size: 12px; }
+.k-note-row p { font-size: 14px; }
+.k-sleg { display: flex; gap: 12px; padding: 12px 10px 0; font-size: 12px; color: var(--text-3); }
+.k-sleg span { display: inline-flex; align-items: center; gap: 6px; cursor: help; }
+.k-sleg .sdot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; }
+/* Chancen, Konto, Snippets in the same language */
+.sv-lead { margin: 0 0 24px; }
+.sv-lead h2, .sv-lead p, .sv-lead { font-size: 34px !important; line-height: 1.15 !important; letter-spacing: -.03em !important; font-weight: 600 !important; max-width: 900px; }
+.sv-lead p { font-size: 17px !important; font-weight: 400 !important; letter-spacing: 0 !important; color: var(--text-2); line-height: 1.45 !important; margin-top: 8px !important; }
+.sv-sites { gap: 8px; margin: 0 0 24px; }
+.sv-sites a { height: 32px; border-radius: 8px; font-size: 14px; padding: 0 12px; }
+.hl-h { margin: 32px 0 16px; }
+.hl-h h2, .sv-mc-h h2 { font-size: 17px !important; font-weight: 600 !important; }
+.itop { padding: 16px 24px 24px; border-radius: var(--r); }
+.itop::before { display: none; }
+.sv-irow { border-radius: 8px; }
+.sv-ititle { font-size: 22px !important; font-weight: 600 !important; }
+.sv-idetail { font-size: 14px !important; }
+.acc, .card.acc { padding: 24px; border-radius: var(--r); box-shadow: var(--card-shadow); background: var(--card); margin-bottom: 16px; }
+.acc h2 { font-size: 17px; font-weight: 600; letter-spacing: -.012em; }
+.accsub { font-size: 14px; }
+.fld input { border-radius: 8px; padding: 8px 12px; font-size: 14px; background: var(--card); }
+.fld input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.btn { border-radius: 8px; padding: 8px 16px; font-size: 14px; background: var(--text); color: var(--bg); }
+.btn.sm { padding: 6px 12px; font-size: 12px; }
+.btn.ghost { background: var(--sel); color: var(--text); }
+.trk { border-radius: var(--r); padding: 24px; }
+.trk .h b { font-size: 17px; }
+@media (max-width: 760px) {
+  .content { padding: 0 16px 112px; }
+  .top { padding: 16px 16px 12px; margin: 0 -16px 16px; }
+  .top.has-tabs { padding-bottom: 0; }
+  .ttl h1 { font-size: 22px; }
+  .right { width: 100%; flex-wrap: nowrap; }
+  .pick { width: auto; }
+  .k-pill-btn { height: 32px; padding: 0 12px; font-size: 14px; }
+  .k-tabs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); margin: 12px -16px 0; padding: 0 8px; overflow: visible; }
+  .k-tab { padding: 8px 2px 12px; text-align: center; font-size: 12px; }
+  .k-tab .lg { display: none; } .k-tab .sm { display: inline; }
+  .k-tab.on::after { left: 12px; right: 12px; }
+  .k-subnav { display: flex; width: 100%; }
+  .k-subnav a { flex: 1; justify-content: center; padding: 0 8px; font-size: 12px; }
+  .k-hero h2 { font-size: 28px; }
+  .k-hero p { font-size: 14px; }
+  .k-card { padding: 16px; }
+  .k-chartbox { padding: 8px 8px 16px; }
+  .sv-lead h2, .sv-lead p, .sv-lead { font-size: 28px !important; }
+  .sv-lead p { font-size: 14px !important; }
+}
+.sv-lead, .sv-lead h2, .sv-lead p { font-size: inherit !important; font-weight: inherit !important; letter-spacing: normal !important; line-height: normal !important; }
+.sv-lead .k-lead-h { margin: 0; font: 600 34px/1.15 var(--display) !important; letter-spacing: -.03em !important; }
+.sv-lead .k-lead-p { margin: 8px 0 0 !important; font-size: 17px !important; line-height: 1.45 !important; color: var(--text-2); max-width: 760px; }
+.k-pot-l .d, .k-pot-l .v { white-space: normal; }
+@media (max-width: 760px) { .sv-lead .k-lead-h { font-size: 28px !important; } .sv-lead .k-lead-p { font-size: 14px !important; } }
+@media (max-width: 760px) { .sv-sites { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-right: -16px; padding-right: 16px; } .sv-sites::-webkit-scrollbar { display: none; } .sv-sites a { flex: none; } }
 </style>
 </head>
 <body>
@@ -2024,6 +2150,14 @@ body { background: var(--bg); color: var(--text); }
       a.append(companyLogo(c, 'logo'), el('span', 'lbl', c.name), dot)
       box.append(a)
     })
+    // what the dots mean
+    var leg = el('div', 'k-sleg')
+    ;[['ok', 'Läuft', STATUS_TEXT.ok[1]], ['warn', 'Prüfen', STATUS_TEXT.warn[1]], ['quiet', 'Ruhig', STATUS_TEXT.quiet[1]]].forEach(function (x) {
+      var it = el('span', null, x[1]); it.title = x[2]
+      it.prepend(el('i', 'sdot ' + x[0]))
+      leg.append(it)
+    })
+    box.append(leg)
     paintStatus()
   }
   function paintStatus() {
@@ -2092,12 +2226,7 @@ body { background: var(--bg); color: var(--text); }
     document.title = (state.view === 'overview' ? '' : title + ' · ') + 'Gruppenwerk Analytics'
     $('pick').style.display = state.view === 'tracking' || state.view === 'check' || state.view === 'funnel' || state.view === 'account' ? 'none' : ''
     renderTabs()
-    if (state.view === 'dash' && state.site) paintMonitor()
-    if (state.view === 'dash') {
-      var live = el('span', 'live'); live.id = 'live'
-      live.append(el('i'), el('span', null, '…'))
-      sub.append(live)
-    }
+    if (state.site) paintMonitor()
     syncPicker()
     $('custom').classList.toggle('on', state.period === 'custom')
     var r = range(); $('from').value = r[0]; $('to').value = r[1]
@@ -2181,7 +2310,11 @@ body { background: var(--bg); color: var(--text); }
 
   // ---------- dashboard ----------
   // ---------- site sections: tabs, site switch, uptime ----------
-  var SITE_TABS = [['dash', 'Übersicht'], ['leads', 'Anfragen'], ['visitors', 'Besucher'], ['heatmap', 'Heatmap'], ['funnel', 'Funnel'], ['check', 'Website-Check'], ['ads', 'Werbung'], ['google', 'Google']]
+  // five sections; "Website" and "Werbung & Google" hold several views behind a small switch
+  var SITE_TABS = [['dash', 'Übersicht', 'Übersicht'], ['leads', 'Anfragen', 'Anfragen'], ['website', 'Website', 'Website'], ['marketing', 'Werbung & Google', 'Werbung'], ['funnel', 'Rechner', 'Rechner']]
+  var TAB_GROUP = { visitors: 'website', heatmap: 'website', check: 'website', ads: 'marketing', google: 'marketing' }
+  var TAB_SUBS = { website: [['visitors', 'Besucher'], ['heatmap', 'Heatmap'], ['check', 'Website-Check']], marketing: [['ads', 'Werbung'], ['google', 'Google']] }
+  function firstView(tab) { return tab === 'website' ? 'visitors' : tab === 'marketing' ? (tabAvailable('ads') ? 'ads' : 'google') : tab }
   function scopeSites() {
     if (state.site) return [state.site]
     var co = COMPANIES.filter(function (c) { return 'company:' + c.id === state.scope })[0]
@@ -2198,44 +2331,67 @@ body { background: var(--bg); color: var(--text); }
     var inSite = (state.site || (state.scope && state.scope !== 'all')) && (state.view === 'dash' || SITE_VIEWS.indexOf(state.view) >= 0)
     nav.hidden = !inSite
     document.querySelector('.top').classList.toggle('has-tabs', !!inSite)
+    paintSitePick(inSite)
     if (!inSite) return
+    var current = TAB_GROUP[state.view] || state.view
     SITE_TABS.forEach(function (t) {
-      if (!tabAvailable(t[0])) return
-      var a = el('a', 'k-tab' + (state.view === t[0] ? ' on' : ''), t[1])
-      var site = state.site || (TOOL_VIEWS.indexOf(t[0]) >= 0 ? scopeSites()[0] : null)
-      a.href = urlFor({ view: t[0] === 'dash' ? null : t[0], site: site, scope: site ? null : state.scope })
+      var view = firstView(t[0])
+      var a = el('a', 'k-tab' + (current === t[0] ? ' on' : ''))
+      a.append(el('span', 'lg', t[1]), el('span', 'sm', t[2]))
+      var site = state.site || (TOOL_VIEWS.indexOf(view) >= 0 ? scopeSites()[0] : null)
+      a.href = urlFor({ view: view === 'dash' ? null : view, site: site, scope: site ? null : state.scope })
       a.dataset.nav = ''
       if (site) a.dataset.site = site
       else a.dataset.scope = state.scope
-      if (t[0] !== 'dash') a.dataset.view = t[0]
-      if (state.view === t[0]) a.setAttribute('aria-current', 'page')
+      if (view !== 'dash') a.dataset.view = view
+      if (current === t[0]) a.setAttribute('aria-current', 'page')
       nav.append(a)
     })
-    var on = nav.querySelector('.on')
-    if (on && on.scrollIntoView && nav.scrollWidth > nav.clientWidth) on.scrollIntoView({ block: 'nearest', inline: 'center' })
   }
   // websites of a company with more than one: "Alle" plus each site; the tools need one site
-  function siteSwitch(view, allowAll) {
-    var coId = companyOfState()
-    var co = COMPANIES.filter(function (c) { return c.id === coId })[0]
-    if (!co || co.sites.length < 2) return
-    var sw = el('nav', 'k-sites')
-    sw.setAttribute('aria-label', 'Website wählen')
-    var target = state.view === 'dash' ? null : state.view
-    if (allowAll) {
-      var all = el('a', state.site ? '' : 'on', 'Alle Websites')
-      all.href = urlFor({ scope: 'company:' + co.id, view: target }); all.dataset.nav = ''; all.dataset.scope = 'company:' + co.id
-      if (target) all.dataset.view = target
-      sw.append(all)
-    }
-    co.sites.forEach(function (s2) {
-      var a = el('a', state.site === s2.domain ? 'on' : '')
-      a.href = urlFor({ site: s2.domain, view: target }); a.dataset.nav = ''; a.dataset.site = s2.domain
-      if (target) a.dataset.view = target
-      a.append(siteLogo(s2.domain), el('span', null, s2.name))
+  // the small switch between the views of one section (Besucher · Heatmap · Website-Check)
+  function siteSwitch(view) {
+    var group = TAB_GROUP[state.view]
+    if (!group) return
+    var sw = el('nav', 'k-subnav')
+    sw.setAttribute('aria-label', 'Ansicht')
+    TAB_SUBS[group].forEach(function (t) {
+      if (t[0] === 'ads' && !tabAvailable('ads')) return
+      var site = state.site || (TOOL_VIEWS.indexOf(t[0]) >= 0 ? scopeSites()[0] : null)
+      var a = el('a', state.view === t[0] ? 'on' : '', t[1])
+      a.href = urlFor({ view: t[0], site: site, scope: site ? null : state.scope }); a.dataset.nav = ''; a.dataset.view = t[0]
+      if (site) a.dataset.site = site; else a.dataset.scope = state.scope
       sw.append(a)
     })
     view.append(sw)
+  }
+  // website choice for companies with several sites, as a pill next to the period
+  function paintSitePick(inSite) {
+    var old = $('sitePick'); if (old) old.remove()
+    var coId = companyOfState()
+    var co = COMPANIES.filter(function (c) { return c.id === coId })[0]
+    if (!inSite || !co || co.sites.length < 2) return
+    var tool = TOOL_VIEWS.indexOf(state.view) >= 0
+    var wrap = el('div', 'k-pillwrap'); wrap.id = 'sitePick'
+    var btn = el('button', 'k-pill-btn'); btn.type = 'button'; btn.setAttribute('aria-haspopup', 'menu'); btn.setAttribute('aria-expanded', 'false')
+    var cur = state.site ? SITE_BY_DOMAIN[state.site].name : 'Alle Websites'
+    if (state.site) btn.append(siteLogo(state.site, 'pl'))
+    btn.append(el('span', null, cur), html('<svg class="dn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 10l5 5 5-5"/></svg>'))
+    var menu = el('div', 'k-menu'); menu.hidden = true; menu.setAttribute('role', 'menu')
+    var target = state.view === 'dash' ? null : state.view
+    var opts = (tool ? [] : [[null, 'Alle Websites']]).concat(co.sites.map(function (s2) { return [s2.domain, s2.name] }))
+    opts.forEach(function (o) {
+      var b = el('button', (o[0] === state.site || (!o[0] && !state.site) ? 'on' : '')); b.type = 'button'; b.setAttribute('role', 'menuitemradio')
+      if (o[0]) b.append(siteLogo(o[0], 'pl'))
+      b.append(el('span', null, o[1]))
+      b.onclick = function () { menu.hidden = true; navigate(o[0] ? urlFor({ site: o[0], view: target }) : urlFor({ scope: 'company:' + co.id, view: target })) }
+      menu.append(b)
+    })
+    btn.onclick = function (e) { e.stopPropagation(); menu.hidden = !menu.hidden; btn.setAttribute('aria-expanded', String(!menu.hidden)) }
+    document.addEventListener('click', function (e) { if (!menu.hidden && !wrap.contains(e.target)) menu.hidden = true })
+    wrap.append(btn, menu)
+    var pick = $('pick')
+    pick.parentNode.insertBefore(wrap, pick)
   }
   var MONITOR = null
   function loadMonitor() {
@@ -2245,7 +2401,7 @@ body { background: var(--bg); color: var(--text); }
     if (!m) return null
     if (m.problem === 'down') return ['bad', 'Website nicht erreichbar']
     if (m.problem === 'snippet') return ['bad', 'Messung fehlt auf der Website']
-    return ['good', 'Online' + (m.response_ms ? ' · antwortet in ' + (m.response_ms / 1000).toFixed(1).replace('.', ',') + ' s' : '')]
+    return ['good', 'Online']
   }
   function paintMonitor() {
     var box = $('mon')
@@ -2443,7 +2599,7 @@ body { background: var(--bg); color: var(--text); }
   function chartPoints(series, prevSeries, from, to, since, hourly, partSeries) {
     var bs = buckets(series || {}, from, to, since, hourly)
     var pb = prevSeries ? buckets(prevSeries, from, to, null, hourly) : null
-    return bs.map(function (b, i) {
+    var pts = bs.map(function (b, i) {
       var parts = null
       if (partSeries) {
         parts = {}
@@ -2454,11 +2610,72 @@ body { background: var(--bg); color: var(--text); }
       }
       return { label: b.label, long: b.long, v: b.v === null ? null : b.v, p: pb ? pb[i].v : null, parts: parts }
     })
+    // only the measured part: days before the tracker went live are left out, not drawn empty
+    var first = 0
+    while (first < pts.length - 2 && pts[first].v === null) first++
+    return pts.slice(first)
   }
   // ---------- KPI row with chart (company, site and overall overview) ----------
-  var TYPE_SHADES = { call: 'var(--d1)', whatsapp: 'var(--d2)', email: 'var(--d3)', form: 'var(--good)' }
+  var TYPE_SHADES = { call: 'var(--t-call)', whatsapp: 'var(--t-wa)', email: 'var(--t-mail)', form: 'var(--t-form)' }
+  var TYPE_GLYPH = {
+    call: '<path d="M5 4h3l2 5-2.5 1.5a11 11 0 0 0 6 6L15 14l5 2v3a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/>',
+    whatsapp: '<path d="M4 20l1.3-4A8 8 0 1 1 8 18.7z"/>',
+    email: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',
+    form: '<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/>'
+  }
+  function typeBadge(k, text) {
+    var b = el('span', 'k-type'); b.style.setProperty('--c', TYPE_SHADES[k])
+    b.append(html('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + TYPE_GLYPH[k] + '</svg>'), el('span', null, text))
+    return b
+  }
+  // a change is only shown as good or bad when the numbers are large enough to mean something
+  function honestDelta(cur, prev, opt) {
+    opt = opt || {}
+    if (prev === null || prev === undefined || cur === null || cur === undefined) return null
+    var diff = cur - prev, big = Math.max(Math.abs(cur), Math.abs(prev))
+    var f = function (x) { return opt.money ? money0.format(x) : nf.format(x) }
+    if (Math.abs(diff) < 0.5) return { cls: 'neutral', text: 'wie davor' }
+    var pct = prev ? Math.abs(diff) / prev : 1
+    if ((opt.money ? big < 50 : big < 10) || (pct < 0.2 && big < 30)) return { cls: 'neutral', text: 'davor ' + f(prev) }
+    var up = diff > 0
+    var cls = opt.neutral ? 'neutral' : (opt.invert ? !up : up) ? 'good' : 'bad'
+    return { cls: cls, text: (up ? '↗ ' : '↘ ') + (pct < 10 ? Math.round(pct * 100) + ' %' : f(Math.abs(diff))) + ' ggü. davor' }
+  }
+  // explanations wait behind a small (i)
+  function infoTip(text, label) {
+    var b = el('button', 'k-i'); b.type = 'button'; b.setAttribute('aria-label', label || 'Erklärung'); b.textContent = 'i'
+    b.onclick = function (e) {
+      e.stopPropagation()
+      var open = document.querySelector('.k-tip')
+      if (open) { var was = open._for === b; open.remove(); if (was) return }
+      var t = el('div', 'k-tip', text); t._for = b
+      document.body.append(t)
+      var r = b.getBoundingClientRect()
+      var left = Math.min(window.innerWidth - t.offsetWidth - 12, Math.max(12, r.left + r.width / 2 - t.offsetWidth / 2))
+      t.style.left = left + 'px'
+      t.style.top = (r.bottom + window.scrollY + 8) + 'px'
+    }
+    return b
+  }
+  document.addEventListener('click', function (e) { var t = document.querySelector('.k-tip'); if (t && !t.contains(e.target)) t.remove() })
+  window.addEventListener('scroll', function () { var t = document.querySelector('.k-tip'); if (t) t.remove() }, { passive: true })
+  // the one statement a page starts with
+  var PERIOD_PHRASE = { today: 'heute', yesterday: 'gestern', '7d': 'in den letzten 7 Tagen', '30d': 'in den letzten 30 Tagen', month: 'in diesem Monat', lastmonth: 'im letzten Monat', '12mo': 'in den letzten 12 Monaten', custom: 'im gewählten Zeitraum' }
+  function hero(view) {
+    var h = el('section', 'k-hero')
+    h.append(el('h2', null, '\u00a0'), el('p', null, '\u00a0'))
+    h.classList.add('loading')
+    view.append(h)
+    return function (big, sub) {
+      h.classList.remove('loading')
+      h.firstChild.textContent = big
+      h.lastChild.textContent = sub || ''
+      h.lastChild.hidden = !sub
+    }
+  }
   function kpiBoard(box, d) {
-    var defs = metricDefs(d)
+    // a number that does not exist yet is not shown at all
+    var defs = metricDefs(d).filter(function (m) { return m.value !== null && m.value !== undefined })
     var sel = defs.filter(function (m) { return m.key === state.kpi })[0] || defs[0]
     box.replaceChildren()
     var strip = el('div', 'k-kpis'); strip.setAttribute('role', 'tablist')
@@ -2470,17 +2687,10 @@ body { background: var(--bg); color: var(--text); }
       v.append(num)
       if (m.unit && m.unit !== m.label) v.append(el('small', null, m.unit))
       var dEl = el('div', 'd')
-      if (m.prev !== null && m.prev !== undefined && m.value !== null) {
-        var diff = m.value - m.prev, up = diff > 0
-        var good = m.key === 'cpl' || m.key === 'spend' ? !up : up
-        if (Math.abs(diff) < (m.money ? 0.5 : 0.5)) dEl.textContent = 'wie davor'
-        else {
-          var pct = m.prev ? Math.round(Math.abs(diff) / m.prev * 100) : null
-          dEl.className = 'd ' + (m.key === 'spend' ? 'neutral' : good ? 'good' : 'bad')
-          dEl.textContent = (up ? '↗ ' : '↘ ') + (pct !== null && pct < 1000 ? pct + ' %' : (m.money ? money0.format(Math.abs(diff)) : nf.format(Math.abs(diff)))) + ' ggü. davor'
-        }
-      } else if (m.site && since) dEl.textContent = 'gemessen seit ' + fmtDay(since)
-      else dEl.textContent = ' '
+      var hd = honestDelta(m.value, m.prev, { money: m.money, invert: m.key === 'cpl', neutral: m.key === 'spend' })
+      if (hd) { dEl.className = 'd ' + hd.cls; dEl.textContent = hd.text }
+      else if (m.site && since) dEl.textContent = 'seit ' + fmtDay(since)
+      else dEl.textContent = '\u00a0'
       b.append(el('div', 'l', m.label), v, dEl)
       b.title = m.about
       b.onclick = function () { state.kpi = m.key; kpiBoard(box, d) }
@@ -2503,7 +2713,7 @@ body { background: var(--bg); color: var(--text); }
         foot.append(it)
       })
       if (prevS) { var pl = el('span', 'k-leg prev'); pl.textContent = 'Zeitraum davor'; foot.append(pl) }
-      var about = el('span', 'k-about', sel.about)
+      var about = el('span', 'k-about-i'); about.append(el('span', null, 'Was zählt hier?'), infoTip(sel.about))
       foot.append(about)
       chart.append(foot)
     } else chart.append(el('p', 'k-muted', sel.about))
@@ -2514,21 +2724,21 @@ body { background: var(--bg); color: var(--text); }
     var out = []
     var chip = function (t) { return '<span class="k-chip">' + escapeHtml(t) + '</span>' }
     var n = d.leads.total
-    if (d.leads.prev !== null && d.leads.prev !== undefined && (n || d.leads.prev)) {
+    if (d.leads.prev !== null && d.leads.prev !== undefined && Math.max(n, d.leads.prev) >= 10) {
       if (n > d.leads.prev) out.push(['up', 'Mehr Anfragen als im Zeitraum davor: ' + chip(String(n)) + ' statt ' + d.leads.prev + '.'])
       else if (n < d.leads.prev) out.push(['down', 'Weniger Anfragen als im Zeitraum davor: ' + chip(String(n)) + ' statt ' + d.leads.prev + '.'])
-    } else if (n) out.push(['star', chip(plural(n, ['Anfrage', 'Anfragen'])) + ' seit Messbeginn am ' + fmtDay(d.tracking_since || d.from) + '.'])
+    }
     var src = (d.sources || []).slice().sort(function (a, b) { return b.n - a.n })
     if (src.length && n >= 2) out.push(['star', 'Die meisten Anfragen kommen über ' + chip(sourceName(src[0].source)) + ': ' + src[0].n + ' von ' + n + '.'])
     var types = d.leads.types || {}, tk = Object.keys(types).sort(function (a, b) { return types[b] - types[a] })[0]
-    if (tk && types[tk] && n >= 3) out.push(['star', chip({ call: 'Anrufen', whatsapp: 'WhatsApp', email: 'E-Mail', form: 'Das Formular' }[tk]) + (tk === 'call' ? ' ist' : ' ist') + ' der häufigste Weg: ' + types[tk] + ' von ' + n + '.'])
+    if (tk && types[tk] && n >= 3) out.push(['star', plural(types[tk], ['Anfrage', 'Anfragen']) + ' von ' + n + ' kamen ' + chip({ call: 'per Anruf', whatsapp: 'per WhatsApp', email: 'per E-Mail', form: 'über das Formular' }[tk]) + (types[tk] / n >= 0.5 ? ', mehr als die Hälfte.' : '.')])
     if (d.ads && d.ads.per_lead) {
       var pl = d.ads.per_lead, pp = d.ads.per_lead_prev
       out.push([pp && pl < pp ? 'up' : pp && pl > pp ? 'down' : 'star', 'Eine Anfrage kostet im Schnitt ' + chip(money0.format(pl)) + ' Werbung' + (pp ? ', davor ' + money0.format(pp) : '') + '.'])
     } else if (d.ads && d.ads.spend > 20 && !n) out.push(['down', chip(money0.format(d.ads.spend)) + ' Werbung im Zeitraum, aber noch keine Anfrage über die Website.'])
     var wk = d.weekdays || [], best = wk.indexOf(Math.max.apply(null, wk))
     if (n >= 6 && wk[best] >= 2) out.push(['star', 'Die meisten Anfragen kommen am ' + chip(DAY_NAMES[best]) + '.'])
-    if (d.search && d.search.prev !== null && d.search.prev !== undefined && Math.abs(d.search.clicks - d.search.prev) >= 5) out.push([d.search.clicks > d.search.prev ? 'up' : 'down', 'Klicks aus der Google-Suche: ' + chip(String(d.search.clicks)) + ' statt ' + d.search.prev + ' davor.'])
+    if (d.search && d.search.prev !== null && d.search.prev !== undefined && Math.max(d.search.clicks, d.search.prev) >= 10 && Math.abs(d.search.clicks - d.search.prev) >= 5) out.push([d.search.clicks > d.search.prev ? 'up' : 'down', 'Klicks aus der Google-Suche: ' + chip(String(d.search.clicks)) + ' statt ' + d.search.prev + ' davor.'])
     return out.slice(0, 5)
   }
   function escapeHtml(t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c] }) }
@@ -2549,7 +2759,26 @@ body { background: var(--bg); color: var(--text); }
   // ---------- paths to an enquiry: source -> first page -> how they got in touch ----------
   function renderSankey(card, results) {
     var groups = groupLeads(results.filter(function (r) { return r.type !== 'Application' && r.type !== 'Application contact' }))
-    if (groups.length < 2) { card.append(el('p', 'k-muted', 'Sobald ein paar Anfragen da sind, zeigt diese Grafik, über welchen Weg die Leute kamen und wie sie sich gemeldet haben.')); return }
+    if (!groups.length) { card.append(el('p', 'k-muted', 'Sobald Anfragen da sind, steht hier, über welchen Weg die Leute kamen und wie sie sich gemeldet haben.')); return }
+    // with few enquiries a plain list says more than a flow chart
+    if (groups.length < 10) {
+      var cnt = {}
+      groups.forEach(function (g) { var k = sourceName(g.source) + '\u0000' + leadTypes(g)[0]; cnt[k] = (cnt[k] || 0) + 1 })
+      var list = el('div', 'k-pathlist')
+      list.append(el('div', 'k-pl-h'))
+      list.firstChild.append(el('span', null, 'Kam über'), el('span'), el('span', null, 'Meldete sich per'), el('span'))
+      Object.keys(cnt).sort(function (a, b) { return cnt[b] - cnt[a] }).forEach(function (k) {
+        var p = k.split('\u0000'), r = el('div', 'k-pl-r')
+        var src = el('span', 'n'), ic = iconFor('source', groups.filter(function (g) { return sourceName(g.source) === p[0] })[0].source)
+        if (ic) src.append(ic)
+        src.append(document.createTextNode(p[0]))
+        var tk = { Anruf: 'call', WhatsApp: 'whatsapp', 'E-Mail': 'email', Formular: 'form' }[p[1]] || 'form'
+        r.append(src, html('<svg class="k-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>'), typeBadge(tk, p[1]), el('b', null, String(cnt[k])))
+        list.append(r)
+      })
+      card.append(list)
+      return
+    }
     var cols = [function (g) { return sourceName(g.source) }, function (g) { return pageName(g.entry || '/') }, function (g) { return leadTypes(g)[0] }]
     var MAXN = 5
     var keyOf = [{}, {}, {}]
@@ -2591,7 +2820,7 @@ body { background: var(--bg); color: var(--text); }
       pos.forEach(function (map, c) {
         Object.keys(map).forEach(function (k) {
           var nd = map[k]
-          s += '<rect x="' + colX[c] + '" y="' + nd.y + '" width="' + nodeW + '" height="' + nd.h + '" rx="2" fill="' + (c === 2 ? 'var(--good)' : 'var(--d1)') + '"/>'
+          s += '<rect x="' + colX[c] + '" y="' + nd.y + '" width="' + nodeW + '" height="' + nd.h + '" rx="2" fill="' + (c === 2 ? 'var(--d2)' : 'var(--d1)') + '"/>'
           var maxCh = Math.floor((c === 1 ? 150 : lab - 14) / 6.6)
           var label = k.length > maxCh ? k.slice(0, maxCh - 1) + '…' : k
           var cy = nd.y + nd.h / 2 + 4
@@ -2614,8 +2843,23 @@ body { background: var(--bg); color: var(--text); }
   }
 
   // ---------- overview tab of a company or website ----------
+  function leadHero(d, where) {
+    var n = d.leads.total
+    var big = plural(n, ['Anfrage', 'Anfragen']) + ' ' + (PERIOD_PHRASE[state.period] || 'im Zeitraum')
+    var parts = []
+    var hd = honestDelta(n, d.leads.prev)
+    if (hd && hd.cls !== 'neutral') parts.push(n > d.leads.prev ? (n - d.leads.prev) + ' mehr als im Zeitraum davor' : (d.leads.prev - n) + ' weniger als im Zeitraum davor')
+    else if (hd && d.leads.prev !== null) parts.push('Davor: ' + d.leads.prev)
+    var types = d.leads.types || {}, tk = Object.keys(types).sort(function (a, b) { return types[b] - types[a] })[0]
+    if (n >= 2 && tk && types[tk]) parts.push('die meisten ' + { call: 'per Anruf', whatsapp: 'per WhatsApp', email: 'per E-Mail', form: 'über das Formular' }[tk])
+    if (where) parts.push(where)
+    if (d.tracking_since && d.tracking_since > d.from) parts.push('gemessen seit ' + fmtDay(d.tracking_since))
+    var sub = parts.join(', ')
+    return [big, sub ? sub.charAt(0).toUpperCase() + sub.slice(1) + '.' : '']
+  }
   function renderDash(view) {
     siteSwitch(view, true)
+    var setHero = hero(view)
     var alerts = el('div', 'k-alerts')
     var board = el('section', 'k-board k-board3')
     board.append(skeletonRows(3))
@@ -2634,6 +2878,8 @@ body { background: var(--bg); color: var(--text); }
     var token = renderToken
     api('summary').then(function (d) {
       if (token !== renderToken) return
+      var h = leadHero(d)
+      setHero(h[0], h[1])
       kpiBoard(board, d)
       renderNotices(notes, d)
     }).catch(function (e) { console.error(e); board.replaceChildren(el('div', 'empty', 'Fehler beim Laden')) })
@@ -2685,31 +2931,28 @@ body { background: var(--bg); color: var(--text); }
     var seen = {}
     return g.items.map(function (r) { return LEAD_SHORT[r.type] || r.type }).filter(function (t) { if (seen[t]) return false; seen[t] = 1; return true })
   }
+  var LEAD_KEY = { 'Phone click': 'call', 'WhatsApp click': 'whatsapp', 'Email click': 'email', 'Form submit': 'form', Application: 'form', 'Application contact': 'call' }
   function leadIcon(g) {
-    var t = g.items[0].type
-    var box = el('span', 'k-lic')
-    if (CONTACT_APP[t]) box.append(brandIcon(CONTACT_APP[t]))
-    else box.append(html((LEAD_ICON[t] || LEAD_ICON['Form submit'])[1]))
+    var k = LEAD_KEY[g.items[0].type] || 'form'
+    var box = el('span', 'k-lic'); box.style.setProperty('--c', TYPE_SHADES[k])
+    box.append(html('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + TYPE_GLYPH[k] + '</svg>'))
     return box
   }
   function leadRow(g, outcome, onOpen) {
     var row = el('button', 'k-lead'); row.type = 'button'
-    var types = leadTypes(g)
     var mid = el('span', 'k-row-m')
-    var title = types.join(' + ')
-    var phone = g.items.filter(function (r) { return r.type === 'Phone click' && r.label })[0]
-    mid.append(el('b', null, title + (phone ? ' · ' + phone.label.replace(/^Anrufen:\s*/, '') : '')))
-    var meta = []
+    // what happened, where, from which source: never the company's own phone number
+    mid.append(el('b', null, leadTypes(g).join(' + ') + (g.city ? ' · ' + g.city : '')))
+    var meta = [sourceName(g.source)]
+    if (g.keyword) meta.push('„' + g.keyword + '“')
     if (!state.site) meta.push((SITE_BY_DOMAIN[g.site] || {}).name || g.site)
-    meta.push(sourceName(g.source))
-    if (g.keyword) meta.push('„' + g.keyword + '"')
-    if (g.city) meta.push(g.city)
-    mid.append(el('span', null, meta.join(' · ')))
+    mid.append(el('span', null, 'über ' + meta.join(' · ')))
     var right = el('span', 'k-lead-r')
     var st = outcome ? outcome.status : 'open'
     var pill = el('span', 'k-pill ' + st, st === 'won' && outcome.value ? money0.format(outcome.value) : OUTCOME_NAME[st])
     right.append(pill, el('time', null, timeAgo(g.ts)))
     row.append(leadIcon(g), mid, right)
+    row.setAttribute('aria-label', leadTypes(g).join(' und ') + ', ' + timeAgo(g.ts) + ', Status ' + OUTCOME_NAME[st])
     row.onclick = function () { onOpen(g) }
     return row
   }
@@ -2738,7 +2981,7 @@ body { background: var(--bg); color: var(--text); }
     add('Kam über', sourceName(g.source) + (g.keyword ? ' · „' + g.keyword + '"' : ''))
     add('Einstieg', pageName(g.entry))
     add('Gerät', (g.device || '') + (g.city ? ' · ' + g.city : ''))
-    g.items.forEach(function (r) { if (r.label && r.type !== 'Form submit') add(LEAD_SHORT[r.type] || r.type, r.label.replace(/^Anrufen:\s*/, '')) })
+
     if (g.choices) Object.keys(g.choices).forEach(function (k) { add(k, g.choices[k]) })
     box.append(facts)
     box.append(el('h3', 'k-sheet-h', 'Was ist daraus geworden?'))
@@ -2797,8 +3040,9 @@ body { background: var(--bg); color: var(--text); }
   // ---------- tab: enquiries ----------
   function renderLeadsTab(view) {
     siteSwitch(view, true)
+    var setHero = hero(view)
     var sum = el('section', 'k-board k-sum')
-    sum.append(skeletonRows(2))
+    sum.hidden = true
     var inbox = kcard('inbox', 'Alle Anfragen')
     var bySrc = kcard('bysrc', 'Was jeder Weg bringt')
     var cols = el('div', 'k-cols')
@@ -2829,6 +3073,14 @@ body { background: var(--bg); color: var(--text); }
           if (o.status === 'none') none++
         })
         var spend = s && s.ads ? s.ads.spend : null
+        var real = groups.length - none
+        var known = Object.keys(outs).length
+        setHero(plural(real, ['Anfrage', 'Anfragen']) + ' ' + (PERIOD_PHRASE[state.period] || 'im Zeitraum'),
+          won ? plural(won, ['Auftrag', 'Aufträge']) + (revenue ? ' mit ' + money0.format(revenue) + ' Umsatz' : '') + (decided ? ', ' + Math.round((won / decided) * 100) + ' % der entschiedenen Anfragen.' : '.')
+            : known ? plural(known, ['Anfrage hat', 'Anfragen haben']) + ' schon ein Ergebnis. Noch kein Auftrag eingetragen.'
+            : real ? 'Tippe eine Anfrage an und trag ein, was daraus wurde. Dann siehst du hier Aufträge und Umsatz.' : '')
+        // the money numbers only once there is something to count
+        sum.hidden = !won
         var cells = [
           ['Anfragen', nf.format(groups.length - none), none ? none + ' ohne echten Kontakt' : 'Anrufe, WhatsApp, E-Mails, Formulare'],
           ['Aufträge', nf.format(won), decided ? Math.round((won / decided) * 100) + ' % der entschiedenen' : 'Ergebnis bei den Anfragen eintragen'],
@@ -2865,10 +3117,10 @@ body { background: var(--bg); color: var(--text); }
         })
         paintList()
         inbox.append(filter, list)
-        // per source: enquiries, orders, revenue
-        bySrc.querySelectorAll('.k-table, .k-muted').forEach(function (n) { n.remove() })
+        // per source: enquiries, orders, revenue (only once there are orders)
+        bySrc.querySelectorAll('.k-table, .k-muted, .k-foot').forEach(function (n) { n.remove() })
         var rows = (d.by_source || []).filter(function (r) { return r.leads })
-        if (!rows.length) bySrc.hidden = true
+        if (!rows.length || !rows.some(function (r) { return r.won })) bySrc.hidden = true
         else {
           var t = el('table', 'k-table')
           t.append(html('<thead><tr><th>Weg</th><th>Anfragen</th><th>Aufträge</th><th>Umsatz</th></tr></thead>'))
@@ -2907,6 +3159,7 @@ body { background: var(--bg); color: var(--text); }
   // ---------- tab: visitors ----------
   function renderVisitorsTab(view) {
     siteSwitch(view, true)
+    var setHero = hero(view)
     var main = el('section', 'k-board k-board3')
     main.append(skeletonRows(3))
     var grid = el('div', 'grid')
@@ -2923,6 +3176,9 @@ body { background: var(--bg); color: var(--text); }
     Promise.all([api('overview'), api('timeseries')]).then(function (res) {
       if (token !== renderToken) return
       state.totalVisitors = res[0].current.visitors
+      var cv = res[0].current
+      setHero(plural(cv.visitors, ['Besucher', 'Besucher']) + ' ' + (PERIOD_PHRASE[state.period] || 'im Zeitraum'),
+        cv.visitors ? (cv.leads ? plural(cv.leads, ['hat', 'haben']).replace(/^(\d+) /, '$1 davon ') + ' sich gemeldet (' + String(Math.round(cv.leads / cv.visitors * 1000) / 10).replace('.', ',') + ' %).' : 'Noch hat sich niemand davon gemeldet.') : '')
       visitorsBoard(main, res[0], res[1])
       var goals = document.querySelector('[data-panel="goals"]')
       if (goals) renderPanel(goals, 'goals')
@@ -2968,12 +3224,30 @@ body { background: var(--bg); color: var(--text); }
   // ---------- tabs: advertising and Google ----------
   function renderAdsTab(view) {
     siteSwitch(view, true)
+    var setHero = hero(view)
     var s = el('section', 'card panel wide k-solo'); s.id = 'ads'
     view.append(s)
+    var token = renderToken
+    api('summary').then(function (d) {
+      if (token !== renderToken || !d.ads) return
+      var fromAds = (d.sources || []).filter(function (x) { return x.source === 'Google Ads' }).reduce(function (a, x) { return a + x.n }, 0)
+      setHero(money0.format(d.ads.spend) + ' für Google-Anzeigen',
+        plural(d.ads.clicks, ['Klick', 'Klicks']) + ', daraus ' + plural(fromAds, ['Anfrage', 'Anfragen']) + ' über die Website' + (fromAds && d.ads.spend_tracked ? ', also ' + money0.format(d.ads.spend_tracked / fromAds) + ' pro Anfrage seit Messbeginn' : '') + '.')
+    }).catch(function () {})
     Promise.resolve(renderAds()).then(function () { if (!s.children.length || s.querySelector(':scope > .empty')) s.replaceChildren(el('p', 'k-muted', 'Für diese Auswahl gibt es keine Google-Anzeigen.')) })
   }
   function renderGoogleTab(view) {
     siteSwitch(view, true)
+    var setHero = hero(view)
+    var token = renderToken
+    api('summary').then(function (d) {
+      if (token !== renderToken) return
+      var big = d.search ? plural(d.search.clicks, ['Klick', 'Klicks']) + ' aus der Google-Suche' : d.gbp ? plural(d.gbp.views, ['Einblendung', 'Einblendungen']) + ' im Google-Profil' : 'Google'
+      var sub = []
+      if (d.search) sub.push(nf.format(d.search.impressions) + '-mal in den Suchergebnissen gezeigt')
+      if (d.gbp) sub.push('im Google-Profil ' + plural(d.gbp.calls, ['Anruf', 'Anrufe']) + ' und ' + plural(d.gbp.web, ['Klick', 'Klicks']) + ' zur Website')
+      setHero(big, sub.length ? sub.join(', ').replace(/^./, function (c) { return c.toUpperCase() }) + '.' : '')
+    }).catch(function () {})
     var g = el('section', 'card panel wide k-solo'); g.id = 'gbp'
     var s = el('section', 'card panel wide k-solo'); s.id = 'search'
     view.append(s, g)
@@ -3860,7 +4134,10 @@ body { background: var(--bg); color: var(--text); }
       var sentence = !open.length ? 'Alles erledigt. Neue Punkte erscheinen hier von selbst.'
         : (high.length ? (high.length === 1 ? 'Eine Sache ist dringend.' : high.length + ' Dinge sind dringend.') : 'Nichts Dringendes, aber ' + plural(open.length, ['Idee', 'Ideen']) + ' zum Besserwerden.')
           + (richest ? ' Am meisten Geld lässt sich bei „' + richest.title.replace(/\.$/, '') + '“ sparen.' : '')
-      lead.append(el('p', null, sentence))
+      // one big statement, the rest of the sentence below it
+      var cut = sentence.indexOf('. ')
+      lead.append(el('h2', 'k-lead-h', cut > 0 ? sentence.slice(0, cut + 1) : sentence))
+      if (cut > 0) lead.append(el('p', 'k-lead-p', sentence.slice(cut + 2)))
       wrap.append(lead)
 
       // four numbers, the same cards as on the company pages
@@ -3960,7 +4237,7 @@ body { background: var(--bg); color: var(--text); }
     when: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 10.4 3.5 2.1-1 1.7L11 13V7h2z"/></svg>',
     source: '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="5" width="18" height="3" rx="1.5"/><rect x="3" y="10.5" width="12" height="3" rx="1.5"/><rect x="3" y="16" width="7" height="3" rx="1.5"/></svg>'
   }
-  var TYPE_COLOR = { call: 'var(--m-green)', whatsapp: 'var(--m-teal)', email: 'var(--m-blue)', form: 'var(--m-indigo)' }
+  var TYPE_COLOR = { call: 'var(--t-call)', whatsapp: 'var(--t-wa)', email: 'var(--t-mail)', form: 'var(--t-form)' }
   var TYPE_NAME = { call: ['Anruf', 'Anrufe'], whatsapp: ['WhatsApp', 'WhatsApp'], email: ['E-Mail', 'E-Mails'], form: ['Formular', 'Formulare'] }
   var SHARE_COLORS = ['var(--m-blue)', 'var(--m-orange)', 'var(--m-purple)', 'var(--m-teal)', 'var(--m-gray)']
   var PERIOD_SHORT = { today: 'Heute', yesterday: 'Gestern', '7d': '7 Tage', '30d': '30 Tage', month: 'Dieser Monat', lastmonth: 'Letzter Monat', '12mo': '12 Monate' }
@@ -4190,14 +4467,8 @@ body { background: var(--bg); color: var(--text); }
     state.hdev = state.hdev || 'desktop'
     state.hlayer = state.hlayer || 'scroll'
     state.hpage = state.hpage || '/'
+    siteSwitch(view)
     var bar = el('div', 'k-toolbar')
-    var sites = hmSiteOptions()
-    if (sites.length > 1) {
-      var ss = el('select', 'k-select'); ss.setAttribute('aria-label', 'Website')
-      sites.forEach(function (x) { ss.append(new Option(x.name, x.domain, false, x.domain === state.site)) })
-      ss.onchange = function () { state.site = ss.value; state.hpage = '/'; saveUrl(); render() }
-      bar.append(ss)
-    }
     var ps = el('select', 'k-select'); ps.setAttribute('aria-label', 'Seite')
     ps.append(new Option(pageName(state.hpage), state.hpage))
     ps.onchange = function () { state.hpage = ps.value; render(true) }
@@ -4514,7 +4785,7 @@ body { background: var(--bg); color: var(--text); }
       var sim = Object.assign({}, base)
       var today = simCalc(M, base)
 
-      var lede = el('p', 'k-lede')
+      var setHeroF = hero(view)
       var board = el('section', 'k-board k-sim')
       var flow = el('div', 'k-flow')
       var results = el('div', 'k-strip static k-sim-res')
@@ -4523,7 +4794,7 @@ body { background: var(--bg); color: var(--text); }
       var levers = el('section', 'k-card')
       var why = el('section', 'k-card')
       cols.append(levers, why)
-      view.append(lede, board, cols)
+      view.append(board, cols)
 
       // funnel picture: bars with bands between them, today's size as an outline
       var stageVals = function (r) { return [r.visits, r.looked, r.area, r.leads, r.customers] }
@@ -4544,7 +4815,7 @@ body { background: var(--bg); color: var(--text); }
               var sj = stageIdx[k + 1], y1 = y0 + rowH, wn = w2(vals[sj])
               sv2 += '<path d="M' + (cx - wv / 2) + ' ' + (y0 + 4) + ' C' + (cx - wv / 2) + ' ' + (y0 + rowH / 2) + ' ' + (cx - wn / 2) + ' ' + (y1 - rowH / 2) + ' ' + (cx - wn / 2) + ' ' + (y1 - 4) + ' L' + (cx + wn / 2) + ' ' + (y1 - 4) + ' C' + (cx + wn / 2) + ' ' + (y1 - rowH / 2) + ' ' + (cx + wv / 2) + ' ' + (y0 + rowH / 2) + ' ' + (cx + wv / 2) + ' ' + (y0 + 4) + ' Z" fill="url(#kbgv)"/>'
             }
-            sv2 += '<rect x="' + (cx - wv / 2) + '" y="' + (y0 - 4) + '" width="' + wv + '" height="8" rx="3" fill="' + (si >= 3 ? 'var(--good)' : 'var(--d1)') + '"/>'
+            sv2 += '<rect x="' + (cx - wv / 2) + '" y="' + (y0 - 4) + '" width="' + wv + '" height="8" rx="3" fill="' + (si >= 3 ? 'var(--d2)' : 'var(--d1)') + '"/>'
             var prev = k ? vals[stageIdx[k - 1]] : null
             sv2 += '<text x="0" y="' + (y0 - 2) + '" font-size="19" font-weight="500" fill="var(--text)" style="font-variant-numeric:tabular-nums">' + fmtN(v) + '</text>'
             sv2 += '<text x="0" y="' + (y0 + 16) + '" font-size="12" fill="var(--text-2)">' + SIM_STAGES[si][1] + (prev ? ' · ' + Math.round((v / prev) * 100) + ' %' : '') + '</text>'
@@ -4571,7 +4842,7 @@ body { background: var(--bg); color: var(--text); }
           }
           var hb = h(base0[si])
           if (Math.abs(base0[si] - v) > 0.05 * Math.max(v, 1)) sv += '<rect x="' + (x0 - barW / 2 - 3) + '" y="' + (cy - hb / 2) + '" width="' + (barW + 6) + '" height="' + hb + '" rx="4" fill="none" stroke="var(--text-3)" stroke-dasharray="3 3"/>'
-          sv += '<rect x="' + (x0 - barW / 2) + '" y="' + (cy - hv / 2) + '" width="' + barW + '" height="' + hv + '" rx="3" fill="' + (si >= 3 ? 'var(--good)' : 'var(--d1)') + '"/>'
+          sv += '<rect x="' + (x0 - barW / 2) + '" y="' + (cy - hv / 2) + '" width="' + barW + '" height="' + hv + '" rx="3" fill="' + (si >= 3 ? 'var(--d2)' : 'var(--d1)') + '"/>'
           var prevV = k ? vals[stageIdx[k - 1]] : null
           sv += '<text x="' + x0 + '" y="22" text-anchor="middle" font-size="22" font-weight="500" fill="var(--text)" style="font-variant-numeric:tabular-nums;letter-spacing:-.02em">' + fmtN(v) + '</text>'
           sv += '<text x="' + x0 + '" y="42" text-anchor="middle" font-size="12.5" fill="var(--text-2)">' + SIM_STAGES[si][1] + '</text>'
@@ -4602,9 +4873,8 @@ body { background: var(--bg); color: var(--text); }
           resEls.cpl.v.textContent = r.adsLeads >= 0.1 ? money0.format(sim.budget / r.adsLeads) : '–'
           resEls.cpl.d.textContent = money0.format(sim.budget) + ' Budget im Monat'
         }
-        lede.textContent = Math.abs(dl) < 0.5
-          ? 'Heute kommen rund ' + fmtN(today.leads) + ' Anfragen im Monat über die Website, gemessen seit ' + fmtDay(d.since) + '. Verändere die Werte und sieh, was passiert.'
-          : 'So kämen rund ' + fmtN(r.leads) + ' statt ' + fmtN(today.leads) + ' Anfragen im Monat.'
+        if (Math.abs(dl) < 0.5) setHeroF('Rund ' + fmtN(today.leads) + ' Anfragen im Monat', 'Hochgerechnet aus den letzten ' + d.days + ' Tagen. Verändere die Werte unten und sieh, was passiert.')
+        else setHeroF('Rund ' + fmtN(r.leads) + ' Anfragen im Monat', (dl > 0 ? fmtN(dl) + ' mehr' : fmtN(-dl) + ' weniger') + ' als heute (' + fmtN(today.leads) + '), wenn sich die eingestellten Werte so ändern.')
         sliders.forEach(function (f) { f() })
       }
 
@@ -4618,7 +4888,12 @@ body { background: var(--bg); color: var(--text); }
       var pctF = function (v) { return Math.round(v * 100) + ' %' }
       var slider = function (key, label, min, max, step, fmt, note, range) {
         var row = el('div', 'k-sl'), top = el('div', 'k-sl-top'), val = el('b')
-        top.append(el('span', null, label), val)
+        var lab = el('span', 'k-sl-l', label)
+        // the budget limit is a fact worth seeing; the rest is explanation behind (i)
+        var assumed = /^Annahme/.test(note || '')
+        if (note && key !== 'budget') lab.append(infoTip(note + (range ? ' Der helle Bereich zeigt, wo der echte Wert mit 90 % Sicherheit liegt.' : '')))
+        if (assumed) lab.append(el('span', 'k-tag', 'Annahme'))
+        top.append(lab, val)
         var track = el('div', 'k-sl-track')
         if (range) {
           var band = el('span', 'k-sl-band')
@@ -4632,7 +4907,7 @@ body { background: var(--bg); color: var(--text); }
         inp.setAttribute('aria-label', label)
         track.append(mark, inp)
         row.append(top, track)
-        if (note) row.append(el('div', 'k-sl-note', note))
+        if (note && key === 'budget') row.append(el('div', 'k-sl-note', note))
         inp.oninput = function () {
           sim[key] = Number(inp.value)
           if ((key === 'close' && o.close_rate === null) || (key === 'value' && o.avg_value === null)) simSave(state.site, { close: sim.close, value: sim.value })
@@ -4687,14 +4962,8 @@ body { background: var(--bg); color: var(--text); }
   function renderCheck(view) {
     var token = renderToken
     state.cpage = state.cpage || '/'
+    siteSwitch(view)
     var bar = el('div', 'k-toolbar')
-    var sites = hmSiteOptions()
-    if (sites.length > 1) {
-      var ss = el('select', 'k-select'); ss.setAttribute('aria-label', 'Website')
-      sites.forEach(function (x) { ss.append(new Option(x.name, x.domain, false, x.domain === state.site)) })
-      ss.onchange = function () { state.site = ss.value; state.cpage = '/'; saveUrl(); render() }
-      bar.append(ss)
-    }
     var ps = el('select', 'k-select'); ps.setAttribute('aria-label', 'Seite')
     ps.append(new Option(pageName(state.cpage), state.cpage))
     ps.onchange = function () { state.cpage = ps.value; render(true) }
@@ -5461,6 +5730,7 @@ body { background: var(--bg); color: var(--text); }
     var r = range(), token = renderToken
     var alerts = el('div', 'k-alerts')
     var silent = el('div')
+    var setHero = hero(view)
     var board = el('section', 'k-board k-board3')
     board.append(skeletonRows(3))
     var notes = kcard('notes', 'Was auffällt')
@@ -5479,6 +5749,8 @@ body { background: var(--bg); color: var(--text); }
     if (isAdmin()) renderSilentSites(silent)
     api('summary').then(function (d) {
       if (token !== renderToken) return
+      var h = leadHero(d, 'über ' + COMPANIES.length + ' Firmen')
+      setHero(h[0], h[1])
       kpiBoard(board, d)
       renderNotices(notes, d)
     }).catch(function () { board.replaceChildren(el('div', 'empty', 'Fehler beim Laden')) })
