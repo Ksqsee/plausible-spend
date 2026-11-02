@@ -283,6 +283,7 @@ async function purgeOld(db) {
   const cutoff = Date.now() - RETENTION_DAYS * 86400000
   await db.batch([
     db.prepare('DELETE FROM events WHERE ts < ?').bind(cutoff),
+    db.prepare('DELETE FROM heat_clicks WHERE date < ?').bind(new Date(cutoff).toISOString().slice(0, 10)),
     db.prepare('DELETE FROM sessions WHERE last_ts < ?').bind(cutoff),
     db.prepare('DELETE FROM auth_sessions WHERE expires_at < ?').bind(Date.now()),
     db.prepare('DELETE FROM login_attempts WHERE first_at < ? AND locked_until < ?').bind(Date.now() - 86400000, Date.now())

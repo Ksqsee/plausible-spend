@@ -237,6 +237,43 @@ export async function handleEvent(request, env) {
   const propsJson = props ? JSON.stringify(props) : null
 
   const db = env.DB
+
+  // heatmap batches go to their own tables and are not counted as events
+  if (name === 'Heat') {
+    const w = Number(payload.w) || 0
+    const device = w < 576 ? 'mobile' : w < 992 ? 'tablet' : 'desktop'
+    const p = props || {}
+    const ph = Math.min(Math.max(Math.round(Number(p.ph) || 0), 0), 100000)
+    const heatRows = []
+    for (const c of Array.isArray(p.hc) ? p.hc : []) {
+      const [x, y, sec, target] = c.split('|')
+      const xi = Math.round(Number(x))
+      const yi = Math.round(Number(y))
+      if (!Number.isFinite(xi) || !Number.isFinite(yi) || xi < 0 || xi > 1000 || yi < 0 || yi > 100000) continue
+      heatRows.push(
+        db
+          .prepare('INSERT INTO heat_clicks (site, page, device, date, x, y, ph, target, section) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
+          .bind(site, page, device, date, xi, yi, ph, clean(target, 80), clean(sec, 60))
+      )
+    }
+    const sections = (Array.isArray(p.sg) ? p.sg : [])
+      .map((g) => g.split('|'))
+      .filter((g) => /^[a-z][a-z0-9-]{1,40}$/.test(g[0]) && Number.isFinite(Number(g[1])) && Number.isFinite(Number(g[2])))
+      .map((g) => [g[0], Math.round(Number(g[1])), Math.round(Number(g[2]))])
+    if (ph) {
+      heatRows.push(
+        db
+          .prepare(
+            'INSERT INTO page_geo (site, page, device, ph, vh, vw, sections, updated_ts) VALUES (?, ?, ?, ?, ?, ?, ?, ?) ' +
+              'ON CONFLICT(site, page, device) DO UPDATE SET ph = excluded.ph, vh = excluded.vh, vw = excluded.vw, sections = excluded.sections, updated_ts = excluded.updated_ts'
+          )
+          .bind(site, page, device, ph, Math.round(Number(p.vh) || 0), Math.round(Number(p.vw) || 0), JSON.stringify(sections), now)
+      )
+    }
+    if (heatRows.length) await db.batch(heatRows)
+    return accepted()
+  }
+
   // One visit per visitor and day. The visitor id already changes every day (daily salt), and a
   // fixed id means events that arrive at the same moment can never open two separate visits.
   const sessionId = `${visitorId}-${date}`
@@ -351,7 +388,8 @@ function capitalizeSource(source) {
 
 // Event properties are kept small and flat: strings, numbers, a list of strings (sections seen)
 // and one level of string choices (form answers).
-const LIST_PROPS = { sec: 40, fs: 20, err: 20 }
+// list props: max entries and max length per entry
+const LIST_PROPS = { sec: [40, 60], fs: [20, 60], err: [20, 60], hc: [40, 110], sg: [40, 60] }
 
 // Section id -> visible heading, as sent with engagement events.
 export function sectionHeadings(raw) {
@@ -374,7 +412,7 @@ export function sanitizeProps(raw) {
     if (key === 'sn') continue // section headings go to their own table
     if (LIST_PROPS[key]) {
       if (!Array.isArray(v)) continue
-      out[key] = v.filter((x) => typeof x === 'string').slice(0, LIST_PROPS[key]).map((x) => x.slice(0, 60))
+      out[key] = v.filter((x) => typeof x === 'string').slice(0, LIST_PROPS[key][0]).map((x) => x.slice(0, LIST_PROPS[key][1]))
     } else if (typeof v === 'string') out[key] = v.slice(0, 200)
     else if (typeof v === 'number' && Number.isFinite(v)) out[key] = v
     else if (Array.isArray(v)) continue

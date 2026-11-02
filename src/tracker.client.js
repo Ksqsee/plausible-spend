@@ -8,6 +8,8 @@
 //   Phone / Email / WhatsApp / Maps click, Review click, Outbound link, File download, Button click
 //   FAQ open, Copy contact, Video play, Rage click (several quick clicks on something that does nothing)
 //   Engagement also carries the page's load time (largest contentful paint) on the first page of a visit
+//   Heat: once per page, where people clicked (position and element, never typed text) and the page's
+//   geometry (height, fold, section positions), for heatmaps and scroll maps
 //   Form start, Form step, Form submit (a lead the CRM accepted), Form abandon (left with the form
 //   half filled: which field came last, never what was typed), Application start, Application,
 //   Application contact (call or mail about a job), Cancellation (withdrawal form, not a lead)
@@ -137,14 +139,16 @@
   }
 
   document.addEventListener('visibilitychange', function () {
-    if (document.visibilityState === 'hidden') { flushEngagement(); flushForms() }
+    if (document.visibilityState === 'hidden') { flushEngagement(); flushForms(); flushHeat() }
     else {
       if (!engagementSent) visibleSince = Date.now()
       // back from another app: a later abandon may replace the one just sent
       for (var k in forms) forms[k].sent = false
+      // clicks after coming back are sent as a new batch
+      if (heat.length) { heat = []; heatSent = false } else heatSent = false
     }
   })
-  window.addEventListener('pagehide', function () { flushEngagement(); flushForms() })
+  window.addEventListener('pagehide', function () { flushEngagement(); flushForms(); flushHeat() })
 
   // ---- load time: when the biggest element of the first screen was painted ----
   var lcp = 0
@@ -158,6 +162,47 @@
     } catch (e) {}
   }
 
+  // ---- heatmap: click positions and page geometry ----
+  var heat = []
+  var heatSent = false
+  function describe(t) {
+    var el = t.closest && t.closest('a, button, [role="button"], input, textarea, select, label, img, video, summary, h1, h2, h3, p, li')
+    if (!el) return t.tagName ? t.tagName.toLowerCase() : ''
+    var tag = el.tagName.toLowerCase()
+    if (/^(input|textarea|select)$/.test(tag)) return tag
+    if (tag === 'img') return 'Bild' + (el.alt ? ': ' + clip(el.alt, 30) : '')
+    return tag + ': ' + clip(el.innerText || el.getAttribute('aria-label') || '', 30)
+  }
+  document.addEventListener(
+    'click',
+    function (e) {
+      if (heat.length >= 40 || !e.target || inConsentBanner(e.target)) return
+      var doc = document.documentElement
+      var w = Math.max(doc.scrollWidth, 1)
+      var x = Math.round((e.pageX / w) * 1000)
+      var y = Math.round(e.pageY)
+      heat.push([x, y, sectionName(e.target) || '', describe(e.target)].join('|').replace(/[\n\r]/g, ' ').slice(0, 110))
+    },
+    true
+  )
+  function geometry() {
+    var out = []
+    var list = document.querySelectorAll('section[id]')
+    for (var i = 0; i < list.length && out.length < 40; i++) {
+      var s = list[i]
+      if (!NAMED_SECTION.test(s.id) || SKIP_SECTION.test(s.id)) continue
+      var r = s.getBoundingClientRect()
+      out.push(s.id + '|' + Math.round(r.top + window.scrollY) + '|' + Math.round(r.height))
+    }
+    return out
+  }
+  function flushHeat() {
+    if (heatSent) return
+    heatSent = true
+    var doc = document.documentElement
+    send('Heat', { hc: heat.slice(0, 40), sg: geometry(), ph: Math.round(doc.scrollHeight), vh: window.innerHeight, vw: window.innerWidth })
+  }
+
   // ---- page views ----
 
   var formsStarted = {}
@@ -166,6 +211,9 @@
     if (lastPath === location.pathname) return
     flushEngagement()
     flushForms()
+    if (lastPath !== undefined) flushHeat()
+    heat = []
+    heatSent = false
     lastPath = location.pathname
     formsStarted = {}
     forms = {}
