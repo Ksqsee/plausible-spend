@@ -689,6 +689,101 @@ button.hm-row:hover { box-shadow: inset 0 0 0 1.5px var(--line); }
 .sim-sl input[type=range] { width: 100%; accent-color: var(--accent); }
 .sim-sl .sim-mark { position: absolute; top: -3px; width: 2px; height: 22px; background: var(--text-3); border-radius: 1px; transform: translateX(-1px); pointer-events: none; opacity: .6; }
 .sim-sl .sim-today { font-size: 11.5px; color: var(--text-3); }
+.wc-hero { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 24px; align-items: stretch; margin-bottom: 28px; }
+.wc-score { background: var(--card); border-radius: 22px; box-shadow: var(--card-shadow); padding: 24px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; text-align: center; }
+.wc-ring { position: relative; width: 168px; height: 168px; }
+.wc-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.wc-ring circle { fill: none; stroke-width: 14; stroke-linecap: round; }
+.wc-ring .bg { stroke: var(--m-gray); }
+.wc-ring .fg { transition: stroke-dashoffset 1.3s cubic-bezier(.2,.8,.2,1); }
+.wc-ring .num { position: absolute; inset: 0; display: grid; place-items: center; font: 700 48px var(--display); letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+.wc-ring .num > div { display: flex; flex-direction: column; align-items: center; line-height: 1; }
+.wc-ring .num small { display: block; font-family: inherit; font-size: 13px; font-weight: 500; color: var(--text-3); letter-spacing: 0; margin-top: 6px; }
+.wc-verdict { font: 600 17px var(--display); }
+.wc-when { font-size: 12px; color: var(--text-3); }
+.wc-right { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.wc-lead { font: 600 22px/1.3 var(--display); letter-spacing: -.02em; margin: 0; }
+.wc-cats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+.wc-cat { border: 0; text-align: left; cursor: pointer; font: inherit; color: inherit; background: var(--card); border-radius: 18px; box-shadow: var(--card-shadow); padding: 14px 14px 12px; display: flex; flex-direction: column; gap: 10px; transition: box-shadow .2s, transform .2s var(--ease); }
+.wc-cat:hover { box-shadow: var(--card-hover); transform: translateY(-1px); }
+.wc-cat.on { outline: 2px solid var(--accent); }
+.wc-cat .t { font-size: 13px; color: var(--text-2); line-height: 1.3; min-height: 2.6em; }
+.wc-cat .v { display: flex; align-items: center; gap: 10px; }
+.wc-cat .v b { font: 700 26px var(--display); font-variant-numeric: tabular-nums; }
+.wc-mini { width: 34px; height: 34px; transform: rotate(-90deg); flex: none; }
+.wc-mini circle { fill: none; stroke-width: 5; stroke-linecap: round; }
+.wc-mini .bg { stroke: var(--m-gray); }
+.wc-mini .fg { transition: stroke-dashoffset 1.1s cubic-bezier(.2,.8,.2,1); }
+.wc-h { font: 600 20px var(--display); letter-spacing: -.015em; margin: 32px 0 14px; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.wc-h small { font-family: inherit; font-size: 13px; font-weight: 400; letter-spacing: 0; color: var(--text-3); }
+.wc-next { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.wc-todo { background: var(--card); border-radius: 20px; box-shadow: var(--card-shadow); padding: 18px; display: flex; flex-direction: column; gap: 8px; position: relative; }
+.wc-todo .n { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font: 700 13px var(--display); color: #fff; }
+.wc-todo b { font: 600 16px var(--display); letter-spacing: -.01em; }
+.wc-todo .f { font-size: 13px; color: var(--text-3); overflow-wrap: anywhere; }
+.wc-todo .x { font-size: 14px; line-height: 1.45; }
+.wc-two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; }
+.wc-panel { background: var(--card); border-radius: 22px; box-shadow: var(--card-shadow); padding: 20px; min-width: 0; }
+.wc-panel h3 { font: 600 16px var(--display); margin: 0 0 4px; }
+.wc-panel .sub { font-size: 13px; color: var(--text-3); margin: 0 0 16px; }
+.wc-race { position: relative; }
+.wc-race .scale { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-3); margin-top: 6px; }
+.wc-race .zone { position: absolute; left: 0; top: 0; bottom: 18px; border-radius: 10px; background: color-mix(in srgb, var(--m-green) 12%, transparent); }
+.wc-race .zone span { position: absolute; left: 8px; top: 4px; font-size: 11px; font-weight: 600; color: var(--m-green); }
+.wc-qrow { position: relative; height: 34px; display: flex; align-items: center; }
+.wc-qrow .line { position: absolute; left: 0; right: 0; height: 2px; background: var(--line-soft); }
+.wc-qrow .dot { position: absolute; width: 14px; height: 14px; margin-left: -7px; border-radius: 50%; box-shadow: 0 0 0 3px var(--card); transition: left 1.1s cubic-bezier(.2,.8,.2,1); }
+.wc-qrow .lb { position: absolute; font-size: 12.5px; white-space: nowrap; color: var(--text-2); transition: left 1.1s cubic-bezier(.2,.8,.2,1), opacity .6s; opacity: 0; max-width: 60%; overflow: hidden; text-overflow: ellipsis; }
+.wc-qrow .lb b { color: var(--text); font-weight: 600; }
+.wc-race .rows { padding-top: 22px; }
+.wc-speed .track { position: relative; height: 14px; border-radius: 7px; background: linear-gradient(90deg, var(--m-green) 0 31.25%, var(--m-orange) 31.25% 50%, var(--m-red) 50% 100%); opacity: .9; margin: 34px 0 8px; }
+.wc-speed .mk { position: absolute; top: -30px; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 12px; font-weight: 600; white-space: nowrap; transition: left 1.1s cubic-bezier(.2,.8,.2,1); }
+.wc-speed .mk::after { content: ""; width: 3px; height: 26px; background: var(--text); border-radius: 2px; }
+.wc-speed .scale { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-3); }
+.wc-srow { display: grid; grid-template-columns: 74px minmax(0, 1fr) 56px; gap: 12px; align-items: center; margin: 10px 0; font-size: 14px; }
+.wc-srow b { font: 700 18px var(--display); text-align: right; font-variant-numeric: tabular-nums; }
+.wc-srow .track { position: relative; height: 10px; border-radius: 5px; background: linear-gradient(90deg, var(--m-green) 0 31.25%, var(--m-orange) 31.25% 50%, var(--m-red) 50% 100%); }
+.wc-srow .pin { position: absolute; top: 50%; width: 20px; height: 20px; margin: -10px 0 0 -10px; border-radius: 50%; background: var(--card); box-shadow: 0 0 0 3px var(--text), 0 2px 6px rgba(0,0,0,.25); transition: left 1.1s cubic-bezier(.2,.8,.2,1); }
+.wc-sscale { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-3); margin-left: 86px; margin-right: 68px; }
+.wc-weight { display: flex; height: 12px; border-radius: 6px; overflow: hidden; margin: 22px 0 10px; background: var(--m-gray); }
+.wc-weight i { display: block; height: 100%; transition: width 1s cubic-bezier(.2,.8,.2,1); width: 0; }
+.wc-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; color: var(--text-2); }
+.wc-legend span::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--c); margin-right: 6px; }
+.wc-list { background: var(--card); border-radius: 22px; box-shadow: var(--card-shadow); overflow: hidden; }
+.wc-group { padding: 14px 20px 6px; font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--text-3); display: flex; justify-content: space-between; }
+.wc-item { border-top: 1px solid var(--line-soft); }
+.wc-item > button { all: unset; box-sizing: border-box; width: 100%; display: grid; grid-template-columns: 26px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 13px 20px; cursor: pointer; }
+.wc-item > button:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.wc-item .st { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: 13px; font-weight: 700; }
+.wc-item .st.good { background: var(--m-green); } .wc-item .st.warn { background: var(--m-orange); } .wc-item .st.bad { background: var(--m-red); } .wc-item .st.info { background: var(--m-gray); color: var(--text-2); }
+.wc-item .tt { font-size: 14.5px; font-weight: 500; }
+.wc-item .fd { display: block; font-size: 13px; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wc-item .chev { color: var(--text-3); transition: transform .25s; }
+.wc-item.open .chev { transform: rotate(90deg); }
+.wc-item .wc-more { display: none; padding: 0 20px 16px 58px; font-size: 14px; line-height: 1.5; }
+.wc-item.open .wc-more { display: block; }
+.wc-item.open .fd { white-space: normal; }
+.wc-item .fix { background: color-mix(in srgb, var(--accent) 8%, transparent); border-radius: 12px; padding: 10px 12px; }
+.wc-items { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.wc-items .it { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--text-2); background: var(--bg); border-radius: 10px; padding: 6px 8px; max-width: 100%; overflow-wrap: anywhere; }
+.wc-items img { width: 120px; height: 80px; object-fit: cover; border-radius: 6px; background: var(--m-gray); }
+.wc-pages { display: flex; flex-direction: column; }
+.wc-prow { all: unset; box-sizing: border-box; display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 12px; align-items: center; padding: 12px 20px; border-top: 1px solid var(--line-soft); cursor: pointer; font-size: 14px; }
+.wc-prow:first-child { border-top: 0; }
+.wc-prow:hover { background: var(--line-soft); }
+.wc-prow.on { background: color-mix(in srgb, var(--accent) 8%, transparent); }
+.wc-prow .p { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
+.wc-prow .c { font-size: 12px; color: var(--text-3); }
+.wc-pill { min-width: 44px; text-align: center; padding: 3px 10px; border-radius: 999px; font-weight: 700; font-size: 13px; color: #fff; font-variant-numeric: tabular-nums; }
+.wc-btn { border: 0; font: inherit; font-size: 14px; font-weight: 600; height: 36px; padding: 0 16px; border-radius: 10px; background: var(--accent); color: #fff; cursor: pointer; }
+.wc-btn.ghost { background: var(--card); color: var(--accent); box-shadow: var(--card-shadow); }
+.wc-btn:disabled { opacity: .5; cursor: default; }
+.wc-wait { background: var(--card); border-radius: 22px; box-shadow: var(--card-shadow); padding: 48px 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.wc-wait .steps { display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: var(--text-3); text-align: left; }
+.wc-wait .steps .on { color: var(--text); font-weight: 500; }
+.wc-wait .steps .done { color: var(--m-green); }
+@media (max-width: 1100px) { .wc-cats { grid-template-columns: repeat(2, minmax(0, 1fr)); } .wc-next { grid-template-columns: minmax(0, 1fr); } .wc-two { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 760px) { .wc-hero { grid-template-columns: minmax(0, 1fr); } .wc-lead { font-size: 19px; } .wc-item .wc-more { padding-left: 20px; } .wc-item > button { padding: 12px 16px; } }
 .sim-foot { margin-top: 14px; max-width: 80ch; }
 @media (max-width: 1100px) { .sim-grid { grid-template-columns: minmax(0, 1fr); } .sim-stage { height: 460px; } }
 
@@ -1370,7 +1465,7 @@ td.wrap { white-space: normal; min-width: 180px; }
 
   // ---------- routing ----------
   // tools that work on one website
-  var TOOL_VIEWS = ['heatmap', 'funnel']
+  var TOOL_VIEWS = ['heatmap', 'funnel', 'check']
   function readUrl() {
     var p = new URLSearchParams(location.search)
     state.site = p.get('site') && SITE_BY_DOMAIN[p.get('site')] ? p.get('site') : null
@@ -1481,6 +1576,10 @@ td.wrap { white-space: normal; min-width: 180px; }
       title = 'Funnel-Simulator'
       img = siteLogo(state.site, 'logo')
       sub.append(document.createTextNode(SITE_BY_DOMAIN[state.site].name + ' · was passiert, wenn sich etwas ändert'))
+    } else if (state.view === 'check') {
+      title = 'Website-Check'
+      img = siteLogo(state.site, 'logo')
+      sub.append(document.createTextNode(SITE_BY_DOMAIN[state.site].name + ' · Google, Handy, Kontakt und Recht im Check'))
     } else if (state.view === 'account') {
       title = 'Konto'
       img = brandLogo()
@@ -1582,6 +1681,7 @@ td.wrap { white-space: normal; min-width: 180px; }
     else if (state.view === 'account') renderAccount(view)
     else if (state.view === 'heatmap') renderHeatmap(view)
     else if (state.view === 'funnel') renderFunnelSim(view)
+    else if (state.view === 'check') renderCheck(view)
     else renderDash(view)
     window.scrollTo(0, 0)
   }
@@ -1644,14 +1744,23 @@ td.wrap { white-space: normal; min-width: 180px; }
       var th = el('div', 'sv-mc-h'); th.append(el('h2', null, 'Werkzeuge'))
       var tg = el('div', 'sv-tool-grid')
       ;[['heatmap', 'Heatmap', 'Wie weit Besucher scrollen und wohin sie klicken, direkt auf der Seite.', 'var(--m-red)', '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1 3.5-1.5 5.5-1.5 8a2.5 2.5 0 0 0 5 0c0-1-.3-1.8-.8-2.6C17.4 9 19 11.4 19 14a7 7 0 0 1-14 0c0-4.5 4-7.5 7-12z"/></svg>'],
-        ['funnel', 'Funnel-Simulator', 'Was passiert, wenn mehr Besucher den Kontaktbereich erreichen oder das Budget steigt.', 'var(--m-indigo)', '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 4h18l-7 8.5V19l-4 2v-8.5z"/></svg>']].forEach(function (t) {
-        var a = el('a', 'sv-tool'); a.href = '?view=' + t[0] + '&site=' + encodeURIComponent(toolSite); a.dataset.nav = ''; a.dataset.site = toolSite; a.dataset.view = t[0]
+        ['funnel', 'Funnel-Simulator', 'Was passiert, wenn mehr Besucher den Kontaktbereich erreichen oder das Budget steigt.', 'var(--m-indigo)', '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 4h18l-7 8.5V19l-4 2v-8.5z"/></svg>'],
+        ['check', 'Website-Check', 'Wie gut die Seite bei Google, auf dem Handy und für Anfragen aufgestellt ist.', 'var(--m-green)', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5.5c0 4.5-3 8-7 9.5-4-1.5-7-5-7-9.5V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg>']].forEach(function (t) {
+        var a = el('a', 'sv-tool'); a.href = '?view=' + t[0] + '&site=' + encodeURIComponent(toolSite); a.dataset.nav = ''; a.dataset.site = toolSite; a.dataset.view = t[0]; a.id = 'tool-' + t[0]
         var ic = el('span', 'ic'); ic.style.background = t[3]; ic.append(html(t[4]))
         var tx = el('div'); tx.append(el('b', null, t[1]), el('span', null, t[2]))
         a.append(ic, tx)
         tg.append(a)
       })
       tools.append(th, tg)
+      // the latest website check score on its card, when there is one
+      var tok = renderToken
+      fetch('/api/audits?site=' + encodeURIComponent(toolSite)).then(function (r) { return r.json() }).then(function (l) {
+        var home = (l.pages || []).filter(function (p) { return p.page === '/' })[0], card = $('tool-check')
+        if (tok !== renderToken || !home || !card) return
+        var pill = el('span', 'wc-pill', String(home.score)); pill.style.background = wcColor(home.score); pill.style.marginLeft = 'auto'; pill.title = 'Website-Check der Startseite'
+        card.append(pill)
+      }).catch(function () {})
     }
     view.append(nudge, hl, cards, tools, top, more)
     showGoogle()
@@ -3331,6 +3440,299 @@ td.wrap { white-space: normal; min-width: 180px; }
     var visits = Math.max(0, s.visits + (s.budget !== null && s.cpc ? (s.budget - s.budget0) / s.cpc : 0))
     var looked = visits * s.looked, area = looked * s.area, leads = area * s.contact, customers = leads * s.close
     return { visits: visits, looked: looked, area: area, leads: leads, customers: customers, revenue: customers * s.value }
+  }
+  // ---------- Website-Check ----------
+  
+  function wcColor(s) { return s === null || s === undefined ? 'var(--m-gray)' : s >= 85 ? 'var(--m-green)' : s >= 65 ? 'var(--m-orange)' : 'var(--m-red)' }
+  function wcVerdict(s) { return s >= 90 ? 'Sehr gut' : s >= 75 ? 'Gut' : s >= 60 ? 'Ausbaufähig' : 'Schwach' }
+  function wcRing(cls, size, stroke, score) {
+    var r = (size - stroke) / 2, c = 2 * Math.PI * r
+    var svg = html('<svg class="' + cls + '" viewBox="0 0 ' + size + ' ' + size + '"><circle class="bg" cx="' + size / 2 + '" cy="' + size / 2 + '" r="' + r + '"/><circle class="fg" cx="' + size / 2 + '" cy="' + size / 2 + '" r="' + r + '" stroke-dasharray="' + c + '" stroke-dashoffset="' + c + '"/></svg>')
+    var fg = svg.querySelector('.fg'); fg.style.stroke = wcColor(score)
+    if (score !== null) animateTo(fg, 'strokeDashoffset', String(c * (1 - score / 100)))
+    return svg
+  }
+  function wcAgo(ts) {
+    var d = Math.floor((Date.now() - ts) / 86400000)
+    return d <= 0 ? 'heute' : d === 1 ? 'gestern' : 'vor ' + d + ' Tagen'
+  }
+  function renderCheck(view) {
+    var token = renderToken
+    state.cpage = state.cpage || '/'
+    var bar = el('div', 'hm-bar')
+    var sites = hmSiteOptions()
+    if (sites.length > 1) {
+      var ss = el('select', 'hm-select'); ss.setAttribute('aria-label', 'Website')
+      sites.forEach(function (x) { ss.append(new Option(x.name, x.domain, false, x.domain === state.site)) })
+      ss.onchange = function () { state.site = ss.value; state.cpage = '/'; saveUrl(); render() }
+      bar.append(ss)
+    }
+    var ps = el('select', 'hm-select'); ps.id = 'wcPage'; ps.setAttribute('aria-label', 'Seite')
+    ps.append(new Option(pageName(state.cpage), state.cpage))
+    ps.onchange = function () { state.cpage = ps.value; render() }
+    var again = el('button', 'wc-btn ghost', 'Neu prüfen'); again.type = 'button'
+    bar.append(ps, again)
+    var body = el('div')
+    view.append(bar, body)
+
+    var auditUrl = '/api/audit?site=' + encodeURIComponent(state.site) + '&xpage=' + encodeURIComponent(state.cpage)
+    var waiting = function () {
+      var w = el('div', 'wc-wait')
+      w.append(el('span', 'spin'), el('b', null, 'Die Seite wird gerade geprüft'))
+      var steps = el('div', 'steps')
+      var labels = ['Seite wie auf einem Handy öffnen', 'Texte, Überschriften und Bilder lesen', 'Ladezeit und Datenmenge messen', 'Links, Sitemap und Google-Daten prüfen']
+      var rows = labels.map(function (l) { var s = el('span', null, '○ ' + l); steps.append(s); return s })
+      w.append(steps, el('span', 'wc-when', 'Dauert etwa 20 Sekunden.'))
+      var i = 0
+      var tick = function () {
+        if (!w.isConnected) return
+        rows.forEach(function (r, k) { r.className = k < i ? 'done' : k === i ? 'on' : ''; r.textContent = (k < i ? '✓ ' : k === i ? '● ' : '○ ') + labels[k] })
+        if (i < labels.length - 1) { i++; setTimeout(tick, 5000) }
+      }
+      tick()
+      body.replaceChildren(w)
+    }
+    var run = function () {
+      waiting(); again.disabled = true
+      return fetch(auditUrl, { method: 'POST' }).then(function (r) { if (!r.ok) throw new Error('audit'); return r.json() })
+    }
+    again.onclick = function () { run().then(show).catch(fail) }
+    var fail = function () {
+      if (token !== renderToken) return
+      again.disabled = false
+      body.replaceChildren(el('section', 'card iempty', 'Die Seite ließ sich gerade nicht prüfen. Bitte gleich noch einmal versuchen.'))
+    }
+
+    // page picker: most visited pages plus every page already checked
+    Promise.all([api('breakdown', { dim: 'page', limit: 15 }).catch(function () { return [] }), fetch('/api/audits?site=' + encodeURIComponent(state.site)).then(function (r) { return r.json() }).catch(function () { return { pages: [] } })]).then(function (res) {
+      if (token !== renderToken) return
+      var scores = {}
+      res[1].pages.forEach(function (p) { scores[p.page] = p.score })
+      var seen = {}, opts = []
+      res[0].forEach(function (p) { if (p.name && !seen[p.name]) { seen[p.name] = 1; opts.push(p.name) } })
+      res[1].pages.forEach(function (p) { if (!seen[p.page]) { seen[p.page] = 1; opts.push(p.page) } })
+      if (!seen[state.cpage]) opts.unshift(state.cpage)
+      ps.replaceChildren()
+      opts.forEach(function (p) { ps.append(new Option(pageName(p) + (scores[p] !== undefined ? ' · ' + scores[p] + ' Punkte' : ''), p, false, p === state.cpage)) })
+      view._pages = { list: opts, audits: res[1].pages }
+      if (view._shown) renderPagesList(view)
+    })
+
+    fetch(auditUrl).then(function (r) { return r.json() }).then(function (d) {
+      if (token !== renderToken) return
+      if (d.checks && Date.now() - d.ts < d.max_age) return d
+      return run()
+    }).then(function (d) { if (d && token === renderToken) show(d) }).catch(fail)
+
+    function show(d) {
+      again.disabled = false
+      view._shown = true
+      body.replaceChildren()
+      var byId = {}
+      d.checks.forEach(function (c) { byId[c.id] = c })
+      // hero: one big number, four areas
+      var hero = el('section', 'wc-hero')
+      var sc = el('div', 'wc-score'), ring = el('div', 'wc-ring')
+      ring.append(wcRing('', 168, 14, d.score))
+      var num = el('div', 'num'), n = el('span', null, '0'), wrapN = el('div')
+      wrapN.append(n, el('small', null, 'von 100'))
+      num.append(wrapN); ring.append(num)
+      countTo(n, d.score)
+      sc.append(ring, el('div', 'wc-verdict', wcVerdict(d.score)), el('div', 'wc-when', 'Geprüft ' + wcAgo(d.ts) + ' · wie auf einem Handy'))
+      var right = el('div', 'wc-right')
+      var bad = d.checks.filter(function (c) { return c.status === 'bad' }).length
+      var warn = d.checks.filter(function (c) { return c.status === 'warn' }).length
+      var good = d.checks.filter(function (c) { return c.status === 'good' }).length
+      var first = d.todo.length ? byId[d.todo[0]] : null
+      var lead = good + ' von ' + (good + bad + warn) + ' Punkten passen. ' + (first ? 'Am meisten bringt jetzt: ' + first.title + '.' : 'Es gibt gerade nichts Wichtiges zu tun.')
+      right.append(el('p', 'wc-lead', lead))
+      var cats = el('div', 'wc-cats')
+      Object.keys(d.cats).filter(function (k) { return d.scores[k] !== null }).forEach(function (k, i) {
+        var b = el('button', 'wc-cat'); b.type = 'button'
+        var v = el('div', 'v'), num2 = el('b', null, '0')
+        v.append(wcRing('wc-mini', 34, 5, d.scores[k]), num2)
+        b.append(el('span', 't', d.cats[k]), v)
+        countTo(num2, d.scores[k])
+        enter(b, i)
+        b.onclick = function () {
+          var g = $('wcg-' + k); if (!g) return
+          g.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'start' })
+        }
+        cats.append(b)
+      })
+      right.append(cats)
+      hero.append(sc, right)
+      body.append(hero)
+
+      // the three things to do first
+      if (d.todo.length) {
+        body.append(html('<h2 class="wc-h">Als Nächstes<small>Sortiert nach Wirkung</small></h2>'))
+        var next = el('div', 'wc-next')
+        d.todo.slice(0, 3).forEach(function (id, i) {
+          var c = byId[id], t = el('div', 'wc-todo')
+          var nn = el('span', 'n', String(i + 1)); nn.style.background = c.status === 'bad' ? 'var(--m-red)' : 'var(--m-orange)'
+          t.append(nn, el('b', null, c.title), el('span', 'f', c.found), el('span', 'x', c.fix))
+          enter(t, i)
+          next.append(t)
+        })
+        body.append(next)
+      }
+
+      // Google and speed, as pictures
+      var two = el('div', 'wc-two')
+      var s = d.live && d.live.search
+      if (s && s.queries.length) {
+        var gp = el('section', 'wc-panel')
+        gp.append(el('h3', null, 'Platz bei Google'), el('p', 'sub', 'Für welche Suchen diese Seite erscheint, letzte 4 Wochen. Links ist besser.'))
+        var race = el('div', 'wc-race'), zone = el('div', 'zone'), rows = el('div', 'rows')
+        var MAXP = 30, xp = function (p) { return Math.min(Math.max((p - 1) / (MAXP - 1), 0), 1) * 100 }
+        zone.style.width = xp(10.5) + '%'; zone.append(el('span', null, 'Seite 1'))
+        race.append(zone, rows)
+        var qs2 = s.queries.slice().sort(function (a, b) { return b.impressions - a.impressions }).slice(0, 7).sort(function (a, b) { return a.position - b.position })
+        qs2.forEach(function (q, i) {
+          var r = el('div', 'wc-qrow'), dot = el('span', 'dot'), lb = el('span', 'lb')
+          r.title = q.query + ': Platz ' + String(q.position).replace('.', ',') + ', ' + q.impressions + '× gezeigt, ' + q.clicks + ' Klicks'
+          dot.style.background = q.position <= 3.5 ? 'var(--m-green)' : q.position <= 10.5 ? 'var(--m-blue)' : q.position <= 20 ? 'var(--m-orange)' : 'var(--text-3)'
+          lb.append(el('b', null, q.query), document.createTextNode(' · Platz ' + String(Math.round(q.position * 10) / 10).replace('.', ',')))
+          dot.style.left = '0%'
+          r.append(el('i', 'line'), dot, lb)
+          rows.append(r)
+          var target = Math.min(xp(q.position), 100)
+          // label sits right of the dot, or left of it near the end of the scale
+          if (target > 55) { lb.style.right = (100 - target) + '%'; lb.style.paddingRight = '14px' } else { lb.style.left = target + '%'; lb.style.paddingLeft = '14px' }
+          setTimeout(function () { animateTo(dot, 'left', target + '%'); animateTo(lb, 'opacity', '1') }, 80 * i)
+        })
+        race.append(html('<div class="scale"><span>Platz 1</span><span>10</span><span>20</span><span>30+</span></div>'))
+        gp.append(race)
+        var sumG = el('p', 'sub')
+        sumG.style.margin = '14px 0 0'
+        sumG.textContent = nf.format(s.impressions) + '× gezeigt, ' + plural(s.clicks, ['Klick', 'Klicks']) + (s.near.length ? ' · ' + s.near.length + ' Suchen knapp vor Seite 1 oder knapp darauf: dort lohnt sich mehr Text zum Thema.' : '')
+        gp.append(sumG)
+        two.append(gp)
+      }
+      var sp = el('section', 'wc-panel wc-speed')
+      sp.append(el('h3', null, 'Ladezeit'), el('p', 'sub', 'Bis der Hauptinhalt steht. Grün heißt: Besucher warten nicht.'))
+      var MAXS = 8000, marks = []
+      if (d.live.speed.mobile_n) marks.push(['Handy', d.live.speed.mobile])
+      if (d.live.speed.desktop_n) marks.push(['Computer', d.live.speed.desktop])
+      marks.forEach(function (m) {
+        var row = el('div', 'wc-srow'), tr = el('div', 'track'), pin = el('span', 'pin')
+        pin.style.left = '0%'; tr.append(pin)
+        var v = el('b', null, (m[1] / 1000).toFixed(1).replace('.', ',') + ' s')
+        v.style.color = m[1] <= 2500 ? 'var(--m-green)' : m[1] <= 4000 ? 'var(--m-orange)' : 'var(--m-red)'
+        row.append(el('span', 'k', m[0]), tr, v)
+        sp.append(row)
+        animateTo(pin, 'left', Math.min(m[1] / MAXS * 100, 98) + '%')
+      })
+      if (marks.length) sp.append(html('<div class="wc-sscale"><span>0 s</span><span>2,5 s</span><span>4 s</span><span>8 s</span></div>'))
+      else sp.append(el('p', 'sub', byId.lcp ? byId.lcp.found : 'Noch keine Messung von echten Besuchern.'))
+      if (d.net && d.net.bytes) {
+        var types = [['Image', 'Bilder', 'var(--m-orange)'], ['Script', 'Skripte', 'var(--m-indigo)'], ['Font', 'Schriften', 'var(--m-pink)'], ['Stylesheet', 'Gestaltung', 'var(--m-teal)']]
+        var known = 0
+        var wbar = el('div', 'wc-weight'), leg = el('div', 'wc-legend')
+        types.forEach(function (t) {
+          var b = d.net.byType[t[0]] || 0; known += b
+          if (!b) return
+          var seg = el('i'); seg.style.background = t[2]; wbar.append(seg)
+          animateTo(seg, 'width', (b / d.net.bytes * 100) + '%')
+          var lg = el('span', null, t[1] + ' ' + wcKb(b)); lg.style.setProperty('--c', t[2]); leg.append(lg)
+        })
+        var rest = d.net.bytes - known
+        if (rest > 0) { var seg2 = el('i'); seg2.style.background = 'var(--text-3)'; wbar.append(seg2); animateTo(seg2, 'width', (rest / d.net.bytes * 100) + '%'); var lg2 = el('span', null, 'Sonstiges ' + wcKb(rest)); lg2.style.setProperty('--c', 'var(--text-3)'); leg.append(lg2) }
+        var wh = el('p', 'sub', 'Datenmenge: ' + wcKb(d.net.bytes) + ' pro Aufruf' + (d.net.bytes > 2.5e6 ? ', ein Handy im Mobilnetz braucht dafür spürbar länger.' : ', das ist schlank.'))
+        wh.style.margin = '22px 0 0'
+        sp.append(wh, wbar, leg)
+      }
+      two.append(sp)
+      body.append(html('<h2 class="wc-h">Auf einen Blick</h2>'), two)
+
+      // every point, grouped
+      body.append(html('<h2 class="wc-h">Alle Prüfpunkte<small>Antippen für Details und was zu tun ist</small></h2>'))
+      var list = el('section', 'wc-list')
+      Object.keys(d.cats).forEach(function (k) {
+        var cs = d.checks.filter(function (c) { return c.cat === k })
+        if (!cs.length) return
+        var g = el('div', 'wc-group'); g.id = 'wcg-' + k
+        var okN = cs.filter(function (c) { return c.status === 'good' }).length
+        g.append(el('span', null, d.cats[k]), el('span', null, okN + ' / ' + cs.length + ' in Ordnung'))
+        list.append(g)
+        var order = { bad: 0, warn: 1, info: 2, good: 3 }
+        cs.slice().sort(function (a, b) { return order[a.status] - order[b.status] }).forEach(function (c) {
+          var it = el('div', 'wc-item'), b = el('button'); b.type = 'button'
+          var st = el('span', 'st ' + c.status, c.status === 'good' ? '✓' : c.status === 'info' ? 'i' : c.status === 'warn' ? '!' : '✕')
+          var mid = el('span'); mid.append(el('span', 'tt', c.title), el('span', 'fd', c.found))
+          b.append(st, mid, html('<svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>'))
+          b.setAttribute('aria-expanded', 'false')
+          var more = el('div', 'wc-more')
+          if (c.fix) more.append(el('div', 'fix', c.fix))
+          else more.append(el('div', null, 'Alles in Ordnung, hier ist nichts zu tun.'))
+          if (c.items && c.items.length) {
+            var its = el('div', 'wc-items')
+            c.items.slice(0, 8).forEach(function (x) {
+              var ii = el('div', 'it')
+              if (x.img) { var im = el('img'); im.loading = 'lazy'; im.alt = ''; im.referrerPolicy = 'no-referrer'; im.src = x.img; ii.append(im) }
+              ii.append(el('span', null, x.label))
+              its.append(ii)
+            })
+            more.append(its)
+          }
+          b.onclick = function () { var o = it.classList.toggle('open'); b.setAttribute('aria-expanded', String(o)) }
+          it.append(b, more)
+          list.append(it)
+        })
+      })
+      body.append(list)
+
+      // other pages of the site
+      var ph = html('<h2 class="wc-h">Alle Seiten<small>Jede Seite wird einzeln geprüft</small></h2>')
+      var pl = el('section', 'wc-list wc-pages'); pl.id = 'wcPages'
+      body.append(ph, pl)
+      if (view._pages) renderPagesList(view)
+    }
+  }
+  function wcKb(b) { return b >= 1048576 ? (b / 1048576).toFixed(1).replace('.', ',') + ' MB' : Math.round(b / 1024) + ' KB' }
+  function renderPagesList(view) {
+    var pl = $('wcPages'); if (!pl || !view._pages) return
+    pl.replaceChildren()
+    var audits = {}
+    view._pages.audits.forEach(function (a) { audits[a.page] = a })
+    var queue = []
+    view._pages.list.slice(0, 15).forEach(function (p) {
+      var a = audits[p], row = el('button', 'wc-prow' + (p === state.cpage ? ' on' : '')); row.type = 'button'
+      var name = el('span', 'p', pageName(p))
+      var meta = el('span', 'c', a ? (a.bad ? a.bad + ' Probleme' : a.warn ? a.warn + ' Hinweise' : 'alles gut') : 'noch nicht geprüft')
+      var pill = el('span', 'wc-pill', a ? String(a.score) : '–')
+      pill.style.background = a ? wcColor(a.score) : 'var(--m-gray)'
+      if (!a) { pill.style.color = 'var(--text-3)'; queue.push({ page: p, pill: pill, meta: meta }) }
+      row.append(name, meta, pill)
+      row.onclick = function () { state.cpage = p; window.scrollTo(0, 0); render() }
+      pl.append(row)
+    })
+    if (queue.length) {
+      var foot = el('div', 'wc-prow'); foot.style.cursor = 'default'
+      var go = el('button', 'wc-btn', queue.length === 1 ? 'Diese Seite auch prüfen' : 'Die ' + queue.length + ' übrigen Seiten prüfen'); go.type = 'button'
+      foot.append(el('span', 'c', 'Dauert etwa 20 Sekunden pro Seite.'), el('span'), go)
+      go.onclick = function () {
+        go.disabled = true
+        var token = renderToken, i = 0
+        var next = function () {
+          if (token !== renderToken || i >= queue.length) { go.textContent = 'Fertig'; return }
+          var q = queue[i++]
+          q.meta.textContent = 'wird geprüft…'
+          go.textContent = 'Seite ' + i + ' von ' + queue.length + '…'
+          fetch('/api/audit?site=' + encodeURIComponent(state.site) + '&xpage=' + encodeURIComponent(q.page), { method: 'POST' })
+            .then(function (r) { if (!r.ok) throw new Error(); return fetch('/api/audits?site=' + encodeURIComponent(state.site)).then(function (r2) { return r2.json() }) })
+            .then(function (l) {
+              var a = l.pages.filter(function (x) { return x.page === q.page })[0]
+              if (a) { q.pill.textContent = a.score; q.pill.style.background = wcColor(a.score); q.pill.style.color = '#fff'; q.meta.textContent = a.bad ? a.bad + ' Probleme' : a.warn ? a.warn + ' Hinweise' : 'alles gut'; view._pages.audits = l.pages }
+            })
+            .catch(function () { q.meta.textContent = 'ließ sich nicht prüfen' })
+            .then(next)
+        }
+        next()
+      }
+      pl.append(foot)
+    }
   }
   function renderFunnelSim(view) {
     var token = renderToken

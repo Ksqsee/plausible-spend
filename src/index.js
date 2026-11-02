@@ -20,6 +20,7 @@ import { summary } from './summary.js'
 import { heat } from './heat.js'
 import { simFunnel } from './sim.js'
 import { capture, getShot, shotMeta } from './shots.js'
+import { AUDIT_MAX_AGE, CATS, getAudit, grade, listAudits, liveData, refreshOneAudit, runAudit } from './audit.js'
 import { MIN_PASSWORD_LENGTH, checkPassword, currentUser, ensureAdmin, generatePassword, login, logout, setPassword } from './auth.js'
 
 // Headers every dashboard response carries: no framing, no MIME sniffing, no referrer to third parties.
@@ -180,6 +181,33 @@ async function api(request, env, url, user) {
     const shot = await getShot(env, site, page, device)
     if (!shot) return json({ error: 'no screenshot' }, 404)
     return new Response(shot.image, { headers: { ...BASE_HEADERS, 'Content-Type': 'image/jpeg', 'Cache-Control': 'private, max-age=300' } })
+  }
+
+  // --- website check ---
+  if (path === 'audit' || path === 'audits') {
+    const sites = await resolveSites(db, url, user)
+    const site = url.searchParams.get('site')
+    if (!site || !sites.includes(site)) throw new BadRequest('site required')
+    const to = new Date().toISOString().slice(0, 10)
+    const from = new Date(Date.now() - 28 * 86400000).toISOString().slice(0, 10)
+    if (path === 'audits') {
+      const list = await listAudits(env, site)
+      const out = []
+      for (const a of list) {
+        const g = grade(a, await liveData(db, site, a.page, from, to))
+        out.push({ page: a.page, ts: a.ts, score: g.score, scores: g.scores, bad: g.checks.filter((c) => c.status === 'bad').length, warn: g.checks.filter((c) => c.status === 'warn').length })
+      }
+      out.sort((x, y) => (x.page === '/' ? -1 : y.page === '/' ? 1 : x.page.localeCompare(y.page)))
+      return json({ pages: out, cats: CATS })
+    }
+    const page = (url.searchParams.get('xpage') || '/').slice(0, 300)
+    if (!page.startsWith('/')) throw new BadRequest('page required')
+    let a = await getAudit(env, site, page)
+    if (request.method === 'POST') a = await runAudit(env, site, page)
+    if (!a) return json({ audit: null, cats: CATS, max_age: AUDIT_MAX_AGE })
+    const live = await liveData(db, site, page, from, to)
+    const g = grade(a, live)
+    return json({ ts: a.ts, page, site, cats: CATS, max_age: AUDIT_MAX_AGE, ...g, live, net: a.net, facts: { title: a.facts.title, description: a.facts.description, url: a.facts.url } })
   }
 
   // --- monthly memory ---
@@ -397,5 +425,7 @@ export default {
       // the monthly memory: this month so far and last month, kept for good
       ctx.waitUntil(rollupMonths(env.DB, recentMonths(2)))
     }
+    // keep the website check fresh: re-check the stalest home page, one per run
+    ctx.waitUntil(refreshOneAudit(env).catch((e) => console.log('audit refresh failed', e && e.message)))
   }
 }
