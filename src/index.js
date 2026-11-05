@@ -23,6 +23,7 @@ import { summary } from './summary.js'
 import { heat } from './heat.js'
 import { journey, simFunnel } from './sim.js'
 import { importOpLeads, opLeadsBefore } from './opleads.js'
+import { gscCompare } from './gsc.js'
 import { capture, getShot, shotMeta } from './shots.js'
 import { monitorStatus, runMonitor } from './monitor.js'
 import { AUDIT_MAX_AGE, assess, getAudit, listAudits, liveData, refreshOneAudit, runAudit } from './audit.js'
@@ -160,6 +161,12 @@ async function api(request, env, url, user) {
     const days = Math.min(Math.max(Number(url.searchParams.get('days')) || 30, 1), 400)
     const detail = url.searchParams.has('detail') ? Math.min(Math.max(Number(url.searchParams.get('detail')) || 0, 0), 90) : Math.min(days, 30)
     return json(await syncAll(env, days, detail))
+  }
+  if (path === 'gsc-check') {
+    adminOnly(user)
+    const to = localParts(Date.now()).date
+    const from = new Date(Date.now() - 16 * 86400000).toISOString().slice(0, 10)
+    return json(await gscCompare(env, from, to))
   }
   if (path === 'sync-log') {
     adminOnly(user)

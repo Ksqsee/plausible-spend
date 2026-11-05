@@ -1,3 +1,4 @@
+import { gscConfigured, syncSearchDirect, syncSearchPagesDirect } from './gsc.js'
 // Pulls Google Ads, Search Console and Google Business Profile data from Windsor.ai.
 // See https://windsor.ai/api-documentation/
 
@@ -359,8 +360,16 @@ export async function syncAll(env, days = 30, detailDays = days) {
       }
     }
     if (site.gsc_property) {
-      await run(env, log, 'searchconsole', site.domain, () => syncSearch(env, site, dateFrom, today))
-      if (detailDays > 0) await run(env, log, 'search_pages', site.domain, () => syncSearchPages(env, site, detailFrom, today))
+      const direct = env.GSC_SOURCE === 'google' && gscConfigured(env)
+      if (!direct) {
+        await run(env, log, 'searchconsole', site.domain, () => syncSearch(env, site, dateFrom, today))
+        if (detailDays > 0) await run(env, log, 'search_pages', site.domain, () => syncSearchPages(env, site, detailFrom, today))
+      }
+      // straight from Google: live once switched over, a shadow copy for comparison until then
+      if (gscConfigured(env)) {
+        await run(env, log, direct ? 'searchconsole' : 'gsc_direct', site.domain, () => syncSearchDirect(env, site, dateFrom, today, direct))
+        if (detailDays > 0) await run(env, log, direct ? 'search_pages' : 'gsc_direct_pages', site.domain, () => syncSearchPagesDirect(env, site, detailFrom, today, direct))
+      }
     }
   }
   const { results: locations } = await env.DB.prepare('SELECT * FROM gbp_locations').all()
