@@ -1514,6 +1514,9 @@ body { background: var(--bg); color: var(--text); }
 .k-pal-row.on .k-pal-go { opacity: 1; }
 .k-pal-empty { padding: 22px; text-align: center; color: var(--text-3); font-size: 14px; }
 /* phone tab bar */
+.k-before { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px 28px; margin-top: 8px; }
+.k-before-col h3 { margin: 0 0 8px; font-size: 13px; font-weight: 500; color: var(--text-3); }
+#before .k-sub { margin: 2px 0 14px; color: var(--text-2); font-size: 14px; line-height: 1.5; max-width: 70ch; }
 .k-bottom { display: none; }
 @media (max-width: 760px) {
   .k-bottom { position: fixed; z-index: 900; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: repeat(4, 1fr); padding: 6px 8px calc(6px + env(safe-area-inset-bottom)); background: var(--glass); backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px); border-top: 1px solid var(--line); }
@@ -2966,6 +2969,42 @@ body { font-size: 14px; line-height: 1.5; }
       card.append(body)
     }).catch(function () {})
   }
+  // form enquiries from the Onepage CRM that arrived before our tracker ran on the site
+  var LEFT_OUT = { test: ['Test', 'Tests'], job: ['Bewerbung', 'Bewerbungen'], spam: ['Werbe-Mail', 'Werbe-Mails'], empty: ['leeres Formular', 'leere Formulare'], duplicate: ['doppelte Anfrage', 'doppelte Anfragen'], rejected: ['abgelehnte Anfrage', 'abgelehnte Anfragen'] }
+  function renderBefore(card, b) {
+    if (!b || !b.total) return
+    card.hidden = false
+    var fmt = function (d) { return new Date(d + 'T00:00:00').toLocaleDateString('de-DE', { day: 'numeric', month: 'long' }) }
+    var left = Object.keys(b.left_out || {}).map(function (k) { return plural(b.left_out[k], LEFT_OUT[k] || [k, k]) })
+    card.append(el('p', 'k-sub', plural(b.total, ['Formular-Anfrage', 'Formular-Anfragen']) + ' kamen ' + (b.first ? 'zwischen ' + fmt(b.first) + ' und ' : 'vor ') + (b.tracking_since ? fmt(b.tracking_since) : 'dem Messbeginn') +
+      ' über die Website, gezählt von Onepage. Anrufe und WhatsApp aus dieser Zeit sind nicht bekannt.' + (left.length ? ' Nicht mitgezählt: ' + left.join(', ') + '.' : '')))
+    var bars = function (title, rows, label, icon) {
+      var box = el('div', 'k-before-col')
+      box.append(el('h3', null, title))
+      var body = el('div', 'k-bars'), max = rows.length ? rows[0].n : 1
+      rows.slice(0, 6).forEach(function (x) {
+        var r = el('div', 'k-bar'), fill = el('i'), name = el('span', 'n')
+        fill.style.width = '0%'
+        animateTo(fill, 'width', Math.max(2, (x.n / max) * 100) + '%')
+        var ic = icon && x.name ? iconFor('source', x.name) : null
+        if (ic) name.append(ic)
+        name.append(document.createTextNode(label(x.name)))
+        r.append(fill, name, el('b', null, nf.format(x.n)))
+        body.append(r)
+      })
+      box.append(body)
+      return box
+    }
+    var grid = el('div', 'k-before')
+    grid.append(
+      bars('Woher', b.sources, function (n) { return n ? sourceName(n) : 'Ohne Herkunft' }, true),
+      bars('Von welcher Seite', b.pages, function (n) { return n === '/' || !n ? 'Startseite' : n }),
+      bars('Monat', b.months.map(function (m) { return { name: m.month, n: m.n } }).reverse(), function (n) { return new Date(n + '-01T00:00:00').toLocaleDateString('de-DE', { month: 'long', year: 'numeric' }) })
+    )
+    if (!state.site && b.sites && b.sites.length > 1) grid.append(bars('Website', b.sites, function (n) { return (SITE_BY_DOMAIN[n] || {}).name || n }))
+    card.append(grid)
+    if (b.sources.some(function (x) { return !x.name })) card.append(el('p', 'k-muted', 'Ohne Herkunft: Onepage merkt sich nur Werbe- und Kampagnen-Kennungen. Ob diese Besucher über Google, direkt oder anders kamen, ist nicht bekannt.'))
+  }
   // ---------- enquiries ----------
   var OUTCOMES = [['open', 'Offen'], ['quote', 'Angebot'], ['won', 'Auftrag'], ['lost', 'Verloren'], ['none', 'Kein Kontakt']]
   var OUTCOME_NAME = { open: 'Offen', quote: 'Angebot', won: 'Auftrag', lost: 'Verloren', none: 'Kein Kontakt' }
@@ -3116,8 +3155,11 @@ body { font-size: 14px; line-height: 1.5; }
     cols.append(forms, paths)
     var cols2 = el('div', 'k-cols')
     cols2.append(when, choices)
-    view.append(sum, inbox, bySrc, cols, cols2)
+    var before = kcard('before', 'Vor Messbeginn')
+    before.hidden = true
+    view.append(sum, inbox, bySrc, cols, cols2, before)
     var token = renderToken
+    api('before').then(function (b) { if (token === renderToken) renderBefore(before, b) }).catch(function () {})
     var load = function () {
       return Promise.all([api('leads'), api('summary').catch(function () { return null })]).then(function (res) {
         if (token !== renderToken) return

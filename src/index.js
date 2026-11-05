@@ -19,6 +19,7 @@ import { localParts } from './ingest.js'
 import { summary } from './summary.js'
 import { heat } from './heat.js'
 import { journey, simFunnel } from './sim.js'
+import { importOpLeads, opLeadsBefore } from './opleads.js'
 import { capture, getShot, shotMeta } from './shots.js'
 import { monitorStatus, runMonitor } from './monitor.js'
 import { AUDIT_MAX_AGE, assess, getAudit, listAudits, liveData, refreshOneAudit, runAudit } from './audit.js'
@@ -161,6 +162,13 @@ async function api(request, env, url, user) {
     adminOnly(user)
     const { results } = await db.prepare('SELECT * FROM sync_log ORDER BY ts DESC LIMIT 40').all()
     return json(results)
+  }
+  if (path === 'op-leads' && request.method === 'POST') {
+    adminOnly(user)
+    const body = await readJson(request)
+    const r = await importOpLeads(db, body.rows)
+    if (r.error) throw new BadRequest(r.error)
+    return json(r)
   }
   if (path === 'outcome' && request.method === 'POST') {
     const body = await readJson(request)
@@ -322,6 +330,8 @@ async function api(request, env, url, user) {
       return json(await summary(db, q))
     case 'simfunnel':
       return json(await simFunnel(db, q))
+    case 'before':
+      return json(await opLeadsBefore(db, q.sites))
     case 'journey':
       return json(await journey(db, q))
     case 'heat':
