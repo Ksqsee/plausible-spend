@@ -369,6 +369,75 @@ td.m { color: var(--text-3); font-weight: 400; }
 .chipv::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: .7; }
 .chipv.good { background: color-mix(in srgb, var(--up) 13%, transparent); color: color-mix(in srgb, var(--up) 80%, var(--text)); }
 .chipv.bad { background: color-mix(in srgb, var(--down) 12%, transparent); color: var(--down); }
+.tr-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin-top: 18px; font-size: 13px; color: var(--text-2); }
+.tr-legend button { display: inline-flex; align-items: center; gap: 7px; border: 0; background: none; padding: 4px 0; font: inherit; color: var(--text-3); cursor: pointer; }
+.tr-legend button.on { color: var(--text); }
+.tr-legend button i { width: 10px; height: 10px; border-radius: 3px; opacity: .3; }
+.tr-legend button.on i { opacity: 1; }
+.tr-trendkey { display: inline-flex; align-items: center; gap: 7px; color: var(--text-3); margin-left: auto; }
+.tr-trendkey i { width: 18px; border-top: 2px dashed var(--ink); opacity: .55; }
+.tr-chart { height: 300px; margin-top: 10px; }
+.tr-chart .tip .r span::before { background: var(--dot, var(--tip-text)); }
+.tr-foot { margin-top: 12px; font-size: 12.5px; }
+#trendchain .ph .title, #trend .ph .title { white-space: normal; }
+.tr-kpis { grid-template-columns: repeat(4, 1fr); }
+.tr-chain { display: grid; gap: 14px; margin-top: 18px; }
+.tr-row { display: grid; grid-template-columns: 110px repeat(4, 1fr); gap: 10px; align-items: stretch; }
+.tr-src { font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.tr-src::before { content: ""; width: 10px; height: 10px; border-radius: 3px; background: var(--m-blue); }
+.tr-src.o::before { background: var(--m-green); }
+.tr-step { position: relative; background: var(--sel); border-radius: 12px; padding: 12px 14px; min-width: 0; }
+.tr-step + .tr-step::before { content: "›"; position: absolute; left: -9px; top: 50%; transform: translateY(-50%); color: var(--text-3); font-size: 15px; }
+.tr-step .l { font-size: 12.5px; color: var(--text-3); }
+.tr-step .n { font: 600 22px/1.2 var(--display); letter-spacing: -.02em; margin-top: 2px; font-variant-numeric: tabular-nums; }
+.tr-step .s { font-size: 12px; color: var(--text-3); margin-top: 3px; line-height: 1.4; }
+.tr-ctl { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.tr-ctl .k-segc { max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+.tr-ctl .k-segc button { white-space: nowrap; }
+.tr-movers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 16px; }
+.tr-mv { background: var(--sel); border-radius: 12px; padding: 12px 14px; min-width: 0; }
+.tr-mv .l { font-size: 12px; color: var(--text-3); }
+.tr-mv b { display: block; margin-top: 3px; font-size: 14.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tr-mv .s { font-size: 12.5px; color: var(--text-2); margin-top: 2px; }
+.tr-mv.good .s { color: color-mix(in srgb, var(--up) 80%, var(--text)); }
+.tr-mv.bad .s { color: var(--down); }
+.tr-kw { margin-top: 16px; }
+.tr-kh, .tr-kr { display: grid; grid-template-columns: minmax(0, 2.2fr) 130px 64px 92px 76px 84px 128px; gap: 10px; align-items: center; }
+.tr-kh { font-size: 12px; color: var(--text-3); padding: 0 8px 8px; border-bottom: 1px solid var(--line-soft); }
+.tr-kr { width: 100%; border: 0; background: none; font: inherit; color: inherit; text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--line-soft); cursor: pointer; border-radius: 8px; }
+.tr-kr:hover, .tr-kr.open { background: var(--sel); }
+.tr-kr .nm { min-width: 0; display: flex; flex-direction: column; }
+.tr-kr .nm b { font-weight: 500; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tr-kr .nm small { font-size: 12px; color: var(--text-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tr-kh .num, .tr-kr .num { text-align: right; font-variant-numeric: tabular-nums; font-size: 14px; }
+.tr-kr .num.b { font-weight: 600; }
+.tr-kr .num.m { color: var(--text-2); }
+.tr-kr .num.up { color: color-mix(in srgb, var(--up) 85%, var(--text)); font-weight: 600; }
+.tr-kr .num.down { color: var(--down); font-weight: 600; }
+.tr-spark { display: flex; align-items: flex-end; gap: 2px; height: 28px; }
+.tr-spark i { flex: 1; max-width: 8px; border-radius: 2px; background: var(--m-blue); }
+.tr-spark i.z { background: var(--line); }
+.tr-spark i.run { opacity: .4; }
+.tr-kwd { padding: 6px 8px 14px; border-bottom: 1px solid var(--line-soft); }
+.tr-kwd-t { display: grid; gap: 0; font-size: 13px; margin-bottom: 8px; }
+.tr-kwd-t > div { display: grid; grid-template-columns: 1.4fr repeat(5, 1fr); gap: 8px; padding: 5px 0; border-bottom: 1px dashed var(--line-soft); font-variant-numeric: tabular-nums; }
+.tr-kwd-t > div > span:not(:first-child) { text-align: right; }
+.tr-kwd-t .h { color: var(--text-3); font-size: 12px; }
+.tr-kwd-t .b { font-weight: 600; }
+.tr-kwd-t .run { color: var(--text-3); }
+@media (max-width: 760px) {
+  .tr-kpis { grid-template-columns: 1fr 1fr; }
+  .tr-row { grid-template-columns: 1fr 1fr; }
+  .tr-src { grid-column: 1 / -1; }
+  .tr-step + .tr-step::before { display: none; }
+  .tr-movers { grid-template-columns: 1fr; }
+  .tr-kh { display: none; }
+  .tr-kr { grid-template-columns: minmax(0, 1fr) auto auto; grid-template-areas: "nm b ch" "sp sp chip"; row-gap: 6px; }
+  .tr-kr .nm { grid-area: nm; } .tr-kr .tr-spark { grid-area: sp; max-width: 180px; } .tr-kr .num.b { grid-area: b; } .tr-kr .num.up, .tr-kr .num.down, .tr-kr > .num:nth-child(4) { grid-area: ch; }
+  .tr-kr > .num.m { display: none; } .tr-kr > .chipv { grid-area: chip; justify-self: end; }
+  .tr-kwd-t > div { grid-template-columns: 1.3fr repeat(3, 1fr); } .tr-kwd-t > div > span:nth-child(5), .tr-kwd-t > div > span:nth-child(6) { display: none; }
+  .tr-trendkey { margin-left: 0; }
+}
 .chipv.warn { background: color-mix(in srgb, var(--warn) 18%, transparent); color: color-mix(in srgb, var(--warn) 60%, var(--text)); }
 .two { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .two .a { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text); min-width: 0; }
@@ -2156,7 +2225,7 @@ body { font-size: 14px; line-height: 1.5; }
   // tools that work on one website
   var TOOL_VIEWS = ['heatmap', 'funnel', 'check']
   // the sections of a company or website page, shown as tabs under the title
-  var SITE_VIEWS = ['leads', 'visitors', 'heatmap', 'funnel', 'dropoff', 'check', 'ads', 'google']
+  var SITE_VIEWS = ['leads', 'visitors', 'heatmap', 'funnel', 'dropoff', 'check', 'trend', 'ads', 'google']
   function readUrl() {
     var p = new URLSearchParams(location.search)
     state.site = p.get('site') && SITE_BY_DOMAIN[p.get('site')] ? p.get('site') : null
@@ -2387,6 +2456,7 @@ body { font-size: 14px; line-height: 1.5; }
     else if (state.view === 'leads') renderLeadsTab(view)
     else if (state.view === 'dropoff') renderDropoff(view)
     else if (state.view === 'visitors') renderVisitorsTab(view)
+    else if (state.view === 'trend') renderTrendTab(view)
     else if (state.view === 'ads') renderAdsTab(view)
     else if (state.view === 'google') renderGoogleTab(view)
     else renderDash(view)
@@ -2397,9 +2467,9 @@ body { font-size: 14px; line-height: 1.5; }
   // ---------- site sections: tabs, site switch, uptime ----------
   // five sections; "Website" and "Werbung & Google" hold several views behind a small switch
   var SITE_TABS = [['dash', 'Übersicht', 'Übersicht'], ['leads', 'Anfragen', 'Anfragen'], ['website', 'Website', 'Website'], ['marketing', 'Werbung & Google', 'Werbung'], ['flow', 'Funnel', 'Funnel']]
-  var TAB_GROUP = { visitors: 'website', heatmap: 'website', check: 'website', ads: 'marketing', google: 'marketing', dropoff: 'flow', funnel: 'flow' }
-  var TAB_SUBS = { website: [['visitors', 'Besucher'], ['heatmap', 'Heatmap'], ['check', 'Website-Check']], marketing: [['ads', 'Werbung'], ['google', 'Google']], flow: [['dropoff', 'Absprünge'], ['funnel', 'Rechner']] }
-  function firstView(tab) { return tab === 'website' ? 'visitors' : tab === 'marketing' ? (tabAvailable('ads') ? 'ads' : 'google') : tab === 'flow' ? 'dropoff' : tab }
+  var TAB_GROUP = { visitors: 'website', heatmap: 'website', check: 'website', trend: 'marketing', ads: 'marketing', google: 'marketing', dropoff: 'flow', funnel: 'flow' }
+  var TAB_SUBS = { website: [['visitors', 'Besucher'], ['heatmap', 'Heatmap'], ['check', 'Website-Check']], marketing: [['trend', 'Verlauf'], ['ads', 'Werbung'], ['google', 'Google']], flow: [['dropoff', 'Absprünge'], ['funnel', 'Rechner']] }
+  function firstView(tab) { return tab === 'website' ? 'visitors' : tab === 'marketing' ? 'trend' : tab === 'flow' ? 'dropoff' : tab }
   function scopeSites() {
     if (state.site) return [state.site]
     var co = COMPANIES.filter(function (c) { return 'company:' + c.id === state.scope })[0]
@@ -3368,6 +3438,425 @@ body { font-size: 14px; line-height: 1.5; }
         plural(d.ads.clicks, ['Klick', 'Klicks']) + ', daraus ' + plural(fromAds, ['Anfrage', 'Anfragen']) + ' über die Website' + (fromAds && d.ads.spend_tracked ? ', also ' + money0.format(d.ads.spend_tracked / fromAds) + ' pro Anfrage seit Messbeginn' : '') + '.')
     }).catch(function () {})
     Promise.resolve(renderAds()).then(function () { if (!s.children.length || s.querySelector(':scope > .empty')) s.replaceChildren(el('p', 'k-muted', 'Für diese Auswahl gibt es keine Google-Anzeigen.')) })
+  }
+  // ---------- Verlauf: clicks per day, week or month, how the chain works, keywords over time ----------
+  var TREND_UNITS = [['day', 'Tag'], ['week', 'Woche'], ['month', 'Monat']]
+  var TREND_SPAN = { day: 42, week: 16, month: 13 }
+  var trendCache = null
+  function weekStart(d) { var x = new Date(d); var wd = (x.getDay() + 6) % 7; x.setDate(x.getDate() - wd); return x }
+  function trendKey(d, unit) { return unit === 'day' ? iso(d) : unit === 'week' ? iso(weekStart(d)) : iso(d).slice(0, 7) }
+  function trendLabel(start, unit, long) {
+    var f = function (x, o) { return x.toLocaleDateString('de-DE', o) }
+    if (unit === 'day') return long ? f(start, { weekday: 'long', day: 'numeric', month: 'long' }) : f(start, { day: 'numeric', month: 'numeric' })
+    if (unit === 'week') {
+      var end = addDays(start, 6)
+      return long ? 'Woche ' + f(start, { day: 'numeric', month: 'short' }) + ' – ' + f(end, { day: 'numeric', month: 'short' }) : f(start, { day: 'numeric', month: 'numeric' })
+    }
+    return long ? f(start, { month: 'long', year: 'numeric' }) : f(start, { month: 'short' }).replace('.', '')
+  }
+  // the daily rows grouped into the chosen unit; the newest bucket may still be running
+  function trendBuckets(d, unit) {
+    var byDay = {}
+    d.daily.forEach(function (r) { byDay[r.date] = r })
+    var end = new Date(d.to + 'T00:00:00')
+    var first = [d.since.ads, d.since.organic].filter(Boolean).sort()[0]
+    if (!first) return []
+    var start = new Date(first + 'T00:00:00')
+    var out = [], map = {}
+    for (var x = new Date(start); x <= end; x = addDays(x, 1)) {
+      var k = trendKey(x, unit)
+      if (!map[k]) {
+        var bs = unit === 'day' ? new Date(x) : unit === 'week' ? weekStart(x) : new Date(x.getFullYear(), x.getMonth(), 1)
+        map[k] = { key: k, start: bs, days: 0, ads: 0, organic: 0, impressions: 0, oimpressions: 0, spend: 0, leads: 0, conv: 0, avis: 0, ovis: 0 }
+        out.push(map[k])
+      }
+      var b = map[k], r = byDay[iso(x)]
+      b.days++
+      if (!r) continue
+      b.ads += r.ads_clicks; b.organic += r.organic_clicks; b.impressions += r.ads_impressions; b.oimpressions += r.organic_impressions
+      b.spend += r.ads_spend; b.leads += r.ads_leads; b.conv += r.ads_conversions; b.avis += r.ads_visitors; b.ovis += r.organic_visitors
+    }
+    out.forEach(function (b) {
+      var full = unit === 'day' ? 1 : unit === 'week' ? 7 : new Date(b.start.getFullYear(), b.start.getMonth() + 1, 0).getDate()
+      // running: still going on today; partial: data starts in the middle of it
+      b.running = iso(addDays(b.start, full - 1)) >= iso(new Date())
+      b.partial = !b.running && b.days < full
+      b.incomplete = b.running || b.partial
+      b.total = b.ads + b.organic
+      b.short = trendLabel(b.start, unit, false); b.long = trendLabel(b.start, unit, true)
+    })
+    // Google reports search clicks two to three days late; those days are not "zero"
+    var res = out.slice(-TREND_SPAN[unit])
+    res.organicLast = d.since.organic_last
+    return res
+  }
+  function changeText(cur, prev, unitWord) {
+    if (!prev && !cur) return 'gleich wie ' + unitWord
+    if (!prev) return 'neu gegenüber ' + unitWord
+    var p = Math.round(((cur - prev) / prev) * 100)
+    if (p === 0) return 'gleich wie ' + unitWord
+    return (p > 0 ? '↑ ' : '↓ ') + Math.abs(p) + ' % gegenüber ' + unitWord
+  }
+  function trendChart(box, list, show) {
+    box.replaceChildren()
+    var tip = el('div', 'tip'); box.append(tip)
+    if (!list.length) return
+    var W = box.clientWidth || 640, H = box.clientHeight || 300
+    var padL = 36, padB = 26, padT = 10, padR = 6
+    var iw = W - padL - padR, ih = H - padT - padB
+    var val = function (b) { return (show.ads ? b.ads : 0) + (show.organic ? b.organic : 0) }
+    var max = niceMax(Math.max.apply(null, list.map(val).concat([1])))
+    var grid = cssVar('--line-soft'), muted = cssVar('--text-3'), axis = cssVar('--line')
+    var cA = cssVar('--m-blue'), cO = cssVar('--m-green'), ink = cssVar('--ink')
+    var root = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': 'Klicks im Verlauf' })
+    var ticks = [5, 4, 3, 2].filter(function (t) { return max % t === 0 })[0] || 4
+    for (var i = 0; i <= ticks; i++) {
+      var y = padT + ih - (ih * i) / ticks
+      root.append(svg('line', { x1: padL, x2: W - padR, y1: y, y2: y, stroke: i === 0 ? axis : grid, 'stroke-width': 1 }))
+      var t = svg('text', { x: padL - 8, y: y + 4, 'text-anchor': 'end', 'font-size': 11.5, fill: muted }); t.textContent = nf.format(Math.round((max * i) / ticks)); root.append(t)
+    }
+    var n = list.length, slot = iw / n, bw = Math.max(3, Math.min(34, slot * 0.62))
+    var yv = function (v) { return padT + ih - (ih * v) / max }
+    var every = Math.max(1, Math.ceil(n / Math.max(2, Math.floor(iw / 58))))
+    list.forEach(function (b, i) {
+      var cx = padL + slot * i + slot / 2, x0 = cx - bw / 2, base = padT + ih
+      var g = svg('g', { opacity: b.incomplete ? 0.45 : 1 })
+      if (show.organic && b.organic) { var h1 = ih * b.organic / max; g.append(svg('rect', { x: x0, y: base - h1, width: bw, height: Math.max(1, h1), rx: 2, fill: cO })); base -= h1 }
+      if (show.ads && b.ads) { var h2 = ih * b.ads / max; g.append(svg('rect', { x: x0, y: base - h2, width: bw, height: Math.max(1, h2), rx: 2, fill: cA })) }
+      root.append(g)
+      if (i % every === 0 || i === n - 1) {
+        var lt = svg('text', { x: cx, y: H - 6, 'text-anchor': 'middle', 'font-size': 11.5, fill: muted }); lt.textContent = b.short; root.append(lt)
+      }
+    })
+    // trend line: average of the last three buckets, so single spikes do not dominate
+    var pts = []
+    list.forEach(function (b, i) {
+      if (b.incomplete) return
+      var win = list.slice(Math.max(0, i - 2), i + 1).filter(function (x) { return !x.incomplete })
+      var avg = win.reduce(function (a, x) { return a + val(x) }, 0) / win.length
+      pts.push([padL + slot * i + slot / 2, yv(avg)])
+    })
+    if (pts.length > 1) root.append(svg('path', { d: smoothPath(pts), fill: 'none', stroke: ink, 'stroke-width': 1.6, 'stroke-dasharray': '4 4', opacity: 0.55 }))
+    var hit = svg('rect', { x: padL, y: 0, width: iw, height: padT + ih, fill: 'transparent' })
+    var hl = svg('rect', { y: padT, height: ih, width: slot, fill: ink, opacity: 0, rx: 4 })
+    root.insertBefore(hl, root.firstChild)
+    root.append(hit)
+    function showTip(evt) {
+      var rect = root.getBoundingClientRect()
+      var px = ((evt.clientX - rect.left) / rect.width) * W
+      var i = Math.max(0, Math.min(n - 1, Math.floor((px - padL) / slot)))
+      var b = list[i]
+      hl.setAttribute('x', padL + slot * i); hl.setAttribute('opacity', 0.05)
+      tip.replaceChildren(el('div', 't', b.long + (b.running ? ' · läuft noch' : b.partial ? ' · nur ' + plural(b.days, ['Tag', 'Tage']) + ' erfasst' : '')))
+      var row = function (label, value, color) { var r = el('div', 'r'), s = el('span', null, label); if (color) s.style.setProperty('--dot', color); r.append(s, el('b', null, value)); return r }
+      if (show.ads) tip.append(row('Anzeigen', nf.format(b.ads), cA))
+      if (show.organic) tip.append(row('Google-Suche', nf.format(b.organic), cO))
+      if (show.ads && show.organic) tip.append(row('Zusammen', nf.format(b.total)))
+      var extra = []
+      if (show.ads && b.ads) extra.push(money.format(b.spend / b.ads) + ' pro Anzeigen-Klick')
+      if (show.ads && b.impressions) extra.push(pct.format(b.ads / b.impressions * 100) + ' % der Anzeigen-Einblendungen geklickt')
+      if (show.ads && b.leads) extra.push(plural(b.leads, ['Anfrage', 'Anfragen']) + ' über Anzeigen')
+      if (show.organic && list.organicLast && iso(addDays(b.start, b.days - 1)) > list.organicLast) extra.push('Google-Suche meldet die letzten Tage noch nach')
+      if (extra.length) tip.append(el('div', 'h', extra.join(' · ')))
+      tip.style.display = 'block'
+      var tw = tip.offsetWidth, left = padL + slot * i + slot + 8
+      if (left + tw > W) left = padL + slot * i - tw - 8
+      tip.style.left = Math.max(0, left) + 'px'; tip.style.top = '8px'
+    }
+    hit.addEventListener('pointermove', showTip)
+    hit.addEventListener('pointerdown', showTip)
+    hit.addEventListener('pointerleave', function () { tip.style.display = 'none'; hl.setAttribute('opacity', 0) })
+    box.append(root)
+  }
+  function trendLegend(show, avail, onToggle) {
+    var box = el('div', 'tr-legend')
+    ;[['ads', 'Anzeigen', 'var(--m-blue)'], ['organic', 'Google-Suche', 'var(--m-green)']].filter(function (o) { return avail[o[0]] }).forEach(function (o) {
+      var b = el('button', show[o[0]] ? 'on' : ''); b.type = 'button'
+      var dot = el('i'); dot.style.background = o[2]
+      b.append(dot, el('span', null, o[1]))
+      b.setAttribute('aria-pressed', String(!!show[o[0]]))
+      b.onclick = function () {
+        var next = !show[o[0]]
+        if (!next && (!avail[o[0] === 'ads' ? 'organic' : 'ads'] || !show[o[0] === 'ads' ? 'organic' : 'ads'])) return
+        show[o[0]] = next; onToggle()
+      }
+      box.append(b)
+    })
+    var t = el('span', 'tr-trendkey'); t.append(el('i'), el('span', null, 'Trend (Schnitt aus 3)'))
+    box.append(t)
+    return box
+  }
+  // the chain from "shown" to "enquiry", last 28 days against the 28 before
+  function trendChain(d) {
+    var end = d.to, byDay = {}
+    d.daily.forEach(function (r) { byDay[r.date] = r })
+    var sum = function (from, to) {
+      var s = { ai: 0, ac: 0, av: 0, al: 0, sp: 0, oi: 0, oc: 0, ov: 0 }
+      for (var x = new Date(from + 'T00:00:00'), e = new Date(to + 'T00:00:00'); x <= e; x = addDays(x, 1)) {
+        var r = byDay[iso(x)]; if (!r) continue
+        s.ai += r.ads_impressions; s.ac += r.ads_clicks; s.av += r.ads_visitors; s.al += r.ads_leads; s.sp += r.ads_spend
+        s.oi += r.organic_impressions; s.oc += r.organic_clicks; s.ov += r.organic_visitors
+      }
+      return s
+    }
+    var e = new Date(end + 'T00:00:00')
+    var cur = sum(iso(addDays(e, -27)), end), prev = sum(iso(addDays(e, -55)), iso(addDays(e, -28)))
+    var box = el('div', 'tr-chain')
+    var webSince = d.since.website
+    var step = function (label, n, p, rate, note) {
+      var s = el('div', 'tr-step')
+      s.append(el('div', 'l', label), el('div', 'n', n === null ? '–' : nf.format(n)))
+      var sub = []
+      if (rate) sub.push(rate)
+      if (n !== null && p !== null) { var dd = n - p; sub.push(dd === 0 ? 'gleich wie davor' : (dd > 0 ? '↑ ' : '↓ ') + nf.format(Math.abs(dd)) + ' ggü. davor') }
+      if (note) sub.push(note)
+      s.append(el('div', 's', sub.join(' · ')))
+      return s
+    }
+    var rate = function (a, b, word) { return b ? pct.format(a / b * 100) + ' % ' + word : '' }
+    var webNote = webSince && webSince > iso(addDays(e, -27)) ? 'Website misst erst seit ' + new Date(webSince + 'T00:00:00').toLocaleDateString('de-DE', { day: 'numeric', month: 'short' }) : ''
+    var rowA = el('div', 'tr-row'), rowO = el('div', 'tr-row')
+    if (cur.ai || prev.ai) {
+      rowA.append(el('div', 'tr-src', 'Anzeigen'),
+        step('Gezeigt', cur.ai, prev.ai, ''),
+        step('Geklickt', cur.ac, prev.ac, rate(cur.ac, cur.ai, 'der Einblendungen') + (cur.ac ? ' · ' + money.format(cur.sp / cur.ac) + ' pro Klick' : '')),
+        step('Auf der Website', cur.av, webNote ? null : prev.av, rate(cur.av, cur.ac, 'der Klicks'), webNote),
+        step('Anfragen', cur.al, webNote ? null : prev.al, rate(cur.al, cur.av, 'der Besucher')))
+      box.append(rowA)
+    }
+    if (cur.oi || prev.oi) {
+      rowO.append(el('div', 'tr-src o', 'Google-Suche'),
+        step('Gezeigt', cur.oi, prev.oi, ''),
+        step('Geklickt', cur.oc, prev.oc, rate(cur.oc, cur.oi, 'der Einblendungen')),
+        step('Auf der Website', cur.ov, webNote ? null : prev.ov, '', webNote))
+      box.append(rowO)
+    }
+    return box
+  }
+  // ---- keywords over time ----
+  function kwWeeks(d, rows) {
+    var last = [d.since.keywords_last, d.since.organic_last].filter(Boolean).sort().pop() || d.to
+    var all = {}
+    rows.forEach(function (k) { Object.keys(k.weeks).forEach(function (w) { all[w] = 1 }) })
+    var weeks = Object.keys(all).sort()
+    // a week counts as complete once its Sunday is inside the data
+    var complete = weeks.filter(function (w) { return iso(addDays(new Date(w + 'T00:00:00'), 6)) <= last })
+    return { weeks: weeks.slice(-13), complete: complete }
+  }
+  function kwStats(k, W, n) {
+    var cw = W.complete, curW = cw.slice(-n), prevW = cw.slice(-2 * n, -n)
+    var get = function (ws, i) { return ws.reduce(function (a, w) { return a + (k.weeks[w] ? k.weeks[w][i] || 0 : 0) }, 0) }
+    var s = { clicks: get(curW, 0), prev: get(prevW, 0), impr: get(curW, 1), prevImpr: get(prevW, 1) }
+    s.total = Object.keys(k.weeks).reduce(function (a, w) { return a + (k.weeks[w][0] || 0) }, 0)
+    if (k.kind === 'ads') { s.spend = get(curW, 2); s.conv = get(curW, 3); s.allConv = Object.keys(k.weeks).reduce(function (a, w) { return a + (k.weeks[w][3] || 0) }, 0) }
+    else {
+      var pos = function (ws) { var t = 0, wsum = 0; ws.forEach(function (w) { var x = k.weeks[w]; if (x && x[2] !== null && x[1]) { t += x[2] * x[1]; wsum += x[1] } }); return wsum ? t / wsum : null }
+      s.pos = pos(curW); s.prevPos = pos(prevW)
+    }
+    var hadBefore = prevW.some(function (w) { return k.weeks[w] && (k.weeks[w][1] || k.weeks[w][0]) })
+    var olderClicks = cw.slice(0, -n).some(function (w) { return k.weeks[w] && k.weeks[w][0] })
+    var d = s.clicks - s.prev
+    if (!s.clicks && !s.prev && !olderClicks) s.trend = s.impr ? ['Gezeigt, kein Klick', 'warn', 'idle'] : ['Ruhig', '', 'quiet']
+    else if (!s.clicks && (s.prev || olderClicks)) s.trend = ['Eingeschlafen', 'bad', 'down']
+    else if (!hadBefore && !olderClicks) s.trend = ['Neu', 'good', 'up']
+    else if (d >= Math.max(2, s.prev * 0.15)) s.trend = ['Steigt', 'good', 'up']
+    else if (-d >= Math.max(2, s.prev * 0.15)) s.trend = ['Fällt', 'bad', 'down']
+    else s.trend = ['Stabil', '', 'flat']
+    return s
+  }
+  function kwSpark(k, W) {
+    var box = el('span', 'tr-spark')
+    var max = Math.max.apply(null, W.weeks.map(function (w) { return k.weeks[w] ? k.weeks[w][0] : 0 }).concat([1]))
+    W.weeks.forEach(function (w) {
+      var v = k.weeks[w] ? k.weeks[w][0] : 0
+      var i = el('i', (W.complete.indexOf(w) < 0 ? 'run ' : '') + (v ? '' : 'z'))
+      i.style.height = (v ? Math.max(3, v / max * 26) : 2) + 'px'
+      i.title = 'Woche ab ' + new Date(w + 'T00:00:00').toLocaleDateString('de-DE', { day: 'numeric', month: 'short' }) + ': ' + plural(v, ['Klick', 'Klicks'])
+      box.append(i)
+    })
+    return box
+  }
+  function kwDetail(k, W) {
+    var box = el('div', 'tr-kwd')
+    var tbl = el('div', 'tr-kwd-t')
+    var head = el('div', 'h')
+    head.append(el('span', null, 'Woche'), el('span', null, 'Gezeigt'), el('span', null, 'Klicks'), el('span', null, 'Klickrate'), el('span', null, k.kind === 'ads' ? 'Kosten' : 'Platz'), el('span', null, k.kind === 'ads' ? 'Conversions' : ''))
+    tbl.append(head)
+    W.weeks.slice().reverse().forEach(function (w) {
+      var x = k.weeks[w] || [0, 0, k.kind === 'ads' ? 0 : null, 0]
+      var r = el('div', 'r' + (W.complete.indexOf(w) < 0 ? ' run' : ''))
+      r.append(el('span', null, new Date(w + 'T00:00:00').toLocaleDateString('de-DE', { day: 'numeric', month: 'short' }) + (W.complete.indexOf(w) < 0 ? ' (läuft)' : '')),
+        el('span', null, nf.format(x[1])), el('span', 'b', nf.format(x[0])), el('span', null, x[1] ? pct.format(x[0] / x[1] * 100) + ' %' : '–'),
+        el('span', null, k.kind === 'ads' ? money.format(x[2] || 0) : x[2] === null || x[2] === undefined ? '–' : pct.format(x[2])),
+        el('span', null, k.kind === 'ads' ? nf.format(x[3] || 0) : ''))
+      tbl.append(r)
+    })
+    box.append(tbl)
+    var meta = []
+    if (k.campaign) meta.push('Kampagne: ' + k.campaign + (k.ad_group ? ' › ' + k.ad_group : ''))
+    if (k.first) meta.push('Erste Daten: ' + new Date(k.first + 'T00:00:00').toLocaleDateString('de-DE', { day: 'numeric', month: 'short' }))
+    if (k.last_click) meta.push('Letzter Klick: ' + new Date(k.last_click + 'T00:00:00').toLocaleDateString('de-DE', { day: 'numeric', month: 'short' }))
+    if (meta.length) box.append(el('div', 'k-muted', meta.join(' · ')))
+    return box
+  }
+  function renderKeywordTrends(section, d) {
+    var kind = state.tabs.trendkw || (d.keywords.length ? 'ads' : 'organic')
+    var n = state.tabs.trendn || 4
+    var filter = state.tabs.trendf || 'all'
+    section.replaceChildren()
+    var tabsDef = []
+    if (d.keywords.length) tabsDef.push(['ads', 'Anzeigen-Keywords'])
+    if (d.queries.length) tabsDef.push(['organic', 'Google-Suche'])
+    if (!tabsDef.length) { section.append(el('div', 'empty', 'Noch keine Keyword-Daten für diese Auswahl')); return }
+    if (!tabsDef.some(function (t) { return t[0] === kind })) kind = tabsDef[0][0]
+    header(section, tabsDef, kind, function (t) { state.tabs.trendkw = t; renderKeywordTrends(section, d) }, null)
+    var rows = kind === 'ads' ? d.keywords : d.queries
+    var W = kwWeeks(d, rows)
+    if (W.complete.length < 2) n = 1
+    var stats = rows.map(function (k) { return { k: k, s: kwStats(k, W, n) } })
+    var unitWord = n === 1 ? 'letzte Woche' : 'letzten ' + n + ' Wochen'
+    section.append(el('div', 'lead-in', (kind === 'ads'
+      ? 'Wie oft jedes Keyword Ihrer Anzeigen geklickt wurde, Woche für Woche. Verglichen werden die '
+      : 'Wonach Menschen gesucht haben, bevor sie Ihre Seite in der normalen Google-Suche angeklickt haben. Verglichen werden die ') +
+      unitWord + ' mit ' + (n === 1 ? 'der Woche' : 'den ' + n + ' Wochen') + ' davor (nur abgeschlossene Wochen).'))
+    var ctl = el('div', 'tr-ctl')
+    ctl.append(seg([[1, '1 Woche'], [4, '4 Wochen']].filter(function (o) { return o[0] === 1 || W.complete.length >= 2 }), n, function (v) { state.tabs.trendn = v; renderKeywordTrends(section, d) }))
+    var counts = { all: stats.length, up: 0, down: 0, idle: 0 }
+    stats.forEach(function (x) { if (x.s.trend[2] === 'up') counts.up++; else if (x.s.trend[2] === 'down') counts.down++; else if (x.s.trend[2] === 'idle') counts.idle++ })
+    var fopts = [['all', 'Alle ' + counts.all], ['up', '↑ Steigt / neu ' + counts.up], ['down', '↓ Fällt ' + counts.down]]
+    if (counts.idle) fopts.push(['idle', 'Gezeigt, kein Klick ' + counts.idle])
+    if (!fopts.some(function (o) { return o[0] === filter })) filter = 'all'
+    ctl.append(seg(fopts, filter, function (v) { state.tabs.trendf = v; renderKeywordTrends(section, d) }))
+    section.append(ctl)
+    // the two headlines: biggest gain and biggest loss
+    var movers = stats.filter(function (x) { return x.s.trend[2] === 'up' || x.s.trend[2] === 'down' })
+    var best = movers.slice().sort(function (a, b) { return (b.s.clicks - b.s.prev) - (a.s.clicks - a.s.prev) })[0]
+    var worst = movers.slice().sort(function (a, b) { return (a.s.clicks - a.s.prev) - (b.s.clicks - b.s.prev) })[0]
+    var hl = el('div', 'tr-movers')
+    if (best && best.s.clicks > best.s.prev) hl.append(moverCard('Stärkster Anstieg', best, 'good'))
+    if (worst && worst.s.clicks < worst.s.prev) hl.append(moverCard('Stärkster Rückgang', worst, 'bad'))
+    var top = stats.slice().sort(function (a, b) { return b.s.clicks - a.s.clicks })[0]
+    if (top && top.s.clicks) hl.append(moverCard('Meiste Klicks', top, ''))
+    if (hl.children.length) section.append(hl)
+    var list = stats.filter(function (x) { return filter === 'all' || x.s.trend[2] === filter })
+    list.sort(function (a, b) { return (b.s.clicks - a.s.clicks) || (b.s.prev - a.s.prev) || (b.s.impr - a.s.impr) || (b.s.total - a.s.total) })
+    var showAll = !!section.dataset.all
+    var shown = showAll ? list : list.filter(function (x) { return x.s.clicks || x.s.prev || x.s.total }).slice(0, 25)
+    if (!shown.length) shown = list.slice(0, 25)
+    var multi = scopeSites().length > 1
+    var tbl = el('div', 'tr-kw' + (kind === 'ads' ? ' ads' : ''))
+    var head = el('div', 'tr-kh')
+    head.append(el('span', null, 'Keyword'), el('span', null, 'Verlauf (Wochen)'), el('span', 'num', 'Klicks'), el('span', 'num', 'Veränderung'),
+      el('span', 'num', 'Klickrate'), el('span', 'num', kind === 'ads' ? 'Preis/Klick' : 'Platz'), el('span', null, 'Entwicklung'))
+    tbl.append(head)
+    shown.forEach(function (x) {
+      var k = x.k, s = x.s
+      var row = el('button', 'tr-kr'); row.type = 'button'
+      var name = el('span', 'nm')
+      name.append(el('b', null, k.keyword), el('small', null, (kind === 'ads' ? (MATCH_WORDS[k.match_type] || '') : '') + (multi ? (kind === 'ads' && MATCH_WORDS[k.match_type] ? ' · ' : '') + (SITE_BY_DOMAIN[k.site] ? SITE_BY_DOMAIN[k.site].name : k.site) : '')))
+      var dd = s.clicks - s.prev
+      var ch = el('span', 'num ' + (dd > 0 ? 'up' : dd < 0 ? 'down' : ''), dd === 0 ? '±0' : (dd > 0 ? '+' : '−') + nf.format(Math.abs(dd)))
+      var ctr = el('span', 'num m', s.impr ? pct.format(s.clicks / s.impr * 100) + ' %' : '–')
+      var last = kind === 'ads'
+        ? el('span', 'num m', s.clicks ? money.format(s.spend / s.clicks) : '–')
+        : el('span', 'num m', s.pos === null ? '–' : pct.format(s.pos) + (s.prevPos !== null && Math.abs(s.prevPos - s.pos) >= 0.5 ? (s.pos < s.prevPos ? ' ↑' : ' ↓') : ''))
+      row.append(name, kwSpark(k, W), el('span', 'num b', nf.format(s.clicks)), ch, ctr, last, el('span', 'chipv ' + s.trend[1], s.trend[0]))
+      var det = null
+      row.onclick = function () {
+        if (det) { det.remove(); det = null; row.classList.remove('open'); return }
+        det = kwDetail(k, W); row.classList.add('open'); row.after(det)
+      }
+      tbl.append(row)
+    })
+    section.append(tbl)
+    if (list.length > shown.length || showAll) section.append(toggleMore(showAll ? 'Weniger anzeigen' : 'Alle ' + list.length + ' anzeigen', function () {
+      if (section.dataset.all) delete section.dataset.all; else section.dataset.all = '1'
+      renderKeywordTrends(section, d)
+    }))
+    section.append(el('p', 'k-muted tr-foot', 'Tippen Sie auf eine Zeile für die Wochenwerte. Helle Balken = Woche läuft noch. ' +
+      (kind === 'ads' ? 'Keyword-Daten ab ' : 'Suchdaten ab ') + new Date((kind === 'ads' ? d.since.keywords : d.since.organic) + 'T00:00:00').toLocaleDateString('de-DE', { day: 'numeric', month: 'long' }) + '.'))
+    function moverCard(title, x, cls) {
+      var c = el('div', 'tr-mv ' + cls)
+      var dd = x.s.clicks - x.s.prev
+      c.append(el('div', 'l', title), el('b', null, x.k.keyword),
+        el('div', 's', plural(x.s.clicks, ['Klick', 'Klicks']) + (title === 'Meiste Klicks' ? '' : ' (' + (dd > 0 ? '+' : '−') + nf.format(Math.abs(dd)) + ' ggü. davor)')))
+      return c
+    }
+  }
+  function renderTrendTab(view) {
+    siteSwitch(view, true)
+    var setHero = hero(view)
+    var s1 = el('section', 'card panel wide k-solo tr-card'); s1.id = 'trend'
+    var s2 = el('section', 'card panel wide k-solo'); s2.id = 'trendchain'
+    var s3 = el('section', 'card panel wide k-solo'); s3.id = 'trendkw'
+    view.append(s1, s2, s3)
+    var sk = skeletonRows(4); s1.append(sk)
+    var token = renderToken, key = qs()
+    var load = trendCache && trendCache.key === key ? Promise.resolve(trendCache.data) : api('trends').then(function (d) { trendCache = { key: key, data: d }; return d })
+    return load.then(function (d) {
+      if (token !== renderToken) return
+      sk.remove()
+      if (!d.daily.length) {
+        setHero('Noch keine Klickdaten', 'Sobald Anzeigen laufen oder Google die Seite in der Suche zeigt, erscheint hier der Verlauf.')
+        s1.append(el('div', 'empty', 'Keine Daten')); s2.remove(); s3.remove(); return
+      }
+      var show = { ads: d.daily.some(function (r) { return r.ads_clicks || r.ads_impressions }), organic: d.daily.some(function (r) { return r.organic_clicks || r.organic_impressions }) }
+      if (!show.ads && !show.organic) show.ads = show.organic = true
+      var avail = { ads: show.ads, organic: show.organic }
+      // hero: last 4 complete weeks against the 4 before
+      var wk = trendBuckets(d, 'week').filter(function (b) { return !b.incomplete })
+      var c4 = wk.slice(-4), p4 = wk.slice(-8, -4)
+      var t = function (l, f) { return l.reduce(function (a, b) { return a + f(b) }, 0) }
+      var cur = t(c4, function (b) { return b.total }), prev = t(p4, function (b) { return b.total })
+      setHero(plural(cur, ['Klick', 'Klicks']) + ' in den letzten 4 Wochen',
+        (p4.length === 4 ? changeText(cur, prev, 'den 4 Wochen davor').replace(/^./, function (c) { return c.toUpperCase() }) + ' (' + nf.format(prev) + '). ' : '') +
+        (avail.ads && avail.organic ? nf.format(t(c4, function (b) { return b.ads })) + ' aus Anzeigen, ' + nf.format(t(c4, function (b) { return b.organic })) + ' aus der normalen Google-Suche.' : avail.ads ? 'Alle aus Google-Anzeigen.' : 'Alle aus der normalen Google-Suche, ohne Anzeigen.'))
+      var unit = state.tabs.trendunit || 'week'
+      function paint() {
+        s1.replaceChildren()
+        var ph = el('div', 'ph'), tl = el('div', 'tabs'); tl.append(el('span', 'title', 'Klicks im Verlauf')); ph.append(tl)
+        ph.append(seg(TREND_UNITS, unit, function (u) { unit = u; state.tabs.trendunit = u; paint() }))
+        s1.append(ph)
+        var list = trendBuckets(d, unit)
+        var done = list.filter(function (b) { return !b.incomplete })
+        var lastB = done[done.length - 1], prevB = done[done.length - 2], runB = list[list.length - 1].running ? list[list.length - 1] : null
+        var word = { day: ['Gestern', 'dem Tag davor', 'Tag'], week: ['Letzte Woche', 'der Woche davor', 'Woche'], month: ['Letzter Monat', 'dem Monat davor', 'Monat'] }[unit]
+        var val = function (b) { return b ? (show.ads ? b.ads : 0) + (show.organic ? b.organic : 0) : 0 }
+        var avg = done.length ? Math.round(done.reduce(function (a, b) { return a + val(b) }, 0) / done.length * 10) / 10 : 0
+        var kp = el('div', 'kpis tr-kpis')
+        if (lastB) kp.append(kpi(unit === 'day' ? lastB.long.replace(/^\w/, function (c) { return c.toUpperCase() }) : word[0], nf.format(val(lastB)), prevB ? changeText(val(lastB), val(prevB), word[1]) : ''))
+        if (runB) kp.append(kpi(unit === 'day' ? 'Heute bisher' : unit === 'week' ? 'Diese Woche bisher' : 'Dieser Monat bisher', nf.format(val(runB)), plural(runB.days, ['Tag', 'Tage']) + ' erfasst'))
+        if (done.length) kp.append(kpi('Durchschnitt pro ' + word[2], pct.format(avg), 'über ' + plural(done.length, [word[2], unit === 'day' ? 'Tage' : unit === 'week' ? 'Wochen' : 'Monate'])))
+        var bestB = done.slice().sort(function (a, b) { return val(b) - val(a) })[0]
+        if (bestB) kp.append(kpi({ day: 'Bester Tag', week: 'Beste Woche', month: 'Bester Monat' }[unit], nf.format(val(bestB)), bestB.long))
+        s1.append(kp)
+        s1.append(trendLegend(show, avail, paint))
+        var chart = el('div', 'chart tr-chart')
+        s1.append(chart)
+        requestAnimationFrame(function () { trendChart(chart, list, show) })
+        var note = []
+        if (unit === 'day' && d.since.organic_last && d.since.organic_last < d.to) note.push('Die Google-Suche meldet ihre Klicks 2–3 Tage später; die letzten Tage füllen sich noch.')
+        var dl = function (x) { return new Date(x + 'T00:00:00').toLocaleDateString('de-DE', { day: 'numeric', month: 'long' }) }
+        var src = []
+        if (avail.ads && d.since.ads) src.push('Anzeigen-Daten ab ' + dl(d.since.ads))
+        if (avail.organic && d.since.organic) src.push('Google-Suche ab ' + dl(d.since.organic))
+        if (src.length) note.push(src.join(', ') + '.')
+        s1.append(el('p', 'k-muted tr-foot', note.join(' ')))
+      }
+      paint()
+      var resizeT
+      window.addEventListener('resize', function onR() {
+        if (token !== renderToken) { window.removeEventListener('resize', onR); return }
+        clearTimeout(resizeT); resizeT = setTimeout(paint, 150)
+      })
+      // chain
+      var ch = trendChain(d)
+      if (ch.children.length) {
+        var ph2 = el('div', 'ph'), tl2 = el('div', 'tabs'); tl2.append(el('span', 'title', 'So entsteht aus einer Einblendung eine Anfrage')); ph2.append(tl2)
+        s2.append(ph2, el('div', 'lead-in', 'Letzte 28 Tage. Jede Stufe zeigt, wie viele es bis dorthin geschafft haben, und wie sich das gegenüber den 28 Tagen davor verändert hat.'), ch)
+      } else s2.remove()
+      renderKeywordTrends(s3, d)
+    }).catch(function () { if (token === renderToken) { sk.remove(); s1.append(el('div', 'empty', 'Verlauf konnte nicht geladen werden')) } })
   }
   function renderGoogleTab(view) {
     siteSwitch(view, true)

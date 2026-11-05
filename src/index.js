@@ -21,6 +21,7 @@ import { adsDeep, content, forms, funnel, gbp, insights, leads, months, outcomeS
 import { localParts } from './ingest.js'
 import { summary } from './summary.js'
 import { heat } from './heat.js'
+import { trends } from './trends.js'
 import { journey, simFunnel } from './sim.js'
 import { importOpLeads, opLeadsBefore } from './opleads.js'
 import { gscCompare } from './gsc.js'
@@ -348,6 +349,8 @@ async function api(request, env, url, user) {
       return json(await heat(db, q, (url.searchParams.get('xpage') || '/').slice(0, 300), url.searchParams.get('device') === 'mobile' ? 'mobile' : 'desktop'))
     case 'months':
       return json(await months(db, q))
+    case 'trends':
+      return json(await trends(db, q))
     case 'ads-deep':
       return json(await adsDeep(db, q))
     case 'gbp':
