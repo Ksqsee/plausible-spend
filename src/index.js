@@ -4,6 +4,9 @@ import loginHtml from './login.html'
 import logoSvg from './logo.svg'
 import gwSvg from './gw.svg'
 import icons from './icons.js'
+import icon180 from './app/icon-180.png'
+import icon192 from './app/icon-192.png'
+import icon512 from './app/icon-512.png'
 import interFont from './fonts/inter-400-700.woff2'
 import interTightFont from './fonts/inter-tight-500-700.woff2'
 import monoFont from './fonts/dm-mono-400.woff2'
@@ -443,6 +446,30 @@ export default {
       return new Response(url.pathname === '/gw.svg' ? gwSvg : logoSvg, {
         headers: { 'Content-Type': 'image/svg+xml', 'Cache-Control': 'public, max-age=86400', 'X-Content-Type-Options': 'nosniff' }
       })
+    }
+    // home-screen app: icons and manifest
+    const appIcon = { '/apple-touch-icon.png': icon180, '/icon-192.png': icon192, '/icon-512.png': icon512 }[url.pathname]
+    if (appIcon) {
+      return new Response(appIcon, { headers: { 'Content-Type': 'image/png', 'Cache-Control': 'public, max-age=604800', 'X-Content-Type-Options': 'nosniff' } })
+    }
+    if (url.pathname === '/manifest.webmanifest') {
+      return new Response(
+        JSON.stringify({
+          name: 'Gruppenwerk Analytics',
+          short_name: 'Analytics',
+          start_url: '/',
+          scope: '/',
+          display: 'standalone',
+          background_color: '#f7f7f8',
+          theme_color: '#f7f7f8',
+          icons: [
+            { src: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+            { src: '/icon-512.png', sizes: '512x512', type: 'image/png' },
+            { src: '/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' }
+          ]
+        }),
+        { headers: { 'Content-Type': 'application/manifest+json', 'Cache-Control': 'public, max-age=86400' } }
+      )
     }
     const icon = url.pathname.match(/^\/i\/([a-z0-9-]+)\.svg$/)
     if (icon && Object.prototype.hasOwnProperty.call(icons, icon[1])) {

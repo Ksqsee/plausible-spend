@@ -2,9 +2,17 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Gruppenwerk Analytics</title>
 <link rel="icon" type="image/svg+xml" href="/logo.svg?v=3">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Analytics">
+<meta name="theme-color" content="#f7f7f8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d0d12" media="(prefers-color-scheme: dark)">
 <link rel="preload" href="/f/inter.woff2" as="font" type="font/woff2" crossorigin>
 <style>
 @font-face { font-family: "Inter"; font-style: normal; font-weight: 400 700; font-display: swap; src: url(/f/inter.woff2) format("woff2"); }
@@ -1517,9 +1525,23 @@ body { background: var(--bg); color: var(--text); }
 .k-before { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px 28px; margin-top: 8px; }
 .k-before-col h3 { margin: 0 0 8px; font-size: 13px; font-weight: 500; color: var(--text-3); }
 #before .k-sub { margin: 2px 0 14px; color: var(--text-2); font-size: 14px; line-height: 1.5; max-width: 70ch; }
+/* phone polish */
+.acc-out { display: none; }
+@media (max-width: 760px) {
+  .acc-out { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 18px; }
+  .acc-out .accsub { margin: 0; }
+  .acc { padding: 20px 18px; }
+  .accrow { grid-template-columns: minmax(0, 1fr); }
+  .accrow .acts { flex-wrap: wrap; }
+  .k-row-m b, .k-lead .k-row-m b { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: clip; line-height: 1.3; }
+  .k-pd-row b, .k-fp-row b, .k-pd-row .v, .k-fp-row .v { white-space: nowrap; }
+  .k-tab { font-size: 12.5px; letter-spacing: -.01em; }
+  .k-bt span { white-space: nowrap; }
+}
+@media (display-mode: standalone) { .top { padding-top: max(16px, env(safe-area-inset-top)); } }
 .k-bottom { display: none; }
 @media (max-width: 760px) {
-  .k-bottom { position: fixed; z-index: 900; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: repeat(4, 1fr); padding: 6px 8px calc(6px + env(safe-area-inset-bottom)); background: var(--glass); backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px); border-top: 1px solid var(--line); }
+  .k-bottom { position: fixed; z-index: 900; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: repeat(5, 1fr); padding: 6px 4px calc(6px + env(safe-area-inset-bottom)); background: var(--glass); backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px); border-top: 1px solid var(--line); }
   .k-bt { border: 0; background: none; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 5px 0; color: var(--text-3); font: inherit; font-size: 11px; font-weight: 500; cursor: pointer; }
   .k-bt svg { width: 22px; height: 22px; }
   .k-bt.on { color: var(--accent); }
@@ -1582,8 +1604,8 @@ body { background: var(--bg); color: var(--text); }
 .k-card-h h2 { font-size: 15px; font-weight: 600; }
 @media (max-width: 900px) { .k-cols-37 { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 760px) {
-  .k-kpis { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; padding: 6px 6px 0; scrollbar-width: none; }
-  .k-k { flex: 0 0 auto; min-width: 46%; scroll-snap-align: start; padding: 12px 12px; }
+  .k-kpis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px; padding: 6px 6px 0; overflow: visible; }
+  .k-k { min-width: 0; padding: 12px 12px; }
   .k-k .v { font-size: 24px; }
   .k-chartbox { padding: 10px 10px 12px; }
 }
@@ -1780,7 +1802,7 @@ body { font-size: 14px; line-height: 1.5; }
 .k-when2 .bars i { width: 100%; max-width: 64px; border-radius: 6px 6px 2px 2px; background: var(--d1); }
 .k-when2 .bars b { font-size: 14px; font-variant-numeric: tabular-nums; }
 .k-when2 .bars span { font-size: 12px; color: var(--text-3); }
-@media (max-width: 760px) { .k-fp-row, .k-pd-row { grid-template-columns: minmax(0, 1fr) 40px; } .k-fp-row .m, .k-pd-row .m { grid-column: 1 / -1; grid-row: 2; } }
+@media (max-width: 760px) { .k-fp-row, .k-pd-row { grid-template-columns: minmax(0, 1fr) 56px; } .k-fp-row .m, .k-pd-row .m { grid-column: 1 / -1; grid-row: 2; } }
 </style>
 </head>
 <body>
@@ -2148,6 +2170,13 @@ body { font-size: 14px; line-height: 1.5; }
     }
     state.view = v === 'insights' || v === 'account' || (v === 'tracking' && isAdmin()) || (TOOL_VIEWS.indexOf(v) >= 0 && state.site) || (SITE_VIEWS.indexOf(v) >= 0 && TOOL_VIEWS.indexOf(v) < 0 && (state.site || state.scope)) ? v : state.site || state.scope ? 'dash' : 'overview'
     if (state.view === 'insights' && !state.site && !state.scope) state.scope = 'all'
+    // a company login has nothing to compare: skip the overview and open its own dashboard
+    if (state.view === 'overview' && !isAdmin() && COMPANIES.length === 1) {
+      var own = COMPANIES[0]
+      if (own.sites.length === 1) state.site = own.sites[0].domain
+      else state.scope = 'company:' + own.id
+      state.view = 'dash'
+    }
     state.period = p.get('period') || '30d'
     state.from = p.get('from')
     state.to = p.get('to')
@@ -6156,6 +6185,11 @@ body { font-size: 14px; line-height: 1.5; }
   }
   function renderAccount(view) {
     $('pick').style.display = 'none'
+    var outBox = el('section', 'card acc acc-out')
+    var who = el('p', 'accsub', 'Auf diesem Gerät abmelden')
+    var outB = el('button', 'btn ghost', 'Abmelden'); outB.type = 'button'
+    outB.onclick = function () { $('logout').click() }
+    outBox.append(who, outB)
     var pw = el('section', 'card acc')
     pw.append(el('h2', null, 'Passwort ändern'))
     var f = el('form', 'accf'), msg = el('p', 'msg')
@@ -6173,7 +6207,7 @@ body { font-size: 14px; line-height: 1.5; }
       }).catch(function (err) { msg.textContent = err.message; msg.classList.add('bad') }).finally(function () { b.disabled = false })
     }
     pw.append(f)
-    view.append(pw)
+    view.append(outBox, pw)
     if (!isAdmin()) return
     view.append(syncCard())
 
@@ -6386,22 +6420,25 @@ body { font-size: 14px; line-height: 1.5; }
     // phone: a tab bar at the bottom instead of the hamburger menu
     var bar = el('nav', 'k-bottom'); bar.setAttribute('aria-label', 'Navigation')
     ;[['overview', 'Übersicht', '<rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/>'],
+      ['leads', 'Anfragen', '<path d="M4 6.5h16v11H4z"/><path d="M4 7l8 6 8-6"/>'],
       ['insights', 'Chancen', '<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.6.5 1 1.2 1 2V16h5.2v-.2c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"/>'],
-      ['firms', 'Firmen', '<path d="M4 20V8l6-4 6 4v12M16 10h4v10M8 12h4M8 16h4"/>'],
-      ['search', 'Suchen', '<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>']].forEach(function (t) {
+      ['search', 'Suchen', '<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>'],
+      ['account', 'Konto', '<circle cx="12" cy="8.5" r="3.6"/><path d="M5 20c1.2-3.6 3.8-5.4 7-5.4s5.8 1.8 7 5.4"/>']].forEach(function (t) {
       var b = el('button', 'k-bt'); b.type = 'button'; b.dataset.k = t[0]
       b.append(html('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + t[2] + '</svg>'), el('span', null, t[1]))
       b.onclick = function () {
         if (t[0] === 'search') openPalette()
-        else if (t[0] === 'firms') $('app').classList.add('menu')
-        else navigate(urlFor({ view: t[0] === 'overview' ? null : t[0], scope: t[0] === 'insights' ? null : null }))
+        else if (t[0] === 'leads') navigate(urlFor({ view: 'leads', site: state.site, scope: state.site ? null : state.scope || (isAdmin() || COMPANIES.length !== 1 ? 'all' : 'company:' + COMPANIES[0].id) }))
+        else if (t[0] === 'overview') navigate(urlFor({}))
+        else navigate(urlFor({ view: t[0] }))
       }
       bar.append(b)
     })
     document.body.append(bar)
   })()
   function paintBottom() {
-    var key = state.view === 'overview' ? 'overview' : state.view === 'insights' ? 'insights' : state.site || state.scope ? 'firms' : ''
+    var home = state.view === 'overview' || (!isAdmin() && COMPANIES.length === 1 && state.view === 'dash')
+    var key = home ? 'overview' : state.view === 'leads' ? 'leads' : state.view === 'insights' ? 'insights' : state.view === 'account' ? 'account' : ''
     document.querySelectorAll('.k-bt').forEach(function (b) { b.classList.toggle('on', b.dataset.k === key) })
   }
   var topBar = document.querySelector('.top')

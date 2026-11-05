@@ -12,7 +12,7 @@ fallthrough = false
 
 [[rules]]
 type = "Data"
-globs = ["**/*.woff2"]
+globs = ["**/*.woff2", "**/*.png"]
 fallthrough = false
 
 [[d1_databases]]
