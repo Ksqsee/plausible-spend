@@ -22,6 +22,7 @@ import { localParts } from './ingest.js'
 import { summary } from './summary.js'
 import { heat } from './heat.js'
 import { trends } from './trends.js'
+import { adSetup, syncAdSetup } from './adsetup.js'
 import { journey, simFunnel } from './sim.js'
 import { importOpLeads, opLeadsBefore } from './opleads.js'
 import { gscCompare } from './gsc.js'
@@ -55,7 +56,7 @@ function page(htmlText, status = 200, extra) {
     `script-src 'nonce-${nonce}'`,
     "style-src 'self' 'unsafe-inline'",
     "font-src 'self'",
-    "img-src 'self' data: https://onecdn.io https://icons.duckduckgo.com https://cdn.jsdelivr.net",
+    "img-src 'self' data: https://onecdn.io https://icons.duckduckgo.com https://cdn.jsdelivr.net https://tile.openstreetmap.org",
     "connect-src 'self'",
     "base-uri 'none'",
     "form-action 'self'",
@@ -101,6 +102,24 @@ async function api(request, env, url, user) {
   const own = user.role === 'admin' ? null : user.company
 
   if (path === 'me') return json({ username: user.username, role: user.role, company: user.company })
+
+  if (path === 'ad-setup' && request.method === 'GET') return json(await adSetup(db, own))
+  if (path === 'ad-setup/import' && request.method === 'POST') {
+    adminOnly(user)
+    const only = url.searchParams.get('company')
+    if (!only || !/^[a-z0-9-]{1,40}$/.test(only)) throw new BadRequest('company required')
+    const text = await request.text()
+    if (text.length > 3_000_000) throw new BadRequest('too large')
+    let body
+    try { body = JSON.parse(text) } catch { throw new BadRequest('JSON expected') }
+    const pick = (a) => (Array.isArray(a) ? a.filter((r) => r && typeof r === 'object').slice(0, 20000) : null)
+    return json(await syncAdSetup(env, only, { ads: pick(body.ads), assets: pick(body.assets) }))
+  }
+  if (path === 'ad-setup/refresh' && request.method === 'POST') {
+    adminOnly(user)
+    const only = url.searchParams.get('company')
+    return json(await syncAdSetup(env, only && /^[a-z0-9-]{1,40}$/.test(only) ? only : null))
+  }
 
   if (path === 'sites') {
     const { results } = await db
@@ -542,6 +561,8 @@ export default {
     // Keyword level tables are large: the full 30 days once a night, the last 3 days otherwise.
     const nightly = new Date(event.scheduledTime).getUTCHours() < 6
     ctx.waitUntil(syncAll(env, 30, nightly ? 30 : 3))
+    // how the Google Ads accounts are set up (campaigns, targeting, ads, assets)
+    ctx.waitUntil(syncAdSetup(env).catch((e) => console.log('ad setup failed', e && e.message)))
     // visit data is kept for 25 months, then deleted (data minimisation)
     if (nightly) {
       ctx.waitUntil(purgeOld(env.DB))

@@ -438,6 +438,127 @@ td.m { color: var(--text-3); font-weight: 400; }
   .tr-kwd-t > div { grid-template-columns: 1.3fr repeat(3, 1fr); } .tr-kwd-t > div > span:nth-child(5), .tr-kwd-t > div > span:nth-child(6) { display: none; }
   .tr-trendkey { margin-left: 0; }
 }
+/* ---------- Anzeigen (ad setup) ---------- */
+.as-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 4px 0 16px; }
+.as-pick { max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+.as-pick button { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.as-pick button img, .as-pick button .clogo { width: 16px; height: 16px; border-radius: 4px; }
+.as-refresh { margin: 0 0 0 auto; }
+.as-co { margin-bottom: 16px; }
+.as-coh { display: flex; align-items: center; gap: 12px; }
+.as-coh .logo { width: 36px; height: 36px; border-radius: 9px; flex: none; }
+.as-coh .t { flex: 1; min-width: 0; }
+.as-coh h3 { margin: 0; font: 600 17px/1.3 var(--display); letter-spacing: -.01em; }
+.as-cnt { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.as-st { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; padding: 2px 9px; border-radius: 999px; background: var(--sel); color: var(--text-2); white-space: nowrap; }
+.as-st::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--text-3); }
+.as-st.on { color: color-mix(in srgb, var(--up) 80%, var(--text)); background: color-mix(in srgb, var(--up) 12%, transparent); }
+.as-st.on::before { background: var(--up); box-shadow: 0 0 0 3px color-mix(in srgb, var(--up) 25%, transparent); }
+.as-st.paused::before { background: var(--m-orange); }
+.as-budget { display: flex; gap: 3px; height: 8px; margin: 16px 0 6px; border-radius: 4px; overflow: hidden; }
+.as-budget i { display: block; min-width: 3px; background: var(--m-blue); opacity: .35; }
+.as-budget i.on { opacity: 1; }
+.as-camp { border-top: 1px solid var(--line-soft); }
+.as-camp:first-of-type { margin-top: 10px; }
+.as-ch { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) 18px; gap: 8px 10px; align-items: center; background: none; border: 0; padding: 14px 4px; text-align: left; font: inherit; color: inherit; cursor: pointer; border-radius: 10px; }
+.as-ch:hover { background: color-mix(in srgb, var(--sel) 60%, transparent); }
+.as-ch .nm { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; min-width: 0; }
+.as-ch .nm b { font-size: 15px; font-weight: 600; }
+.as-ch .chips { grid-column: 1; display: flex; flex-wrap: wrap; gap: 6px; }
+.as-ch .chev { grid-column: 2; grid-row: 1 / span 2; width: 18px; height: 18px; color: var(--text-3); transition: transform .2s var(--ease); }
+.as-camp.open .chev { transform: rotate(90deg); }
+.as-chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--text-2); background: var(--sel); padding: 4px 9px; border-radius: 8px; max-width: 100%; }
+.as-chip svg { width: 14px; height: 14px; flex: none; color: var(--text-3); }
+.as-chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.as-fc { font-size: 12px; font-weight: 500; padding: 2px 9px; border-radius: 999px; }
+.as-fc.warn { background: color-mix(in srgb, var(--warn) 18%, transparent); color: color-mix(in srgb, var(--warn) 60%, var(--text)); }
+.as-fc.bad { background: color-mix(in srgb, var(--down) 12%, transparent); color: var(--down); }
+.as-cb { padding: 4px 4px 22px; }
+.as-find { display: grid; gap: 6px; margin: 2px 0 14px; }
+.as-find .r { display: flex; gap: 9px; align-items: flex-start; font-size: 13.5px; line-height: 1.45; padding: 9px 12px; border-radius: 10px; background: color-mix(in srgb, var(--warn) 10%, transparent); }
+.as-find .r.bad { background: color-mix(in srgb, var(--down) 9%, transparent); }
+.as-find .r i { flex: none; width: 8px; height: 8px; border-radius: 50%; margin-top: 6px; background: var(--warn); }
+.as-find .r.bad i { background: var(--down); }
+.as-tabs { margin: 4px 0 14px; max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+.as-tabs button { white-space: nowrap; }
+.as-ov { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 340px); gap: 24px; align-items: start; }
+.as-set { display: grid; grid-template-columns: 130px minmax(0, 1fr); gap: 0; margin: 0; font-size: 13.5px; align-content: start; }
+.as-set dt { color: var(--text-3); padding: 9px 0; border-bottom: 1px solid var(--line-soft); }
+.as-set dd { margin: 0; padding: 9px 0; border-bottom: 1px solid var(--line-soft); }
+.as-geo .sub-h:first-child { margin-top: 0; }
+.as-map { position: relative; width: 100%; max-width: 340px; height: 210px; border-radius: 12px; overflow: hidden; background: var(--sel); }
+.as-map .tiles { position: absolute; left: 50%; top: 0; width: 320px; height: 210px; transform: translateX(-50%); }
+.as-map .tiles img { position: absolute; width: 256px; height: 256px; max-width: none; }
+.as-map svg { position: absolute; left: 50%; top: 0; width: 320px; height: 210px; transform: translateX(-50%); }
+.as-map .area { fill: color-mix(in srgb, var(--m-blue) 22%, transparent); stroke: var(--m-blue); stroke-width: 2; }
+.as-map .dot { fill: var(--m-blue); stroke: #fff; stroke-width: 2; }
+.as-map .lab { position: absolute; left: 10px; top: 10px; background: var(--card); color: var(--text); font-size: 12px; font-weight: 600; padding: 3px 8px; border-radius: 6px; box-shadow: 0 1px 4px rgba(0,0,0,.15); }
+.as-map .attr { position: absolute; right: 6px; bottom: 4px; font-size: 10px; color: #333; background: rgba(255,255,255,.75); padding: 0 4px; border-radius: 3px; }
+:root[data-theme="dark"] .as-map .tiles { filter: invert(.92) hue-rotate(180deg) brightness(.95) contrast(.9); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .as-map .tiles { filter: invert(.92) hue-rotate(180deg) brightness(.95) contrast(.9); } }
+.as-places { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+.as-places span { font-size: 12.5px; background: var(--sel); padding: 3px 8px; border-radius: 6px; }
+.as-week { display: grid; gap: 4px; margin: 4px 0 8px; }
+.as-week .h { position: relative; height: 14px; }
+.as-week .hh { position: absolute; transform: translateX(-50%); font-size: 10.5px; color: var(--text-3); }
+.as-week .r { display: grid; grid-template-columns: 28px minmax(0, 1fr); align-items: center; }
+.as-week .d { font-size: 12px; color: var(--text-3); }
+.as-week .bar { position: relative; height: 14px; border-radius: 4px; background: var(--sel); overflow: hidden; }
+.as-week .bar i { position: absolute; top: 0; bottom: 0; background: var(--m-blue); border-radius: 3px; }
+.as-gh { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 18px 0 8px; }
+.as-gh:first-child { margin-top: 0; }
+.as-gh b { font-size: 14px; }
+.as-ads { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+.as-ad { border: 1px solid var(--line-soft); border-radius: 14px; padding: 14px 16px; background: var(--card); min-width: 0; }
+.as-ad .atop > b { display: block; font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.as-ad .url { display: flex; align-items: center; gap: 9px; }
+.as-ad .fav { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: var(--sel); font-size: 12px; font-weight: 600; flex: none; }
+.as-ad .nm { font-size: 13px; color: var(--text); }
+.as-ad .u { font-size: 12px; color: var(--text-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 260px; }
+.as-ad .hl { margin-top: 8px; font-size: 18px; line-height: 1.3; color: #1a0dab; }
+:root[data-theme="dark"] .as-ad .hl { color: #8ab4f8; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .as-ad .hl { color: #8ab4f8; } }
+.as-ad .ds { margin-top: 4px; font-size: 13.5px; line-height: 1.5; color: var(--text-2); }
+.as-ad .sl { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 8px; }
+.as-ad .sl span { font-size: 13px; color: #1a0dab; }
+:root[data-theme="dark"] .as-ad .sl span { color: #8ab4f8; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .as-ad .sl span { color: #8ab4f8; } }
+.as-ad .meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--line-soft); }
+.as-tag { font-size: 11.5px; padding: 2px 8px; border-radius: 999px; background: var(--sel); color: var(--text-2); }
+.as-tag.ok { background: color-mix(in srgb, var(--up) 12%, transparent); color: color-mix(in srgb, var(--up) 80%, var(--text)); }
+.as-tag.bad { background: color-mix(in srgb, var(--down) 12%, transparent); color: var(--down); }
+.as-texts { margin-top: 10px; }
+.as-texts summary { cursor: pointer; font-size: 13px; color: var(--text-2); }
+.as-texts .lt { display: grid; margin-top: 8px; }
+.as-texts .r { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 8px; font-size: 12.5px; padding: 4px 0; border-bottom: 1px dashed var(--line-soft); }
+.as-texts .n, .as-texts .c { color: var(--text-3); font-variant-numeric: tabular-nums; }
+.as-texts .c.bad { color: var(--down); }
+.as-link { display: block; margin-top: 8px; font-size: 12px; color: var(--text-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.as-legend { margin-bottom: 4px; font-size: 12.5px; }
+.as-kws { display: flex; flex-wrap: wrap; gap: 6px; }
+.as-kw { font-size: 13px; padding: 4px 9px; border-radius: 8px; background: var(--sel); font-family: var(--mono); letter-spacing: -.01em; }
+.as-kw.exact { background: color-mix(in srgb, var(--m-blue) 12%, transparent); }
+.as-kw.phrase { background: color-mix(in srgb, var(--m-green) 11%, transparent); }
+.as-assets { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 6px 24px; }
+.as-assets .sub-h { margin-top: 6px; }
+.as-sls { display: grid; gap: 8px; }
+.as-sl { display: block; padding: 10px 12px; border-radius: 10px; background: var(--sel); color: inherit; text-decoration: none; }
+.as-sl b { display: block; font-size: 14px; color: #1a0dab; font-weight: 500; }
+:root[data-theme="dark"] .as-sl b { color: #8ab4f8; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .as-sl b { color: #8ab4f8; } }
+.as-sl span { display: block; font-size: 12.5px; color: var(--text-2); margin-top: 2px; }
+.as-sl small { display: block; font-size: 11.5px; color: var(--text-3); margin-top: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.as-callouts { display: flex; flex-wrap: wrap; gap: 6px; }
+.as-callouts span, .as-callouts a { font-size: 13px; padding: 4px 10px; border-radius: 999px; background: var(--sel); color: var(--text); text-decoration: none; }
+.as-snip { font-size: 13.5px; line-height: 1.5; margin-bottom: 4px; }
+@media (max-width: 760px) {
+  .as-ov { grid-template-columns: 1fr; }
+  .as-set { grid-template-columns: 110px minmax(0, 1fr); }
+  .as-coh { flex-wrap: wrap; }
+  .as-cnt { width: 100%; justify-content: flex-start; }
+  .as-ads { grid-template-columns: 1fr; }
+  .as-refresh { margin-left: 0; }
+}
 .chipv.warn { background: color-mix(in srgb, var(--warn) 18%, transparent); color: color-mix(in srgb, var(--warn) 60%, var(--text)); }
 .two { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .two .a { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text); min-width: 0; }
@@ -1886,6 +2007,10 @@ body { font-size: 14px; line-height: 1.5; }
       <svg class="i" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.6.5 1 1.2 1 2V16h5.2v-.2c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"/></svg>
       <span class="lbl">Chancen</span><span class="badge-n" id="insCount"></span>
     </a>
+    <a class="nav" href="?view=adsetup" data-nav data-key="view:adsetup">
+      <svg class="i" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10v4a1 1 0 0 0 1 1h2l5 4V5L7 9H5a1 1 0 0 0-1 1z"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11"/></svg>
+      <span class="lbl">Anzeigen</span>
+    </a>
     <div class="stitle">Firmen</div>
     <div id="companies"></div>
     <div class="sfoot">
@@ -2237,7 +2362,7 @@ body { font-size: 14px; line-height: 1.5; }
       var co0 = COMPANIES.filter(function (c) { return 'company:' + c.id === state.scope })[0]
       if (co0 && co0.sites[0]) { state.site = co0.sites[0].domain; state.scope = null }
     }
-    state.view = v === 'insights' || v === 'account' || (v === 'tracking' && isAdmin()) || (TOOL_VIEWS.indexOf(v) >= 0 && state.site) || (SITE_VIEWS.indexOf(v) >= 0 && TOOL_VIEWS.indexOf(v) < 0 && (state.site || state.scope)) ? v : state.site || state.scope ? 'dash' : 'overview'
+    state.view = v === 'insights' || v === 'account' || v === 'adsetup' || (v === 'tracking' && isAdmin()) || (TOOL_VIEWS.indexOf(v) >= 0 && state.site) || (SITE_VIEWS.indexOf(v) >= 0 && TOOL_VIEWS.indexOf(v) < 0 && (state.site || state.scope)) ? v : state.site || state.scope ? 'dash' : 'overview'
     if (state.view === 'insights' && !state.site && !state.scope) state.scope = 'all'
     // a company login has nothing to compare: skip the overview and open its own dashboard
     if (state.view === 'overview' && !isAdmin() && COMPANIES.length === 1) {
@@ -2269,7 +2394,7 @@ body { font-size: 14px; line-height: 1.5; }
     render()
   }
   function saveUrl() {
-    var view = state.view === 'insights' || state.view === 'tracking' || state.view === 'account' || SITE_VIEWS.indexOf(state.view) >= 0 ? state.view : null
+    var view = state.view === 'insights' || state.view === 'adsetup' || state.view === 'tracking' || state.view === 'account' || SITE_VIEWS.indexOf(state.view) >= 0 ? state.view : null
     history.replaceState(null, '', urlFor({ view: view, site: state.site, scope: view === 'insights' && state.scope === 'all' ? null : state.scope, filters: state.filters }))
   }
 
@@ -2326,7 +2451,7 @@ body { font-size: 14px; line-height: 1.5; }
   }
   function markSidebar() {
     var co = companyOfState()
-    var key = state.view === 'insights' || state.view === 'tracking' || state.view === 'account' ? 'view:' + state.view : co ? 'company:' + co : state.view === 'overview' || state.scope === 'all' ? 'overview' : ''
+    var key = state.view === 'insights' || state.view === 'adsetup' || state.view === 'tracking' || state.view === 'account' ? 'view:' + state.view : co ? 'company:' + co : state.view === 'overview' || state.scope === 'all' ? 'overview' : ''
     Array.prototype.forEach.call(document.querySelectorAll('.side .nav[data-key]'), function (n) { n.classList.toggle('on', n.dataset.key === key) })
   }
   function closeMenu() { $('app').classList.remove('menu') }
@@ -2344,6 +2469,10 @@ body { font-size: 14px; line-height: 1.5; }
       title = 'Chancen'
       img = brandLogo()
       sub.append(document.createTextNode('Was sich verbessern lässt'))
+    } else if (state.view === 'adsetup') {
+      title = 'Anzeigen'
+      img = brandLogo()
+      sub.append(document.createTextNode('So sind die Google-Ads-Konten eingerichtet'))
     } else if (state.view === 'tracking') {
       title = 'Snippets'
       img = brandLogo()
@@ -2448,6 +2577,7 @@ body { font-size: 14px; line-height: 1.5; }
     view.classList.add('enter')
     if (state.view === 'overview') renderOverview(view)
     else if (state.view === 'insights') renderInsightsPage(view)
+    else if (state.view === 'adsetup') renderAdSetup(view)
     else if (state.view === 'tracking') renderTracking(view)
     else if (state.view === 'account') renderAccount(view)
     else if (state.view === 'heatmap') renderHeatmap(view)
@@ -3857,6 +3987,331 @@ body { font-size: 14px; line-height: 1.5; }
       } else s2.remove()
       renderKeywordTrends(s3, d)
     }).catch(function () { if (token === renderToken) { sk.remove(); s1.append(el('div', 'empty', 'Verlauf konnte nicht geladen werden')) } })
+  }
+  // ---------- Anzeigen: how every Google Ads account is set up ----------
+  var AS_DAYS = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY']
+  var AS_DAY_SHORT = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So']
+  var AS_STATUS = { ENABLED: ['Aktiv', 'on'], PAUSED: ['Pausiert', 'paused'], REMOVED: ['Gelöscht', 'off'] }
+  var AS_BIDDING = { TARGET_SPEND: 'Klicks maximieren', MAXIMIZE_CONVERSIONS: 'Conversions maximieren', MANUAL_CPC: 'Manueller CPC', TARGET_CPA: 'Ziel-CPA', MAXIMIZE_CONVERSION_VALUE: 'Conversion-Wert maximieren', TARGET_IMPRESSION_SHARE: 'Anteil an möglichen Impressionen' }
+  var AS_MATCH = { EXACT: ['[', ']', 'Genau passend'], PHRASE: ['"', '"', 'Passende Wortgruppe'], BROAD: ['', '', 'Weitgehend passend'] }
+  var AS_SNIPPET = { 'Service catalog': 'Leistungen', Types: 'Typen', Brands: 'Marken', Styles: 'Stile', Models: 'Modelle', Amenities: 'Ausstattung', Neighborhoods: 'Stadtteile', Courses: 'Kurse', Destinations: 'Ziele', Shows: 'Shows', 'Insurance coverage': 'Versicherung', 'Degree programs': 'Studiengänge', 'Featured hotels': 'Hotels' }
+  var adSetupCache = null
+  function asHost(u) { try { return new URL(u).hostname.replace(/^www\./, '') } catch (e) { return u || '' } }
+  function asEuro(v) { return v === null || v === undefined ? '–' : money.format(v).replace(',00', '') }
+  function asHours(f, t) { return (f === 0 && t === 24) ? 'ganztags' : f + '–' + t + ' Uhr' }
+  // "Mo–Fr 7–19 Uhr · Sa–So ganztags"
+  function asScheduleText(sched) {
+    if (!sched.length) return 'Immer'
+    var byDay = AS_DAYS.map(function (d) { return sched.filter(function (s) { return s.day === d }).map(function (s) { return asHours(s.from, s.to) }).join(', ') })
+    var parts = [], i = 0
+    while (i < 7) {
+      var j = i
+      while (j + 1 < 7 && byDay[j + 1] === byDay[i]) j++
+      if (byDay[i]) parts.push((i === j ? AS_DAY_SHORT[i] : AS_DAY_SHORT[i] + '–' + AS_DAY_SHORT[j]) + ' ' + byDay[i])
+      i = j + 1
+    }
+    return parts.join(' · ')
+  }
+  function asGeoText(c) {
+    if (c.radius.length) return c.radius.map(function (r) { return pct.format(r.km) + ' km Umkreis' }).join(' + ')
+    if (c.places.length) return c.places.length === 1 ? c.places[0].name : c.places[0].name + ' + ' + (c.places.length - 1) + ' weitere Orte'
+    return 'Kein Gebiet'
+  }
+  // what is worth a second look, per campaign; level: bad (fix before going live) or warn
+  function asFindings(co) {
+    var camps = co.setup ? co.setup.campaigns : []
+    var kwCamp = {}, placeCamp = {}
+    camps.forEach(function (c) {
+      c.groups.forEach(function (g) { g.keywords.forEach(function (k) { var t = k.text.toLowerCase(); (kwCamp[t] = kwCamp[t] || {})[c.name] = 1 }) })
+      c.places.forEach(function (p) { (placeCamp[p.id] = placeCamp[p.id] || {})[c.name] = p.name })
+    })
+    var out = {}
+    camps.forEach(function (c) {
+      var f = []
+      if (!c.radius.length && !c.places.length) f.push(['bad', 'Kein Gebiet eingestellt: würde weltweit ausgeliefert.'])
+      if (!c.languages.length) f.push(['bad', 'Keine Sprache eingestellt.'])
+      if (c.partners || c.display) f.push(['warn', (c.display ? 'Displaynetzwerk' : 'Suchnetzwerk-Partner') + ' eingeschaltet.'])
+      if (c.presence && c.presence !== 'PRESENCE') f.push(['warn', 'Standortoption „Interesse“ statt „Präsenz“.'])
+      var others = {}, shared = 0, sharedWith = {}
+      c.groups.forEach(function (g) { g.keywords.forEach(function (k) { var m = kwCamp[k.text.toLowerCase()]; var o = Object.keys(m).filter(function (n) { return n !== c.name }); if (o.length) { shared++; o.forEach(function (n) { others[n] = 1; sharedWith[n] = 1 }) } }) })
+      if (shared) f.push(['warn', plural(shared, ['Keyword steht', 'Keywords stehen']) + ' auch in ' + Object.keys(others).map(function (n) { return '„' + n + '“' }).join(', ') + '. Die Kampagnen bieten gegeneinander.'])
+      var po = {}
+      c.places.forEach(function (p) { Object.keys(placeCamp[p.id]).forEach(function (n) { if (n !== c.name) po[n] = (po[n] || 0) + 1 }) })
+      Object.keys(po).filter(function (n) { return sharedWith[n] }).forEach(function (n) { f.push(['warn', plural(po[n], ['Ort ist', 'Orte sind']) + ' auch in „' + n + '“ eingestellt, mit denselben Keywords. Dort bieten beide Kampagnen gegeneinander.']) })
+      if (c.ceiling && c.budget < c.ceiling * 2) {
+        var perDay = Math.floor(c.budget / (c.ceiling * 0.6))
+        f.push(['warn', 'Budget ' + asEuro(c.budget) + '/Tag bei bis zu ' + asEuro(c.ceiling) + ' pro Klick: ' + (perDay < 1 ? 'reicht oft für keinen einzigen Klick am Tag.' : 'reicht nur für etwa ' + plural(perDay, ['Klick', 'Klicks']) + ' am Tag.') + ' So sammeln sich nur langsam Daten.'])
+      }
+      var we = c.schedule.filter(function (s) { return (s.day === 'SATURDAY' || s.day === 'SUNDAY') && s.from === 0 && s.to === 24 })
+      var wk = c.schedule.filter(function (s) { return s.day !== 'SATURDAY' && s.day !== 'SUNDAY' && !(s.from === 0 && s.to === 24) })
+      if (we.length && wk.length) f.push(['warn', 'Am Wochenende rund um die Uhr, werktags nur ' + asHours(wk[0].from, wk[0].to) + '.'])
+      var hosts = {}
+      c.groups.forEach(function (g) { g.ads.forEach(function (a) { if (a.url && /\.onepage\.me$/.test(asHost(a.url))) hosts[asHost(a.url)] = 1 }) })
+      if (Object.keys(hosts).length) f.push(['warn', 'Anzeige zeigt die Adresse ' + Object.keys(hosts).join(', ') + '. Eine eigene Domain wirkt vertrauenswürdiger.'])
+      var noAds = c.groups.filter(function (g) { return !g.ads.length }).length
+      if (noAds) f.push(['bad', plural(noAds, ['Anzeigengruppe hat', 'Anzeigengruppen haben']) + ' keine Anzeige.'])
+      if (!c.calls.length && !c.groups.some(function (g) { return g.calls && g.calls.length })) f.push(['warn', 'Keine Telefonnummer als Anruf-Asset.'])
+      if (c.sitelinks.length && c.sitelinks.length < 4) f.push(['warn', 'Nur ' + c.sitelinks.length + ' Sitelinks, Google zeigt bis zu 4.'])
+      out[c.name] = f
+    })
+    return out
+  }
+  function asStatus(s) { var x = AS_STATUS[s] || [s || '–', '']; return el('span', 'as-st ' + x[1], x[0]) }
+  function asChip(icon, text, title) {
+    var c = el('span', 'as-chip')
+    if (icon) c.append(html('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + icon + '</svg>'))
+    c.append(el('span', null, text))
+    if (title) c.title = title
+    return c
+  }
+  var AS_I = {
+    euro: '<path d="M17 6.5A6.5 6.5 0 1 0 17 17.5"/><path d="M4 10.5h9M4 13.5h9"/>',
+    bid: '<path d="M4 17l5-5 4 4 7-7"/><path d="M15 9h5v5"/>',
+    pin: '<path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
+    clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+    stack: '<path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/>'
+  }
+  // a small OpenStreetMap with the targeted radius drawn on top
+  function asMap(r) {
+    var W = 320, H = 210
+    var lat = r.lat, lng = r.lng
+    var mpp = (r.km * 1000) / 78
+    var z = Math.max(5, Math.min(13, Math.floor(Math.log2((156543.03 * Math.cos(lat * Math.PI / 180)) / mpp))))
+    var scale = Math.pow(2, z) * 256
+    var px = (lng + 180) / 360 * scale
+    var py = (1 - Math.log(Math.tan(lat * Math.PI / 180) + 1 / Math.cos(lat * Math.PI / 180)) / Math.PI) / 2 * scale
+    var box = el('div', 'as-map')
+    var tiles = el('div', 'tiles')
+    var x0 = Math.floor((px - W / 2) / 256), x1 = Math.floor((px + W / 2) / 256), y0 = Math.floor((py - H / 2) / 256), y1 = Math.floor((py + H / 2) / 256)
+    for (var tx = x0; tx <= x1; tx++) for (var ty = y0; ty <= y1; ty++) {
+      var img = el('img'); img.alt = ''; img.decoding = 'async'
+      img.src = 'https://tile.openstreetmap.org/' + z + '/' + tx + '/' + ty + '.png'
+      img.style.left = Math.round(tx * 256 - (px - W / 2)) + 'px'; img.style.top = Math.round(ty * 256 - (py - H / 2)) + 'px'
+      tiles.append(img)
+    }
+    var rpx = (r.km * 1000) / ((156543.03 * Math.cos(lat * Math.PI / 180)) / Math.pow(2, z))
+    var ov = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, 'aria-hidden': 'true' })
+    ov.append(svg('circle', { cx: W / 2, cy: H / 2, r: rpx, class: 'area' }), svg('circle', { cx: W / 2, cy: H / 2, r: 4.5, class: 'dot' }))
+    var lab = el('span', 'lab', pct.format(r.km) + ' km')
+    box.append(tiles, ov, lab, el('span', 'attr', '© OpenStreetMap'))
+    return box
+  }
+  function asWeek(sched) {
+    var g = el('div', 'as-week')
+    var head = el('div', 'h'); head.append(el('span'))
+    ;[0, 6, 12, 18, 24].forEach(function (h) { var s = el('span', 'hh', String(h)); s.style.left = 'calc(28px + (100% - 28px) * ' + (h / 24) + ')'; head.append(s) })
+    g.append(head)
+    AS_DAYS.forEach(function (d, i) {
+      var row = el('div', 'r'); row.append(el('span', 'd', AS_DAY_SHORT[i]))
+      var bar = el('div', 'bar')
+      var list = sched.length ? sched.filter(function (s) { return s.day === d }) : [{ from: 0, to: 24 }]
+      list.forEach(function (s) { var on = el('i'); on.style.left = (s.from / 24 * 100) + '%'; on.style.width = ((s.to - s.from) / 24 * 100) + '%'; on.title = AS_DAY_SHORT[i] + ' ' + asHours(s.from, s.to); bar.append(on) })
+      row.append(bar); g.append(row)
+    })
+    return g
+  }
+  function asKeyword(k) {
+    var m = AS_MATCH[k.match] || ['', '', k.match]
+    var c = el('span', 'as-kw ' + (k.match || '').toLowerCase(), m[0] + k.text + m[1])
+    c.title = m[2] + (k.clicks ? ' · ' + plural(k.clicks, ['Klick', 'Klicks']) : '')
+    return c
+  }
+  // the ad as it would look on Google: first three headlines, first two descriptions
+  function asAdPreview(a, c) {
+    var card = el('div', 'as-ad')
+    var top = el('div', 'atop')
+    top.append(el('b', null, 'Gesponsert'))
+    var url = el('div', 'url')
+    url.append(el('span', 'fav', (asHost(a.url) || '?').charAt(0).toUpperCase()))
+    var t = el('div'); t.append(el('div', 'nm', c.name.split(' · ')[0]), el('div', 'u', asHost(a.url) + (a.path1 ? ' › ' + a.path1 : '') + (a.path2 ? ' › ' + a.path2 : '')))
+    url.append(t)
+    top.append(url)
+    card.append(top, el('div', 'hl', a.headlines.slice(0, 3).join(' | ')), el('div', 'ds', a.descriptions.slice(0, 2).join(' ')))
+    var sl = c.sitelinks.slice(0, 4)
+    if (sl.length) { var s = el('div', 'sl'); sl.forEach(function (x) { s.append(el('span', null, x.text)) }); card.append(s) }
+    var meta = el('div', 'meta')
+    meta.append(asStatus(a.status))
+    if (a.approval) meta.append(el('span', 'as-tag ' + (a.approval === 'APPROVED' ? 'ok' : a.approval === 'DISAPPROVED' ? 'bad' : ''), a.approval === 'APPROVED' ? 'Genehmigt' : a.approval === 'DISAPPROVED' ? 'Abgelehnt' : a.approval === 'APPROVED_LIMITED' ? 'Eingeschränkt' : a.approval))
+    var STR = { EXCELLENT: 'Sehr gut', GOOD: 'Gut', AVERAGE: 'Durchschnittlich', POOR: 'Schwach', PENDING: 'Bewertung folgt', UNRATED: 'Nicht bewertet' }
+    if (a.strength) meta.append(el('span', 'as-tag ' + (a.strength === 'EXCELLENT' || a.strength === 'GOOD' ? 'ok' : a.strength === 'POOR' ? 'bad' : ''), 'Anzeigenstärke: ' + (STR[a.strength] || a.strength)))
+    meta.append(el('span', 'as-tag', a.headlines.length + ' Titel · ' + a.descriptions.length + ' Beschreibungen'))
+    card.append(meta)
+    var more = el('details', 'as-texts')
+    more.append(el('summary', null, 'Alle Texte'))
+    var lt = el('div', 'lt')
+    a.headlines.forEach(function (h, i) { var r = el('div', 'r'); r.append(el('span', 'n', 'T' + (i + 1)), el('span', 'x', h), el('span', 'c' + (h.length > 30 ? ' bad' : ''), h.length + '/30')); lt.append(r) })
+    a.descriptions.forEach(function (h, i) { var r = el('div', 'r'); r.append(el('span', 'n', 'B' + (i + 1)), el('span', 'x', h), el('span', 'c' + (h.length > 90 ? ' bad' : ''), h.length + '/90')); lt.append(r) })
+    more.append(lt)
+    if (a.url) { var lk = el('a', 'as-link', a.url); lk.href = a.url; lk.target = '_blank'; lk.rel = 'noopener'; more.append(lk) }
+    card.append(more)
+    return card
+  }
+  function asCampaign(c, co, findings) {
+    var box = el('article', 'as-camp')
+    var head = el('button', 'as-ch'); head.type = 'button'; head.setAttribute('aria-expanded', 'false')
+    var nm = el('div', 'nm')
+    nm.append(asStatus(c.status), el('b', null, c.name))
+    var bad = findings.filter(function (f) { return f[0] === 'bad' }).length, warn = findings.length - bad
+    if (findings.length) nm.append(el('span', 'as-fc ' + (bad ? 'bad' : 'warn'), findings.length === 1 ? '1 Hinweis' : findings.length + ' Hinweise'))
+    var kws = c.groups.reduce(function (a, g) { return a + g.keywords.length }, 0), ads = c.groups.reduce(function (a, g) { return a + g.ads.length }, 0)
+    var chips = el('div', 'chips')
+    chips.append(
+      asChip(AS_I.euro, asEuro(c.budget) + ' / Tag'),
+      asChip(AS_I.bid, (AS_BIDDING[c.bidding] || c.bidding || '–') + (c.ceiling ? ' · max. ' + asEuro(c.ceiling) : '')),
+      asChip(AS_I.pin, asGeoText(c)),
+      asChip(AS_I.clock, asScheduleText(c.schedule)),
+      asChip(AS_I.stack, plural(c.groups.length, ['Gruppe', 'Gruppen']) + ' · ' + plural(kws, ['Keyword', 'Keywords']) + ' · ' + plural(ads, ['Anzeige', 'Anzeigen'])))
+    var chev = html('<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>')
+    head.append(nm, chips, chev)
+    box.append(head)
+    var body = null
+    head.onclick = function () {
+      var open = box.classList.toggle('open')
+      head.setAttribute('aria-expanded', String(open))
+      if (open && !body) { body = asCampaignBody(c, findings); box.append(body) }
+      if (body) body.hidden = !open
+    }
+    return box
+  }
+  function asCampaignBody(c, findings) {
+    var body = el('div', 'as-cb')
+    if (findings.length) {
+      var fl = el('div', 'as-find')
+      findings.forEach(function (f) { var r = el('div', 'r ' + f[0]); r.append(el('i'), el('span', null, f[1])); fl.append(r) })
+      body.append(fl)
+    }
+    var tabs = [['ov', 'Einstellungen'], ['ads', 'Anzeigen'], ['kw', 'Keywords'], ['as', 'Assets'], ['neg', 'Ausschlüsse (' + c.negatives.length + ')']]
+    var pane = el('div', 'as-pane')
+    var cur = 'ov'
+    var bar = seg(tabs, cur, function (k) { cur = k; paint() }, 'as-tabs')
+    body.append(bar, pane)
+    function paint() {
+      pane.replaceChildren()
+      if (cur === 'ov') {
+        var grid = el('div', 'as-ov')
+        var set = el('dl', 'as-set')
+        var row = function (k, v) { set.append(el('dt', null, k), el('dd', null, v)) }
+        row('Status', (AS_STATUS[c.status] || [c.status])[0])
+        row('Tagesbudget', asEuro(c.budget) + ' · im Monat bis ca. ' + asEuro(Math.round(c.budget * 30.4)))
+        row('Gebotsstrategie', (AS_BIDDING[c.bidding] || c.bidding || '–') + (c.ceiling ? ', höchstens ' + asEuro(c.ceiling) + ' pro Klick' : ''))
+        row('Netzwerke', 'Google-Suche' + (c.partners ? ' + Suchnetzwerk-Partner' : '') + (c.display ? ' + Display' : ''))
+        row('Standortoption', c.presence === 'PRESENCE' ? 'Präsenz: Personen, die dort sind' : c.presence === 'PRESENCE_OR_INTEREST' ? 'Präsenz oder Interesse' : (c.presence || '–'))
+        row('Sprache', c.languages.join(', ') || '–')
+        if (c.stats && (c.stats.impressions || c.stats.clicks)) row('Letzte 30 Tage', nf.format(c.stats.clicks) + ' Klicks · ' + nf.format(c.stats.impressions) + ' Einblendungen · ' + money.format(c.stats.spend))
+        grid.append(set)
+        var geo = el('div', 'as-geo')
+        geo.append(el('div', 'sub-h', 'Gebiet'))
+        c.radius.forEach(function (r) { geo.append(asMap(r)) })
+        if (c.places.length) { var pl = el('div', 'as-places'); c.places.forEach(function (p) { pl.append(el('span', null, p.name)) }); geo.append(pl) }
+        if (c.excluded.length) { geo.append(el('div', 'k-muted', 'Ausgeschlossen: ' + c.excluded.map(function (p) { return p.name }).join(', '))) }
+        if (!c.radius.length && !c.places.length) geo.append(el('div', 'empty', 'Kein Gebiet eingestellt'))
+        geo.append(el('div', 'sub-h', 'Werbezeiten'), asWeek(c.schedule), el('div', 'k-muted', asScheduleText(c.schedule)))
+        grid.append(geo)
+        pane.append(grid)
+      } else if (cur === 'ads') {
+        c.groups.forEach(function (g) {
+          var gh = el('div', 'as-gh'); gh.append(el('b', null, g.name), asStatus(g.status), el('span', 'k-muted', plural(g.keywords.length, ['Keyword', 'Keywords'])))
+          pane.append(gh)
+          if (!g.ads.length) { pane.append(el('div', 'k-muted', 'Keine Anzeige in dieser Gruppe.')); return }
+          var wrap = el('div', 'as-ads'); g.ads.forEach(function (a) { wrap.append(asAdPreview(a, c)) }); pane.append(wrap)
+        })
+      } else if (cur === 'kw') {
+        var legend = el('div', 'as-legend k-muted')
+        legend.append(document.createTextNode('[genau passend]  "passende Wortgruppe"  weitgehend passend'))
+        pane.append(legend)
+        c.groups.forEach(function (g) {
+          var gh = el('div', 'as-gh'); gh.append(el('b', null, g.name), el('span', 'k-muted', plural(g.keywords.length, ['Keyword', 'Keywords'])))
+          var list = el('div', 'as-kws'); g.keywords.slice().sort(function (a, b) { return a.text.localeCompare(b.text) }).forEach(function (k) { list.append(asKeyword(k)) })
+          pane.append(gh, list)
+        })
+      } else if (cur === 'as') {
+        var aw = el('div', 'as-assets')
+        var blk = function (title, n, node) { var b = el('div', 'blk'); b.append(el('div', 'sub-h', title + (n !== null ? ' · ' + n : '')), node); aw.append(b) }
+        var sl = el('div', 'as-sls')
+        c.sitelinks.forEach(function (s) { var x = el('a', 'as-sl'); if (s.url) { x.href = s.url; x.target = '_blank'; x.rel = 'noopener' } x.append(el('b', null, s.text)); if (s.d1 || s.d2) x.append(el('span', null, [s.d1, s.d2].filter(Boolean).join(' · '))); x.append(el('small', null, asHost(s.url) + (s.url && new URL(s.url).pathname !== '/' ? new URL(s.url).pathname : ''))); sl.append(x) })
+        blk('Sitelinks', c.sitelinks.length, c.sitelinks.length ? sl : el('div', 'k-muted', 'Keine'))
+        var co2 = el('div', 'as-callouts'); c.callouts.forEach(function (t) { co2.append(el('span', null, t)) })
+        blk('Callouts', c.callouts.length, c.callouts.length ? co2 : el('div', 'k-muted', 'Keine'))
+        var sn = el('div')
+        c.snippets.forEach(function (s) { var r = el('div', 'as-snip'); r.append(el('b', null, (AS_SNIPPET[s.header] || s.header) + ': '), document.createTextNode(s.values.join(', '))); sn.append(r) })
+        blk('Snippets', c.snippets.length, c.snippets.length ? sn : el('div', 'k-muted', 'Keine'))
+        var cl = el('div', 'as-callouts'); c.calls.forEach(function (t) { var a = el('a', 'tel', t); a.href = 'tel:' + t.replace(/\s/g, ''); cl.append(a) })
+        blk('Anruf', c.calls.length, c.calls.length ? cl : el('div', 'k-muted', 'Keine Nummer'))
+        pane.append(aw)
+        if (c.assets_kept || c.groups.some(function (g) { return g.ads_kept })) pane.append(el('p', 'k-muted', 'Anzeigen und Assets pausierter Kampagnen stammen aus dem letzten Import, Windsor liefert sie erst, wenn die Kampagne läuft.'))
+      } else {
+        if (!c.negatives.length) pane.append(el('div', 'k-muted', 'Keine ausgeschlossenen Keywords'))
+        else {
+          pane.append(el('p', 'k-muted', 'Bei diesen Suchbegriffen wird keine Anzeige der Kampagne gezeigt.'))
+          var nl = el('div', 'as-kws'); c.negatives.slice().sort(function (a, b) { return a[0].localeCompare(b[0]) }).forEach(function (n) { nl.append(asKeyword({ text: n[0], match: n[1] })) }); pane.append(nl)
+        }
+      }
+    }
+    paint()
+    return body
+  }
+  function renderAdSetup(view) {
+    var token = renderToken
+    var setHero = hero(view)
+    var bar = el('div', 'as-bar'); view.append(bar)
+    var list = el('div', 'as-list'); list.append(skeletonRows(6)); view.append(list)
+    var load = adSetupCache ? Promise.resolve(adSetupCache) : api('ad-setup').then(function (d) { adSetupCache = d; return d })
+    load.then(function (d) {
+      if (token !== renderToken) return
+      var cos = d.companies.filter(function (c) { return c.setup })
+      var pick = state.tabs.adsetup && cos.some(function (c) { return c.id === state.tabs.adsetup }) ? state.tabs.adsetup : (cos.length === 1 ? cos[0].id : 'all')
+      var all = [], findings = {}
+      cos.forEach(function (c) { findings[c.id] = asFindings(c); c.setup.campaigns.forEach(function (x) { all.push(x) }) })
+      var on = all.filter(function (c) { return c.status === 'ENABLED' }).length
+      var budget = all.reduce(function (a, c) { return a + (c.status === 'REMOVED' ? 0 : c.budget) }, 0)
+      var badN = 0
+      Object.keys(findings).forEach(function (id) { Object.keys(findings[id]).forEach(function (k) { badN += findings[id][k].filter(function (f) { return f[0] === 'bad' }).length }) })
+      setHero(plural(all.length, ['Kampagne', 'Kampagnen']) + ' in ' + plural(cos.length, ['Konto', 'Konten']),
+        (on ? on + ' aktiv, ' + (all.length - on) + ' pausiert' : 'Alle pausiert') + ' · zusammen ' + asEuro(budget) + ' Tagesbudget' + (badN ? ' · ' + plural(badN, ['Punkt muss', 'Punkte müssen']) + ' vor dem Start behoben werden' : '') + '.')
+      if (cos.length > 1) {
+        var opts = [['all', 'Alle']].concat(cos.map(function (c) { return [c.id, c.name] }))
+        var s = seg(opts, pick, function (v) { state.tabs.adsetup = v; paintList(v) }, 'as-pick')
+        Array.prototype.forEach.call(s.children, function (b, i) { if (i === 0) return; var co = COMPANIES.filter(function (x) { return x.id === opts[i][0] })[0]; if (co) b.prepend(companyLogo(co)) })
+        bar.append(s)
+      }
+      if (isAdmin()) {
+        var rf = el('button', 'more-btn as-refresh', 'Jetzt aktualisieren'); rf.type = 'button'
+        rf.onclick = function () {
+          rf.disabled = true; rf.textContent = 'Wird aktualisiert …'
+          fetch('/api/ad-setup/refresh', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin' }).then(function () { adSetupCache = null; render(true) }).catch(function () { rf.disabled = false; rf.textContent = 'Fehlgeschlagen, nochmal' })
+        }
+        bar.append(rf)
+      }
+      paintList(pick)
+      function paintList(which) {
+        list.replaceChildren()
+        cos.filter(function (c) { return which === 'all' || c.id === which }).forEach(function (co) {
+          var sec = el('section', 'card panel wide as-co')
+          var hd = el('div', 'as-coh')
+          var meta = COMPANIES.filter(function (x) { return x.id === co.id })[0]
+          if (meta) hd.append(companyLogo(meta, 'logo'))
+          var t = el('div', 't'); t.append(el('h3', null, co.name))
+          var camps = co.setup.campaigns
+          var b = camps.reduce(function (a, c) { return a + c.budget }, 0)
+          var sub = 'Konto ' + co.account + ' · ' + plural(camps.length, ['Kampagne', 'Kampagnen']) + ' · ' + asEuro(b) + ' / Tag'
+          if (co.fetched_ts) sub += ' · Stand ' + new Date(co.fetched_ts).toLocaleString('de-DE', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
+          t.append(el('div', 'k-muted', sub))
+          hd.append(t)
+          var cnt = { ENABLED: 0, PAUSED: 0 }; camps.forEach(function (c) { cnt[c.status] = (cnt[c.status] || 0) + 1 })
+          var st = el('div', 'as-cnt')
+          if (cnt.ENABLED) st.append(el('span', 'as-st on', cnt.ENABLED + ' aktiv'))
+          if (cnt.PAUSED) st.append(el('span', 'as-st paused', cnt.PAUSED + ' pausiert'))
+          hd.append(st)
+          sec.append(hd)
+          if (co.error) sec.append(el('p', 'k-muted', 'Letzte Aktualisierung fehlgeschlagen, gezeigt wird der letzte Stand.'))
+          var budgets = el('div', 'as-budget')
+          camps.forEach(function (c) { var seg2 = el('i'); seg2.style.flex = String(Math.max(c.budget, 0.5)); seg2.title = c.name + ': ' + asEuro(c.budget) + ' / Tag'; seg2.className = AS_STATUS[c.status] ? AS_STATUS[c.status][1] : ''; budgets.append(seg2) })
+          sec.append(budgets)
+          camps.forEach(function (c) { sec.append(asCampaign(c, co, findings[co.id][c.name] || [])) })
+          list.append(sec)
+        })
+      }
+    }).catch(function () { if (token === renderToken) list.replaceChildren(el('div', 'empty', 'Die Anzeigen-Übersicht konnte nicht geladen werden')) })
   }
   function renderGoogleTab(view) {
     siteSwitch(view, true)
@@ -6830,6 +7285,7 @@ body { font-size: 14px; line-height: 1.5; }
     var items = [
       { t: 'Übersicht', s: 'Alle Unternehmen', href: urlFor({}), icon: 'grid' },
       { t: 'Chancen', s: 'Was sich verbessern lässt', href: urlFor({ view: 'insights' }), view: 'insights', icon: 'bulb' },
+      { t: 'Anzeigen', s: 'Kampagnen, Gebiet, Anzeigen und Assets', href: urlFor({ view: 'adsetup' }), view: 'adsetup', icon: 'grid' },
       { t: 'Konto', s: 'Passwort und Zugänge', href: urlFor({ view: 'account' }), view: 'account', icon: 'user' }
     ]
     COMPANIES.forEach(function (c) {
