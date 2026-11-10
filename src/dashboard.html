@@ -613,6 +613,128 @@ td.m { color: var(--text-3); font-weight: 400; }
   .asx-ads { grid-template-columns: minmax(0, 1fr); }
   .asx-ad .meta { flex-wrap: wrap; }
 }
+/* ---------- Anzeigen: campaign and ad pages ---------- */
+.asx-camps a.tr { text-decoration: none; }
+.asp { max-width: 1180px; }
+.asp-crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 14px; margin: 2px 0 14px; }
+.asp-crumbs a { color: var(--text-2); text-decoration: none; }
+.asp-crumbs a:hover { color: var(--text); text-decoration: underline; text-underline-offset: 3px; }
+.asp-crumbs .sep { color: var(--line); }
+.asp-crumbs .cur { color: var(--text); font-weight: 500; }
+.asp-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+.asp-head h1 { margin: 0; font: 700 34px/1.12 var(--display); letter-spacing: -.035em; color: var(--text); }
+.asp-head .sub { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 10px; font-size: 14px; color: var(--text-2); }
+.asp-pn { display: flex; gap: 8px; }
+.asx-btn.ghost { background: var(--card); color: var(--text); border: 1px solid var(--line); display: inline-flex; align-items: center; gap: 7px; text-decoration: none; font-weight: 500; }
+.asx-btn.ghost svg { width: 16px; height: 16px; }
+.asp-facts { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; margin-bottom: 32px; }
+.asp-fact { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 16px 16px 18px; min-width: 0; }
+.asp-fact .ic { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 9px; background: var(--text); color: var(--card); }
+.asp-fact .ic svg { width: 17px; height: 17px; }
+.asp-fact .l { font-size: 13px; font-weight: 600; color: var(--text); margin-top: 14px; }
+.asp-fact .t { font-size: 14.5px; line-height: 1.45; color: var(--text-2); margin-top: 4px; }
+.asp-grid { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 40px; align-items: start; }
+.asp-main { min-width: 0; }
+.asp-sec { margin-bottom: 40px; }
+.asp-sh { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--text); }
+.asp-sh h2 { margin: 0; font: 650 21px/1.2 var(--display); letter-spacing: -.02em; color: var(--text); }
+.asp-sh p { margin: 5px 0 0; font-size: 14px; line-height: 1.5; color: var(--text-2); }
+.asp-todo { display: grid; gap: 8px; }
+.asp-todo .r { display: flex; gap: 12px; align-items: flex-start; font-size: 15px; line-height: 1.5; padding: 14px 16px; border-radius: 12px; background: var(--card); border: 1px solid var(--line); color: var(--text); }
+.asp-todo .r i { flex: none; width: 9px; height: 9px; border-radius: 50%; margin-top: 7px; background: var(--m-orange); }
+.asp-todo .r.bad { border-color: color-mix(in srgb, var(--down) 45%, var(--line)); }
+.asp-todo .r.bad i { background: var(--down); }
+.asp-todo .ok { display: flex; gap: 10px; align-items: center; font-size: 15px; padding: 14px 16px; border-radius: 12px; background: var(--card); border: 1px solid var(--line); }
+.asp-todo .ok svg { width: 20px; height: 20px; color: var(--up); }
+.asp-adlist { display: grid; gap: 8px; }
+.asp-adrow { min-width: 0; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 18px; border-radius: 14px; background: var(--card); border: 1px solid var(--line); color: inherit; text-decoration: none; transition: border-color .15s, box-shadow .15s; }
+.asp-adrow:hover { border-color: var(--text); box-shadow: 0 2px 10px rgba(0,0,0,.06); }
+.asp-adrow .l { min-width: 0; }
+.asp-adrow .grp { font-size: 12px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: .03em; }
+.asp-adrow .hl { font-size: 17px; line-height: 1.35; color: #1a0dab; margin-top: 4px; }
+.asp-adrow .u { font-size: 13px; color: var(--text-3); margin-top: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.asp-adrow .r { display: flex; align-items: center; gap: 10px; flex: none; }
+.asp-adrow .cnt { font-size: 13px; color: var(--text-3); white-space: nowrap; }
+.asp-adrow .r svg { width: 18px; height: 18px; transform: rotate(180deg); color: var(--text-3); }
+:root[data-theme="dark"] .asp-adrow .hl, :root[data-theme="dark"] .asp-phone .ghl, :root[data-theme="dark"] .asp-desk .ghl, :root[data-theme="dark"] .gsl span { color: #8ab4f8; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .asp-adrow .hl, :root:not([data-theme="light"]) .asp-phone .ghl, :root:not([data-theme="light"]) .asp-desk .ghl, :root:not([data-theme="light"]) .gsl span { color: #8ab4f8; } }
+.asp-side { min-width: 0; position: sticky; top: 84px; }
+.asp-side h3 { margin: 0 0 10px; font-size: 13px; font-weight: 650; color: var(--text); }
+.asp-side h3 ~ h3 { margin-top: 26px; }
+.asp-kv { display: grid; grid-template-columns: 1fr; margin: 0; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 4px 16px; }
+.asp-kv dt { font-size: 12px; color: var(--text-3); padding-top: 11px; }
+.asp-kv dd { margin: 2px 0 0; padding-bottom: 11px; font-size: 14.5px; color: var(--text); border-bottom: 1px solid var(--line-soft); }
+.asp-kv dd:last-of-type { border-bottom: 0; }
+.asp-adgrid { display: grid; grid-template-columns: minmax(0, 420px) minmax(0, 1fr); gap: 44px; align-items: start; }
+.asp-preview { position: sticky; top: 84px; }
+.asp-preview .ctl { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+.asp-preview .ctl .asx-seg { margin: 0; }
+.asp-preview .stage { display: grid; place-items: center; padding: 26px 0; background: var(--sel); border-radius: 22px; }
+.asp-phone { width: 320px; border-radius: 40px; padding: 12px; background: #111; box-shadow: 0 20px 50px rgba(0,0,0,.18); }
+.asp-phone .scr { background: #fff; border-radius: 30px; padding: 18px 14px 20px; min-height: 520px; color: #202124; }
+.asp-desk { width: 100%; max-width: 400px; border-radius: 14px; border: 1px solid #dadce0; background: #fff; color: #202124; overflow: hidden; }
+.asp-desk .scr { padding: 16px 18px 18px; }
+.gbar { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.glogo { font: 600 19px/1 Arial, sans-serif; letter-spacing: -.5px; background: linear-gradient(90deg, #4285f4 0 25%, #ea4335 25% 42%, #fbbc05 42% 58%, #4285f4 58% 75%, #34a853 75% 87%, #ea4335 87%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.gbar .q { flex: 1; min-width: 0; font-size: 13px; padding: 8px 12px; border-radius: 999px; border: 1px solid #dadce0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #3c4043; }
+.gad .gtop b { display: block; font-size: 12px; font-weight: 700; margin-bottom: 7px; }
+.gad .gu { display: flex; align-items: center; gap: 9px; }
+.gad .fav { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: #f1f3f4; font-size: 12px; font-weight: 700; flex: none; }
+.gad .n { font-size: 14px; }
+.gad .p { font-size: 12px; color: #4d5156; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 230px; }
+.gad .ghl { margin-top: 10px; font-size: 19px; line-height: 1.3; color: #1a0dab; }
+.gad .gds { margin-top: 6px; font-size: 14px; line-height: 1.55; color: #4d5156; }
+.gad .gsl { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin-top: 10px; border-top: 1px solid #ecedef; }
+.gad .gsl span { font-size: 14px; color: #1a0dab; padding: 9px 0; border-bottom: 1px solid #ecedef; }
+.gad .gcall { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 14px; color: #1a0dab; }
+.gad .gcall svg { width: 16px; height: 16px; }
+.ghost { margin-top: 22px; display: grid; gap: 7px; }
+.ghost i { height: 9px; border-radius: 5px; background: #f1f3f4; }
+.ghost i:first-child { width: 45%; } .ghost i:nth-child(2) { width: 85%; } .ghost i:nth-child(3) { width: 70%; }
+.asp-texts { min-width: 0; }
+.asp-grp { border: 1px solid var(--line); border-radius: 14px; background: var(--card); margin-bottom: 8px; overflow: hidden; }
+.asp-grp > summary { list-style: none; display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 15px 18px; cursor: pointer; }
+.asp-grp > summary::-webkit-details-marker { display: none; }
+.asp-grp > summary b { font-size: 15.5px; font-weight: 600; color: var(--text); margin-right: auto; }
+.asp-grp > summary span { font-size: 13.5px; color: var(--text-3); white-space: nowrap; }
+.asp-grp > summary::after { content: "+"; font-size: 20px; line-height: 1; color: var(--text-3); margin-left: 4px; }
+.asp-grp[open] > summary::after { content: "–"; }
+.asp-grp .asx-tbl { border: 0; border-top: 1px solid var(--line); border-radius: 0; }
+.asp-lines { display: grid; }
+.asp-line { display: grid; grid-template-columns: minmax(0, 1fr) 90px 52px; gap: 14px; align-items: center; padding: 11px 0; border-bottom: 1px solid var(--line-soft); }
+.asp-line .tx { font-size: 15.5px; line-height: 1.4; color: var(--text); }
+.asp-line .bar { height: 5px; border-radius: 3px; background: var(--sel); overflow: hidden; }
+.asp-line .bar i { display: block; height: 100%; background: var(--text); border-radius: 3px; }
+.asp-line .bar i.over { background: var(--down); }
+.asp-line .n { font-size: 12.5px; color: var(--text-3); text-align: right; font-variant-numeric: tabular-nums; }
+.asp-line .n.over { color: var(--down); font-weight: 700; }
+.asp-dest { display: grid; gap: 4px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; }
+.asp-dest .l { font-size: 12px; color: var(--text-3); }
+.asp-dest .l ~ .l { margin-top: 8px; }
+.asp-dest a, .asp-dest .v { font-size: 15px; color: var(--text); word-break: break-all; display: inline-flex; align-items: center; gap: 6px; }
+.asp-dest a svg { width: 15px; height: 15px; flex: none; }
+.asx-chips .asx-kw small { font-family: var(--sans, inherit); font-weight: 700; color: var(--text); margin-left: 4px; }
+@media (max-width: 1100px) {
+  .asp-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .asp-grid, .asp-adgrid { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .asp-side, .asp-preview { position: static; }
+}
+@media (max-width: 760px) {
+  .asp-head h1 { font-size: 27px; }
+  .asp-facts { grid-template-columns: minmax(0, 1fr); gap: 8px; margin-bottom: 26px; }
+  .asp-fact { display: grid; grid-template-columns: 32px minmax(0, 1fr); column-gap: 12px; padding: 14px; }
+  .asp-fact .ic { grid-row: 1 / span 2; }
+  .asp-fact .l { margin-top: 0; }
+  .asp-phone { width: 290px; }
+  .asp-line { grid-template-columns: minmax(0, 1fr) 46px; }
+  .asp-line .bar { display: none; }
+  .asp-adrow { align-items: flex-start; padding: 14px; }
+  .asp-adrow .r .asx-tag { display: none; }
+  .asp-grp > summary { flex-wrap: wrap; }
+  .asp-adrow .cnt { display: none; }
+  .asp-pn { width: 100%; }
+  .asp-pn .asx-btn { flex: 1; justify-content: center; }
+}
 .chipv.warn { background: color-mix(in srgb, var(--warn) 18%, transparent); color: color-mix(in srgb, var(--warn) 60%, var(--text)); }
 .two { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .two .a { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text); min-width: 0; }
@@ -2411,6 +2533,7 @@ body { font-size: 14px; line-height: 1.5; }
     var scope = p.get('scope')
     state.scope = !state.site && scope && (scope === 'all' || COMPANIES.some(function (c) { return 'company:' + c.id === scope })) ? scope : null
     var v = p.get('view')
+    state.as = { co: p.get('co'), c: p.get('c'), ad: p.get('ad') }
     // the tools need one website: a company page opens them for its first site
     if (TOOL_VIEWS.indexOf(v) >= 0 && !state.site && state.scope && state.scope.indexOf('company:') === 0) {
       var co0 = COMPANIES.filter(function (c) { return 'company:' + c.id === state.scope })[0]
@@ -2439,6 +2562,7 @@ body { font-size: 14px; line-height: 1.5; }
     if (period !== '30d') p.set('period', period)
     if (period === 'custom') { p.set('from', state.from || ''); p.set('to', state.to || '') }
     if (target.filters && target.filters.length) p.set('filters', JSON.stringify(target.filters))
+    if (target.view === 'adsetup' && target.as) { ['co', 'c', 'ad'].forEach(function (k) { if (target.as[k]) p.set(k, target.as[k]) }) }
     var s = p.toString()
     return s ? '?' + s : '/'
   }
@@ -2449,7 +2573,7 @@ body { font-size: 14px; line-height: 1.5; }
   }
   function saveUrl() {
     var view = state.view === 'insights' || state.view === 'adsetup' || state.view === 'tracking' || state.view === 'account' || SITE_VIEWS.indexOf(state.view) >= 0 ? state.view : null
-    history.replaceState(null, '', urlFor({ view: view, site: state.site, scope: view === 'insights' && state.scope === 'all' ? null : state.scope, filters: state.filters }))
+    history.replaceState(null, '', urlFor({ view: view, site: state.site, scope: view === 'insights' && state.scope === 'all' ? null : state.scope, filters: state.filters, as: view === 'adsetup' ? state.as : null }))
   }
 
   document.addEventListener('click', function (e) {
@@ -4188,108 +4312,6 @@ body { font-size: 14px; line-height: 1.5; }
     rows.forEach(function (r) { var tr = el('div', 'tr'); r.forEach(function (c, i) { var cell = el('span', heads[i][1] || ''); if (c && c.nodeType) cell.append(c); else cell.textContent = c === null || c === undefined ? '' : c; tr.append(cell) }); t.append(tr) })
     return t
   }
-  function asAdPreview(a, c) {
-    var card = el('div', 'asx-ad')
-    var head = el('div', 'ah')
-    head.append(el('b', null, 'Gesponsert'))
-    var u = el('div', 'u'); u.append(el('span', 'fav', (asHost(a.url) || '?').charAt(0).toUpperCase()))
-    var ut = el('div'); ut.append(el('div', 'n', c.name.split(' · ')[0]), el('div', 'p', asHost(a.url) + (a.path1 ? ' › ' + a.path1 : '') + (a.path2 ? ' › ' + a.path2 : '')))
-    u.append(ut); head.append(u)
-    card.append(head, el('div', 'hl', a.headlines.slice(0, 3).join(' | ')), el('div', 'ds', a.descriptions.slice(0, 2).join(' ')))
-    if (c.sitelinks.length) { var s = el('div', 'sl'); c.sitelinks.slice(0, 4).forEach(function (x) { s.append(el('span', null, x.text)) }); card.append(s) }
-    var STR = { EXCELLENT: 'Sehr gut', GOOD: 'Gut', AVERAGE: 'Mittel', POOR: 'Schwach', PENDING: 'folgt', UNRATED: '–' }
-    var meta = el('div', 'meta')
-    meta.append(asStatus(a.status), el('span', 'asx-tag' + (a.approval === 'APPROVED' ? ' ok' : a.approval === 'DISAPPROVED' ? ' bad' : ''), a.approval === 'APPROVED' ? 'Genehmigt' : a.approval === 'DISAPPROVED' ? 'Abgelehnt' : (a.approval || '–')),
-      el('span', 'asx-tag', 'Stärke: ' + (STR[a.strength] || a.strength || '–')), el('span', 'asx-tag', a.headlines.length + ' Titel · ' + a.descriptions.length + ' Texte'))
-    card.append(meta)
-    var more = el('details', 'asx-texts'); more.append(el('summary', null, 'Alle Texte anzeigen'))
-    var lt = el('div', 'lt')
-    a.headlines.forEach(function (x, i) { var r = el('div', 'r'); r.append(el('span', 'n', 'T' + (i + 1)), el('span', null, x), el('span', 'c' + (x.length > 30 ? ' bad' : ''), x.length + '/30')); lt.append(r) })
-    a.descriptions.forEach(function (x, i) { var r = el('div', 'r'); r.append(el('span', 'n', 'B' + (i + 1)), el('span', null, x), el('span', 'c' + (x.length > 90 ? ' bad' : ''), x.length + '/90')); lt.append(r) })
-    more.append(lt)
-    if (a.url) { var lk = el('a', 'asx-url', a.url); lk.href = a.url; lk.target = '_blank'; lk.rel = 'noopener'; more.append(lk) }
-    card.append(more)
-    return card
-  }
-  function asDetail(c, m, findings) {
-    var box = el('div', 'asx-det')
-    if (findings.length) {
-      var fl = el('div', 'asx-find')
-      findings.forEach(function (f) { var r = el('div', 'r ' + f[0]); r.append(el('i'), el('span', null, f[1])); fl.append(r) })
-      box.append(fl)
-    }
-    var grid = el('div', 'asx-dg'), main = el('div', 'asx-main'), side = el('aside', 'asx-side')
-    // side: the facts, the area, the hours
-    var kv = el('dl', 'asx-kv')
-    var row = function (k, v) { kv.append(el('dt', null, k), el('dd', null, v)) }
-    var exp = asExpected(c, m)
-    row('Status', (AS_STATUS[c.status] || [c.status])[0])
-    row('Budget', asEuro(c.budget) + ' / Tag · ca. ' + asEuro(Math.round(c.budget * 30.4)) + ' / Monat')
-    row('Gebote', (AS_BIDDING[c.bidding] || c.bidding || '–') + (c.ceiling ? ', max. ' + asEuro(c.ceiling) : ''))
-    if (exp !== null) row('Erwartet', '≈ ' + pct.format(Math.round(exp * 10) / 10) + ' Klicks / Tag bei Ø ' + money.format(Math.min(m.cpc, c.ceiling || m.cpc)) + ' pro Klick')
-    row('Netzwerk', 'Google-Suche' + (c.partners ? ' + Partner' : '') + (c.display ? ' + Display' : ''))
-    row('Standort', c.presence === 'PRESENCE' ? 'Präsenz' : (c.presence || '–'))
-    row('Sprache', c.languages.join(', ') || '–')
-    row('Klicks 30 T.', c.stats && c.stats.clicks ? nf.format(c.stats.clicks) + ' · ' + money.format(c.stats.spend) : 'noch keine')
-    side.append(el('div', 'h', 'Details'), kv)
-    side.append(el('div', 'h', 'Gebiet'))
-    c.radius.forEach(function (r) { side.append(asMap(r)) })
-    if (c.places.length) {
-      var pl = el('div', 'asx-pl')
-      var show = function (all) { pl.replaceChildren(); (all ? c.places : c.places.slice(0, 9)).forEach(function (p) { pl.append(el('span', null, p.name)) }); if (!all && c.places.length > 9) { var more = el('button', 'asx-more', '+ ' + (c.places.length - 9) + ' weitere'); more.type = 'button'; more.onclick = function () { show(true) }; pl.append(more) } }
-      show(false); side.append(pl)
-    }
-    if (!c.radius.length && !c.places.length) side.append(el('p', 'asx-mut', 'Kein Gebiet eingestellt'))
-    side.append(el('div', 'h', 'Werbezeiten'), asWeek(c.schedule), el('p', 'asx-mut', asScheduleText(c.schedule)))
-    // main: tabs
-    var nKw = c.groups.reduce(function (a, g) { return a + g.keywords.length }, 0)
-    var nAds = c.groups.reduce(function (a, g) { return a + g.ads.length }, 0)
-    var tabs = [['ads', 'Anzeigen ' + nAds], ['kw', 'Keywords ' + nKw], ['neg', 'Ausschlüsse ' + c.negatives.length], ['as', 'Assets ' + (c.sitelinks.length + c.callouts.length + c.snippets.length + c.calls.length)]]
-    var pane = el('div', 'pane'), cur = 'ads'
-    main.append(seg(tabs, cur, function (k) { cur = k; paint() }, 'asx-seg'), pane)
-    function paint() {
-      pane.replaceChildren()
-      if (cur === 'ads') {
-        c.groups.forEach(function (g) {
-          pane.append(el('div', 'asx-gh', g.name))
-          if (!g.ads.length) { pane.append(el('p', 'asx-mut', 'Keine Anzeige in dieser Gruppe.')); return }
-          var w = el('div', 'asx-ads'); g.ads.forEach(function (a) { w.append(asAdPreview(a, c)) }); pane.append(w)
-        })
-      } else if (cur === 'kw') {
-        pane.append(el('p', 'asx-mut', 'Klicks, Kosten und Anfragen der letzten 90 Tage aus dem bisherigen Konto, wenn es das Keyword dort schon gab.'))
-        c.groups.forEach(function (g) {
-          pane.append(el('div', 'asx-gh', g.name))
-          var rows = g.keywords.map(function (k) { return { k: k, h: m.kwHist[k.text.toLowerCase()] } })
-          rows.sort(function (a, b) { return ((b.h && b.h.c) || 0) - ((a.h && a.h.c) || 0) || a.k.text.localeCompare(b.k.text) })
-          pane.append(asTable([['Keyword'], ['Option'], ['Klicks', 'num'], ['Ø Preis', 'num'], ['Anfragen', 'num']], rows.map(function (r) {
-            var h = r.h
-            return [asKw(r.k.text, r.k.match), (AS_MATCH[r.k.match] || ['', '', r.k.match])[2], h ? nf.format(h.c) : el('span', 'asx-new', 'neu'), h && h.c ? money.format(h.s / h.c) : '–', h ? nf.format(Math.round(h.v * 10) / 10) : '–']
-          }), 'kwt'))
-        })
-      } else if (cur === 'neg') {
-        if (!c.negatives.length) { pane.append(el('p', 'asx-mut', 'Keine ausgeschlossenen Keywords.')); return }
-        pane.append(el('p', 'asx-mut', 'Bei diesen Suchen erscheint keine Anzeige dieser Kampagne.'))
-        var nl = el('div', 'asx-chips'); c.negatives.slice().sort(function (a, b) { return a[0].localeCompare(b[0]) }).forEach(function (n) { nl.append(asKw(n[0], n[1])) }); pane.append(nl)
-      } else {
-        var aw = el('div', 'asx-assets')
-        var blk = function (title, node) { var b = el('div', 'blk'); b.append(el('div', 'asx-gh', title), node); aw.append(b) }
-        var sl = el('div', 'asx-sls')
-        c.sitelinks.forEach(function (s) { var x = el('a', 'asx-sl'); if (s.url) { x.href = s.url; x.target = '_blank'; x.rel = 'noopener' } x.append(el('b', null, s.text)); if (s.d1 || s.d2) x.append(el('span', null, [s.d1, s.d2].filter(Boolean).join(' · '))); sl.append(x) })
-        blk('Sitelinks · ' + c.sitelinks.length, c.sitelinks.length ? sl : el('p', 'asx-mut', 'Keine'))
-        var co2 = el('div', 'asx-chips'); c.callouts.forEach(function (x) { co2.append(el('span', 'asx-pill', x)) })
-        blk('Callouts · ' + c.callouts.length, c.callouts.length ? co2 : el('p', 'asx-mut', 'Keine'))
-        var sn = el('div'); c.snippets.forEach(function (s) { var r = el('p', 'asx-snip'); r.append(el('b', null, (AS_SNIPPET[s.header] || s.header) + '  '), document.createTextNode(s.values.join(' · '))); sn.append(r) })
-        blk('Snippets · ' + c.snippets.length, c.snippets.length ? sn : el('p', 'asx-mut', 'Keine'))
-        var cl = el('div', 'asx-chips'); c.calls.forEach(function (x) { var a = el('a', 'asx-pill', x); a.href = 'tel:' + x.replace(/\s/g, ''); cl.append(a) })
-        blk('Anruf', c.calls.length ? cl : el('p', 'asx-mut', 'Keine Nummer'))
-        pane.append(aw)
-      }
-    }
-    paint()
-    grid.append(main, side)
-    box.append(grid)
-    return box
-  }
   function asRecs(m) {
     if (!m.ideas.length && !m.waste.length && !m.organic.length) return null
     var sec = el('div', 'asx-recs')
@@ -4322,6 +4344,215 @@ body { font-size: 14px; line-height: 1.5; }
     paint()
     return sec
   }
+  var AS_ICON = {
+    euro: '<path d="M17 6.5A6.5 6.5 0 1 0 17 17.5"/><path d="M4 10.5h9M4 13.5h9"/>',
+    bid: '<path d="M4 17l5-5 4 4 7-7"/><path d="M15 9h5v5"/>',
+    pin: '<path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
+    clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+    click: '<path d="M9 9l11 4-5 1.5L13.5 20z"/><path d="M5 3v3M3 5h3M8.5 4.5 7 6"/>',
+    back: '<path d="M15 18l-6-6 6-6"/>',
+    ext: '<path d="M14 4h6v6M20 4l-9 9"/><path d="M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/>',
+    check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+    phone: '<rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M11 18h2"/>',
+    desk: '<rect x="3" y="4.5" width="18" height="12" rx="1.5"/><path d="M9 20h6M12 16.5V20"/>',
+    shuffle: '<path d="M4 7h3.5c2 0 3 1 4.5 3.5S14.5 17 16.5 17H20"/><path d="M4 17h3.5c1.3 0 2.2-.5 3-1.5M14 8.5c.8-1 1.7-1.5 2.5-1.5H20"/><path d="M17.5 4.5 20 7l-2.5 2.5M17.5 14.5 20 17l-2.5 2.5"/>'
+  }
+  function asIcon(k) { return html('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + AS_ICON[k] + '</svg>') }
+  function asLink(as, cls, text) { var a = el('a', cls, text); a.href = urlFor({ view: 'adsetup', as: as }); a.dataset.nav = ''; return a }
+  function asShort(name) { return name.replace(/ · Suche · /, ' · ') }
+  function asCrumbs(parts) {
+    var nav = el('nav', 'asp-crumbs'); nav.setAttribute('aria-label', 'Pfad')
+    parts.forEach(function (p, i) {
+      if (i) nav.append(el('span', 'sep', '/'))
+      nav.append(p[1] ? asLink(p[1], null, p[0]) : el('span', 'cur', p[0]))
+    })
+    return nav
+  }
+  function asSection(title, desc, node, extra) {
+    var s = el('section', 'asp-sec')
+    var h = el('div', 'asp-sh'); var t = el('div'); t.append(el('h2', null, title)); if (desc) t.append(el('p', null, desc)); h.append(t); if (extra) h.append(extra)
+    s.append(h, node)
+    return s
+  }
+  function asFact(icon, label, text) { var c = el('div', 'asp-fact'); c.append(el('span', 'ic'), el('div', 'l', label), el('div', 't', text)); c.firstChild.append(asIcon(icon)); return c }
+  function asSideDetails(c, m) {
+    var side = el('aside', 'asp-side')
+    var kv = el('dl', 'asp-kv')
+    var row = function (k, v) { kv.append(el('dt', null, k), el('dd', null, v)) }
+    row('Status', (AS_STATUS[c.status] || [c.status])[0])
+    row('Kampagnen-ID', c.id)
+    row('Typ', 'Suchkampagne')
+    row('Netzwerk', 'Google-Suche' + (c.partners ? ' + Partner' : '') + (c.display ? ' + Display' : ''))
+    row('Standortoption', c.presence === 'PRESENCE' ? 'Präsenz' : (c.presence || '–'))
+    row('Sprache', c.languages.join(', ') || '–')
+    row('Gebotsstrategie', AS_BIDDING[c.bidding] || c.bidding || '–')
+    row('Max. pro Klick', c.ceiling ? asEuro(c.ceiling) : '–')
+    row('Budget', asEuro(c.budget) + ' / Tag')
+    side.append(el('h3', null, 'Details'), kv)
+    side.append(el('h3', null, 'Gebiet'))
+    c.radius.forEach(function (r) { side.append(asMap(r)) })
+    if (c.places.length) {
+      var pl = el('div', 'asx-pl')
+      var show = function (all) { pl.replaceChildren(); (all ? c.places : c.places.slice(0, 9)).forEach(function (p) { pl.append(el('span', null, p.name)) }); if (!all && c.places.length > 9) { var more = el('button', 'asx-more', '+ ' + (c.places.length - 9) + ' weitere'); more.type = 'button'; more.onclick = function () { show(true) }; pl.append(more) } }
+      show(false); side.append(pl)
+    }
+    if (!c.radius.length && !c.places.length) side.append(el('p', 'asx-mut', 'Kein Gebiet eingestellt'))
+    side.append(el('h3', null, 'Werbezeiten'), asWeek(c.schedule), el('p', 'asx-mut', asScheduleText(c.schedule)))
+    return side
+  }
+  // the ad on a phone, as Google would show it; "combo" picks which headlines are shown
+  function asPhone(a, c, combo, desk) {
+    var frame = el('div', desk ? 'asp-desk' : 'asp-phone')
+    var screen = el('div', 'scr')
+    var g = el('div', 'gbar'); g.append(el('span', 'glogo', 'Google'), el('span', 'q', a.headlines[0] || ''))
+    screen.append(g)
+    var card = el('div', 'gad')
+    var top = el('div', 'gtop'); top.append(el('b', null, 'Gesponsert'))
+    var u = el('div', 'gu'); u.append(el('span', 'fav', (asHost(a.url) || '?').charAt(0).toUpperCase()))
+    var ut = el('div'); ut.append(el('div', 'n', c.name.split(' · ')[0]), el('div', 'p', asHost(a.url) + (a.path1 ? ' › ' + a.path1 : '') + (a.path2 ? ' › ' + a.path2 : '')))
+    u.append(ut); top.append(u)
+    var hs = combo.slice(0, 3).map(function (i) { return a.headlines[i] }).filter(Boolean)
+    card.append(top, el('div', 'ghl', hs.join(' | ')), el('div', 'gds', [a.descriptions[combo[3] % a.descriptions.length], a.descriptions[(combo[3] + 1) % a.descriptions.length]].filter(Boolean).join(' ')))
+    if (c.sitelinks.length) { var sl = el('div', 'gsl'); c.sitelinks.slice(0, desk ? 4 : 4).forEach(function (x) { sl.append(el('span', null, x.text)) }); card.append(sl) }
+    if (c.calls.length) { var call = el('div', 'gcall'); call.append(asIcon('phone'), document.createTextNode(c.calls[0])); card.append(call) }
+    screen.append(card)
+    for (var i = 0; i < 3; i++) { var ph = el('div', 'ghost'); ph.append(el('i'), el('i'), el('i')); screen.append(ph) }
+    frame.append(screen)
+    return frame
+  }
+  function asMeter(text, max) {
+    var r = el('div', 'asp-line')
+    var bar = el('span', 'bar'); var f = el('i'); f.style.width = Math.min(100, text.length / max * 100) + '%'; if (text.length > max) f.className = 'over'; bar.append(f)
+    r.append(el('span', 'tx', text), bar, el('span', 'n' + (text.length > max ? ' over' : ''), text.length + '/' + max))
+    return r
+  }
+  function asCampaignPage(wrap, co, c, m, findings) {
+    wrap.append(asCrumbs([['Anzeigen', {}], [co.name, { co: co.id }], [asShort(c.name)]]))
+    var head = el('header', 'asp-head')
+    var h = el('div', 'tt'); h.append(el('h1', null, asShort(c.name)))
+    var sub = el('div', 'sub'); sub.append(asStatus(c.status), el('span', null, 'Suchkampagne · ' + co.name + ' · Konto ' + co.account)); h.append(sub)
+    head.append(h)
+    wrap.append(head)
+    // the five facts in plain words
+    var exp = asExpected(c, m)
+    var facts = el('div', 'asp-facts')
+    facts.append(
+      asFact('euro', 'Budget', asEuro(c.budget) + ' pro Tag, im Monat höchstens etwa ' + asEuro(Math.round(c.budget * 30.4)) + '.'),
+      asFact('bid', 'Gebote', (AS_BIDDING[c.bidding] === 'Klicks maximieren' ? 'Google holt möglichst viele Klicks' : (AS_BIDDING[c.bidding] || c.bidding)) + (c.ceiling ? ', zahlt aber nie mehr als ' + asEuro(c.ceiling) + ' pro Klick.' : '.')),
+      asFact('pin', 'Wo', c.radius.length ? 'Menschen im Umkreis von ' + c.radius.map(function (r) { return pct.format(r.km) + ' km' }).join(' und ') + ' um den Betrieb.' : c.places.length ? 'Menschen in ' + c.places.slice(0, 3).map(function (p) { return p.name }).join(', ') + (c.places.length > 3 ? ' und ' + (c.places.length - 3) + ' weiteren Orten.' : '.') : 'Kein Gebiet eingestellt.'),
+      asFact('clock', 'Wann', asScheduleText(c.schedule) + '.'),
+      asFact('click', 'Erwartet', exp === null ? 'Noch keine Vergleichswerte aus dem alten Konto.' : 'Etwa ' + pct.format(Math.round(exp * 10) / 10) + ' Klicks am Tag, bei bisher Ø ' + money.format(Math.min(m.cpc, c.ceiling || m.cpc)) + ' pro Klick.'))
+    wrap.append(facts)
+    var grid = el('div', 'asp-grid'), main = el('div', 'asp-main')
+    grid.append(main, asSideDetails(c, m))
+    wrap.append(grid)
+    // 1. what to do
+    var todo = el('div', 'asp-todo')
+    if (!findings.length) { var ok = el('div', 'ok'); ok.append(asIcon('check'), el('span', null, 'Nichts gefunden, was vor dem Start geändert werden muss.')); todo.append(ok) }
+    findings.forEach(function (f) { var r = el('div', 'r ' + f[0]); r.append(el('i'), el('span', null, f[1])); todo.append(r) })
+    main.append(asSection('Vor dem Start', findings.length ? plural(findings.length, ['Punkt', 'Punkte']) + ', die wir uns ansehen sollten.' : null, todo))
+    // 2. ads
+    var ads = el('div', 'asp-adlist')
+    c.groups.forEach(function (g, gi) {
+      g.ads.forEach(function (a, ai) {
+        var card = asLink({ co: co.id, c: c.id, ad: gi + '-' + ai }, 'asp-adrow')
+        var l = el('div', 'l'); l.append(el('div', 'grp', g.name), el('div', 'hl', a.headlines.slice(0, 2).join(' | ')), el('div', 'u', asHost(a.url) + (a.path1 ? '/' + a.path1 : '') + (a.path2 ? '/' + a.path2 : '')))
+        var r = el('div', 'r'); r.append(el('span', 'asx-tag' + (a.approval === 'APPROVED' ? ' ok' : ''), a.approval === 'APPROVED' ? 'Genehmigt' : (a.approval || '–')), el('span', 'cnt', a.headlines.length + ' Titel · ' + a.descriptions.length + ' Texte'), asIcon('back'))
+        card.append(l, r)
+        ads.append(card)
+      })
+    })
+    var nAds = c.groups.reduce(function (a, g) { return a + g.ads.length }, 0)
+    main.append(asSection('Anzeigen', plural(nAds, ['Anzeige', 'Anzeigen']) + ' in ' + plural(c.groups.length, ['Anzeigengruppe', 'Anzeigengruppen']) + '. Antippen für Vorschau und alle Texte.', ads))
+    // 3. keywords
+    var kw = el('div')
+    c.groups.forEach(function (g, gi) {
+      var rows = g.keywords.map(function (k) { return { k: k, h: m.kwHist[k.text.toLowerCase()] } })
+      rows.sort(function (a, b) { return ((b.h && b.h.c) || 0) - ((a.h && a.h.c) || 0) || a.k.text.localeCompare(b.k.text) })
+      var clicks = rows.reduce(function (a, r) { return a + ((r.h && r.h.c) || 0) }, 0)
+      var det = el('details', 'asp-grp'); if (gi === 0) det.open = true
+      var sm = el('summary'); sm.append(el('b', null, g.name), el('span', null, plural(g.keywords.length, ['Keyword', 'Keywords']) + (clicks ? ' · ' + plural(clicks, ['Klick', 'Klicks']) + ' bisher' : '')))
+      det.append(sm)
+      kw.append(det)
+      det.append(asTable([['Keyword'], ['Option'], ['Klicks', 'num'], ['Ø Preis', 'num'], ['Anfragen', 'num']], rows.map(function (r) {
+        var x = r.h
+        return [asKw(r.k.text, r.k.match), (AS_MATCH[r.k.match] || ['', '', r.k.match])[2], x ? nf.format(x.c) : el('span', 'asx-new', 'neu'), x && x.c ? money.format(x.s / x.c) : '–', x ? nf.format(Math.round(x.v * 10) / 10) : '–']
+      }), 'kwt'))
+    })
+    var nKw = c.groups.reduce(function (a, g) { return a + g.keywords.length }, 0)
+    main.append(asSection('Keywords', plural(nKw, ['Keyword', 'Keywords']) + '. Klicks, Preis und Anfragen stammen aus den letzten 90 Tagen im bisherigen Konto.', kw))
+    // 4. negatives
+    var neg = el('div', 'asx-chips')
+    var sorted = c.negatives.slice().sort(function (a, b) { return a[0].localeCompare(b[0]) })
+    var paintNeg = function (all) { neg.replaceChildren(); (all ? sorted : sorted.slice(0, 40)).forEach(function (n) { neg.append(asKw(n[0], n[1])) }); if (!all && sorted.length > 40) { var b = el('button', 'asx-more', 'Alle ' + sorted.length + ' anzeigen'); b.type = 'button'; b.onclick = function () { paintNeg(true) }; neg.append(b) } }
+    paintNeg(false)
+    main.append(asSection('Ausgeschlossene Keywords', sorted.length ? 'Bei Suchen mit diesen Begriffen erscheint keine Anzeige dieser Kampagne.' : 'Keine.', neg))
+    // 5. extensions
+    var aw = el('div', 'asx-assets')
+    var blk = function (title, node) { var b = el('div', 'blk'); b.append(el('div', 'asx-gh', title), node); aw.append(b) }
+    var sl = el('div', 'asx-sls')
+    c.sitelinks.forEach(function (x) { var a = el('a', 'asx-sl'); if (x.url) { a.href = x.url; a.target = '_blank'; a.rel = 'noopener' } a.append(el('b', null, x.text)); if (x.d1 || x.d2) a.append(el('span', null, [x.d1, x.d2].filter(Boolean).join(' · '))); sl.append(a) })
+    blk('Sitelinks · ' + c.sitelinks.length, c.sitelinks.length ? sl : el('p', 'asx-mut', 'Keine'))
+    var co2 = el('div', 'asx-chips'); c.callouts.forEach(function (x) { co2.append(el('span', 'asx-pill', x)) })
+    blk('Callouts · ' + c.callouts.length, c.callouts.length ? co2 : el('p', 'asx-mut', 'Keine'))
+    var sn = el('div'); c.snippets.forEach(function (x) { var r = el('p', 'asx-snip'); r.append(el('b', null, (AS_SNIPPET[x.header] || x.header) + '  '), document.createTextNode(x.values.join(' · '))); sn.append(r) })
+    blk('Snippets · ' + c.snippets.length, c.snippets.length ? sn : el('p', 'asx-mut', 'Keine'))
+    var cl = el('div', 'asx-chips'); c.calls.forEach(function (x) { var a = el('a', 'asx-pill', x); a.href = 'tel:' + x.replace(/\s/g, ''); cl.append(a) })
+    blk('Anruf', c.calls.length ? cl : el('p', 'asx-mut', 'Keine Nummer'))
+    main.append(asSection('Erweiterungen', 'Zusätzliche Links, Hinweise und die Telefonnummer, die Google unter der Anzeige zeigen kann.', aw))
+  }
+  function asAdPage(wrap, co, c, m, gi, ai) {
+    var g = c.groups[gi], a = g && g.ads[ai]
+    if (!a) { wrap.append(el('div', 'empty', 'Diese Anzeige gibt es nicht mehr.')); return }
+    var list = []
+    c.groups.forEach(function (gg, x) { gg.ads.forEach(function (_, y) { list.push([x, y]) }) })
+    var idx = list.findIndex(function (p) { return p[0] === gi && p[1] === ai })
+    wrap.append(asCrumbs([['Anzeigen', {}], [co.name, { co: co.id }], [asShort(c.name), { co: co.id, c: c.id }], ['Anzeige ' + (idx + 1)]]))
+    var head = el('header', 'asp-head')
+    var h = el('div', 'tt'); h.append(el('h1', null, g.name))
+    var sub = el('div', 'sub')
+    var STR = { EXCELLENT: 'Sehr gut', GOOD: 'Gut', AVERAGE: 'Mittel', POOR: 'Schwach', PENDING: 'Bewertung folgt', UNRATED: '–' }
+    sub.append(asStatus(a.status), el('span', 'asx-tag' + (a.approval === 'APPROVED' ? ' ok' : ''), a.approval === 'APPROVED' ? 'Genehmigt' : (a.approval || '–')), el('span', null, 'Anzeigenstärke: ' + (STR[a.strength] || a.strength || '–')))
+    h.append(sub); head.append(h)
+    var nav = el('div', 'asp-pn')
+    if (idx > 0) nav.append(asLink({ co: co.id, c: c.id, ad: list[idx - 1].join('-') }, 'asx-btn ghost', '‹ Vorherige'))
+    if (idx < list.length - 1) nav.append(asLink({ co: co.id, c: c.id, ad: list[idx + 1].join('-') }, 'asx-btn ghost', 'Nächste ›'))
+    head.append(nav)
+    wrap.append(head)
+    var grid = el('div', 'asp-adgrid')
+    // left: the preview
+    var pv = el('div', 'asp-preview')
+    var mode = 'phone', combo = [0, 1, 2, 0]
+    var stage = el('div', 'stage')
+    var ctl = el('div', 'ctl')
+    var sw = seg([['phone', 'Handy'], ['desk', 'Computer']], mode, function (v) { mode = v; draw() }, 'asx-seg')
+    var shuffle = el('button', 'asx-btn ghost'); shuffle.type = 'button'; shuffle.append(asIcon('shuffle'), document.createTextNode('Andere Kombination'))
+    shuffle.onclick = function () {
+      var n = a.headlines.length, pick = []
+      while (pick.length < Math.min(3, n)) { var r = Math.floor(Math.random() * n); if (pick.indexOf(r) < 0) pick.push(r) }
+      pick.push(Math.floor(Math.random() * Math.max(1, a.descriptions.length)))
+      combo = pick; draw()
+    }
+    ctl.append(sw, shuffle)
+    function draw() { stage.replaceChildren(asPhone(a, c, combo, mode === 'desk')) }
+    draw()
+    pv.append(ctl, stage, el('p', 'asx-mut', 'Google setzt die Anzeige bei jeder Suche neu zusammen: bis zu 3 Titel und 2 Beschreibungen aus der Liste rechts.'))
+    // right: the texts
+    var tx = el('div', 'asp-texts')
+    var hl = el('div', 'asp-lines'); a.headlines.forEach(function (x) { hl.append(asMeter(x, 30)) })
+    tx.append(asSection('Titel', a.headlines.length + ' von 15 möglichen · je höchstens 30 Zeichen', hl))
+    var ds = el('div', 'asp-lines'); a.descriptions.forEach(function (x) { ds.append(asMeter(x, 90)) })
+    tx.append(asSection('Beschreibungen', a.descriptions.length + ' von 4 möglichen · je höchstens 90 Zeichen', ds))
+    var dest = el('div', 'asp-dest')
+    var link = el('a', null, a.url || '–'); if (a.url) { link.href = a.url; link.target = '_blank'; link.rel = 'noopener' } link.append(asIcon('ext'))
+    dest.append(el('div', 'l', 'Zielseite'), link, el('div', 'l', 'Angezeigter Pfad'), el('div', 'v', asHost(a.url) + (a.path1 ? '/' + a.path1 : '') + (a.path2 ? '/' + a.path2 : '')))
+    tx.append(asSection('Wohin die Anzeige führt', null, dest))
+    var kws = el('div', 'asx-chips')
+    g.keywords.slice().sort(function (x, y) { return x.text.localeCompare(y.text) }).forEach(function (k) { var ch = asKw(k.text, k.match); var hh = m.kwHist[k.text.toLowerCase()]; if (hh && hh.c) ch.append(el('small', null, ' ' + nf.format(hh.c))); kws.append(ch) })
+    tx.append(asSection('Bei diesen Suchen', g.keywords.length + ' Keywords der Anzeigengruppe. Die Zahl dahinter: Klicks im bisherigen Konto (90 Tage).', kws))
+    grid.append(pv, tx)
+    wrap.append(grid)
+  }
   function asCompany(co, findings) {
     var m = asModel(co)
     var camps = co.setup.campaigns
@@ -4347,8 +4578,8 @@ body { font-size: 14px; line-height: 1.5; }
     camps.forEach(function (c) {
       var f = findings[c.name] || []
       var bad = f.filter(function (x) { return x[0] === 'bad' }).length
-      var row = el('button', 'tr'); row.type = 'button'; row.setAttribute('aria-expanded', 'false')
-      var nm = el('span', 'nm'); nm.append(el('b', null, c.name.replace(/ · Suche · /, ' · ')), asStatus(c.status))
+      var row = asLink({ co: co.id, c: c.id }, 'tr')
+      var nm = el('span', 'nm'); nm.append(el('b', null, asShort(c.name)), asStatus(c.status))
       var e = asExpected(c, m)
       var kws = c.groups.reduce(function (a, g) { return a + g.keywords.length }, 0)
       var fl = el('span', 'fl')
@@ -4356,12 +4587,6 @@ body { font-size: 14px; line-height: 1.5; }
       fl.append(html('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>'))
       row.append(nm, el('span', 'num', asEuro(c.budget)), el('span', 'num', c.ceiling ? asEuro(c.ceiling) : '–'), el('span', 'geo', asGeoText(c)),
         el('span', 'num', e === null ? '–' : '≈ ' + pct.format(Math.round(e * 10) / 10)), el('span', 'num', nf.format(kws)), fl)
-      var det = null
-      row.onclick = function () {
-        var open = row.classList.toggle('open'); row.setAttribute('aria-expanded', String(open))
-        if (open && !det) { det = asDetail(c, m, f); row.after(det) }
-        if (det) det.hidden = !open
-      }
       tbl.append(row)
     })
     sec.append(tbl)
@@ -4372,16 +4597,30 @@ body { font-size: 14px; line-height: 1.5; }
   function renderAdSetup(view) {
     var token = renderToken
     var wrap = el('div', 'asx'); view.append(wrap)
-    var strip = el('div', 'asx-strip'); wrap.append(strip)
-    var bar = el('div', 'asx-bar'); wrap.append(bar)
+    var as = state.as || {}
     var list = el('div', 'asx-list'); list.append(skeletonRows(6)); wrap.append(list)
     var load = adSetupCache ? Promise.resolve(adSetupCache) : api('ad-setup').then(function (d) { adSetupCache = d; return d })
     load.then(function (d) {
       if (token !== renderToken) return
+      list.remove()
       var cos = d.companies.filter(function (c) { return c.setup })
-      var findings = {}, all = [], badN = 0, warnN = 0, clicks = 0, hist = 0
+      var findings = {}
+      cos.forEach(function (c) { findings[c.id] = asFindings(c) })
+      // a campaign or one ad on its own page
+      if (as.c) {
+        var co = cos.filter(function (x) { return x.id === as.co })[0]
+        var camp = co && co.setup.campaigns.filter(function (x) { return x.id === as.c })[0]
+        if (!camp) { wrap.append(el('div', 'empty', 'Diese Kampagne gibt es nicht mehr.')); return }
+        var mm = asModel(co)
+        var page = el('div', 'asp'); wrap.append(page)
+        if (as.ad) { var pr = as.ad.split('-').map(Number); asAdPage(page, co, camp, mm, pr[0], pr[1]) }
+        else asCampaignPage(page, co, camp, mm, findings[co.id][camp.name] || [])
+        return
+      }
+      var strip = el('div', 'asx-strip'), bar = el('div', 'asx-bar'), body = el('div', 'asx-list')
+      wrap.append(strip, bar, body)
+      var all = [], badN = 0, warnN = 0, clicks = 0, hist = 0
       cos.forEach(function (c) {
-        findings[c.id] = asFindings(c)
         c.setup.campaigns.forEach(function (x) { all.push(x); clicks += (x.stats && x.stats.clicks) || 0; (findings[c.id][x.name] || []).forEach(function (f) { if (f[0] === 'bad') badN++; else warnN++ }) })
         if (c.history && c.history.totals) hist += c.history.totals.clicks || 0
       })
@@ -4393,10 +4632,10 @@ body { font-size: 14px; line-height: 1.5; }
       cell('Klicks 30 Tage', nf.format(clicks), hist ? nf.format(hist) + ' in 90 Tagen (alt)' : 'neue Konten')
       cell('Keywords', nf.format(all.reduce(function (a, c) { return a + c.groups.reduce(function (b, g) { return b + g.keywords.length }, 0) }, 0)), nf.format(all.reduce(function (a, c) { return a + c.negatives.length }, 0)) + ' Ausschlüsse')
       cell('Hinweise', nf.format(badN + warnN), badN ? badN + ' vor dem Start beheben' : 'nichts Kritisches', badN ? 'bad' : warnN ? 'warn' : '')
-      var pick = state.tabs.adsetup && cos.some(function (c) { return c.id === state.tabs.adsetup }) ? state.tabs.adsetup : (cos.length === 1 ? cos[0].id : 'all')
+      var pick = as.co && cos.some(function (c) { return c.id === as.co }) ? as.co : (cos.length === 1 ? cos[0].id : 'all')
       if (cos.length > 1) {
         var opts = [['all', 'Alle']].concat(cos.map(function (c) { return [c.id, c.name] }))
-        var s = seg(opts, pick, function (v) { state.tabs.adsetup = v; paintList(v) }, 'asx-pick')
+        var s = seg(opts, pick, function (v) { state.as = v === 'all' ? {} : { co: v }; saveUrl(); paintList(v) }, 'asx-pick')
         Array.prototype.forEach.call(s.children, function (b, i) { if (!i) return; var co = COMPANIES.filter(function (x) { return x.id === opts[i][0] })[0]; if (co) b.prepend(companyLogo(co)) })
         bar.append(s)
       }
@@ -4410,8 +4649,8 @@ body { font-size: 14px; line-height: 1.5; }
       }
       paintList(pick)
       function paintList(which) {
-        list.replaceChildren()
-        cos.filter(function (c) { return which === 'all' || c.id === which }).forEach(function (co) { list.append(asCompany(co, findings[co.id])) })
+        body.replaceChildren()
+        cos.filter(function (c) { return which === 'all' || c.id === which }).forEach(function (co) { body.append(asCompany(co, findings[co.id])) })
       }
     }).catch(function () { if (token === renderToken) list.replaceChildren(el('div', 'empty', 'Die Anzeigen-Übersicht konnte nicht geladen werden')) })
   }
