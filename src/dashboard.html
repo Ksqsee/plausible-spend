@@ -443,9 +443,12 @@ td.m { color: var(--text-3); font-weight: 400; }
 .asx-strip { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); background: var(--card); border: 1px solid var(--hair); border-radius: 16px; overflow: hidden; }
 .asx-strip .c { padding: 18px 20px 16px; border-left: 1px solid var(--soft); min-width: 0; }
 .asx-strip .c:first-child { border-left: 0; }
-.asx-strip .l { display: block; font-size: 12px; font-weight: 500; color: var(--mut); letter-spacing: .01em; }
+.asx-strip .l { display: block; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text); }
+.asx-strip .c { border-top: 3px solid var(--tc, var(--text)); }
+.asx-strip .c:nth-child(2) { --tc: var(--t-green); } .asx-strip .c:nth-child(3) { --tc: var(--t-teal); } .asx-strip .c:nth-child(4) { --tc: var(--t-blue); } .asx-strip .c:nth-child(5) { --tc: var(--t-orange); } .asx-strip .c.bad { --tc: var(--t-red); }
+.asx-strip .c .l { color: var(--tc, var(--text)); }
 .asx-strip b { display: block; font: 600 30px/1.15 var(--display); letter-spacing: -.035em; color: var(--ink); margin-top: 6px; }
-.asx-strip .s { display: block; font-size: 12.5px; color: var(--mut); margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.asx-strip .s { display: block; font-size: 13px; color: var(--text-2); margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .asx-strip .c.bad b { color: var(--down); }
 .asx-strip .c.warn b { color: color-mix(in srgb, var(--warn) 75%, var(--ink)); }
 .asx-bar { display: flex; align-items: center; gap: 10px; margin: 22px 0 18px; }
@@ -479,7 +482,9 @@ td.m { color: var(--text-3); font-weight: 400; }
 .asx-camps .fl { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
 .asx-camps .fl svg { width: 16px; height: 16px; color: var(--mut); transition: transform .2s var(--ease); }
 .asx-camps .tr.open .fl svg { transform: rotate(90deg); color: var(--ink); }
-.asx-st { display: inline-flex; align-items: center; gap: 5px; flex: none; font-size: 11.5px; font-weight: 500; color: var(--text-2); padding: 2px 8px 2px 7px; border-radius: 6px; background: var(--sel); }
+.asx-st { display: inline-flex; align-items: center; gap: 6px; flex: none; font-size: 12px; font-weight: 600; color: var(--text); padding: 3px 9px 3px 8px; border-radius: 999px; background: var(--sel); }
+.asx-st.paused { color: var(--t-orange); background: color-mix(in srgb, var(--t-orange) 12%, transparent); }
+.asx-st.on { color: var(--t-green); background: color-mix(in srgb, var(--t-green) 12%, transparent); }
 .asx-st::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--mut); }
 .asx-st.on { color: var(--ink); } .asx-st.on::before { background: var(--up); }
 .asx-st.paused::before { background: var(--m-orange); }
@@ -627,12 +632,16 @@ td.m { color: var(--text-3); font-weight: 400; }
 .asp-pn { display: flex; gap: 8px; }
 .asx-btn.ghost { background: var(--card); color: var(--text); border: 1px solid var(--line); display: inline-flex; align-items: center; gap: 7px; text-decoration: none; font-weight: 500; }
 .asx-btn.ghost svg { width: 16px; height: 16px; }
-.asp-facts { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; margin-bottom: 32px; }
-.asp-fact { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 16px 16px 18px; min-width: 0; }
-.asp-fact .ic { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 9px; background: var(--text); color: var(--card); }
-.asp-fact .ic svg { width: 17px; height: 17px; }
-.asp-fact .l { font-size: 13px; font-weight: 600; color: var(--text); margin-top: 14px; }
-.asp-fact .t { font-size: 14.5px; line-height: 1.45; color: var(--text-2); margin-top: 4px; }
+.asx, .asp { --t-green: #087a4b; --t-blue: #1d5bd8; --t-violet: #6a3bd1; --t-orange: #c25200; --t-teal: #0b7a82; --t-red: #c8102e; }
+:root[data-theme="dark"] .asx { --t-green: #43d39a; --t-blue: #7aa5ff; --t-violet: #b49bff; --t-orange: #ff9b4a; --t-teal: #4fd1d9; --t-red: #ff6b7f; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .asx { --t-green: #43d39a; --t-blue: #7aa5ff; --t-violet: #b49bff; --t-orange: #ff9b4a; --t-teal: #4fd1d9; --t-red: #ff6b7f; } }
+.asp-facts { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); margin-bottom: 36px; background: var(--card); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+.asp-fact { padding: 18px 20px 20px; min-width: 0; border-left: 1px solid var(--line-soft); border-top: 3px solid var(--tc, var(--text)); }
+.asp-fact:first-child { border-left: 0; }
+.asp-fact.t-green { --tc: var(--t-green); } .asp-fact.t-blue { --tc: var(--t-blue); } .asp-fact.t-violet { --tc: var(--t-violet); } .asp-fact.t-orange { --tc: var(--t-orange); } .asp-fact.t-teal { --tc: var(--t-teal); }
+.asp-fact .l { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--tc); }
+.asp-fact .v { font: 700 24px/1.15 var(--display); letter-spacing: -.03em; color: var(--text); margin-top: 8px; }
+.asp-fact .t { font-size: 14px; line-height: 1.45; color: var(--text); opacity: .72; margin-top: 6px; }
 .asp-grid { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 40px; align-items: start; }
 .asp-main { min-width: 0; }
 .asp-sec { margin-bottom: 40px; }
@@ -640,9 +649,9 @@ td.m { color: var(--text-3); font-weight: 400; }
 .asp-sh h2 { margin: 0; font: 650 21px/1.2 var(--display); letter-spacing: -.02em; color: var(--text); }
 .asp-sh p { margin: 5px 0 0; font-size: 14px; line-height: 1.5; color: var(--text-2); }
 .asp-todo { display: grid; gap: 8px; }
-.asp-todo .r { display: flex; gap: 12px; align-items: flex-start; font-size: 15px; line-height: 1.5; padding: 14px 16px; border-radius: 12px; background: var(--card); border: 1px solid var(--line); color: var(--text); }
-.asp-todo .r i { flex: none; width: 9px; height: 9px; border-radius: 50%; margin-top: 7px; background: var(--m-orange); }
-.asp-todo .r.bad { border-color: color-mix(in srgb, var(--down) 45%, var(--line)); }
+.asp-todo .r { display: flex; gap: 12px; align-items: flex-start; font-size: 15px; line-height: 1.5; padding: 14px 16px; border-radius: 12px; background: color-mix(in srgb, var(--t-orange) 7%, var(--card)); border: 0; border-left: 4px solid var(--t-orange); color: var(--text); }
+.asp-todo .r i { display: none; }
+.asp-todo .r.bad { border-left-color: var(--t-red); background: color-mix(in srgb, var(--t-red) 7%, var(--card)); }
 .asp-todo .r.bad i { background: var(--down); }
 .asp-todo .ok { display: flex; gap: 10px; align-items: center; font-size: 15px; padding: 14px 16px; border-radius: 12px; background: var(--card); border: 1px solid var(--line); }
 .asp-todo .ok svg { width: 20px; height: 20px; color: var(--up); }
@@ -715,16 +724,18 @@ td.m { color: var(--text-3); font-weight: 400; }
 .asp-dest a svg { width: 15px; height: 15px; flex: none; }
 .asx-chips .asx-kw small { font-family: var(--sans, inherit); font-weight: 700; color: var(--text); margin-left: 4px; }
 @media (max-width: 1100px) {
-  .asp-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .asp-facts { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .asp-fact:nth-child(4) { border-left: 0; }
   .asp-grid, .asp-adgrid { grid-template-columns: minmax(0, 1fr); gap: 28px; }
   .asp-side, .asp-preview { position: static; }
 }
 @media (max-width: 760px) {
   .asp-head h1 { font-size: 27px; }
-  .asp-facts { grid-template-columns: minmax(0, 1fr); gap: 8px; margin-bottom: 26px; }
-  .asp-fact { display: grid; grid-template-columns: 32px minmax(0, 1fr); column-gap: 12px; padding: 14px; }
-  .asp-fact .ic { grid-row: 1 / span 2; }
-  .asp-fact .l { margin-top: 0; }
+  .asp-facts { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); margin-bottom: 28px; }
+  .asp-fact { padding: 14px 14px 16px; border-left: 0; }
+  .asp-fact:nth-child(even) { border-left: 1px solid var(--line-soft); }
+  .asp-fact:last-child { grid-column: 1 / -1; }
+  .asp-fact .v { font-size: 20px; }
   .asp-phone { width: 290px; }
   .asp-line { grid-template-columns: minmax(0, 1fr) 46px; }
   .asp-line .bar { display: none; }
@@ -4374,7 +4385,8 @@ body { font-size: 14px; line-height: 1.5; }
     s.append(h, node)
     return s
   }
-  function asFact(icon, label, text) { var c = el('div', 'asp-fact'); c.append(el('span', 'ic'), el('div', 'l', label), el('div', 't', text)); c.firstChild.append(asIcon(icon)); return c }
+  // one fact: coloured label, the number big, one line of plain words
+  function asFact(tone, label, big, text) { var c = el('div', 'asp-fact ' + tone); c.append(el('div', 'l', label), el('div', 'v', big), el('div', 't', text)); return c }
   function asSideDetails(c, m) {
     var side = el('aside', 'asp-side')
     var kv = el('dl', 'asp-kv')
@@ -4437,11 +4449,11 @@ body { font-size: 14px; line-height: 1.5; }
     var exp = asExpected(c, m)
     var facts = el('div', 'asp-facts')
     facts.append(
-      asFact('euro', 'Budget', asEuro(c.budget) + ' pro Tag, im Monat höchstens etwa ' + asEuro(Math.round(c.budget * 30.4)) + '.'),
-      asFact('bid', 'Gebote', (AS_BIDDING[c.bidding] === 'Klicks maximieren' ? 'Google holt möglichst viele Klicks' : (AS_BIDDING[c.bidding] || c.bidding)) + (c.ceiling ? ', zahlt aber nie mehr als ' + asEuro(c.ceiling) + ' pro Klick.' : '.')),
-      asFact('pin', 'Wo', c.radius.length ? 'Menschen im Umkreis von ' + c.radius.map(function (r) { return pct.format(r.km) + ' km' }).join(' und ') + ' um den Betrieb.' : c.places.length ? 'Menschen in ' + c.places.slice(0, 3).map(function (p) { return p.name }).join(', ') + (c.places.length > 3 ? ' und ' + (c.places.length - 3) + ' weiteren Orten.' : '.') : 'Kein Gebiet eingestellt.'),
-      asFact('clock', 'Wann', asScheduleText(c.schedule) + '.'),
-      asFact('click', 'Erwartet', exp === null ? 'Noch keine Vergleichswerte aus dem alten Konto.' : 'Etwa ' + pct.format(Math.round(exp * 10) / 10) + ' Klicks am Tag, bei bisher Ø ' + money.format(Math.min(m.cpc, c.ceiling || m.cpc)) + ' pro Klick.'))
+      asFact('t-green', 'Budget', asEuro(c.budget) + ' / Tag', 'im Monat höchstens ca. ' + asEuro(Math.round(c.budget * 30.4))),
+      asFact('t-blue', 'Gebot', c.ceiling ? 'max. ' + asEuro(c.ceiling) : (AS_BIDDING[c.bidding] || '–'), AS_BIDDING[c.bidding] === 'Klicks maximieren' ? 'Google holt möglichst viele Klicks' : (AS_BIDDING[c.bidding] || c.bidding || '')),
+      asFact('t-violet', 'Gebiet', c.radius.length ? c.radius.map(function (r) { return pct.format(r.km) + ' km' }).join(' + ') : c.places.length ? plural(c.places.length, ['Ort', 'Orte']) : 'keins', c.radius.length ? 'Umkreis um den Betrieb' : c.places.length ? c.places.slice(0, 3).map(function (p) { return p.name }).join(', ') + (c.places.length > 3 ? ' …' : '') : 'würde weltweit laufen'),
+      asFact('t-orange', 'Werbezeiten', (function () { var t = asScheduleText(c.schedule); return t.split(' · ')[0] })(), (function () { var t = asScheduleText(c.schedule).split(' · '); return t.length > 1 ? t.slice(1).join(' · ') : (c.schedule.length ? 'sonst keine Anzeigen' : 'rund um die Uhr') })()),
+      asFact('t-teal', 'Erwartet', exp === null ? '–' : '≈ ' + pct.format(Math.round(exp * 10) / 10) + ' Klicks', exp === null ? 'keine Vergleichswerte' : 'pro Tag, bei bisher Ø ' + money.format(Math.min(m.cpc, c.ceiling || m.cpc))))
     wrap.append(facts)
     var grid = el('div', 'asp-grid'), main = el('div', 'asp-main')
     grid.append(main, asSideDetails(c, m))
