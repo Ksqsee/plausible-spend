@@ -438,126 +438,180 @@ td.m { color: var(--text-3); font-weight: 400; }
   .tr-kwd-t > div { grid-template-columns: 1.3fr repeat(3, 1fr); } .tr-kwd-t > div > span:nth-child(5), .tr-kwd-t > div > span:nth-child(6) { display: none; }
   .tr-trendkey { margin-left: 0; }
 }
-/* ---------- Anzeigen (ad setup) ---------- */
-.as-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 4px 0 16px; }
-.as-pick { max-width: 100%; overflow-x: auto; scrollbar-width: none; }
-.as-pick button { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
-.as-pick button img, .as-pick button .clogo { width: 16px; height: 16px; border-radius: 4px; }
-.as-refresh { margin: 0 0 0 auto; }
-.as-co { margin-bottom: 16px; }
-.as-coh { display: flex; align-items: center; gap: 12px; }
-.as-coh .logo { width: 36px; height: 36px; border-radius: 9px; flex: none; }
-.as-coh .t { flex: 1; min-width: 0; }
-.as-coh h3 { margin: 0; font: 600 17px/1.3 var(--display); letter-spacing: -.01em; }
-.as-cnt { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
-.as-st { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; padding: 2px 9px; border-radius: 999px; background: var(--sel); color: var(--text-2); white-space: nowrap; }
-.as-st::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--text-3); }
-.as-st.on { color: color-mix(in srgb, var(--up) 80%, var(--text)); background: color-mix(in srgb, var(--up) 12%, transparent); }
-.as-st.on::before { background: var(--up); box-shadow: 0 0 0 3px color-mix(in srgb, var(--up) 25%, transparent); }
-.as-st.paused::before { background: var(--m-orange); }
-.as-budget { display: flex; gap: 3px; height: 8px; margin: 16px 0 6px; border-radius: 4px; overflow: hidden; }
-.as-budget i { display: block; min-width: 3px; background: var(--m-blue); opacity: .35; }
-.as-budget i.on { opacity: 1; }
-.as-camp { border-top: 1px solid var(--line-soft); }
-.as-camp:first-of-type { margin-top: 10px; }
-.as-ch { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) 18px; gap: 8px 10px; align-items: center; background: none; border: 0; padding: 14px 4px; text-align: left; font: inherit; color: inherit; cursor: pointer; border-radius: 10px; }
-.as-ch:hover { background: color-mix(in srgb, var(--sel) 60%, transparent); }
-.as-ch .nm { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; min-width: 0; }
-.as-ch .nm b { font-size: 15px; font-weight: 600; }
-.as-ch .chips { grid-column: 1; display: flex; flex-wrap: wrap; gap: 6px; }
-.as-ch .chev { grid-column: 2; grid-row: 1 / span 2; width: 18px; height: 18px; color: var(--text-3); transition: transform .2s var(--ease); }
-.as-camp.open .chev { transform: rotate(90deg); }
-.as-chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--text-2); background: var(--sel); padding: 4px 9px; border-radius: 8px; max-width: 100%; }
-.as-chip svg { width: 14px; height: 14px; flex: none; color: var(--text-3); }
-.as-chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.as-fc { font-size: 12px; font-weight: 500; padding: 2px 9px; border-radius: 999px; }
-.as-fc.warn { background: color-mix(in srgb, var(--warn) 18%, transparent); color: color-mix(in srgb, var(--warn) 60%, var(--text)); }
-.as-fc.bad { background: color-mix(in srgb, var(--down) 12%, transparent); color: var(--down); }
-.as-cb { padding: 4px 4px 22px; }
-.as-find { display: grid; gap: 6px; margin: 2px 0 14px; }
-.as-find .r { display: flex; gap: 9px; align-items: flex-start; font-size: 13.5px; line-height: 1.45; padding: 9px 12px; border-radius: 10px; background: color-mix(in srgb, var(--warn) 10%, transparent); }
-.as-find .r.bad { background: color-mix(in srgb, var(--down) 9%, transparent); }
-.as-find .r i { flex: none; width: 8px; height: 8px; border-radius: 50%; margin-top: 6px; background: var(--warn); }
-.as-find .r.bad i { background: var(--down); }
-.as-tabs { margin: 4px 0 14px; max-width: 100%; overflow-x: auto; scrollbar-width: none; }
-.as-tabs button { white-space: nowrap; }
-.as-ov { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 340px); gap: 24px; align-items: start; }
-.as-set { display: grid; grid-template-columns: 130px minmax(0, 1fr); gap: 0; margin: 0; font-size: 13.5px; align-content: start; }
-.as-set dt { color: var(--text-3); padding: 9px 0; border-bottom: 1px solid var(--line-soft); }
-.as-set dd { margin: 0; padding: 9px 0; border-bottom: 1px solid var(--line-soft); }
-.as-geo .sub-h:first-child { margin-top: 0; }
-.as-map { position: relative; width: 100%; max-width: 340px; height: 210px; border-radius: 12px; overflow: hidden; background: var(--sel); }
-.as-map .tiles { position: absolute; left: 50%; top: 0; width: 320px; height: 210px; transform: translateX(-50%); }
-.as-map .tiles img { position: absolute; width: 256px; height: 256px; max-width: none; }
-.as-map svg { position: absolute; left: 50%; top: 0; width: 320px; height: 210px; transform: translateX(-50%); }
-.as-map .area { fill: color-mix(in srgb, var(--m-blue) 22%, transparent); stroke: var(--m-blue); stroke-width: 2; }
-.as-map .dot { fill: var(--m-blue); stroke: #fff; stroke-width: 2; }
-.as-map .lab { position: absolute; left: 10px; top: 10px; background: var(--card); color: var(--text); font-size: 12px; font-weight: 600; padding: 3px 8px; border-radius: 6px; box-shadow: 0 1px 4px rgba(0,0,0,.15); }
-.as-map .attr { position: absolute; right: 6px; bottom: 4px; font-size: 10px; color: #333; background: rgba(255,255,255,.75); padding: 0 4px; border-radius: 3px; }
-:root[data-theme="dark"] .as-map .tiles { filter: invert(.92) hue-rotate(180deg) brightness(.95) contrast(.9); }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .as-map .tiles { filter: invert(.92) hue-rotate(180deg) brightness(.95) contrast(.9); } }
-.as-places { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
-.as-places span { font-size: 12.5px; background: var(--sel); padding: 3px 8px; border-radius: 6px; }
-.as-week { display: grid; gap: 4px; margin: 4px 0 8px; }
-.as-week .h { position: relative; height: 14px; }
-.as-week .hh { position: absolute; transform: translateX(-50%); font-size: 10.5px; color: var(--text-3); }
-.as-week .r { display: grid; grid-template-columns: 28px minmax(0, 1fr); align-items: center; }
-.as-week .d { font-size: 12px; color: var(--text-3); }
-.as-week .bar { position: relative; height: 14px; border-radius: 4px; background: var(--sel); overflow: hidden; }
-.as-week .bar i { position: absolute; top: 0; bottom: 0; background: var(--m-blue); border-radius: 3px; }
-.as-gh { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 18px 0 8px; }
-.as-gh:first-child { margin-top: 0; }
-.as-gh b { font-size: 14px; }
-.as-ads { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
-.as-ad { border: 1px solid var(--line-soft); border-radius: 14px; padding: 14px 16px; background: var(--card); min-width: 0; }
-.as-ad .atop > b { display: block; font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
-.as-ad .url { display: flex; align-items: center; gap: 9px; }
-.as-ad .fav { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: var(--sel); font-size: 12px; font-weight: 600; flex: none; }
-.as-ad .nm { font-size: 13px; color: var(--text); }
-.as-ad .u { font-size: 12px; color: var(--text-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 260px; }
-.as-ad .hl { margin-top: 8px; font-size: 18px; line-height: 1.3; color: #1a0dab; }
-:root[data-theme="dark"] .as-ad .hl { color: #8ab4f8; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .as-ad .hl { color: #8ab4f8; } }
-.as-ad .ds { margin-top: 4px; font-size: 13.5px; line-height: 1.5; color: var(--text-2); }
-.as-ad .sl { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 8px; }
-.as-ad .sl span { font-size: 13px; color: #1a0dab; }
-:root[data-theme="dark"] .as-ad .sl span { color: #8ab4f8; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .as-ad .sl span { color: #8ab4f8; } }
-.as-ad .meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--line-soft); }
-.as-tag { font-size: 11.5px; padding: 2px 8px; border-radius: 999px; background: var(--sel); color: var(--text-2); }
-.as-tag.ok { background: color-mix(in srgb, var(--up) 12%, transparent); color: color-mix(in srgb, var(--up) 80%, var(--text)); }
-.as-tag.bad { background: color-mix(in srgb, var(--down) 12%, transparent); color: var(--down); }
-.as-texts { margin-top: 10px; }
-.as-texts summary { cursor: pointer; font-size: 13px; color: var(--text-2); }
-.as-texts .lt { display: grid; margin-top: 8px; }
-.as-texts .r { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 8px; font-size: 12.5px; padding: 4px 0; border-bottom: 1px dashed var(--line-soft); }
-.as-texts .n, .as-texts .c { color: var(--text-3); font-variant-numeric: tabular-nums; }
-.as-texts .c.bad { color: var(--down); }
-.as-link { display: block; margin-top: 8px; font-size: 12px; color: var(--text-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.as-legend { margin-bottom: 4px; font-size: 12.5px; }
-.as-kws { display: flex; flex-wrap: wrap; gap: 6px; }
-.as-kw { font-size: 13px; padding: 4px 9px; border-radius: 8px; background: var(--sel); font-family: var(--mono); letter-spacing: -.01em; }
-.as-kw.exact { background: color-mix(in srgb, var(--m-blue) 12%, transparent); }
-.as-kw.phrase { background: color-mix(in srgb, var(--m-green) 11%, transparent); }
-.as-assets { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 6px 24px; }
-.as-assets .sub-h { margin-top: 6px; }
-.as-sls { display: grid; gap: 8px; }
-.as-sl { display: block; padding: 10px 12px; border-radius: 10px; background: var(--sel); color: inherit; text-decoration: none; }
-.as-sl b { display: block; font-size: 14px; color: #1a0dab; font-weight: 500; }
-:root[data-theme="dark"] .as-sl b { color: #8ab4f8; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .as-sl b { color: #8ab4f8; } }
-.as-sl span { display: block; font-size: 12.5px; color: var(--text-2); margin-top: 2px; }
-.as-sl small { display: block; font-size: 11.5px; color: var(--text-3); margin-top: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.as-callouts { display: flex; flex-wrap: wrap; gap: 6px; }
-.as-callouts span, .as-callouts a { font-size: 13px; padding: 4px 10px; border-radius: 999px; background: var(--sel); color: var(--text); text-decoration: none; }
-.as-snip { font-size: 13.5px; line-height: 1.5; margin-bottom: 4px; }
+/* ---------- Anzeigen: monochrome, high contrast, quiet ---------- */
+.asx { --ink: var(--text); --mut: var(--text-3); --hair: var(--line); --soft: var(--line-soft); --tint: color-mix(in srgb, var(--text) 4%, var(--card)); font-feature-settings: "tnum" 1; }
+.asx-strip { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); background: var(--card); border: 1px solid var(--hair); border-radius: 16px; overflow: hidden; }
+.asx-strip .c { padding: 18px 20px 16px; border-left: 1px solid var(--soft); min-width: 0; }
+.asx-strip .c:first-child { border-left: 0; }
+.asx-strip .l { display: block; font-size: 12px; font-weight: 500; color: var(--mut); letter-spacing: .01em; }
+.asx-strip b { display: block; font: 600 30px/1.15 var(--display); letter-spacing: -.035em; color: var(--ink); margin-top: 6px; }
+.asx-strip .s { display: block; font-size: 12.5px; color: var(--mut); margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.asx-strip .c.bad b { color: var(--down); }
+.asx-strip .c.warn b { color: color-mix(in srgb, var(--warn) 75%, var(--ink)); }
+.asx-bar { display: flex; align-items: center; gap: 10px; margin: 22px 0 18px; }
+.asx .asx-pick { flex: 1; min-width: 0; overflow-x: auto; scrollbar-width: none; background: transparent; padding: 0; gap: 6px; border-radius: 0; }
+.asx .asx-pick button { display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; border: 1px solid var(--hair); background: var(--card); color: var(--ink); border-radius: 999px; padding: 7px 14px; font-weight: 500; box-shadow: none; }
+.asx .asx-pick button.on { background: var(--ink); color: var(--card); border-color: var(--ink); }
+.asx-pick button img, .asx-pick button .logo { width: 16px; height: 16px; border-radius: 4px; }
+.asx-btn { flex: none; border: 0; background: var(--ink); color: var(--card); font: 600 13px var(--sans, inherit); padding: 9px 16px; border-radius: 10px; cursor: pointer; }
+.asx-btn:disabled { opacity: .5; cursor: default; }
+.asx-co { background: var(--card); border: 1px solid var(--hair); border-radius: 18px; padding: 22px 22px 10px; margin-bottom: 18px; }
+.asx-coh { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding-bottom: 18px; }
+.asx-coh .lg { width: 44px; height: 44px; border-radius: 11px; flex: none; }
+.asx-coh .tt { flex: 1; min-width: 180px; }
+.asx-coh h3 { margin: 0; font: 650 22px/1.2 var(--display); letter-spacing: -.025em; color: var(--ink); }
+.asx-coh .sub { font-size: 12.5px; color: var(--mut); margin-top: 3px; }
+.asx-mini { display: flex; gap: 28px; flex-wrap: wrap; }
+.asx-mini > div { min-width: 0; }
+.asx-mini .l { display: block; font-size: 11.5px; color: var(--mut); }
+.asx-mini b { display: block; font-size: 15px; font-weight: 600; color: var(--ink); margin-top: 2px; }
+.asx-mini .s { display: block; font-size: 11.5px; color: var(--mut); margin-top: 1px; }
+.asx-camps { border-top: 1px solid var(--ink); }
+.asx-camps .th, .asx-camps .tr { display: grid; grid-template-columns: minmax(0, 2.6fr) 74px 84px minmax(0, 1.3fr) 82px 74px 64px; gap: 12px; align-items: center; }
+.asx-camps .th { font-size: 11.5px; font-weight: 500; color: var(--mut); padding: 10px 10px; border-bottom: 1px solid var(--hair); }
+.asx-camps .tr { width: 100%; padding: 14px 10px; background: none; border: 0; border-bottom: 1px solid var(--soft); font: inherit; color: var(--ink); text-align: left; cursor: pointer; transition: background .15s; }
+.asx-camps .tr:hover { background: var(--tint); }
+.asx-camps .tr.open { background: var(--tint); border-bottom-color: transparent; }
+.asx-camps .num { text-align: right; font-variant-numeric: tabular-nums; font-size: 14px; }
+.asx-camps .nm { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.asx-camps .nm b { font-size: 14.5px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.asx-camps .geo { font-size: 13.5px; color: var(--text-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.asx-camps .fl { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
+.asx-camps .fl svg { width: 16px; height: 16px; color: var(--mut); transition: transform .2s var(--ease); }
+.asx-camps .tr.open .fl svg { transform: rotate(90deg); color: var(--ink); }
+.asx-st { display: inline-flex; align-items: center; gap: 5px; flex: none; font-size: 11.5px; font-weight: 500; color: var(--text-2); padding: 2px 8px 2px 7px; border-radius: 6px; background: var(--sel); }
+.asx-st::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--mut); }
+.asx-st.on { color: var(--ink); } .asx-st.on::before { background: var(--up); }
+.asx-st.paused::before { background: var(--m-orange); }
+.asx-badge { min-width: 22px; height: 22px; padding: 0 7px; border-radius: 999px; display: inline-grid; place-items: center; font-size: 12px; font-weight: 700; color: #fff; background: var(--m-orange); }
+.asx-badge.bad { background: var(--down); }
+.asx-det { background: var(--tint); border-bottom: 1px solid var(--soft); padding: 4px 10px 26px; }
+.asx-find { display: grid; gap: 2px; margin: 0 0 20px; border-radius: 12px; overflow: hidden; border: 1px solid var(--hair); background: var(--card); }
+.asx-find .r { display: flex; gap: 10px; align-items: flex-start; font-size: 13.5px; line-height: 1.45; padding: 10px 14px; border-top: 1px solid var(--soft); color: var(--ink); }
+.asx-find .r:first-child { border-top: 0; }
+.asx-find .r i { flex: none; width: 7px; height: 7px; border-radius: 50%; margin-top: 7px; background: var(--m-orange); }
+.asx-find .r.bad i { background: var(--down); }
+.asx-dg { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 28px; align-items: start; }
+.asx-main, .asx-side { min-width: 0; }
+.asx-seg { margin-bottom: 14px; max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+.asx-seg button { white-space: nowrap; }
+.asx-gh { font-size: 12px; font-weight: 600; color: var(--mut); letter-spacing: .02em; text-transform: uppercase; margin: 18px 0 8px; }
+.asx-gh:first-child { margin-top: 2px; }
+.asx-mut { margin: 0 0 10px; font-size: 13px; color: var(--mut); line-height: 1.5; }
+.asx-side .h { font-size: 12px; font-weight: 600; color: var(--mut); letter-spacing: .02em; text-transform: uppercase; margin: 22px 0 8px; }
+.asx-side .h:first-child { margin-top: 2px; }
+.asx-kv { display: grid; grid-template-columns: 92px minmax(0, 1fr); margin: 0; background: var(--card); border: 1px solid var(--hair); border-radius: 12px; padding: 4px 14px; font-size: 13px; }
+.asx-kv dt { color: var(--mut); padding: 8px 0; border-top: 1px solid var(--soft); }
+.asx-kv dd { margin: 0; padding: 8px 0; border-top: 1px solid var(--soft); color: var(--ink); }
+.asx-kv dt:first-of-type, .asx-kv dd:first-of-type { border-top: 0; }
+.asx-map { position: relative; height: 200px; border-radius: 12px; overflow: hidden; background: var(--sel); border: 1px solid var(--hair); }
+.asx-map .tiles, .asx-map svg { position: absolute; left: 50%; top: 0; width: 320px; height: 200px; transform: translateX(-50%); }
+.asx-map .tiles img { position: absolute; width: 256px; height: 256px; max-width: none; filter: grayscale(1) contrast(1.05) brightness(1.04); }
+.asx-map .area { fill: color-mix(in srgb, #111 14%, transparent); stroke: #111; stroke-width: 2; }
+.asx-map .dot { fill: #111; stroke: #fff; stroke-width: 2; }
+.asx-map .lab { position: absolute; left: 10px; top: 10px; background: #111; color: #fff; font-size: 12px; font-weight: 600; padding: 3px 8px; border-radius: 6px; }
+.asx-map .attr { position: absolute; right: 6px; bottom: 4px; font-size: 10px; color: #333; background: rgba(255,255,255,.8); padding: 0 4px; border-radius: 3px; }
+:root[data-theme="dark"] .asx-map .tiles img { filter: grayscale(1) invert(.9) contrast(.9); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .asx-map .tiles img { filter: grayscale(1) invert(.9) contrast(.9); } }
+:root[data-theme="dark"] .asx-map .area { fill: rgba(255,255,255,.12); stroke: #fff; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .asx-map .area { fill: rgba(255,255,255,.12); stroke: #fff; } }
+.asx-pl { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+.asx-more { font: inherit; font-size: 12px; font-weight: 600; border: 0; background: none; color: var(--ink); cursor: pointer; padding: 2px 4px; }
+.asx-pl span { font-size: 12px; background: var(--card); border: 1px solid var(--hair); padding: 2px 8px; border-radius: 6px; }
+.asx-week { display: grid; gap: 5px; background: var(--card); border: 1px solid var(--hair); border-radius: 12px; padding: 12px 14px 8px; }
+.asx-week .r, .asx-week .ax { display: grid; grid-template-columns: 24px minmax(0, 1fr); align-items: center; }
+.asx-week .d { font-size: 11.5px; color: var(--mut); }
+.asx-week .bar { position: relative; height: 10px; border-radius: 3px; background: var(--sel); overflow: hidden; }
+.asx-week .bar i { position: absolute; top: 0; bottom: 0; background: var(--ink); border-radius: 3px; }
+.asx-week .ax { grid-template-columns: 24px repeat(4, 1fr) 0; font-size: 10.5px; color: var(--mut); margin-top: 2px; }
+.asx-week .ax span:last-child { text-align: right; }
+.asx-side .asx-mut { margin-top: 8px; }
+.asx-ads { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 12px; }
+.asx-ad { background: var(--card); border: 1px solid var(--hair); border-radius: 14px; padding: 16px; min-width: 0; }
+.asx-ad .ah > b { display: block; font-size: 12px; font-weight: 700; margin-bottom: 7px; color: var(--ink); }
+.asx-ad .u { display: flex; align-items: center; gap: 9px; }
+.asx-ad .fav { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: var(--ink); color: var(--card); font-size: 12px; font-weight: 700; flex: none; }
+.asx-ad .n { font-size: 13px; color: var(--ink); }
+.asx-ad .p { font-size: 12px; color: var(--mut); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 240px; }
+.asx-ad .hl { margin-top: 10px; font-size: 18px; line-height: 1.3; color: #1a0dab; }
+.asx-ad .ds { margin-top: 5px; font-size: 13.5px; line-height: 1.5; color: var(--text-2); }
+.asx-ad .sl { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 9px; }
+.asx-ad .sl span { font-size: 13px; color: #1a0dab; }
+:root[data-theme="dark"] .asx-ad .hl, :root[data-theme="dark"] .asx-ad .sl span, :root[data-theme="dark"] .asx-sl b { color: #8ab4f8; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .asx-ad .hl, :root:not([data-theme="light"]) .asx-ad .sl span, :root:not([data-theme="light"]) .asx-sl b { color: #8ab4f8; } }
+.asx-ad .meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--soft); }
+.asx-tag { font-size: 11.5px; padding: 2px 8px; border-radius: 6px; background: var(--sel); color: var(--text-2); }
+.asx-tag.ok { color: var(--ink); } .asx-tag.ok::before { content: "✓ "; color: var(--up); font-weight: 700; }
+.asx-tag.bad { color: var(--down); }
+.asx-texts { margin-top: 10px; }
+.asx-texts summary { cursor: pointer; font-size: 13px; font-weight: 500; color: var(--ink); }
+.asx-texts .lt { margin-top: 8px; }
+.asx-texts .r { display: grid; grid-template-columns: 26px minmax(0, 1fr) auto; gap: 8px; font-size: 12.5px; padding: 5px 0; border-top: 1px solid var(--soft); }
+.asx-texts .n, .asx-texts .c { color: var(--mut); }
+.asx-texts .c.bad { color: var(--down); font-weight: 600; }
+.asx-url { display: block; margin-top: 8px; font-size: 12px; color: var(--mut); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.asx-kw { font: 500 12.5px/1.4 var(--mono); letter-spacing: -.01em; color: var(--ink); }
+.asx-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.asx-chips .asx-kw { background: var(--card); border: 1px solid var(--hair); padding: 3px 8px; border-radius: 6px; }
+.asx-pill { font-size: 13px; padding: 5px 11px; border-radius: 999px; background: var(--card); border: 1px solid var(--hair); color: var(--ink); text-decoration: none; }
+.asx-tbl { background: var(--card); border: 1px solid var(--hair); border-radius: 12px; overflow: hidden; }
+.asx-tbl .th, .asx-tbl .tr { display: grid; gap: 12px; align-items: center; padding: 9px 14px; }
+.asx-tbl.kwt .th, .asx-tbl.kwt .tr { grid-template-columns: minmax(0, 1fr) 96px 64px 72px 72px; }
+.asx-tbl.rec .th, .asx-tbl.rec .tr { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) 64px 76px 70px; }
+.asx-tbl .th { font-size: 11.5px; color: var(--mut); border-bottom: 1px solid var(--hair); }
+.asx-tbl .tr { font-size: 13px; border-top: 1px solid var(--soft); }
+.asx-tbl .tr:first-of-type { border-top: 0; }
+.asx-tbl .tr > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.asx-tbl .num { text-align: right; font-variant-numeric: tabular-nums; }
+.asx-tbl .tr > span:nth-child(2) { color: var(--text-2); }
+.asx-camps .th > span, .asx-tbl .th > span { font-size: 11.5px; font-weight: 500; color: var(--mut); }
+.asx-new { font-size: 11px; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; color: var(--mut); }
+.asx-good { color: color-mix(in srgb, var(--up) 85%, var(--ink)); }
+.asx-bad { color: var(--down); }
+.asx-assets { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 4px 24px; }
+.asx-sls { display: grid; gap: 6px; }
+.asx-sl { display: block; padding: 10px 12px; border-radius: 10px; background: var(--card); border: 1px solid var(--hair); color: inherit; text-decoration: none; }
+.asx-sl b { display: block; font-size: 14px; font-weight: 500; color: #1a0dab; }
+.asx-sl span { display: block; font-size: 12.5px; color: var(--text-2); margin-top: 2px; }
+.asx-snip { margin: 0 0 6px; font-size: 13.5px; line-height: 1.5; }
+.asx-recs { border-top: 1px solid var(--ink); margin-top: 22px; padding: 18px 0 14px; }
+.asx-rh { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 10px; }
+.asx-rh h4 { margin: 0; font: 650 17px/1.2 var(--display); letter-spacing: -.02em; color: var(--ink); }
+.asx-rh .asx-seg { margin: 0; }
+@media (max-width: 1100px) {
+  .asx-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .asx-strip .c:nth-child(4) { border-left: 0; }
+  .asx-strip .c:nth-child(n+4) { border-top: 1px solid var(--soft); }
+  .asx-dg { grid-template-columns: minmax(0, 1fr); }
+}
 @media (max-width: 760px) {
-  .as-ov { grid-template-columns: 1fr; }
-  .as-set { grid-template-columns: 110px minmax(0, 1fr); }
-  .as-coh { flex-wrap: wrap; }
-  .as-cnt { width: 100%; justify-content: flex-start; }
-  .as-ads { grid-template-columns: 1fr; }
-  .as-refresh { margin-left: 0; }
+  .asx-strip { grid-template-columns: 1fr 1fr; }
+  .asx-strip .c { border-left: 0; border-top: 1px solid var(--soft); padding: 14px 16px; }
+  .asx-strip .c:nth-child(-n+2) { border-top: 0; }
+  .asx-strip .c:nth-child(even) { border-left: 1px solid var(--soft); }
+  .asx-strip .c:last-child { grid-column: 1 / -1; border-left: 0; }
+  .asx-strip b { font-size: 24px; }
+  .asx-co { padding: 16px 14px 6px; border-radius: 16px; }
+  .asx-bar { flex-wrap: wrap; }
+  .asx .asx-pick { flex: 1 1 100%; }
+  .asx-btn { width: 100%; }
+  .asx-mini { gap: 16px; width: 100%; }
+  .asx-camps .th { display: none; }
+  .asx-camps .tr { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "nm fl" "geo geo" "b b"; gap: 6px 10px; padding: 14px 4px; }
+  .asx-camps .tr .nm { grid-area: nm; flex-wrap: wrap; }
+  .asx-camps .tr .nm b { white-space: normal; }
+  .asx-camps .tr .fl { grid-area: fl; }
+  .asx-camps .tr .geo { grid-area: geo; font-size: 13px; }
+  .asx-camps .tr > .num { display: none; }
+  .asx-camps .tr > .num:nth-child(2) { display: block; grid-area: b; text-align: left; font-size: 13px; color: var(--text-2); }
+  .asx-camps .tr > .num:nth-child(2)::after { content: " pro Tag"; }
+  .asx-det { padding: 4px 4px 20px; }
+  .asx-tbl.kwt .th, .asx-tbl.kwt .tr { grid-template-columns: minmax(0, 1fr) 54px 64px; }
+  .asx-tbl.kwt .th > :nth-child(2), .asx-tbl.kwt .tr > :nth-child(2), .asx-tbl.kwt .th > :nth-child(4), .asx-tbl.kwt .tr > :nth-child(4) { display: none; }
+  .asx-tbl.rec .th, .asx-tbl.rec .tr { grid-template-columns: minmax(0, 1fr) 54px 70px; }
+  .asx-tbl.rec .th > :nth-child(2), .asx-tbl.rec .tr > :nth-child(2), .asx-tbl.rec .th > :nth-child(5), .asx-tbl.rec .tr > :nth-child(5) { display: none; }
+  .asx-ads { grid-template-columns: minmax(0, 1fr); }
+  .asx-ad .meta { flex-wrap: wrap; }
 }
 .chipv.warn { background: color-mix(in srgb, var(--warn) 18%, transparent); color: color-mix(in srgb, var(--warn) 60%, var(--text)); }
 .two { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
@@ -3993,13 +4047,12 @@ body { font-size: 14px; line-height: 1.5; }
   var AS_DAY_SHORT = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So']
   var AS_STATUS = { ENABLED: ['Aktiv', 'on'], PAUSED: ['Pausiert', 'paused'], REMOVED: ['Gelöscht', 'off'] }
   var AS_BIDDING = { TARGET_SPEND: 'Klicks maximieren', MAXIMIZE_CONVERSIONS: 'Conversions maximieren', MANUAL_CPC: 'Manueller CPC', TARGET_CPA: 'Ziel-CPA', MAXIMIZE_CONVERSION_VALUE: 'Conversion-Wert maximieren', TARGET_IMPRESSION_SHARE: 'Anteil an möglichen Impressionen' }
-  var AS_MATCH = { EXACT: ['[', ']', 'Genau passend'], PHRASE: ['"', '"', 'Passende Wortgruppe'], BROAD: ['', '', 'Weitgehend passend'] }
+  var AS_MATCH = { EXACT: ['[', ']', 'Genau'], PHRASE: ['"', '"', 'Wortgruppe'], BROAD: ['', '', 'Weitgehend'] }
   var AS_SNIPPET = { 'Service catalog': 'Leistungen', Types: 'Typen', Brands: 'Marken', Styles: 'Stile', Models: 'Modelle', Amenities: 'Ausstattung', Neighborhoods: 'Stadtteile', Courses: 'Kurse', Destinations: 'Ziele', Shows: 'Shows', 'Insurance coverage': 'Versicherung', 'Degree programs': 'Studiengänge', 'Featured hotels': 'Hotels' }
   var adSetupCache = null
   function asHost(u) { try { return new URL(u).hostname.replace(/^www\./, '') } catch (e) { return u || '' } }
   function asEuro(v) { return v === null || v === undefined ? '–' : money.format(v).replace(',00', '') }
   function asHours(f, t) { return (f === 0 && t === 24) ? 'ganztags' : f + '–' + t + ' Uhr' }
-  // "Mo–Fr 7–19 Uhr · Sa–So ganztags"
   function asScheduleText(sched) {
     if (!sched.length) return 'Immer'
     var byDay = AS_DAYS.map(function (d) { return sched.filter(function (s) { return s.day === d }).map(function (s) { return asHours(s.from, s.to) }).join(', ') })
@@ -4014,10 +4067,51 @@ body { font-size: 14px; line-height: 1.5; }
   }
   function asGeoText(c) {
     if (c.radius.length) return c.radius.map(function (r) { return pct.format(r.km) + ' km Umkreis' }).join(' + ')
-    if (c.places.length) return c.places.length === 1 ? c.places[0].name : c.places[0].name + ' + ' + (c.places.length - 1) + ' weitere Orte'
+    if (c.places.length) return c.places.length === 1 ? c.places[0].name : c.places[0].name + ' + ' + (c.places.length - 1) + ' Orte'
     return 'Kein Gebiet'
   }
-  // what is worth a second look, per campaign; level: bad (fix before going live) or warn
+  function asWords(t) { return t.toLowerCase().split(/\s+/).filter(Boolean) }
+  // would this keyword (with its match type) show for that search?
+  function asMatches(text, match, term) {
+    var k = text.toLowerCase()
+    if (match === 'EXACT') return term === k
+    if (match === 'PHRASE') return (' ' + term + ' ').indexOf(' ' + k + ' ') >= 0
+    var tw = asWords(term)
+    return asWords(k).every(function (w) { return tw.indexOf(w) >= 0 })
+  }
+  // everything the page needs about one company, computed once
+  function asModel(co) {
+    var camps = co.setup.campaigns, h = co.history || { keywords: [], terms: [], organic: [], totals: null }
+    var kwHist = {}
+    h.keywords.forEach(function (r) { var x = kwHist[r[0]] || (kwHist[r[0]] = { c: 0, i: 0, s: 0, v: 0 }); x.c += r[2]; x.i += r[3]; x.s += r[4]; x.v += r[5] })
+    var t = h.totals
+    var cpc = t && t.clicks ? t.spend / t.clicks : null
+    var allKw = [], allNeg = []
+    camps.forEach(function (c) {
+      c.groups.forEach(function (g) { g.keywords.forEach(function (k) { allKw.push({ k: k, c: c, g: g }) }) })
+      c.negatives.forEach(function (n) { allNeg.push(n) })
+    })
+    var covered = function (term) { return allKw.some(function (x) { return asMatches(x.k.text, x.k.match, term) }) }
+    var negated = function (term) { return allNeg.some(function (n) { return asMatches(n[0], n[1], term) }) }
+    // the campaign whose keywords share most words with a search
+    var home = function (term) {
+      var tw = asWords(term), best = null, score = 0
+      allKw.forEach(function (x) { var s = asWords(x.k.text).filter(function (w) { return tw.indexOf(w) >= 0 }).length; if (s > score) { score = s; best = x } })
+      return best ? best.c.name.replace(/ · Suche · /, ' · ') + ' › ' + best.g.name : null
+    }
+    var ideas = h.terms.filter(function (r) { return (r[4] > 0 || r[1] >= 2) && !covered(r[0]) && !negated(r[0]) })
+      .sort(function (a, b) { return b[4] - a[4] || b[1] - a[1] }).slice(0, 25).map(function (r) { return { t: r[0], c: r[1], i: r[2], s: r[3], v: r[4], home: home(r[0]) } })
+    var waste = h.terms.filter(function (r) { return r[4] === 0 && r[1] >= 2 && r[3] >= 2 && !negated(r[0]) })
+      .sort(function (a, b) { return b[3] - a[3] }).slice(0, 20).map(function (r) { return { t: r[0], c: r[1], i: r[2], s: r[3], v: r[4], kw: covered(r[0]) } })
+    var organic = h.organic.filter(function (r) { return r[2] >= 20 && !covered(r[0]) && !negated(r[0]) })
+      .sort(function (a, b) { return b[2] - a[2] }).slice(0, 20).map(function (r) { return { t: r[0], c: r[1], i: r[2], p: r[3], home: home(r[0]) } })
+    return { kwHist: kwHist, cpc: cpc, totals: t, ideas: ideas, waste: waste, organic: organic }
+  }
+  function asExpected(c, m) {
+    if (!m.cpc) return null
+    var price = c.ceiling ? Math.min(m.cpc, c.ceiling) : m.cpc
+    return price ? c.budget / price : null
+  }
   function asFindings(co) {
     var camps = co.setup ? co.setup.campaigns : []
     var kwCamp = {}, placeCamp = {}
@@ -4032,58 +4126,39 @@ body { font-size: 14px; line-height: 1.5; }
       if (!c.languages.length) f.push(['bad', 'Keine Sprache eingestellt.'])
       if (c.partners || c.display) f.push(['warn', (c.display ? 'Displaynetzwerk' : 'Suchnetzwerk-Partner') + ' eingeschaltet.'])
       if (c.presence && c.presence !== 'PRESENCE') f.push(['warn', 'Standortoption „Interesse“ statt „Präsenz“.'])
-      var others = {}, shared = 0, sharedWith = {}
-      c.groups.forEach(function (g) { g.keywords.forEach(function (k) { var m = kwCamp[k.text.toLowerCase()]; var o = Object.keys(m).filter(function (n) { return n !== c.name }); if (o.length) { shared++; o.forEach(function (n) { others[n] = 1; sharedWith[n] = 1 }) } }) })
+      var others = {}, shared = 0
+      c.groups.forEach(function (g) { g.keywords.forEach(function (k) { var o = Object.keys(kwCamp[k.text.toLowerCase()]).filter(function (n) { return n !== c.name }); if (o.length) { shared++; o.forEach(function (n) { others[n] = 1 }) } }) })
       if (shared) f.push(['warn', plural(shared, ['Keyword steht', 'Keywords stehen']) + ' auch in ' + Object.keys(others).map(function (n) { return '„' + n + '“' }).join(', ') + '. Die Kampagnen bieten gegeneinander.'])
       var po = {}
       c.places.forEach(function (p) { Object.keys(placeCamp[p.id]).forEach(function (n) { if (n !== c.name) po[n] = (po[n] || 0) + 1 }) })
-      Object.keys(po).filter(function (n) { return sharedWith[n] }).forEach(function (n) { f.push(['warn', plural(po[n], ['Ort ist', 'Orte sind']) + ' auch in „' + n + '“ eingestellt, mit denselben Keywords. Dort bieten beide Kampagnen gegeneinander.']) })
+      Object.keys(po).filter(function (n) { return others[n] }).forEach(function (n) { f.push(['warn', plural(po[n], ['Ort ist', 'Orte sind']) + ' auch in „' + n + '“ eingestellt, mit denselben Keywords.']) })
       if (c.ceiling && c.budget < c.ceiling * 2) {
         var perDay = Math.floor(c.budget / (c.ceiling * 0.6))
-        f.push(['warn', 'Budget ' + asEuro(c.budget) + '/Tag bei bis zu ' + asEuro(c.ceiling) + ' pro Klick: ' + (perDay < 1 ? 'reicht oft für keinen einzigen Klick am Tag.' : 'reicht nur für etwa ' + plural(perDay, ['Klick', 'Klicks']) + ' am Tag.') + ' So sammeln sich nur langsam Daten.'])
+        f.push(['warn', asEuro(c.budget) + ' am Tag bei bis zu ' + asEuro(c.ceiling) + ' pro Klick: ' + (perDay < 1 ? 'oft kein einziger Klick am Tag.' : 'nur etwa ' + plural(perDay, ['Klick', 'Klicks']) + ' am Tag.')])
       }
       var we = c.schedule.filter(function (s) { return (s.day === 'SATURDAY' || s.day === 'SUNDAY') && s.from === 0 && s.to === 24 })
       var wk = c.schedule.filter(function (s) { return s.day !== 'SATURDAY' && s.day !== 'SUNDAY' && !(s.from === 0 && s.to === 24) })
       if (we.length && wk.length) f.push(['warn', 'Am Wochenende rund um die Uhr, werktags nur ' + asHours(wk[0].from, wk[0].to) + '.'])
       var hosts = {}
       c.groups.forEach(function (g) { g.ads.forEach(function (a) { if (a.url && /\.onepage\.me$/.test(asHost(a.url))) hosts[asHost(a.url)] = 1 }) })
-      if (Object.keys(hosts).length) f.push(['warn', 'Anzeige zeigt die Adresse ' + Object.keys(hosts).join(', ') + '. Eine eigene Domain wirkt vertrauenswürdiger.'])
+      if (Object.keys(hosts).length) f.push(['warn', 'Anzeige zeigt ' + Object.keys(hosts).join(', ') + '. Eine eigene Domain wirkt vertrauenswürdiger.'])
       var noAds = c.groups.filter(function (g) { return !g.ads.length }).length
       if (noAds) f.push(['bad', plural(noAds, ['Anzeigengruppe hat', 'Anzeigengruppen haben']) + ' keine Anzeige.'])
-      if (!c.calls.length && !c.groups.some(function (g) { return g.calls && g.calls.length })) f.push(['warn', 'Keine Telefonnummer als Anruf-Asset.'])
+      if (!c.calls.length) f.push(['warn', 'Keine Telefonnummer als Anruf-Asset.'])
       if (c.sitelinks.length && c.sitelinks.length < 4) f.push(['warn', 'Nur ' + c.sitelinks.length + ' Sitelinks, Google zeigt bis zu 4.'])
       out[c.name] = f
     })
     return out
   }
-  function asStatus(s) { var x = AS_STATUS[s] || [s || '–', '']; return el('span', 'as-st ' + x[1], x[0]) }
-  function asChip(icon, text, title) {
-    var c = el('span', 'as-chip')
-    if (icon) c.append(html('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + icon + '</svg>'))
-    c.append(el('span', null, text))
-    if (title) c.title = title
-    return c
-  }
-  var AS_I = {
-    euro: '<path d="M17 6.5A6.5 6.5 0 1 0 17 17.5"/><path d="M4 10.5h9M4 13.5h9"/>',
-    bid: '<path d="M4 17l5-5 4 4 7-7"/><path d="M15 9h5v5"/>',
-    pin: '<path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
-    clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
-    stack: '<path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/>'
-  }
-  // a small OpenStreetMap with the targeted radius drawn on top
+  function asStatus(s) { var x = AS_STATUS[s] || [s || '–', '']; return el('span', 'asx-st ' + x[1], x[0]) }
   function asMap(r) {
-    var W = 320, H = 210
-    var lat = r.lat, lng = r.lng
-    var mpp = (r.km * 1000) / 78
-    var z = Math.max(5, Math.min(13, Math.floor(Math.log2((156543.03 * Math.cos(lat * Math.PI / 180)) / mpp))))
+    var W = 320, H = 200, lat = r.lat, lng = r.lng
+    var z = Math.max(5, Math.min(13, Math.floor(Math.log2((156543.03 * Math.cos(lat * Math.PI / 180)) / ((r.km * 1000) / 74)))))
     var scale = Math.pow(2, z) * 256
     var px = (lng + 180) / 360 * scale
     var py = (1 - Math.log(Math.tan(lat * Math.PI / 180) + 1 / Math.cos(lat * Math.PI / 180)) / Math.PI) / 2 * scale
-    var box = el('div', 'as-map')
-    var tiles = el('div', 'tiles')
-    var x0 = Math.floor((px - W / 2) / 256), x1 = Math.floor((px + W / 2) / 256), y0 = Math.floor((py - H / 2) / 256), y1 = Math.floor((py + H / 2) / 256)
-    for (var tx = x0; tx <= x1; tx++) for (var ty = y0; ty <= y1; ty++) {
+    var box = el('div', 'asx-map'), tiles = el('div', 'tiles')
+    for (var tx = Math.floor((px - W / 2) / 256); tx <= Math.floor((px + W / 2) / 256); tx++) for (var ty = Math.floor((py - H / 2) / 256); ty <= Math.floor((py + H / 2) / 256); ty++) {
       var img = el('img'); img.alt = ''; img.decoding = 'async'
       img.src = 'https://tile.openstreetmap.org/' + z + '/' + tx + '/' + ty + '.png'
       img.style.left = Math.round(tx * 256 - (px - W / 2)) + 'px'; img.style.top = Math.round(ty * 256 - (py - H / 2)) + 'px'
@@ -4091,225 +4166,252 @@ body { font-size: 14px; line-height: 1.5; }
     }
     var rpx = (r.km * 1000) / ((156543.03 * Math.cos(lat * Math.PI / 180)) / Math.pow(2, z))
     var ov = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, 'aria-hidden': 'true' })
-    ov.append(svg('circle', { cx: W / 2, cy: H / 2, r: rpx, class: 'area' }), svg('circle', { cx: W / 2, cy: H / 2, r: 4.5, class: 'dot' }))
-    var lab = el('span', 'lab', pct.format(r.km) + ' km')
-    box.append(tiles, ov, lab, el('span', 'attr', '© OpenStreetMap'))
+    ov.append(svg('circle', { cx: W / 2, cy: H / 2, r: rpx, class: 'area' }), svg('circle', { cx: W / 2, cy: H / 2, r: 4, class: 'dot' }))
+    box.append(tiles, ov, el('span', 'lab', pct.format(r.km) + ' km'), el('span', 'attr', '© OpenStreetMap'))
     return box
   }
   function asWeek(sched) {
-    var g = el('div', 'as-week')
-    var head = el('div', 'h'); head.append(el('span'))
-    ;[0, 6, 12, 18, 24].forEach(function (h) { var s = el('span', 'hh', String(h)); s.style.left = 'calc(28px + (100% - 28px) * ' + (h / 24) + ')'; head.append(s) })
-    g.append(head)
+    var g = el('div', 'asx-week')
     AS_DAYS.forEach(function (d, i) {
       var row = el('div', 'r'); row.append(el('span', 'd', AS_DAY_SHORT[i]))
       var bar = el('div', 'bar')
-      var list = sched.length ? sched.filter(function (s) { return s.day === d }) : [{ from: 0, to: 24 }]
-      list.forEach(function (s) { var on = el('i'); on.style.left = (s.from / 24 * 100) + '%'; on.style.width = ((s.to - s.from) / 24 * 100) + '%'; on.title = AS_DAY_SHORT[i] + ' ' + asHours(s.from, s.to); bar.append(on) })
+      ;(sched.length ? sched.filter(function (s) { return s.day === d }) : [{ from: 0, to: 24 }]).forEach(function (s) { var on = el('i'); on.style.left = (s.from / 24 * 100) + '%'; on.style.width = ((s.to - s.from) / 24 * 100) + '%'; on.title = asHours(s.from, s.to); bar.append(on) })
       row.append(bar); g.append(row)
     })
+    var ax = el('div', 'ax'); ax.append(el('span'), el('span', null, '0'), el('span', null, '6'), el('span', null, '12'), el('span', null, '18'), el('span', null, '24')); g.append(ax)
     return g
   }
-  function asKeyword(k) {
-    var m = AS_MATCH[k.match] || ['', '', k.match]
-    var c = el('span', 'as-kw ' + (k.match || '').toLowerCase(), m[0] + k.text + m[1])
-    c.title = m[2] + (k.clicks ? ' · ' + plural(k.clicks, ['Klick', 'Klicks']) : '')
-    return c
+  function asKw(text, match) { var m = AS_MATCH[match] || ['', '', match]; var c = el('span', 'asx-kw', m[0] + text + m[1]); c.title = m[2]; return c }
+  function asTable(heads, rows, cls) {
+    var t = el('div', 'asx-tbl' + (cls ? ' ' + cls : ''))
+    var h = el('div', 'th'); heads.forEach(function (x) { h.append(el('span', x[1] || '', x[0])) }); t.append(h)
+    rows.forEach(function (r) { var tr = el('div', 'tr'); r.forEach(function (c, i) { var cell = el('span', heads[i][1] || ''); if (c && c.nodeType) cell.append(c); else cell.textContent = c === null || c === undefined ? '' : c; tr.append(cell) }); t.append(tr) })
+    return t
   }
-  // the ad as it would look on Google: first three headlines, first two descriptions
   function asAdPreview(a, c) {
-    var card = el('div', 'as-ad')
-    var top = el('div', 'atop')
-    top.append(el('b', null, 'Gesponsert'))
-    var url = el('div', 'url')
-    url.append(el('span', 'fav', (asHost(a.url) || '?').charAt(0).toUpperCase()))
-    var t = el('div'); t.append(el('div', 'nm', c.name.split(' · ')[0]), el('div', 'u', asHost(a.url) + (a.path1 ? ' › ' + a.path1 : '') + (a.path2 ? ' › ' + a.path2 : '')))
-    url.append(t)
-    top.append(url)
-    card.append(top, el('div', 'hl', a.headlines.slice(0, 3).join(' | ')), el('div', 'ds', a.descriptions.slice(0, 2).join(' ')))
-    var sl = c.sitelinks.slice(0, 4)
-    if (sl.length) { var s = el('div', 'sl'); sl.forEach(function (x) { s.append(el('span', null, x.text)) }); card.append(s) }
+    var card = el('div', 'asx-ad')
+    var head = el('div', 'ah')
+    head.append(el('b', null, 'Gesponsert'))
+    var u = el('div', 'u'); u.append(el('span', 'fav', (asHost(a.url) || '?').charAt(0).toUpperCase()))
+    var ut = el('div'); ut.append(el('div', 'n', c.name.split(' · ')[0]), el('div', 'p', asHost(a.url) + (a.path1 ? ' › ' + a.path1 : '') + (a.path2 ? ' › ' + a.path2 : '')))
+    u.append(ut); head.append(u)
+    card.append(head, el('div', 'hl', a.headlines.slice(0, 3).join(' | ')), el('div', 'ds', a.descriptions.slice(0, 2).join(' ')))
+    if (c.sitelinks.length) { var s = el('div', 'sl'); c.sitelinks.slice(0, 4).forEach(function (x) { s.append(el('span', null, x.text)) }); card.append(s) }
+    var STR = { EXCELLENT: 'Sehr gut', GOOD: 'Gut', AVERAGE: 'Mittel', POOR: 'Schwach', PENDING: 'folgt', UNRATED: '–' }
     var meta = el('div', 'meta')
-    meta.append(asStatus(a.status))
-    if (a.approval) meta.append(el('span', 'as-tag ' + (a.approval === 'APPROVED' ? 'ok' : a.approval === 'DISAPPROVED' ? 'bad' : ''), a.approval === 'APPROVED' ? 'Genehmigt' : a.approval === 'DISAPPROVED' ? 'Abgelehnt' : a.approval === 'APPROVED_LIMITED' ? 'Eingeschränkt' : a.approval))
-    var STR = { EXCELLENT: 'Sehr gut', GOOD: 'Gut', AVERAGE: 'Durchschnittlich', POOR: 'Schwach', PENDING: 'Bewertung folgt', UNRATED: 'Nicht bewertet' }
-    if (a.strength) meta.append(el('span', 'as-tag ' + (a.strength === 'EXCELLENT' || a.strength === 'GOOD' ? 'ok' : a.strength === 'POOR' ? 'bad' : ''), 'Anzeigenstärke: ' + (STR[a.strength] || a.strength)))
-    meta.append(el('span', 'as-tag', a.headlines.length + ' Titel · ' + a.descriptions.length + ' Beschreibungen'))
+    meta.append(asStatus(a.status), el('span', 'asx-tag' + (a.approval === 'APPROVED' ? ' ok' : a.approval === 'DISAPPROVED' ? ' bad' : ''), a.approval === 'APPROVED' ? 'Genehmigt' : a.approval === 'DISAPPROVED' ? 'Abgelehnt' : (a.approval || '–')),
+      el('span', 'asx-tag', 'Stärke: ' + (STR[a.strength] || a.strength || '–')), el('span', 'asx-tag', a.headlines.length + ' Titel · ' + a.descriptions.length + ' Texte'))
     card.append(meta)
-    var more = el('details', 'as-texts')
-    more.append(el('summary', null, 'Alle Texte'))
+    var more = el('details', 'asx-texts'); more.append(el('summary', null, 'Alle Texte anzeigen'))
     var lt = el('div', 'lt')
-    a.headlines.forEach(function (h, i) { var r = el('div', 'r'); r.append(el('span', 'n', 'T' + (i + 1)), el('span', 'x', h), el('span', 'c' + (h.length > 30 ? ' bad' : ''), h.length + '/30')); lt.append(r) })
-    a.descriptions.forEach(function (h, i) { var r = el('div', 'r'); r.append(el('span', 'n', 'B' + (i + 1)), el('span', 'x', h), el('span', 'c' + (h.length > 90 ? ' bad' : ''), h.length + '/90')); lt.append(r) })
+    a.headlines.forEach(function (x, i) { var r = el('div', 'r'); r.append(el('span', 'n', 'T' + (i + 1)), el('span', null, x), el('span', 'c' + (x.length > 30 ? ' bad' : ''), x.length + '/30')); lt.append(r) })
+    a.descriptions.forEach(function (x, i) { var r = el('div', 'r'); r.append(el('span', 'n', 'B' + (i + 1)), el('span', null, x), el('span', 'c' + (x.length > 90 ? ' bad' : ''), x.length + '/90')); lt.append(r) })
     more.append(lt)
-    if (a.url) { var lk = el('a', 'as-link', a.url); lk.href = a.url; lk.target = '_blank'; lk.rel = 'noopener'; more.append(lk) }
+    if (a.url) { var lk = el('a', 'asx-url', a.url); lk.href = a.url; lk.target = '_blank'; lk.rel = 'noopener'; more.append(lk) }
     card.append(more)
     return card
   }
-  function asCampaign(c, co, findings) {
-    var box = el('article', 'as-camp')
-    var head = el('button', 'as-ch'); head.type = 'button'; head.setAttribute('aria-expanded', 'false')
-    var nm = el('div', 'nm')
-    nm.append(asStatus(c.status), el('b', null, c.name))
-    var bad = findings.filter(function (f) { return f[0] === 'bad' }).length, warn = findings.length - bad
-    if (findings.length) nm.append(el('span', 'as-fc ' + (bad ? 'bad' : 'warn'), findings.length === 1 ? '1 Hinweis' : findings.length + ' Hinweise'))
-    var kws = c.groups.reduce(function (a, g) { return a + g.keywords.length }, 0), ads = c.groups.reduce(function (a, g) { return a + g.ads.length }, 0)
-    var chips = el('div', 'chips')
-    chips.append(
-      asChip(AS_I.euro, asEuro(c.budget) + ' / Tag'),
-      asChip(AS_I.bid, (AS_BIDDING[c.bidding] || c.bidding || '–') + (c.ceiling ? ' · max. ' + asEuro(c.ceiling) : '')),
-      asChip(AS_I.pin, asGeoText(c)),
-      asChip(AS_I.clock, asScheduleText(c.schedule)),
-      asChip(AS_I.stack, plural(c.groups.length, ['Gruppe', 'Gruppen']) + ' · ' + plural(kws, ['Keyword', 'Keywords']) + ' · ' + plural(ads, ['Anzeige', 'Anzeigen'])))
-    var chev = html('<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>')
-    head.append(nm, chips, chev)
-    box.append(head)
-    var body = null
-    head.onclick = function () {
-      var open = box.classList.toggle('open')
-      head.setAttribute('aria-expanded', String(open))
-      if (open && !body) { body = asCampaignBody(c, findings); box.append(body) }
-      if (body) body.hidden = !open
-    }
-    return box
-  }
-  function asCampaignBody(c, findings) {
-    var body = el('div', 'as-cb')
+  function asDetail(c, m, findings) {
+    var box = el('div', 'asx-det')
     if (findings.length) {
-      var fl = el('div', 'as-find')
+      var fl = el('div', 'asx-find')
       findings.forEach(function (f) { var r = el('div', 'r ' + f[0]); r.append(el('i'), el('span', null, f[1])); fl.append(r) })
-      body.append(fl)
+      box.append(fl)
     }
-    var tabs = [['ov', 'Einstellungen'], ['ads', 'Anzeigen'], ['kw', 'Keywords'], ['as', 'Assets'], ['neg', 'Ausschlüsse (' + c.negatives.length + ')']]
-    var pane = el('div', 'as-pane')
-    var cur = 'ov'
-    var bar = seg(tabs, cur, function (k) { cur = k; paint() }, 'as-tabs')
-    body.append(bar, pane)
+    var grid = el('div', 'asx-dg'), main = el('div', 'asx-main'), side = el('aside', 'asx-side')
+    // side: the facts, the area, the hours
+    var kv = el('dl', 'asx-kv')
+    var row = function (k, v) { kv.append(el('dt', null, k), el('dd', null, v)) }
+    var exp = asExpected(c, m)
+    row('Status', (AS_STATUS[c.status] || [c.status])[0])
+    row('Budget', asEuro(c.budget) + ' / Tag · ca. ' + asEuro(Math.round(c.budget * 30.4)) + ' / Monat')
+    row('Gebote', (AS_BIDDING[c.bidding] || c.bidding || '–') + (c.ceiling ? ', max. ' + asEuro(c.ceiling) : ''))
+    if (exp !== null) row('Erwartet', '≈ ' + pct.format(Math.round(exp * 10) / 10) + ' Klicks / Tag bei Ø ' + money.format(Math.min(m.cpc, c.ceiling || m.cpc)) + ' pro Klick')
+    row('Netzwerk', 'Google-Suche' + (c.partners ? ' + Partner' : '') + (c.display ? ' + Display' : ''))
+    row('Standort', c.presence === 'PRESENCE' ? 'Präsenz' : (c.presence || '–'))
+    row('Sprache', c.languages.join(', ') || '–')
+    row('Klicks 30 T.', c.stats && c.stats.clicks ? nf.format(c.stats.clicks) + ' · ' + money.format(c.stats.spend) : 'noch keine')
+    side.append(el('div', 'h', 'Details'), kv)
+    side.append(el('div', 'h', 'Gebiet'))
+    c.radius.forEach(function (r) { side.append(asMap(r)) })
+    if (c.places.length) {
+      var pl = el('div', 'asx-pl')
+      var show = function (all) { pl.replaceChildren(); (all ? c.places : c.places.slice(0, 9)).forEach(function (p) { pl.append(el('span', null, p.name)) }); if (!all && c.places.length > 9) { var more = el('button', 'asx-more', '+ ' + (c.places.length - 9) + ' weitere'); more.type = 'button'; more.onclick = function () { show(true) }; pl.append(more) } }
+      show(false); side.append(pl)
+    }
+    if (!c.radius.length && !c.places.length) side.append(el('p', 'asx-mut', 'Kein Gebiet eingestellt'))
+    side.append(el('div', 'h', 'Werbezeiten'), asWeek(c.schedule), el('p', 'asx-mut', asScheduleText(c.schedule)))
+    // main: tabs
+    var nKw = c.groups.reduce(function (a, g) { return a + g.keywords.length }, 0)
+    var nAds = c.groups.reduce(function (a, g) { return a + g.ads.length }, 0)
+    var tabs = [['ads', 'Anzeigen ' + nAds], ['kw', 'Keywords ' + nKw], ['neg', 'Ausschlüsse ' + c.negatives.length], ['as', 'Assets ' + (c.sitelinks.length + c.callouts.length + c.snippets.length + c.calls.length)]]
+    var pane = el('div', 'pane'), cur = 'ads'
+    main.append(seg(tabs, cur, function (k) { cur = k; paint() }, 'asx-seg'), pane)
     function paint() {
       pane.replaceChildren()
-      if (cur === 'ov') {
-        var grid = el('div', 'as-ov')
-        var set = el('dl', 'as-set')
-        var row = function (k, v) { set.append(el('dt', null, k), el('dd', null, v)) }
-        row('Status', (AS_STATUS[c.status] || [c.status])[0])
-        row('Tagesbudget', asEuro(c.budget) + ' · im Monat bis ca. ' + asEuro(Math.round(c.budget * 30.4)))
-        row('Gebotsstrategie', (AS_BIDDING[c.bidding] || c.bidding || '–') + (c.ceiling ? ', höchstens ' + asEuro(c.ceiling) + ' pro Klick' : ''))
-        row('Netzwerke', 'Google-Suche' + (c.partners ? ' + Suchnetzwerk-Partner' : '') + (c.display ? ' + Display' : ''))
-        row('Standortoption', c.presence === 'PRESENCE' ? 'Präsenz: Personen, die dort sind' : c.presence === 'PRESENCE_OR_INTEREST' ? 'Präsenz oder Interesse' : (c.presence || '–'))
-        row('Sprache', c.languages.join(', ') || '–')
-        if (c.stats && (c.stats.impressions || c.stats.clicks)) row('Letzte 30 Tage', nf.format(c.stats.clicks) + ' Klicks · ' + nf.format(c.stats.impressions) + ' Einblendungen · ' + money.format(c.stats.spend))
-        grid.append(set)
-        var geo = el('div', 'as-geo')
-        geo.append(el('div', 'sub-h', 'Gebiet'))
-        c.radius.forEach(function (r) { geo.append(asMap(r)) })
-        if (c.places.length) { var pl = el('div', 'as-places'); c.places.forEach(function (p) { pl.append(el('span', null, p.name)) }); geo.append(pl) }
-        if (c.excluded.length) { geo.append(el('div', 'k-muted', 'Ausgeschlossen: ' + c.excluded.map(function (p) { return p.name }).join(', '))) }
-        if (!c.radius.length && !c.places.length) geo.append(el('div', 'empty', 'Kein Gebiet eingestellt'))
-        geo.append(el('div', 'sub-h', 'Werbezeiten'), asWeek(c.schedule), el('div', 'k-muted', asScheduleText(c.schedule)))
-        grid.append(geo)
-        pane.append(grid)
-      } else if (cur === 'ads') {
+      if (cur === 'ads') {
         c.groups.forEach(function (g) {
-          var gh = el('div', 'as-gh'); gh.append(el('b', null, g.name), asStatus(g.status), el('span', 'k-muted', plural(g.keywords.length, ['Keyword', 'Keywords'])))
-          pane.append(gh)
-          if (!g.ads.length) { pane.append(el('div', 'k-muted', 'Keine Anzeige in dieser Gruppe.')); return }
-          var wrap = el('div', 'as-ads'); g.ads.forEach(function (a) { wrap.append(asAdPreview(a, c)) }); pane.append(wrap)
+          pane.append(el('div', 'asx-gh', g.name))
+          if (!g.ads.length) { pane.append(el('p', 'asx-mut', 'Keine Anzeige in dieser Gruppe.')); return }
+          var w = el('div', 'asx-ads'); g.ads.forEach(function (a) { w.append(asAdPreview(a, c)) }); pane.append(w)
         })
       } else if (cur === 'kw') {
-        var legend = el('div', 'as-legend k-muted')
-        legend.append(document.createTextNode('[genau passend]  "passende Wortgruppe"  weitgehend passend'))
-        pane.append(legend)
+        pane.append(el('p', 'asx-mut', 'Klicks, Kosten und Anfragen der letzten 90 Tage aus dem bisherigen Konto, wenn es das Keyword dort schon gab.'))
         c.groups.forEach(function (g) {
-          var gh = el('div', 'as-gh'); gh.append(el('b', null, g.name), el('span', 'k-muted', plural(g.keywords.length, ['Keyword', 'Keywords'])))
-          var list = el('div', 'as-kws'); g.keywords.slice().sort(function (a, b) { return a.text.localeCompare(b.text) }).forEach(function (k) { list.append(asKeyword(k)) })
-          pane.append(gh, list)
+          pane.append(el('div', 'asx-gh', g.name))
+          var rows = g.keywords.map(function (k) { return { k: k, h: m.kwHist[k.text.toLowerCase()] } })
+          rows.sort(function (a, b) { return ((b.h && b.h.c) || 0) - ((a.h && a.h.c) || 0) || a.k.text.localeCompare(b.k.text) })
+          pane.append(asTable([['Keyword'], ['Option'], ['Klicks', 'num'], ['Ø Preis', 'num'], ['Anfragen', 'num']], rows.map(function (r) {
+            var h = r.h
+            return [asKw(r.k.text, r.k.match), (AS_MATCH[r.k.match] || ['', '', r.k.match])[2], h ? nf.format(h.c) : el('span', 'asx-new', 'neu'), h && h.c ? money.format(h.s / h.c) : '–', h ? nf.format(Math.round(h.v * 10) / 10) : '–']
+          }), 'kwt'))
         })
-      } else if (cur === 'as') {
-        var aw = el('div', 'as-assets')
-        var blk = function (title, n, node) { var b = el('div', 'blk'); b.append(el('div', 'sub-h', title + (n !== null ? ' · ' + n : '')), node); aw.append(b) }
-        var sl = el('div', 'as-sls')
-        c.sitelinks.forEach(function (s) { var x = el('a', 'as-sl'); if (s.url) { x.href = s.url; x.target = '_blank'; x.rel = 'noopener' } x.append(el('b', null, s.text)); if (s.d1 || s.d2) x.append(el('span', null, [s.d1, s.d2].filter(Boolean).join(' · '))); x.append(el('small', null, asHost(s.url) + (s.url && new URL(s.url).pathname !== '/' ? new URL(s.url).pathname : ''))); sl.append(x) })
-        blk('Sitelinks', c.sitelinks.length, c.sitelinks.length ? sl : el('div', 'k-muted', 'Keine'))
-        var co2 = el('div', 'as-callouts'); c.callouts.forEach(function (t) { co2.append(el('span', null, t)) })
-        blk('Callouts', c.callouts.length, c.callouts.length ? co2 : el('div', 'k-muted', 'Keine'))
-        var sn = el('div')
-        c.snippets.forEach(function (s) { var r = el('div', 'as-snip'); r.append(el('b', null, (AS_SNIPPET[s.header] || s.header) + ': '), document.createTextNode(s.values.join(', '))); sn.append(r) })
-        blk('Snippets', c.snippets.length, c.snippets.length ? sn : el('div', 'k-muted', 'Keine'))
-        var cl = el('div', 'as-callouts'); c.calls.forEach(function (t) { var a = el('a', 'tel', t); a.href = 'tel:' + t.replace(/\s/g, ''); cl.append(a) })
-        blk('Anruf', c.calls.length, c.calls.length ? cl : el('div', 'k-muted', 'Keine Nummer'))
-        pane.append(aw)
-        if (c.assets_kept || c.groups.some(function (g) { return g.ads_kept })) pane.append(el('p', 'k-muted', 'Anzeigen und Assets pausierter Kampagnen stammen aus dem letzten Import, Windsor liefert sie erst, wenn die Kampagne läuft.'))
+      } else if (cur === 'neg') {
+        if (!c.negatives.length) { pane.append(el('p', 'asx-mut', 'Keine ausgeschlossenen Keywords.')); return }
+        pane.append(el('p', 'asx-mut', 'Bei diesen Suchen erscheint keine Anzeige dieser Kampagne.'))
+        var nl = el('div', 'asx-chips'); c.negatives.slice().sort(function (a, b) { return a[0].localeCompare(b[0]) }).forEach(function (n) { nl.append(asKw(n[0], n[1])) }); pane.append(nl)
       } else {
-        if (!c.negatives.length) pane.append(el('div', 'k-muted', 'Keine ausgeschlossenen Keywords'))
-        else {
-          pane.append(el('p', 'k-muted', 'Bei diesen Suchbegriffen wird keine Anzeige der Kampagne gezeigt.'))
-          var nl = el('div', 'as-kws'); c.negatives.slice().sort(function (a, b) { return a[0].localeCompare(b[0]) }).forEach(function (n) { nl.append(asKeyword({ text: n[0], match: n[1] })) }); pane.append(nl)
-        }
+        var aw = el('div', 'asx-assets')
+        var blk = function (title, node) { var b = el('div', 'blk'); b.append(el('div', 'asx-gh', title), node); aw.append(b) }
+        var sl = el('div', 'asx-sls')
+        c.sitelinks.forEach(function (s) { var x = el('a', 'asx-sl'); if (s.url) { x.href = s.url; x.target = '_blank'; x.rel = 'noopener' } x.append(el('b', null, s.text)); if (s.d1 || s.d2) x.append(el('span', null, [s.d1, s.d2].filter(Boolean).join(' · '))); sl.append(x) })
+        blk('Sitelinks · ' + c.sitelinks.length, c.sitelinks.length ? sl : el('p', 'asx-mut', 'Keine'))
+        var co2 = el('div', 'asx-chips'); c.callouts.forEach(function (x) { co2.append(el('span', 'asx-pill', x)) })
+        blk('Callouts · ' + c.callouts.length, c.callouts.length ? co2 : el('p', 'asx-mut', 'Keine'))
+        var sn = el('div'); c.snippets.forEach(function (s) { var r = el('p', 'asx-snip'); r.append(el('b', null, (AS_SNIPPET[s.header] || s.header) + '  '), document.createTextNode(s.values.join(' · '))); sn.append(r) })
+        blk('Snippets · ' + c.snippets.length, c.snippets.length ? sn : el('p', 'asx-mut', 'Keine'))
+        var cl = el('div', 'asx-chips'); c.calls.forEach(function (x) { var a = el('a', 'asx-pill', x); a.href = 'tel:' + x.replace(/\s/g, ''); cl.append(a) })
+        blk('Anruf', c.calls.length ? cl : el('p', 'asx-mut', 'Keine Nummer'))
+        pane.append(aw)
       }
     }
     paint()
-    return body
+    grid.append(main, side)
+    box.append(grid)
+    return box
+  }
+  function asRecs(m) {
+    if (!m.ideas.length && !m.waste.length && !m.organic.length) return null
+    var sec = el('div', 'asx-recs')
+    var tabs = []
+    if (m.ideas.length) tabs.push(['ideas', 'Neue Keywords ' + m.ideas.length])
+    if (m.waste.length) tabs.push(['waste', 'Ausschließen ' + m.waste.length])
+    if (m.organic.length) tabs.push(['organic', 'Aus der Google-Suche ' + m.organic.length])
+    var cur = tabs[0][0], pane = el('div')
+    var hd = el('div', 'asx-rh'); hd.append(el('h4', null, 'Empfehlungen'), seg(tabs, cur, function (k) { cur = k; paint() }, 'asx-seg'))
+    sec.append(hd, pane)
+    function paint() {
+      pane.replaceChildren()
+      if (cur === 'ideas') {
+        pane.append(el('p', 'asx-mut', 'Diese Suchen haben im bisherigen Konto Klicks oder Anfragen gebracht, sind in den neuen Kampagnen aber durch kein Keyword abgedeckt.'))
+        pane.append(asTable([['Suchbegriff'], ['Passt zu'], ['Klicks', 'num'], ['Kosten', 'num'], ['Anfragen', 'num']], m.ideas.map(function (r) {
+          return [el('b', null, r.t), r.home || '–', nf.format(r.c), money.format(r.s), r.v ? el('b', 'asx-good', nf.format(Math.round(r.v * 10) / 10)) : '0']
+        }), 'rec'))
+      } else if (cur === 'waste') {
+        pane.append(el('p', 'asx-mut', 'Haben im bisherigen Konto Geld gekostet, aber keine Anfrage gebracht, und sind noch nicht ausgeschlossen. Prüfen, ob sie als Ausschluss rein sollten.'))
+        pane.append(asTable([['Suchbegriff'], ['Heute'], ['Klicks', 'num'], ['Kosten', 'num']], m.waste.map(function (r) {
+          return [el('b', null, r.t), r.kw ? 'würde wieder gezeigt' : 'kein Keyword', nf.format(r.c), el('b', 'asx-bad', money.format(r.s))]
+        }), 'rec'))
+      } else {
+        pane.append(el('p', 'asx-mut', 'So finden Menschen die Website in der normalen Google-Suche. Für diese Suchen gibt es noch kein Keyword.'))
+        pane.append(asTable([['Suche'], ['Passt zu'], ['Gezeigt', 'num'], ['Klicks', 'num'], ['Platz', 'num']], m.organic.map(function (r) {
+          return [el('b', null, r.t), r.home || '–', nf.format(r.i), nf.format(r.c), r.p === null ? '–' : pct.format(r.p)]
+        }), 'rec'))
+      }
+    }
+    paint()
+    return sec
+  }
+  function asCompany(co, findings) {
+    var m = asModel(co)
+    var camps = co.setup.campaigns
+    var sec = el('section', 'asx-co')
+    var meta = COMPANIES.filter(function (x) { return x.id === co.id })[0]
+    var hd = el('header', 'asx-coh')
+    if (meta) hd.append(companyLogo(meta, 'lg'))
+    var tt = el('div', 'tt'); tt.append(el('h3', null, co.name), el('div', 'sub', 'Konto ' + co.account + (co.fetched_ts ? ' · Stand ' + new Date(co.fetched_ts).toLocaleString('de-DE', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '')))
+    hd.append(tt)
+    var budget = camps.reduce(function (a, c) { return a + c.budget }, 0)
+    var exp = camps.reduce(function (a, c) { var e = asExpected(c, m); return e === null ? a : a + e }, 0)
+    var kpis = el('div', 'asx-mini')
+    var mk = function (l, v, s) { var d = el('div'); d.append(el('span', 'l', l), el('b', null, v)); if (s) d.append(el('span', 's', s)); kpis.append(d) }
+    mk('Budget', asEuro(budget) + ' / Tag', 'ca. ' + asEuro(Math.round(budget * 30.4)) + ' im Monat')
+    if (m.cpc) mk('Erwartet', '≈ ' + nf.format(Math.round(exp)) + ' Klicks / Tag', 'bei Ø ' + money.format(m.cpc) + ' (bisher)')
+    if (m.totals) mk('Bisher 90 Tage', nf.format(m.totals.clicks) + ' Klicks', money.format(m.totals.spend) + ' · ' + nf.format(Math.round(m.totals.conversions)) + ' Conversions')
+    hd.append(kpis)
+    sec.append(hd)
+    var tbl = el('div', 'asx-camps')
+    var th = el('div', 'th')
+    ;['Kampagne', 'Budget', 'Max. Gebot', 'Gebiet', 'Erwartet', 'Keywords', ''].forEach(function (x, i) { th.append(el('span', i && i < 6 && i !== 3 ? 'num' : '', x)) })
+    tbl.append(th)
+    camps.forEach(function (c) {
+      var f = findings[c.name] || []
+      var bad = f.filter(function (x) { return x[0] === 'bad' }).length
+      var row = el('button', 'tr'); row.type = 'button'; row.setAttribute('aria-expanded', 'false')
+      var nm = el('span', 'nm'); nm.append(el('b', null, c.name.replace(/ · Suche · /, ' · ')), asStatus(c.status))
+      var e = asExpected(c, m)
+      var kws = c.groups.reduce(function (a, g) { return a + g.keywords.length }, 0)
+      var fl = el('span', 'fl')
+      if (f.length) fl.append(el('span', 'asx-badge ' + (bad ? 'bad' : 'warn'), String(f.length)))
+      fl.append(html('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>'))
+      row.append(nm, el('span', 'num', asEuro(c.budget)), el('span', 'num', c.ceiling ? asEuro(c.ceiling) : '–'), el('span', 'geo', asGeoText(c)),
+        el('span', 'num', e === null ? '–' : '≈ ' + pct.format(Math.round(e * 10) / 10)), el('span', 'num', nf.format(kws)), fl)
+      var det = null
+      row.onclick = function () {
+        var open = row.classList.toggle('open'); row.setAttribute('aria-expanded', String(open))
+        if (open && !det) { det = asDetail(c, m, f); row.after(det) }
+        if (det) det.hidden = !open
+      }
+      tbl.append(row)
+    })
+    sec.append(tbl)
+    var recs = asRecs(m)
+    if (recs) sec.append(recs)
+    return sec
   }
   function renderAdSetup(view) {
     var token = renderToken
-    var setHero = hero(view)
-    var bar = el('div', 'as-bar'); view.append(bar)
-    var list = el('div', 'as-list'); list.append(skeletonRows(6)); view.append(list)
+    var wrap = el('div', 'asx'); view.append(wrap)
+    var strip = el('div', 'asx-strip'); wrap.append(strip)
+    var bar = el('div', 'asx-bar'); wrap.append(bar)
+    var list = el('div', 'asx-list'); list.append(skeletonRows(6)); wrap.append(list)
     var load = adSetupCache ? Promise.resolve(adSetupCache) : api('ad-setup').then(function (d) { adSetupCache = d; return d })
     load.then(function (d) {
       if (token !== renderToken) return
       var cos = d.companies.filter(function (c) { return c.setup })
-      var pick = state.tabs.adsetup && cos.some(function (c) { return c.id === state.tabs.adsetup }) ? state.tabs.adsetup : (cos.length === 1 ? cos[0].id : 'all')
-      var all = [], findings = {}
-      cos.forEach(function (c) { findings[c.id] = asFindings(c); c.setup.campaigns.forEach(function (x) { all.push(x) }) })
+      var findings = {}, all = [], badN = 0, warnN = 0, clicks = 0, hist = 0
+      cos.forEach(function (c) {
+        findings[c.id] = asFindings(c)
+        c.setup.campaigns.forEach(function (x) { all.push(x); clicks += (x.stats && x.stats.clicks) || 0; (findings[c.id][x.name] || []).forEach(function (f) { if (f[0] === 'bad') badN++; else warnN++ }) })
+        if (c.history && c.history.totals) hist += c.history.totals.clicks || 0
+      })
       var on = all.filter(function (c) { return c.status === 'ENABLED' }).length
-      var budget = all.reduce(function (a, c) { return a + (c.status === 'REMOVED' ? 0 : c.budget) }, 0)
-      var badN = 0
-      Object.keys(findings).forEach(function (id) { Object.keys(findings[id]).forEach(function (k) { badN += findings[id][k].filter(function (f) { return f[0] === 'bad' }).length }) })
-      setHero(plural(all.length, ['Kampagne', 'Kampagnen']) + ' in ' + plural(cos.length, ['Konto', 'Konten']),
-        (on ? on + ' aktiv, ' + (all.length - on) + ' pausiert' : 'Alle pausiert') + ' · zusammen ' + asEuro(budget) + ' Tagesbudget' + (badN ? ' · ' + plural(badN, ['Punkt muss', 'Punkte müssen']) + ' vor dem Start behoben werden' : '') + '.')
+      var budget = all.reduce(function (a, c) { return a + c.budget }, 0)
+      var cell = function (l, v, s, cls) { var x = el('div', 'c' + (cls ? ' ' + cls : '')); x.append(el('span', 'l', l), el('b', null, v), el('span', 's', s || ' ')); strip.append(x) }
+      cell('Kampagnen', nf.format(all.length), on ? on + ' aktiv, ' + (all.length - on) + ' pausiert' : 'alle pausiert')
+      cell('Tagesbudget', asEuro(budget), 'ca. ' + asEuro(Math.round(budget * 30.4)) + ' im Monat')
+      cell('Klicks 30 Tage', nf.format(clicks), hist ? nf.format(hist) + ' in 90 Tagen (alt)' : 'neue Konten')
+      cell('Keywords', nf.format(all.reduce(function (a, c) { return a + c.groups.reduce(function (b, g) { return b + g.keywords.length }, 0) }, 0)), nf.format(all.reduce(function (a, c) { return a + c.negatives.length }, 0)) + ' Ausschlüsse')
+      cell('Hinweise', nf.format(badN + warnN), badN ? badN + ' vor dem Start beheben' : 'nichts Kritisches', badN ? 'bad' : warnN ? 'warn' : '')
+      var pick = state.tabs.adsetup && cos.some(function (c) { return c.id === state.tabs.adsetup }) ? state.tabs.adsetup : (cos.length === 1 ? cos[0].id : 'all')
       if (cos.length > 1) {
         var opts = [['all', 'Alle']].concat(cos.map(function (c) { return [c.id, c.name] }))
-        var s = seg(opts, pick, function (v) { state.tabs.adsetup = v; paintList(v) }, 'as-pick')
-        Array.prototype.forEach.call(s.children, function (b, i) { if (i === 0) return; var co = COMPANIES.filter(function (x) { return x.id === opts[i][0] })[0]; if (co) b.prepend(companyLogo(co)) })
+        var s = seg(opts, pick, function (v) { state.tabs.adsetup = v; paintList(v) }, 'asx-pick')
+        Array.prototype.forEach.call(s.children, function (b, i) { if (!i) return; var co = COMPANIES.filter(function (x) { return x.id === opts[i][0] })[0]; if (co) b.prepend(companyLogo(co)) })
         bar.append(s)
       }
       if (isAdmin()) {
-        var rf = el('button', 'more-btn as-refresh', 'Jetzt aktualisieren'); rf.type = 'button'
+        var rf = el('button', 'asx-btn', 'Aktualisieren'); rf.type = 'button'
         rf.onclick = function () {
-          rf.disabled = true; rf.textContent = 'Wird aktualisiert …'
-          fetch('/api/ad-setup/refresh', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin' }).then(function () { adSetupCache = null; render(true) }).catch(function () { rf.disabled = false; rf.textContent = 'Fehlgeschlagen, nochmal' })
+          rf.disabled = true; rf.textContent = 'Lädt …'
+          fetch('/api/ad-setup/refresh', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin' }).then(function () { adSetupCache = null; render(true) }).catch(function () { rf.disabled = false; rf.textContent = 'Nochmal versuchen' })
         }
         bar.append(rf)
       }
       paintList(pick)
       function paintList(which) {
         list.replaceChildren()
-        cos.filter(function (c) { return which === 'all' || c.id === which }).forEach(function (co) {
-          var sec = el('section', 'card panel wide as-co')
-          var hd = el('div', 'as-coh')
-          var meta = COMPANIES.filter(function (x) { return x.id === co.id })[0]
-          if (meta) hd.append(companyLogo(meta, 'logo'))
-          var t = el('div', 't'); t.append(el('h3', null, co.name))
-          var camps = co.setup.campaigns
-          var b = camps.reduce(function (a, c) { return a + c.budget }, 0)
-          var sub = 'Konto ' + co.account + ' · ' + plural(camps.length, ['Kampagne', 'Kampagnen']) + ' · ' + asEuro(b) + ' / Tag'
-          if (co.fetched_ts) sub += ' · Stand ' + new Date(co.fetched_ts).toLocaleString('de-DE', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
-          t.append(el('div', 'k-muted', sub))
-          hd.append(t)
-          var cnt = { ENABLED: 0, PAUSED: 0 }; camps.forEach(function (c) { cnt[c.status] = (cnt[c.status] || 0) + 1 })
-          var st = el('div', 'as-cnt')
-          if (cnt.ENABLED) st.append(el('span', 'as-st on', cnt.ENABLED + ' aktiv'))
-          if (cnt.PAUSED) st.append(el('span', 'as-st paused', cnt.PAUSED + ' pausiert'))
-          hd.append(st)
-          sec.append(hd)
-          if (co.error) sec.append(el('p', 'k-muted', 'Letzte Aktualisierung fehlgeschlagen, gezeigt wird der letzte Stand.'))
-          var budgets = el('div', 'as-budget')
-          camps.forEach(function (c) { var seg2 = el('i'); seg2.style.flex = String(Math.max(c.budget, 0.5)); seg2.title = c.name + ': ' + asEuro(c.budget) + ' / Tag'; seg2.className = AS_STATUS[c.status] ? AS_STATUS[c.status][1] : ''; budgets.append(seg2) })
-          sec.append(budgets)
-          camps.forEach(function (c) { sec.append(asCampaign(c, co, findings[co.id][c.name] || [])) })
-          list.append(sec)
-        })
+        cos.filter(function (c) { return which === 'all' || c.id === which }).forEach(function (co) { list.append(asCompany(co, findings[co.id])) })
       }
     }).catch(function () { if (token === renderToken) list.replaceChildren(el('div', 'empty', 'Die Anzeigen-Übersicht konnte nicht geladen werden')) })
   }

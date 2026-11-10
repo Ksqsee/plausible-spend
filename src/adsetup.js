@@ -222,10 +222,38 @@ export async function adSetup(db, own) {
     )
     .bind(...(own ? [own] : []))
     .all()
-  return {
-    companies: results.map((r) => ({
+  const since = day(new Date(Date.now() - 89 * 86400000))
+  const companies = []
+  for (const r of results) {
+    const { results: siteRows } = await db.prepare('SELECT domain FROM sites WHERE company = ?').bind(r.id).all()
+    const sites = siteRows.map((x) => x.domain)
+    companies.push({
       id: r.id, name: r.name, logo: r.logo_domain, account: r.ads_account, fetched_ts: r.fetched_ts || null, error: r.error || null,
-      setup: r.data ? JSON.parse(r.data) : null
-    }))
+      setup: r.data ? JSON.parse(r.data) : null,
+      history: sites.length ? await history(db, sites, since) : null
+    })
+  }
+  return { since, companies }
+}
+
+// what the old accounts and Google search already tell about these keywords (last 90 days)
+async function history(db, sites, since) {
+  const inl = `site IN (${sites.map(() => '?').join(',')}) AND date >= ?`
+  const b = [...sites, since]
+  const [tot, kw, terms, organic] = await Promise.all([
+    db.prepare(`SELECT SUM(clicks) AS clicks, SUM(impressions) AS impressions, SUM(spend) AS spend, SUM(conversions) AS conversions, MIN(date) AS first FROM ads_spend WHERE ${inl}`).bind(...b).first(),
+    db.prepare(`SELECT LOWER(keyword) AS k, match_type AS m, SUM(clicks) AS c, SUM(impressions) AS i, ROUND(SUM(spend), 2) AS s, SUM(conversions) AS v
+                FROM ads_keywords WHERE ${inl} GROUP BY LOWER(keyword), match_type`).bind(...b).all(),
+    db.prepare(`SELECT LOWER(term) AS t, SUM(clicks) AS c, SUM(impressions) AS i, ROUND(SUM(spend), 2) AS s, SUM(conversions) AS v
+                FROM ads_search_terms WHERE ${inl} GROUP BY LOWER(term) HAVING SUM(clicks) > 0 ORDER BY SUM(spend) DESC LIMIT 400`).bind(...b).all(),
+    db.prepare(`SELECT LOWER(query) AS q, SUM(clicks) AS c, SUM(impressions) AS i,
+                       ROUND(SUM(position * impressions) / NULLIF(SUM(CASE WHEN position IS NOT NULL THEN impressions END), 0), 1) AS p
+                FROM search_queries WHERE ${inl} GROUP BY LOWER(query) HAVING SUM(impressions) >= 10 ORDER BY SUM(impressions) DESC LIMIT 300`).bind(...b).all()
+  ])
+  return {
+    totals: tot && tot.clicks !== null ? tot : null,
+    keywords: kw.results.map((x) => [x.k, x.m, x.c || 0, x.i || 0, x.s || 0, x.v || 0]),
+    terms: terms.results.map((x) => [x.t, x.c || 0, x.i || 0, x.s || 0, x.v || 0]),
+    organic: organic.results.map((x) => [x.q, x.c || 0, x.i || 0, x.p])
   }
 }
