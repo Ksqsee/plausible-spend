@@ -230,6 +230,7 @@ export async function adSetup(db, own) {
     companies.push({
       id: r.id, name: r.name, logo: r.logo_domain, account: r.ads_account, fetched_ts: r.fetched_ts || null, error: r.error || null,
       setup: r.data ? JSON.parse(r.data) : null,
+      decisions: (await db.prepare('SELECT kind, term, state FROM ad_rec WHERE company = ?').bind(r.id).all()).results,
       history: sites.length ? await history(db, sites, since) : null
     })
   }
@@ -256,4 +257,19 @@ async function history(db, sites, since) {
     terms: terms.results.map((x) => [x.t, x.c || 0, x.i || 0, x.s || 0, x.v || 0]),
     organic: organic.results.map((x) => [x.q, x.c || 0, x.i || 0, x.p])
   }
+}
+
+const REC_KINDS = new Set(['ideas', 'waste', 'organic'])
+const REC_STATES = new Set(['accepted', 'ignored', 'open'])
+
+export async function setAdRec(db, own, user, body) {
+  const company = String(body.company || '')
+  const kind = String(body.kind || '')
+  const term = String(body.term || '').trim().toLowerCase().slice(0, 200)
+  const state = String(body.state || '')
+  if (!/^[a-z0-9-]{1,40}$/.test(company) || !REC_KINDS.has(kind) || !term || !REC_STATES.has(state)) return { error: 'invalid' }
+  if (own && own !== company) return { error: 'not your company' }
+  if (state === 'open') await db.prepare('DELETE FROM ad_rec WHERE company = ? AND kind = ? AND term = ?').bind(company, kind, term).run()
+  else await db.prepare('INSERT OR REPLACE INTO ad_rec (company, kind, term, state, by_user, ts) VALUES (?, ?, ?, ?, ?, ?)').bind(company, kind, term, state, user, Date.now()).run()
+  return { ok: true }
 }

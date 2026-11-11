@@ -22,7 +22,7 @@ import { localParts } from './ingest.js'
 import { summary } from './summary.js'
 import { heat } from './heat.js'
 import { trends } from './trends.js'
-import { adSetup, syncAdSetup } from './adsetup.js'
+import { adSetup, setAdRec, syncAdSetup } from './adsetup.js'
 import { journey, simFunnel } from './sim.js'
 import { importOpLeads, opLeadsBefore } from './opleads.js'
 import { gscCompare } from './gsc.js'
@@ -104,6 +104,10 @@ async function api(request, env, url, user) {
   if (path === 'me') return json({ username: user.username, role: user.role, company: user.company })
 
   if (path === 'ad-setup' && request.method === 'GET') return json(await adSetup(db, own))
+  if (path === 'ad-setup/rec' && request.method === 'POST') {
+    const r = await setAdRec(db, own, user.username, await readJson(request))
+    return json(r, r.error ? 400 : 200)
+  }
   if (path === 'ad-setup/import' && request.method === 'POST') {
     adminOnly(user)
     const only = url.searchParams.get('company')

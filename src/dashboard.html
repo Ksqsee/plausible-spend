@@ -438,313 +438,322 @@ td.m { color: var(--text-3); font-weight: 400; }
   .tr-kwd-t > div { grid-template-columns: 1.3fr repeat(3, 1fr); } .tr-kwd-t > div > span:nth-child(5), .tr-kwd-t > div > span:nth-child(6) { display: none; }
   .tr-trendkey { margin-left: 0; }
 }
-/* ---------- Anzeigen: monochrome, high contrast, quiet ---------- */
-.asx { --ink: var(--text); --mut: var(--text-3); --hair: var(--line); --soft: var(--line-soft); --tint: color-mix(in srgb, var(--text) 4%, var(--card)); font-feature-settings: "tnum" 1; }
-.asx-strip { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); background: var(--card); border: 1px solid var(--hair); border-radius: 16px; overflow: hidden; }
-.asx-strip .c { padding: 18px 20px 16px; border-left: 1px solid var(--soft); min-width: 0; }
-.asx-strip .c:first-child { border-left: 0; }
-.asx-strip .l { display: block; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text); }
-.asx-strip .c { border-top: 3px solid var(--tc, var(--text)); }
-.asx-strip .c:nth-child(2) { --tc: var(--t-green); } .asx-strip .c:nth-child(3) { --tc: var(--t-teal); } .asx-strip .c:nth-child(4) { --tc: var(--t-blue); } .asx-strip .c:nth-child(5) { --tc: var(--t-orange); } .asx-strip .c.bad { --tc: var(--t-red); }
-.asx-strip .c .l { color: var(--tc, var(--text)); }
-.asx-strip b { display: block; font: 600 30px/1.15 var(--display); letter-spacing: -.035em; color: var(--ink); margin-top: 6px; }
-.asx-strip .s { display: block; font-size: 13px; color: var(--text-2); margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.asx-strip .c.bad b { color: var(--down); }
-.asx-strip .c.warn b { color: color-mix(in srgb, var(--warn) 75%, var(--ink)); }
-.asx-bar { display: flex; align-items: center; gap: 10px; margin: 22px 0 18px; }
-.asx .asx-pick { flex: 1; min-width: 0; overflow-x: auto; scrollbar-width: none; background: transparent; padding: 0; gap: 6px; border-radius: 0; }
-.asx .asx-pick button { display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; border: 1px solid var(--hair); background: var(--card); color: var(--ink); border-radius: 999px; padding: 7px 14px; font-weight: 500; box-shadow: none; }
-.asx .asx-pick button.on { background: var(--ink); color: var(--card); border-color: var(--ink); }
-.asx-pick button img, .asx-pick button .logo { width: 16px; height: 16px; border-radius: 4px; }
-.asx-btn { flex: none; border: 0; background: var(--ink); color: var(--card); font: 600 13px var(--sans, inherit); padding: 9px 16px; border-radius: 10px; cursor: pointer; }
+/* ---------- Anzeigen ---------- */
+/* neutral labels, near-black values, colour only for meaning */
+.asx { --ink: var(--text); --mut: var(--text-3); --sub: var(--text-2); --hair: var(--line); --soft: var(--line-soft); --tint: color-mix(in srgb, var(--text) 3.5%, var(--card));
+  --c-ok: #0b7d4f; --c-warn: #b45309; --c-bad: #c8102e; --c-link: #1a56db; font-feature-settings: "tnum" 1; }
+:root[data-theme="dark"] .asx { --c-ok: #3fcf8e; --c-warn: #f2a33a; --c-bad: #ff6b7f; --c-link: #8ab4f8; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .asx { --c-ok: #3fcf8e; --c-warn: #f2a33a; --c-bad: #ff6b7f; --c-link: #8ab4f8; } }
+.asx-empty { border: 1px dashed var(--hair); border-radius: 12px; padding: 18px; text-align: center; font-size: 14px; color: var(--sub); }
+.asx-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid var(--ink); background: var(--ink); color: var(--card); font: 600 14px/1 inherit; padding: 10px 16px; border-radius: 10px; cursor: pointer; text-decoration: none; white-space: nowrap; }
+.asx-btn.ghost { background: var(--card); color: var(--ink); border-color: var(--hair); }
+.asx-btn.ghost:hover { border-color: var(--ink); }
+.asx-btn.sm { padding: 7px 12px; font-size: 13px; border-radius: 8px; }
 .asx-btn:disabled { opacity: .5; cursor: default; }
-.asx-co { background: var(--card); border: 1px solid var(--hair); border-radius: 18px; padding: 22px 22px 10px; margin-bottom: 18px; }
-.asx-coh { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding-bottom: 18px; }
+.asx-more { font: inherit; font-size: 13.5px; font-weight: 600; border: 0; background: none; color: var(--c-link); cursor: pointer; padding: 8px 0; }
+.asx-foot { font-size: 13px; line-height: 1.5; color: var(--mut); margin: 10px 0 0; }
+.asx-st { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; color: var(--ink); white-space: nowrap; }
+.asx-st::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--mut); }
+.asx-st.on::before { background: var(--c-ok); }
+.asx-st.off::before { background: var(--c-bad); }
+.asx-iss { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 600; white-space: nowrap; }
+.asx-iss.warn { color: var(--c-warn); } .asx-iss.bad { color: var(--c-bad); } .asx-iss.none { color: var(--mut); font-weight: 400; }
+/* summary strip */
+.asx-strip { margin-bottom: 18px; }
+.asx-strip .who { font-size: 13px; color: var(--sub); margin: 0 0 8px 2px; }
+.asx-strip .cells { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); background: var(--card); border: 1px solid var(--hair); border-radius: 16px; overflow: hidden; }
+.asx-strip .c { text-align: left; font: inherit; color: inherit; border: 0; background: none; padding: 20px 22px; border-left: 1px solid var(--soft); min-width: 0; }
+.asx-strip .c:first-child { border-left: 0; }
+.asx-strip .l { font-size: 13px; color: var(--sub); }
+.asx-strip .v { font: 600 30px/1.1 var(--display); letter-spacing: -.03em; color: var(--ink); margin-top: 6px; }
+.asx-strip .v small { font-size: 17px; font-weight: 500; color: var(--sub); letter-spacing: 0; }
+.asx-strip .s { font-size: 13px; color: var(--sub); margin-top: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.asx-strip button.c { cursor: pointer; }
+.asx-strip .c.warn { background: color-mix(in srgb, var(--c-warn) 8%, var(--card)); }
+.asx-strip .c.warn .v, .asx-strip .c.warn .s { color: var(--c-warn); }
+.asx-strip .c.bad { background: color-mix(in srgb, var(--c-bad) 7%, var(--card)); }
+.asx-strip .c.bad .v, .asx-strip .c.bad .s { color: var(--c-bad); }
+.asx-strip .c.act { box-shadow: inset 0 -3px 0 currentColor; }
+/* toolbar */
+.asx-bar { display: flex; align-items: center; gap: 12px; margin: 0 0 18px; flex-wrap: wrap; }
+.asx-pills { display: flex; gap: 6px; flex: 1; min-width: 0; overflow-x: auto; scrollbar-width: none; padding: 1px; }
+.asx-pills button { display: inline-flex; align-items: center; gap: 7px; flex: none; height: 38px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--hair); background: var(--card); color: var(--ink); font: 500 14px inherit; cursor: pointer; }
+.asx-pills button:hover { border-color: var(--ink); }
+.asx-pills button.on { background: var(--ink); border-color: var(--ink); color: var(--card); }
+.asx-pills button img, .asx-pills button .logo { width: 18px; height: 18px; border-radius: 4px; }
+.asx-pills .n { min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; display: inline-grid; place-items: center; font-size: 11.5px; font-weight: 700; background: var(--c-warn); color: #fff; }
+.asx-toggle { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--ink); cursor: pointer; white-space: nowrap; }
+.asx-toggle input { width: 18px; height: 18px; accent-color: var(--ink); }
+/* company card */
+.asx-co { background: var(--card); border: 1px solid var(--hair); border-radius: 18px; padding: 24px 24px 12px; margin-bottom: 18px; }
+.asx-coh { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding-bottom: 20px; }
 .asx-coh .lg { width: 44px; height: 44px; border-radius: 11px; flex: none; }
-.asx-coh .tt { flex: 1; min-width: 180px; }
-.asx-coh h3 { margin: 0; font: 650 22px/1.2 var(--display); letter-spacing: -.025em; color: var(--ink); }
-.asx-coh .sub { font-size: 12.5px; color: var(--mut); margin-top: 3px; }
-.asx-mini { display: flex; gap: 28px; flex-wrap: wrap; }
-.asx-mini > div { min-width: 0; }
-.asx-mini .l { display: block; font-size: 11.5px; color: var(--mut); }
-.asx-mini b { display: block; font-size: 15px; font-weight: 600; color: var(--ink); margin-top: 2px; }
-.asx-mini .s { display: block; font-size: 11.5px; color: var(--mut); margin-top: 1px; }
-.asx-camps { border-top: 1px solid var(--ink); }
-.asx-camps .th, .asx-camps .tr { display: grid; grid-template-columns: minmax(0, 2.6fr) 74px 84px minmax(0, 1.3fr) 82px 74px 64px; gap: 12px; align-items: center; }
-.asx-camps .th { font-size: 11.5px; font-weight: 500; color: var(--mut); padding: 10px 10px; border-bottom: 1px solid var(--hair); }
-.asx-camps .tr { width: 100%; padding: 14px 10px; background: none; border: 0; border-bottom: 1px solid var(--soft); font: inherit; color: var(--ink); text-align: left; cursor: pointer; transition: background .15s; }
+.asx-coh .tt { flex: 1; min-width: 200px; }
+.asx-coh h3 { margin: 0; font: 650 22px/1.2 var(--display); letter-spacing: -.02em; color: var(--ink); }
+.asx-coh .sub { font-size: 13px; color: var(--sub); margin-top: 3px; }
+.asx-mini { display: flex; gap: 32px; flex-wrap: wrap; margin: 0; }
+.asx-mini dt { font-size: 12.5px; color: var(--sub); }
+.asx-mini dd { margin: 2px 0 0; font-size: 16px; font-weight: 600; color: var(--ink); }
+.asx-mini dd.s { font-size: 12.5px; font-weight: 400; color: var(--sub); margin-top: 1px; }
+.asx-camps { border-top: 1px solid var(--hair); }
+.asx-camps .th, .asx-camps .tr { display: grid; grid-template-columns: minmax(0, 2.6fr) 110px minmax(0, 1.2fr) 120px 130px 20px; gap: 16px; align-items: center; }
+.asx-camps .th { font-size: 12.5px; color: var(--sub); padding: 12px 12px; border-bottom: 1px solid var(--hair); }
+.asx-camps .tr { padding: 14px 12px; min-height: 52px; border-bottom: 1px solid var(--soft); color: var(--ink); text-decoration: none; border-radius: 10px; }
 .asx-camps .tr:hover { background: var(--tint); }
-.asx-camps .tr.open { background: var(--tint); border-bottom-color: transparent; }
-.asx-camps .num { text-align: right; font-variant-numeric: tabular-nums; font-size: 14px; }
-.asx-camps .nm { display: flex; align-items: center; gap: 10px; min-width: 0; }
-.asx-camps .nm b { font-size: 14.5px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.asx-camps .geo { font-size: 13.5px; color: var(--text-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.asx-camps .fl { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
-.asx-camps .fl svg { width: 16px; height: 16px; color: var(--mut); transition: transform .2s var(--ease); }
-.asx-camps .tr.open .fl svg { transform: rotate(90deg); color: var(--ink); }
-.asx-st { display: inline-flex; align-items: center; gap: 6px; flex: none; font-size: 12px; font-weight: 600; color: var(--text); padding: 3px 9px 3px 8px; border-radius: 999px; background: var(--sel); }
-.asx-st.paused { color: var(--t-orange); background: color-mix(in srgb, var(--t-orange) 12%, transparent); }
-.asx-st.on { color: var(--t-green); background: color-mix(in srgb, var(--t-green) 12%, transparent); }
-.asx-st::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--mut); }
-.asx-st.on { color: var(--ink); } .asx-st.on::before { background: var(--up); }
-.asx-st.paused::before { background: var(--m-orange); }
-.asx-badge { min-width: 22px; height: 22px; padding: 0 7px; border-radius: 999px; display: inline-grid; place-items: center; font-size: 12px; font-weight: 700; color: #fff; background: var(--m-orange); }
-.asx-badge.bad { background: var(--down); }
-.asx-det { background: var(--tint); border-bottom: 1px solid var(--soft); padding: 4px 10px 26px; }
-.asx-find { display: grid; gap: 2px; margin: 0 0 20px; border-radius: 12px; overflow: hidden; border: 1px solid var(--hair); background: var(--card); }
-.asx-find .r { display: flex; gap: 10px; align-items: flex-start; font-size: 13.5px; line-height: 1.45; padding: 10px 14px; border-top: 1px solid var(--soft); color: var(--ink); }
-.asx-find .r:first-child { border-top: 0; }
-.asx-find .r i { flex: none; width: 7px; height: 7px; border-radius: 50%; margin-top: 7px; background: var(--m-orange); }
-.asx-find .r.bad i { background: var(--down); }
-.asx-dg { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 28px; align-items: start; }
-.asx-main, .asx-side { min-width: 0; }
-.asx-seg { margin-bottom: 14px; max-width: 100%; overflow-x: auto; scrollbar-width: none; }
-.asx-seg button { white-space: nowrap; }
-.asx-gh { font-size: 12px; font-weight: 600; color: var(--mut); letter-spacing: .02em; text-transform: uppercase; margin: 18px 0 8px; }
-.asx-gh:first-child { margin-top: 2px; }
-.asx-mut { margin: 0 0 10px; font-size: 13px; color: var(--mut); line-height: 1.5; }
-.asx-side .h { font-size: 12px; font-weight: 600; color: var(--mut); letter-spacing: .02em; text-transform: uppercase; margin: 22px 0 8px; }
-.asx-side .h:first-child { margin-top: 2px; }
-.asx-kv { display: grid; grid-template-columns: 92px minmax(0, 1fr); margin: 0; background: var(--card); border: 1px solid var(--hair); border-radius: 12px; padding: 4px 14px; font-size: 13px; }
-.asx-kv dt { color: var(--mut); padding: 8px 0; border-top: 1px solid var(--soft); }
-.asx-kv dd { margin: 0; padding: 8px 0; border-top: 1px solid var(--soft); color: var(--ink); }
-.asx-kv dt:first-of-type, .asx-kv dd:first-of-type { border-top: 0; }
-.asx-map { position: relative; height: 200px; border-radius: 12px; overflow: hidden; background: var(--sel); border: 1px solid var(--hair); }
-.asx-map .tiles, .asx-map svg { position: absolute; left: 50%; top: 0; width: 320px; height: 200px; transform: translateX(-50%); }
-.asx-map .tiles img { position: absolute; width: 256px; height: 256px; max-width: none; filter: grayscale(1) contrast(1.05) brightness(1.04); }
-.asx-map .area { fill: color-mix(in srgb, #111 14%, transparent); stroke: #111; stroke-width: 2; }
-.asx-map .dot { fill: #111; stroke: #fff; stroke-width: 2; }
-.asx-map .lab { position: absolute; left: 10px; top: 10px; background: #111; color: #fff; font-size: 12px; font-weight: 600; padding: 3px 8px; border-radius: 6px; }
-.asx-map .attr { position: absolute; right: 6px; bottom: 4px; font-size: 10px; color: #333; background: rgba(255,255,255,.8); padding: 0 4px; border-radius: 3px; }
-:root[data-theme="dark"] .asx-map .tiles img { filter: grayscale(1) invert(.9) contrast(.9); }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .asx-map .tiles img { filter: grayscale(1) invert(.9) contrast(.9); } }
-:root[data-theme="dark"] .asx-map .area { fill: rgba(255,255,255,.12); stroke: #fff; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .asx-map .area { fill: rgba(255,255,255,.12); stroke: #fff; } }
-.asx-pl { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
-.asx-more { font: inherit; font-size: 12px; font-weight: 600; border: 0; background: none; color: var(--ink); cursor: pointer; padding: 2px 4px; }
-.asx-pl span { font-size: 12px; background: var(--card); border: 1px solid var(--hair); padding: 2px 8px; border-radius: 6px; }
-.asx-week { display: grid; gap: 5px; background: var(--card); border: 1px solid var(--hair); border-radius: 12px; padding: 12px 14px 8px; }
-.asx-week .r, .asx-week .ax { display: grid; grid-template-columns: 24px minmax(0, 1fr); align-items: center; }
-.asx-week .d { font-size: 11.5px; color: var(--mut); }
-.asx-week .bar { position: relative; height: 10px; border-radius: 3px; background: var(--sel); overflow: hidden; }
-.asx-week .bar i { position: absolute; top: 0; bottom: 0; background: var(--ink); border-radius: 3px; }
-.asx-week .ax { grid-template-columns: 24px repeat(4, 1fr) 0; font-size: 10.5px; color: var(--mut); margin-top: 2px; }
-.asx-week .ax span:last-child { text-align: right; }
-.asx-side .asx-mut { margin-top: 8px; }
-.asx-ads { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 12px; }
-.asx-ad { background: var(--card); border: 1px solid var(--hair); border-radius: 14px; padding: 16px; min-width: 0; }
-.asx-ad .ah > b { display: block; font-size: 12px; font-weight: 700; margin-bottom: 7px; color: var(--ink); }
-.asx-ad .u { display: flex; align-items: center; gap: 9px; }
-.asx-ad .fav { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: var(--ink); color: var(--card); font-size: 12px; font-weight: 700; flex: none; }
-.asx-ad .n { font-size: 13px; color: var(--ink); }
-.asx-ad .p { font-size: 12px; color: var(--mut); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 240px; }
-.asx-ad .hl { margin-top: 10px; font-size: 18px; line-height: 1.3; color: #1a0dab; }
-.asx-ad .ds { margin-top: 5px; font-size: 13.5px; line-height: 1.5; color: var(--text-2); }
-.asx-ad .sl { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 9px; }
-.asx-ad .sl span { font-size: 13px; color: #1a0dab; }
-:root[data-theme="dark"] .asx-ad .hl, :root[data-theme="dark"] .asx-ad .sl span, :root[data-theme="dark"] .asx-sl b { color: #8ab4f8; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .asx-ad .hl, :root:not([data-theme="light"]) .asx-ad .sl span, :root:not([data-theme="light"]) .asx-sl b { color: #8ab4f8; } }
-.asx-ad .meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--soft); }
-.asx-tag { font-size: 11.5px; padding: 2px 8px; border-radius: 6px; background: var(--sel); color: var(--text-2); }
-.asx-tag.ok { color: var(--ink); } .asx-tag.ok::before { content: "✓ "; color: var(--up); font-weight: 700; }
-.asx-tag.bad { color: var(--down); }
-.asx-texts { margin-top: 10px; }
-.asx-texts summary { cursor: pointer; font-size: 13px; font-weight: 500; color: var(--ink); }
-.asx-texts .lt { margin-top: 8px; }
-.asx-texts .r { display: grid; grid-template-columns: 26px minmax(0, 1fr) auto; gap: 8px; font-size: 12.5px; padding: 5px 0; border-top: 1px solid var(--soft); }
-.asx-texts .n, .asx-texts .c { color: var(--mut); }
-.asx-texts .c.bad { color: var(--down); font-weight: 600; }
-.asx-url { display: block; margin-top: 8px; font-size: 12px; color: var(--mut); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.asx-kw { font: 500 12.5px/1.4 var(--mono); letter-spacing: -.01em; color: var(--ink); }
-.asx-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.asx-chips .asx-kw { background: var(--card); border: 1px solid var(--hair); padding: 3px 8px; border-radius: 6px; }
-.asx-pill { font-size: 13px; padding: 5px 11px; border-radius: 999px; background: var(--card); border: 1px solid var(--hair); color: var(--ink); text-decoration: none; }
-.asx-tbl { background: var(--card); border: 1px solid var(--hair); border-radius: 12px; overflow: hidden; }
-.asx-tbl .th, .asx-tbl .tr { display: grid; gap: 12px; align-items: center; padding: 9px 14px; }
-.asx-tbl.kwt .th, .asx-tbl.kwt .tr { grid-template-columns: minmax(0, 1fr) 96px 64px 72px 72px; }
-.asx-tbl.rec .th, .asx-tbl.rec .tr { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) 64px 76px 70px; }
-.asx-tbl .th { font-size: 11.5px; color: var(--mut); border-bottom: 1px solid var(--hair); }
-.asx-tbl .tr { font-size: 13px; border-top: 1px solid var(--soft); }
-.asx-tbl .tr:first-of-type { border-top: 0; }
-.asx-tbl .tr > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.asx-tbl .num { text-align: right; font-variant-numeric: tabular-nums; }
-.asx-tbl .tr > span:nth-child(2) { color: var(--text-2); }
-.asx-camps .th > span, .asx-tbl .th > span { font-size: 11.5px; font-weight: 500; color: var(--mut); }
-.asx-new { font-size: 11px; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; color: var(--mut); }
-.asx-good { color: color-mix(in srgb, var(--up) 85%, var(--ink)); }
-.asx-bad { color: var(--down); }
-.asx-assets { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 4px 24px; }
-.asx-sls { display: grid; gap: 6px; }
-.asx-sl { display: block; padding: 10px 12px; border-radius: 10px; background: var(--card); border: 1px solid var(--hair); color: inherit; text-decoration: none; }
-.asx-sl b { display: block; font-size: 14px; font-weight: 500; color: #1a0dab; }
-.asx-sl span { display: block; font-size: 12.5px; color: var(--text-2); margin-top: 2px; }
-.asx-snip { margin: 0 0 6px; font-size: 13.5px; line-height: 1.5; }
-.asx-recs { border-top: 1px solid var(--ink); margin-top: 22px; padding: 18px 0 14px; }
-.asx-rh { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 10px; }
-.asx-rh h4 { margin: 0; font: 650 17px/1.2 var(--display); letter-spacing: -.02em; color: var(--ink); }
-.asx-rh .asx-seg { margin: 0; }
-@media (max-width: 1100px) {
-  .asx-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .asx-strip .c:nth-child(4) { border-left: 0; }
-  .asx-strip .c:nth-child(n+4) { border-top: 1px solid var(--soft); }
-  .asx-dg { grid-template-columns: minmax(0, 1fr); }
-}
-@media (max-width: 760px) {
-  .asx-strip { grid-template-columns: 1fr 1fr; }
-  .asx-strip .c { border-left: 0; border-top: 1px solid var(--soft); padding: 14px 16px; }
-  .asx-strip .c:nth-child(-n+2) { border-top: 0; }
-  .asx-strip .c:nth-child(even) { border-left: 1px solid var(--soft); }
-  .asx-strip .c:last-child { grid-column: 1 / -1; border-left: 0; }
-  .asx-strip b { font-size: 24px; }
-  .asx-co { padding: 16px 14px 6px; border-radius: 16px; }
-  .asx-bar { flex-wrap: wrap; }
-  .asx .asx-pick { flex: 1 1 100%; }
-  .asx-btn { width: 100%; }
-  .asx-mini { gap: 16px; width: 100%; }
-  .asx-camps .th { display: none; }
-  .asx-camps .tr { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "nm fl" "geo geo" "b b"; gap: 6px 10px; padding: 14px 4px; }
-  .asx-camps .tr .nm { grid-area: nm; flex-wrap: wrap; }
-  .asx-camps .tr .nm b { white-space: normal; }
-  .asx-camps .tr .fl { grid-area: fl; }
-  .asx-camps .tr .geo { grid-area: geo; font-size: 13px; }
-  .asx-camps .tr > .num { display: none; }
-  .asx-camps .tr > .num:nth-child(2) { display: block; grid-area: b; text-align: left; font-size: 13px; color: var(--text-2); }
-  .asx-camps .tr > .num:nth-child(2)::after { content: " pro Tag"; }
-  .asx-det { padding: 4px 4px 20px; }
-  .asx-tbl.kwt .th, .asx-tbl.kwt .tr { grid-template-columns: minmax(0, 1fr) 54px 64px; }
-  .asx-tbl.kwt .th > :nth-child(2), .asx-tbl.kwt .tr > :nth-child(2), .asx-tbl.kwt .th > :nth-child(4), .asx-tbl.kwt .tr > :nth-child(4) { display: none; }
-  .asx-tbl.rec .th, .asx-tbl.rec .tr { grid-template-columns: minmax(0, 1fr) 54px 70px; }
-  .asx-tbl.rec .th > :nth-child(2), .asx-tbl.rec .tr > :nth-child(2), .asx-tbl.rec .th > :nth-child(5), .asx-tbl.rec .tr > :nth-child(5) { display: none; }
-  .asx-ads { grid-template-columns: minmax(0, 1fr); }
-  .asx-ad .meta { flex-wrap: wrap; }
-}
-/* ---------- Anzeigen: campaign and ad pages ---------- */
-.asx-camps a.tr { text-decoration: none; }
+.asx-camps .num { text-align: right; font-size: 15px; font-variant-numeric: tabular-nums; }
+.asx-camps .th > span { font-size: 12.5px; }
+.asx-camps .nm { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.asx-camps .l1 { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.asx-camps .l1 b { font-size: 15.5px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.asx-camps .l2 { font-size: 13px; color: var(--sub); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.asx-camps .bud b { font-weight: 600; } .asx-camps .bud small { font-size: 12.5px; color: var(--sub); }
+.asx-camps .geo { font-size: 14px; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.asx-camps .chev { width: 18px; height: 18px; color: var(--mut); }
+.asx-camps .tr:hover .chev { color: var(--ink); }
+/* recommendations */
+.asx-recs { margin-top: 24px; padding: 20px 0 8px; border-top: 1px solid var(--hair); }
+.asx-rh { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 8px; }
+.asx-rh h4 { margin: 0; font: 650 18px/1.2 var(--display); letter-spacing: -.015em; color: var(--ink); }
+.asx-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+.asx-tabs button { display: inline-flex; align-items: center; gap: 7px; height: 34px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--hair); background: var(--card); color: var(--ink); font: 500 13.5px inherit; cursor: pointer; }
+.asx-tabs button.on { background: var(--ink); color: var(--card); border-color: var(--ink); }
+.asx-tabs .n { font-size: 12px; font-weight: 700; opacity: .75; }
+.asx-sum { font-size: 15px; line-height: 1.5; color: var(--ink); margin: 10px 0 14px; }
+.asx-sum .g, .asx-rec .g { color: var(--c-ok); } .asx-sum .r, .asx-rec .r { color: var(--c-bad); }
+.asx-reclist { display: grid; gap: 8px; }
+.asx-rec { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 18px; align-items: center; padding: 14px 16px; border: 1px solid var(--hair); border-radius: 12px; background: var(--card); }
+.asx-rec .l b { display: block; font-size: 15.5px; font-weight: 600; color: var(--ink); }
+.asx-rec .l .w { display: block; font-size: 13px; color: var(--sub); margin-top: 3px; line-height: 1.45; }
+.asx-rec .big { font-size: 15px; font-weight: 600; color: var(--ink); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.asx-rec .act { display: flex; align-items: center; gap: 8px; }
+.asx-rec.accepted, .asx-rec.ignored { background: var(--tint); }
+.asx-rec.ignored .l b { color: var(--sub); text-decoration: line-through; }
+.asx-done { font-size: 13px; font-weight: 600; color: var(--c-ok); white-space: nowrap; }
+.asx-rec.ignored .asx-done { color: var(--sub); }
+/* campaign + ad pages */
 .asp { max-width: 1180px; }
 .asp-crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 14px; margin: 2px 0 14px; }
-.asp-crumbs a { color: var(--text-2); text-decoration: none; }
-.asp-crumbs a:hover { color: var(--text); text-decoration: underline; text-underline-offset: 3px; }
-.asp-crumbs .sep { color: var(--line); }
-.asp-crumbs .cur { color: var(--text); font-weight: 500; }
-.asp-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
-.asp-head h1 { margin: 0; font: 700 34px/1.12 var(--display); letter-spacing: -.035em; color: var(--text); }
-.asp-head .sub { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 10px; font-size: 14px; color: var(--text-2); }
+.asp-crumbs a { color: var(--c-link); text-decoration: none; }
+.asp-crumbs a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.asp-crumbs .sep { color: var(--mut); }
+.asp-crumbs .cur { color: var(--sub); }
+.asp-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
+.asp-head h1 { margin: 0; font: 700 34px/1.12 var(--display); letter-spacing: -.03em; color: var(--ink); }
+.asp-head .sub { display: block; max-width: 760px; margin: 10px 0 0; font-size: 16px; line-height: 1.5; color: var(--ink); }
+.asp-head .sub .asx-st { margin-right: 4px; font-size: 15px; font-weight: 600; }
 .asp-pn { display: flex; gap: 8px; }
-.asx-btn.ghost { background: var(--card); color: var(--text); border: 1px solid var(--line); display: inline-flex; align-items: center; gap: 7px; text-decoration: none; font-weight: 500; }
-.asx-btn.ghost svg { width: 16px; height: 16px; }
-.asx, .asp { --t-green: #087a4b; --t-blue: #1d5bd8; --t-violet: #6a3bd1; --t-orange: #c25200; --t-teal: #0b7a82; --t-red: #c8102e; }
-:root[data-theme="dark"] .asx { --t-green: #43d39a; --t-blue: #7aa5ff; --t-violet: #b49bff; --t-orange: #ff9b4a; --t-teal: #4fd1d9; --t-red: #ff6b7f; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .asx { --t-green: #43d39a; --t-blue: #7aa5ff; --t-violet: #b49bff; --t-orange: #ff9b4a; --t-teal: #4fd1d9; --t-red: #ff6b7f; } }
-.asp-facts { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); margin-bottom: 36px; background: var(--card); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
-.asp-fact { padding: 18px 20px 20px; min-width: 0; border-left: 1px solid var(--line-soft); border-top: 3px solid var(--tc, var(--text)); }
+.asp-jump { position: sticky; top: 60px; z-index: 4; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding: 10px 0; margin-bottom: 18px; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+.asp-jump button { flex: none; display: inline-flex; align-items: center; gap: 7px; height: 34px; padding: 0 13px; border-radius: 999px; border: 1px solid var(--hair); background: var(--card); color: var(--ink); font: 500 13.5px inherit; cursor: pointer; }
+.asp-jump button:hover { border-color: var(--ink); }
+.asp-jump .n { min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; display: inline-grid; place-items: center; font-size: 11.5px; font-weight: 700; background: var(--c-warn); color: #fff; }
+.asp-facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-bottom: 40px; background: var(--card); border: 1px solid var(--hair); border-radius: 16px; overflow: hidden; scroll-margin-top: 120px; }
+.asp-fact { padding: 20px 22px; border-left: 1px solid var(--soft); min-width: 0; }
 .asp-fact:first-child { border-left: 0; }
-.asp-fact.t-green { --tc: var(--t-green); } .asp-fact.t-blue { --tc: var(--t-blue); } .asp-fact.t-violet { --tc: var(--t-violet); } .asp-fact.t-orange { --tc: var(--t-orange); } .asp-fact.t-teal { --tc: var(--t-teal); }
-.asp-fact .l { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--tc); }
-.asp-fact .v { font: 700 24px/1.15 var(--display); letter-spacing: -.03em; color: var(--text); margin-top: 8px; }
-.asp-fact .t { font-size: 14px; line-height: 1.45; color: var(--text); opacity: .72; margin-top: 6px; }
-.asp-grid { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 40px; align-items: start; }
+.asp-fact .l { font-size: 13px; color: var(--sub); }
+.asp-fact .v { font: 600 24px/1.15 var(--display); letter-spacing: -.025em; color: var(--ink); margin-top: 6px; }
+.asp-fact .t { font-size: 13.5px; line-height: 1.45; color: var(--sub); margin-top: 6px; }
+.asp-grid { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 48px; align-items: start; }
 .asp-main { min-width: 0; }
-.asp-sec { margin-bottom: 40px; }
-.asp-sh { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--text); }
-.asp-sh h2 { margin: 0; font: 650 21px/1.2 var(--display); letter-spacing: -.02em; color: var(--text); }
-.asp-sh p { margin: 5px 0 0; font-size: 14px; line-height: 1.5; color: var(--text-2); }
-.asp-todo { display: grid; gap: 8px; }
-.asp-todo .r { display: flex; gap: 12px; align-items: flex-start; font-size: 15px; line-height: 1.5; padding: 14px 16px; border-radius: 12px; background: color-mix(in srgb, var(--t-orange) 7%, var(--card)); border: 0; border-left: 4px solid var(--t-orange); color: var(--text); }
-.asp-todo .r i { display: none; }
-.asp-todo .r.bad { border-left-color: var(--t-red); background: color-mix(in srgb, var(--t-red) 7%, var(--card)); }
-.asp-todo .r.bad i { background: var(--down); }
-.asp-todo .ok { display: flex; gap: 10px; align-items: center; font-size: 15px; padding: 14px 16px; border-radius: 12px; background: var(--card); border: 1px solid var(--line); }
-.asp-todo .ok svg { width: 20px; height: 20px; color: var(--up); }
+.asp-sec { margin-bottom: 44px; scroll-margin-top: 120px; }
+.asp-sh { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--hair); }
+.asp-sh h2 { margin: 0; font: 650 20px/1.2 var(--display); letter-spacing: -.015em; color: var(--ink); }
+.asp-sh p { margin: 5px 0 0; font-size: 14px; line-height: 1.5; color: var(--sub); }
+/* checklist */
+.asp-check .prog { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; font-size: 15px; font-weight: 500; color: var(--ink); }
+.asp-check .prog .bar { flex: 1; max-width: 220px; height: 6px; border-radius: 3px; background: var(--sel); overflow: hidden; }
+.asp-check .prog .bar i { display: block; height: 100%; background: var(--c-ok); border-radius: 3px; }
+.asp-check .it { display: grid; grid-template-columns: 74px minmax(0, 1fr) auto; gap: 14px; align-items: start; padding: 16px; border: 1px solid var(--hair); border-left: 4px solid var(--c-warn); border-radius: 12px; background: var(--card); margin-bottom: 8px; }
+.asp-check .it.bad { border-left-color: var(--c-bad); }
+.asp-check .lv { font-size: 12px; font-weight: 700; color: var(--c-warn); padding-top: 2px; }
+.asp-check .it.bad .lv { color: var(--c-bad); }
+.asp-check .l b { display: block; font-size: 15.5px; font-weight: 600; color: var(--ink); }
+.asp-check .l span { display: block; font-size: 14px; line-height: 1.5; color: var(--sub); margin-top: 3px; }
+.asp-check .go { border: 0; background: none; font: 600 13.5px inherit; color: var(--c-link); cursor: pointer; white-space: nowrap; padding: 2px 0; }
+.asp-check .okl { margin-top: 10px; }
+.asp-check .okl summary { cursor: pointer; font-size: 14px; font-weight: 600; color: var(--ink); padding: 8px 0; }
+.asp-check .okr { font-size: 14px; color: var(--sub); padding: 6px 0 6px 2px; }
+.asp-check .okr::first-letter { color: var(--c-ok); }
+/* ad rows */
 .asp-adlist { display: grid; gap: 8px; }
-.asp-adrow { min-width: 0; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 18px; border-radius: 14px; background: var(--card); border: 1px solid var(--line); color: inherit; text-decoration: none; transition: border-color .15s, box-shadow .15s; }
-.asp-adrow:hover { border-color: var(--text); box-shadow: 0 2px 10px rgba(0,0,0,.06); }
+.asp-adrow { min-width: 0; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 18px; border-radius: 14px; background: var(--card); border: 1px solid var(--hair); color: inherit; text-decoration: none; }
+.asp-adrow:hover { border-color: var(--ink); }
 .asp-adrow .l { min-width: 0; }
-.asp-adrow .grp { font-size: 12px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: .03em; }
-.asp-adrow .hl { font-size: 17px; line-height: 1.35; color: #1a0dab; margin-top: 4px; }
-.asp-adrow .u { font-size: 13px; color: var(--text-3); margin-top: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.asp-adrow .r { display: flex; align-items: center; gap: 10px; flex: none; }
-.asp-adrow .cnt { font-size: 13px; color: var(--text-3); white-space: nowrap; }
-.asp-adrow .r svg { width: 18px; height: 18px; transform: rotate(180deg); color: var(--text-3); }
-:root[data-theme="dark"] .asp-adrow .hl, :root[data-theme="dark"] .asp-phone .ghl, :root[data-theme="dark"] .asp-desk .ghl, :root[data-theme="dark"] .gsl span { color: #8ab4f8; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .asp-adrow .hl, :root:not([data-theme="light"]) .asp-phone .ghl, :root:not([data-theme="light"]) .asp-desk .ghl, :root:not([data-theme="light"]) .gsl span { color: #8ab4f8; } }
-.asp-side { min-width: 0; position: sticky; top: 84px; }
-.asp-side h3 { margin: 0 0 10px; font-size: 13px; font-weight: 650; color: var(--text); }
-.asp-side h3 ~ h3 { margin-top: 26px; }
-.asp-kv { display: grid; grid-template-columns: 1fr; margin: 0; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 4px 16px; }
-.asp-kv dt { font-size: 12px; color: var(--text-3); padding-top: 11px; }
-.asp-kv dd { margin: 2px 0 0; padding-bottom: 11px; font-size: 14.5px; color: var(--text); border-bottom: 1px solid var(--line-soft); }
-.asp-kv dd:last-of-type { border-bottom: 0; }
-.asp-adgrid { display: grid; grid-template-columns: minmax(0, 420px) minmax(0, 1fr); gap: 44px; align-items: start; }
+.asp-adrow .grp { font-size: 13px; color: var(--sub); }
+.asp-adrow .hl { font-size: 17px; line-height: 1.35; color: #1a0dab; margin-top: 3px; }
+.asp-adrow .u { font-size: 13px; color: var(--sub); margin-top: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.asp-adrow .r { display: flex; align-items: center; gap: 12px; flex: none; }
+.asp-adrow .cnt { font-size: 13px; color: var(--sub); white-space: nowrap; }
+.asp-adrow .chev { width: 18px; height: 18px; color: var(--mut); }
+:root[data-theme="dark"] .asp-adrow .hl { color: #8ab4f8; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .asp-adrow .hl { color: #8ab4f8; } }
+/* keywords */
+.asp-grp { border: 1px solid var(--hair); border-radius: 14px; background: var(--card); margin-bottom: 8px; overflow: hidden; }
+.asp-grp > summary { list-style: none; display: flex; align-items: baseline; gap: 12px; padding: 15px 18px; cursor: pointer; }
+.asp-grp > summary::-webkit-details-marker { display: none; }
+.asp-grp > summary b { font-size: 15.5px; font-weight: 600; color: var(--ink); margin-right: auto; }
+.asp-grp > summary span { font-size: 13.5px; color: var(--sub); white-space: nowrap; }
+.asp-grp > summary::after { content: "+"; font-size: 20px; line-height: 1; color: var(--sub); }
+.asp-grp[open] > summary::after { content: "–"; }
+.asx-kwtab { border-top: 1px solid var(--hair); }
+.asx-kwtab .th, .asx-kwtab .tr { display: grid; grid-template-columns: minmax(0, 1fr) 120px 76px 76px; gap: 14px; align-items: center; padding: 10px 18px; }
+.asx-kwtab .th { font-size: 12.5px; color: var(--sub); border-bottom: 1px solid var(--soft); }
+.asx-kwtab .tr { border-bottom: 1px solid var(--soft); font-size: 14.5px; }
+.asx-kwtab .num { text-align: right; font-variant-numeric: tabular-nums; color: var(--ink); }
+.asx-kwtab .num.g { color: var(--c-ok); font-weight: 600; }
+.asx-kwtab .clk { display: flex; align-items: center; justify-content: flex-end; gap: 10px; }
+.asx-kwtab .clk i { display: block; height: 6px; max-width: 64px; min-width: 2px; border-radius: 3px; background: var(--ink); opacity: .85; }
+.asx-kwtab .nodata { grid-column: 2 / -1; text-align: right; font-size: 13px; color: var(--sub); }
+.asx-kwtab .asx-more { padding: 10px 18px; }
+.asx-kwt { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
+.asx-kwt .tx { color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.asx-mt { flex: none; font-size: 11.5px; font-weight: 500; color: var(--sub); border: 1px solid var(--hair); border-radius: 6px; padding: 1px 6px; }
+.asx-chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.asx-neg { display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; color: var(--ink); padding: 4px 10px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--c-bad) 35%, var(--hair)); background: var(--card); }
+.asx-neg i { font-style: normal; color: var(--c-bad); font-size: 12px; }
+.asx-pill { font-size: 13.5px; padding: 5px 12px; border-radius: 999px; background: var(--card); border: 1px solid var(--hair); color: var(--ink); text-decoration: none; }
+.asx-pill.tel { color: var(--c-link); font-weight: 600; }
+.asx-ext { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 28px; }
+.asx-ext h3 { margin: 0 0 10px; font-size: 14px; font-weight: 600; color: var(--ink); }
+.asx-sls { display: grid; gap: 6px; }
+.asx-sl { display: block; padding: 10px 12px; border-radius: 10px; background: var(--card); border: 1px solid var(--hair); text-decoration: none; }
+.asx-sl b { display: block; font-size: 14.5px; font-weight: 500; color: var(--c-link); }
+.asx-sl span { display: block; font-size: 13px; color: var(--sub); margin-top: 2px; }
+.asx-snip { margin: 0 0 6px; font-size: 14px; line-height: 1.5; color: var(--ink); }
+/* area and hours */
+.asp-area { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 28px; align-items: start; }
+.asp-area .sent { margin: 0 0 12px; font-size: 16px; font-weight: 600; line-height: 1.45; color: var(--ink); }
+.asx-map { position: relative; height: 220px; border-radius: 14px; overflow: hidden; background: var(--sel); border: 1px solid var(--hair); }
+.asx-map .tiles, .asx-map svg { position: absolute; left: 50%; top: 0; width: 340px; height: 220px; transform: translateX(-50%); }
+.asx-map .tiles img { position: absolute; width: 256px; height: 256px; max-width: none; filter: grayscale(1) contrast(1.05) brightness(1.05); }
+.asx-map .dim { fill: rgba(17, 17, 17, .32); }
+.asx-map .ring { fill: rgba(26, 86, 219, .12); stroke: #1a56db; stroke-width: 2; }
+.asx-map .pin { fill: #1a56db; stroke: #fff; stroke-width: 2.5; }
+.asx-map .attr { position: absolute; right: 6px; bottom: 4px; font-size: 10px; color: #333; background: rgba(255,255,255,.85); padding: 0 4px; border-radius: 3px; }
+:root[data-theme="dark"] .asx-map .tiles img { filter: grayscale(1) invert(.9) contrast(.9); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .asx-map .tiles img { filter: grayscale(1) invert(.9) contrast(.9); } }
+.asx-pl { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; align-items: center; }
+.asx-pl span { font-size: 13px; background: var(--card); border: 1px solid var(--hair); padding: 3px 9px; border-radius: 999px; color: var(--ink); }
+.asx-now { display: inline-flex; align-items: center; gap: 7px; font-size: 13.5px; font-weight: 600; margin-bottom: 10px; }
+.asx-now::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--mut); }
+.asx-now.on { color: var(--c-ok); } .asx-now.on::before { background: var(--c-ok); }
+.asx-now.off, .asx-now.idle { color: var(--sub); }
+.asx-hours { border: 1px solid var(--hair); border-radius: 12px; background: var(--card); padding: 4px 16px; }
+.asx-hours .r { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--soft); font-size: 14.5px; color: var(--ink); }
+.asx-hours .r:last-child { border-bottom: 0; }
+.asx-hours .r.today { font-weight: 700; }
+.asx-hours .t { font-variant-numeric: tabular-nums; }
+.asx-hours .t.off { color: var(--sub); }
+/* side column */
+.asp-side { min-width: 0; position: sticky; top: 120px; }
+.asp-side .kvg { margin-bottom: 26px; }
+.asp-side h3 { margin: 0 0 8px; font-size: 13px; font-weight: 600; color: var(--sub); }
+.asp-side dl { margin: 0; border-top: 1px solid var(--hair); }
+.asp-side dt { font-size: 13px; color: var(--sub); padding-top: 10px; }
+.asp-side dd { margin: 2px 0 0; padding-bottom: 10px; font-size: 15px; line-height: 1.4; color: var(--ink); border-bottom: 1px solid var(--soft); word-break: break-word; }
+/* ad page */
+.asp-adgrid { display: grid; grid-template-columns: minmax(0, 400px) minmax(0, 1fr); gap: 48px; align-items: start; }
 .asp-preview { position: sticky; top: 84px; }
-.asp-preview .ctl { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+.asp-preview .cap { margin: 0 0 10px; font-size: 14px; font-weight: 600; color: var(--ink); }
+.asp-preview .ctl { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
 .asp-preview .ctl .asx-seg { margin: 0; }
-.asp-preview .stage { display: grid; place-items: center; padding: 26px 0; background: var(--sel); border-radius: 22px; }
-.asp-phone { width: 320px; border-radius: 40px; padding: 12px; background: #111; box-shadow: 0 20px 50px rgba(0,0,0,.18); }
-.asp-phone .scr { background: #fff; border-radius: 30px; padding: 18px 14px 20px; min-height: 520px; color: #202124; }
-.asp-desk { width: 100%; max-width: 400px; border-radius: 14px; border: 1px solid #dadce0; background: #fff; color: #202124; overflow: hidden; }
+.asp-preview .vnav { display: flex; align-items: center; gap: 8px; }
+.asp-preview .vnav .lab { font-size: 13.5px; color: var(--ink); min-width: 120px; text-align: center; font-variant-numeric: tabular-nums; }
+.asp-preview .stage { display: grid; place-items: center; padding: 24px 0; background: var(--sel); border-radius: 20px; }
+.asp-phone { width: 310px; border-radius: 38px; padding: 11px; background: #111; box-shadow: 0 16px 40px rgba(0,0,0,.16); }
+.asp-phone .scr { background: #fff; border-radius: 28px; padding: 16px 14px 18px; color: #202124; min-height: 500px; }
+.asp-desk { width: 100%; max-width: 380px; border-radius: 14px; border: 1px solid #dadce0; background: #fff; color: #202124; overflow: hidden; }
 .asp-desk .scr { padding: 16px 18px 18px; }
-.gbar { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.gbar { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
 .glogo { font: 600 19px/1 Arial, sans-serif; letter-spacing: -.5px; background: linear-gradient(90deg, #4285f4 0 25%, #ea4335 25% 42%, #fbbc05 42% 58%, #4285f4 58% 75%, #34a853 75% 87%, #ea4335 87%); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .gbar .q { flex: 1; min-width: 0; font-size: 13px; padding: 8px 12px; border-radius: 999px; border: 1px solid #dadce0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #3c4043; }
+.gad { margin: 14px 0; }
 .gad .gtop b { display: block; font-size: 12px; font-weight: 700; margin-bottom: 7px; }
 .gad .gu { display: flex; align-items: center; gap: 9px; }
 .gad .fav { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: #f1f3f4; font-size: 12px; font-weight: 700; flex: none; }
 .gad .n { font-size: 14px; }
-.gad .p { font-size: 12px; color: #4d5156; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 230px; }
+.gad .p { font-size: 12px; color: #4d5156; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 220px; }
 .gad .ghl { margin-top: 10px; font-size: 19px; line-height: 1.3; color: #1a0dab; }
+.gad .ghl .mk { background: #fff2a8; border-radius: 3px; box-shadow: 0 0 0 2px #fff2a8; }
 .gad .gds { margin-top: 6px; font-size: 14px; line-height: 1.55; color: #4d5156; }
-.gad .gsl { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin-top: 10px; border-top: 1px solid #ecedef; }
+.gad .gsl { display: grid; grid-template-columns: 1fr 1fr; margin-top: 10px; border-top: 1px solid #ecedef; }
 .gad .gsl span { font-size: 14px; color: #1a0dab; padding: 9px 0; border-bottom: 1px solid #ecedef; }
-.gad .gcall { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 14px; color: #1a0dab; }
-.gad .gcall svg { width: 16px; height: 16px; }
-.ghost { margin-top: 22px; display: grid; gap: 7px; }
+.gad .gcall { margin-top: 10px; font-size: 14px; color: #1a0dab; }
+.ghost { display: grid; gap: 7px; margin: 10px 0; }
 .ghost i { height: 9px; border-radius: 5px; background: #f1f3f4; }
 .ghost i:first-child { width: 45%; } .ghost i:nth-child(2) { width: 85%; } .ghost i:nth-child(3) { width: 70%; }
 .asp-texts { min-width: 0; }
-.asp-grp { border: 1px solid var(--line); border-radius: 14px; background: var(--card); margin-bottom: 8px; overflow: hidden; }
-.asp-grp > summary { list-style: none; display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 15px 18px; cursor: pointer; }
-.asp-grp > summary::-webkit-details-marker { display: none; }
-.asp-grp > summary b { font-size: 15.5px; font-weight: 600; color: var(--text); margin-right: auto; }
-.asp-grp > summary span { font-size: 13.5px; color: var(--text-3); white-space: nowrap; }
-.asp-grp > summary::after { content: "+"; font-size: 20px; line-height: 1; color: var(--text-3); margin-left: 4px; }
-.asp-grp[open] > summary::after { content: "–"; }
-.asp-grp .asx-tbl { border: 0; border-top: 1px solid var(--line); border-radius: 0; }
-.asp-lines { display: grid; }
-.asp-line { display: grid; grid-template-columns: minmax(0, 1fr) 90px 52px; gap: 14px; align-items: center; padding: 11px 0; border-bottom: 1px solid var(--line-soft); }
-.asp-line .tx { font-size: 15.5px; line-height: 1.4; color: var(--text); }
-.asp-line .bar { height: 5px; border-radius: 3px; background: var(--sel); overflow: hidden; }
-.asp-line .bar i { display: block; height: 100%; background: var(--text); border-radius: 3px; }
-.asp-line .bar i.over { background: var(--down); }
-.asp-line .n { font-size: 12.5px; color: var(--text-3); text-align: right; font-variant-numeric: tabular-nums; }
-.asp-line .n.over { color: var(--down); font-weight: 700; }
-.asp-dest { display: grid; gap: 4px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; }
-.asp-dest .l { font-size: 12px; color: var(--text-3); }
-.asp-dest .l ~ .l { margin-top: 8px; }
-.asp-dest a, .asp-dest .v { font-size: 15px; color: var(--text); word-break: break-all; display: inline-flex; align-items: center; gap: 6px; }
-.asp-dest a svg { width: 15px; height: 15px; flex: none; }
-.asx-chips .asx-kw small { font-family: var(--sans, inherit); font-weight: 700; color: var(--text); margin-left: 4px; }
+.asp-texts .asp-sec { margin-bottom: 36px; }
+.asp-line { display: grid; grid-template-columns: minmax(0, 1fr) 80px 150px; gap: 14px; align-items: center; padding: 10px 6px; border-bottom: 1px solid var(--soft); border-radius: 8px; cursor: default; }
+.asp-line:hover { background: var(--tint); }
+.asp-line .tx { font-size: 15.5px; line-height: 1.4; color: var(--ink); }
+.asp-line .bar { height: 6px; border-radius: 3px; background: var(--sel); overflow: hidden; }
+.asp-line .bar i { display: block; height: 100%; border-radius: 3px; background: var(--c-ok); }
+.asp-line .bar i.a { background: var(--c-warn); } .asp-line .bar i.r { background: var(--c-bad); }
+.asp-line .m { display: flex; justify-content: flex-end; gap: 10px; align-items: baseline; white-space: nowrap; }
+.asp-line .vd { font-size: 12.5px; font-weight: 600; }
+.asp-line .vd.g { color: var(--c-ok); } .asp-line .vd.a { color: var(--c-warn); } .asp-line .vd.r { color: var(--c-bad); }
+.asp-line .n { font-size: 12.5px; color: var(--sub); font-variant-numeric: tabular-nums; }
+.asp-dest { margin: 0; border: 1px solid var(--hair); border-radius: 12px; background: var(--card); padding: 4px 16px; }
+.asp-dest dt { font-size: 13px; color: var(--sub); padding-top: 10px; }
+.asp-dest dd { margin: 2px 0 0; padding-bottom: 10px; font-size: 15px; color: var(--ink); word-break: break-all; border-bottom: 1px solid var(--soft); }
+.asp-dest dd:last-of-type { border-bottom: 0; }
+.asp-dest a { color: var(--c-link); }
+.asx-kwlist { border: 1px solid var(--hair); border-radius: 12px; background: var(--card); padding: 2px 16px; }
+.asx-kwlist .r { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--soft); font-size: 14.5px; }
+.asx-kwlist .r:last-child { border-bottom: 0; }
+.asx-kwlist .num { font-size: 13.5px; color: var(--sub); white-space: nowrap; }
 @media (max-width: 1100px) {
-  .asp-facts { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .asp-fact:nth-child(4) { border-left: 0; }
-  .asp-grid, .asp-adgrid { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .asx-strip .cells { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .asx-strip .c:nth-child(4) { border-left: 0; }
+  .asx-strip .c:nth-child(n+4) { border-top: 1px solid var(--soft); }
+  .asp-grid, .asp-adgrid { grid-template-columns: minmax(0, 1fr); gap: 32px; }
   .asp-side, .asp-preview { position: static; }
+  .asp-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .asp-fact:nth-child(3) { border-left: 0; }
+  .asp-fact:nth-child(n+3) { border-top: 1px solid var(--soft); }
+  .asx-camps .th, .asx-camps .tr { grid-template-columns: minmax(0, 2fr) 100px 110px 120px 20px; }
+  .asx-camps .th > :nth-child(3), .asx-camps .tr > .geo { display: none; }
 }
 @media (max-width: 760px) {
+  .asx-strip .cells { grid-template-columns: 1fr 1fr; }
+  .asx-strip .c { border-left: 0; border-top: 1px solid var(--soft); padding: 14px 16px; }
+  .asx-strip .c:nth-child(-n+2) { border-top: 0; }
+  .asx-strip .c:nth-child(even) { border-left: 1px solid var(--soft); }
+  .asx-strip .c:last-child { grid-column: 1 / -1; border-left: 0; }
+  .asx-strip .v { font-size: 25px; }
+  .asx-pills { flex: 1 1 100%; }
+  .asx-co { padding: 16px 14px 6px; }
+  .asx-mini { gap: 18px; width: 100%; }
+  .asx-camps .th { display: none; }
+  .asx-camps .tr { grid-template-columns: minmax(0, 1fr) auto 18px; grid-template-areas: "nm bud chev" "iss iss iss"; gap: 6px 10px; padding: 14px 4px; }
+  .asx-camps .tr .nm { grid-area: nm; } .asx-camps .tr .bud { grid-area: bud; align-self: start; }
+  .asx-camps .tr .l1 { flex-wrap: wrap; gap: 4px 10px; } .asx-camps .tr .l1 b { white-space: normal; }
+  .asx-camps .tr .l2 { white-space: normal; }
+  .asx-camps .tr > .num:not(.bud) { display: none; }
+  .asx-camps .tr > .asx-iss { grid-area: iss; } .asx-camps .tr > .asx-iss.none { display: none; }
+  .asx-camps .tr .chev { grid-area: chev; align-self: start; margin-top: 2px; }
+  .asx-rec { grid-template-columns: minmax(0, 1fr) auto; }
+  .asx-rec .act { grid-column: 1 / -1; }
   .asp-head h1 { font-size: 27px; }
-  .asp-facts { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); margin-bottom: 28px; }
-  .asp-fact { padding: 14px 14px 16px; border-left: 0; }
-  .asp-fact:nth-child(even) { border-left: 1px solid var(--line-soft); }
-  .asp-fact:last-child { grid-column: 1 / -1; }
+  .asp-head .sub { font-size: 15px; }
+  .asp-jump { top: 52px; }
+  .asp-fact { padding: 14px 16px; }
   .asp-fact .v { font-size: 20px; }
-  .asp-phone { width: 290px; }
-  .asp-line { grid-template-columns: minmax(0, 1fr) 46px; }
-  .asp-line .bar { display: none; }
-  .asp-adrow { align-items: flex-start; padding: 14px; }
-  .asp-adrow .r .asx-tag { display: none; }
-  .asp-grp > summary { flex-wrap: wrap; }
+  .asp-check .it { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+  .asp-check .go { justify-self: start; }
   .asp-adrow .cnt { display: none; }
-  .asp-pn { width: 100%; }
-  .asp-pn .asx-btn { flex: 1; justify-content: center; }
+  .asp-area { grid-template-columns: minmax(0, 1fr); }
+  .asx-ext { grid-template-columns: minmax(0, 1fr); }
+  .asx-kwtab .th { display: none; }
+  .asx-kwtab .tr { grid-template-columns: minmax(0, 1fr) auto; padding: 10px 14px; }
+  .asx-kwtab .tr > .num:not(.clk) { display: none; }
+  .asx-kwtab .clk i { display: none; }
+  .asx-kwtab .nodata { grid-column: auto; }
+  .asp-phone { width: 290px; }
+  .asp-line { grid-template-columns: minmax(0, 1fr) auto; }
+  .asp-line .bar { display: none; }
+  .asp-line .m { flex-direction: column; align-items: flex-end; gap: 0; }
+  .asp-pn { width: 100%; } .asp-pn .asx-btn { flex: 1; }
 }
 .chipv.warn { background: color-mix(in srgb, var(--warn) 18%, transparent); color: color-mix(in srgb, var(--warn) 60%, var(--text)); }
 .two { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
@@ -4178,35 +4187,44 @@ body { font-size: 14px; line-height: 1.5; }
     }).catch(function () { if (token === renderToken) { sk.remove(); s1.append(el('div', 'empty', 'Verlauf konnte nicht geladen werden')) } })
   }
   // ---------- Anzeigen: how every Google Ads account is set up ----------
+  // Readability first: a sentence before details, neutral labels, colour only for meaning
+  // (green = runs / brings enquiries, amber = check, red = blocks or wastes money, blue = links).
   var AS_DAYS = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY']
   var AS_DAY_SHORT = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So']
+  var AS_DAY_LONG = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag']
   var AS_STATUS = { ENABLED: ['Aktiv', 'on'], PAUSED: ['Pausiert', 'paused'], REMOVED: ['Gelöscht', 'off'] }
-  var AS_BIDDING = { TARGET_SPEND: 'Klicks maximieren', MAXIMIZE_CONVERSIONS: 'Conversions maximieren', MANUAL_CPC: 'Manueller CPC', TARGET_CPA: 'Ziel-CPA', MAXIMIZE_CONVERSION_VALUE: 'Conversion-Wert maximieren', TARGET_IMPRESSION_SHARE: 'Anteil an möglichen Impressionen' }
-  var AS_MATCH = { EXACT: ['[', ']', 'Genau'], PHRASE: ['"', '"', 'Wortgruppe'], BROAD: ['', '', 'Weitgehend'] }
+  var AS_BIDDING = { TARGET_SPEND: 'Klicks maximieren', MAXIMIZE_CONVERSIONS: 'Conversions maximieren', MANUAL_CPC: 'Manuelle Gebote', TARGET_CPA: 'Ziel-Kosten pro Anfrage', MAXIMIZE_CONVERSION_VALUE: 'Conversion-Wert maximieren', TARGET_IMPRESSION_SHARE: 'Anteil an Einblendungen' }
+  var AS_MATCH = { EXACT: 'genau', PHRASE: 'Wortgruppe', BROAD: 'weitgehend' }
+  var AS_MATCH_HELP = { EXACT: 'Nur bei genau dieser Suche (oder fast genau).', PHRASE: 'Wenn die Suche diese Wörter in dieser Reihenfolge enthält.', BROAD: 'Auch bei ähnlichen Suchen.' }
   var AS_SNIPPET = { 'Service catalog': 'Leistungen', Types: 'Typen', Brands: 'Marken', Styles: 'Stile', Models: 'Modelle', Amenities: 'Ausstattung', Neighborhoods: 'Stadtteile', Courses: 'Kurse', Destinations: 'Ziele', Shows: 'Shows', 'Insurance coverage': 'Versicherung', 'Degree programs': 'Studiengänge', 'Featured hotels': 'Hotels' }
   var adSetupCache = null
   function asHost(u) { try { return new URL(u).hostname.replace(/^www\./, '') } catch (e) { return u || '' } }
   function asEuro(v) { return v === null || v === undefined ? '–' : money.format(v).replace(',00', '') }
-  function asHours(f, t) { return (f === 0 && t === 24) ? 'ganztags' : f + '–' + t + ' Uhr' }
+  function asHours(f, t) { return (f === 0 && t === 24) ? 'ganztags' : String(f).padStart(2, '0') + ':00–' + String(t).padStart(2, '0') + ':00' }
+  function asShort(name) { return name.replace(/ · Suche · /, ' · ') }
   function asScheduleText(sched) {
-    if (!sched.length) return 'Immer'
+    if (!sched.length) return 'Rund um die Uhr'
     var byDay = AS_DAYS.map(function (d) { return sched.filter(function (s) { return s.day === d }).map(function (s) { return asHours(s.from, s.to) }).join(', ') })
     var parts = [], i = 0
     while (i < 7) {
       var j = i
       while (j + 1 < 7 && byDay[j + 1] === byDay[i]) j++
-      if (byDay[i]) parts.push((i === j ? AS_DAY_SHORT[i] : AS_DAY_SHORT[i] + '–' + AS_DAY_SHORT[j]) + ' ' + byDay[i])
+      parts.push((i === j ? AS_DAY_SHORT[i] : AS_DAY_SHORT[i] + '–' + AS_DAY_SHORT[j]) + ' ' + (byDay[i] || 'keine Anzeigen'))
       i = j + 1
     }
     return parts.join(' · ')
   }
-  function asGeoText(c) {
+  function asGeoShort(c) {
     if (c.radius.length) return c.radius.map(function (r) { return pct.format(r.km) + ' km Umkreis' }).join(' + ')
     if (c.places.length) return c.places.length === 1 ? c.places[0].name : c.places[0].name + ' + ' + (c.places.length - 1) + ' Orte'
     return 'Kein Gebiet'
   }
+  function asGeoSentence(c) {
+    if (c.radius.length) return 'Im Umkreis von ' + c.radius.map(function (r) { return pct.format(r.km) + ' km' }).join(' und ') + ' um den Betrieb'
+    if (c.places.length) return 'In ' + c.places.slice(0, 3).map(function (p) { return p.name }).join(', ') + (c.places.length > 3 ? ' und ' + (c.places.length - 3) + ' weiteren Orten' : '')
+    return 'Kein Gebiet eingestellt'
+  }
   function asWords(t) { return t.toLowerCase().split(/\s+/).filter(Boolean) }
-  // would this keyword (with its match type) show for that search?
   function asMatches(text, match, term) {
     var k = text.toLowerCase()
     if (match === 'EXACT') return term === k
@@ -4214,7 +4232,6 @@ body { font-size: 14px; line-height: 1.5; }
     var tw = asWords(term)
     return asWords(k).every(function (w) { return tw.indexOf(w) >= 0 })
   }
-  // everything the page needs about one company, computed once
   function asModel(co) {
     var camps = co.setup.campaigns, h = co.history || { keywords: [], terms: [], organic: [], totals: null }
     var kwHist = {}
@@ -4228,67 +4245,92 @@ body { font-size: 14px; line-height: 1.5; }
     })
     var covered = function (term) { return allKw.some(function (x) { return asMatches(x.k.text, x.k.match, term) }) }
     var negated = function (term) { return allNeg.some(function (n) { return asMatches(n[0], n[1], term) }) }
-    // the campaign whose keywords share most words with a search
     var home = function (term) {
       var tw = asWords(term), best = null, score = 0
       allKw.forEach(function (x) { var s = asWords(x.k.text).filter(function (w) { return tw.indexOf(w) >= 0 }).length; if (s > score) { score = s; best = x } })
-      return best ? best.c.name.replace(/ · Suche · /, ' · ') + ' › ' + best.g.name : null
+      return best ? asShort(best.c.name) + ' › ' + best.g.name : null
     }
+    var dec = {}
+    ;(co.decisions || []).forEach(function (d) { dec[d.kind + '|' + d.term] = d.state })
+    var mk = function (kind, r, extra) { var o = { kind: kind, t: r[0], state: dec[kind + '|' + r[0]] || 'open' }; for (var k in extra) o[k] = extra[k]; return o }
     var ideas = h.terms.filter(function (r) { return (r[4] > 0 || r[1] >= 2) && !covered(r[0]) && !negated(r[0]) })
-      .sort(function (a, b) { return b[4] - a[4] || b[1] - a[1] }).slice(0, 25).map(function (r) { return { t: r[0], c: r[1], i: r[2], s: r[3], v: r[4], home: home(r[0]) } })
+      .sort(function (a, b) { return b[4] - a[4] || b[1] - a[1] }).slice(0, 25).map(function (r) { return mk('ideas', r, { c: r[1], i: r[2], s: r[3], v: r[4], home: home(r[0]) }) })
     var waste = h.terms.filter(function (r) { return r[4] === 0 && r[1] >= 2 && r[3] >= 2 && !negated(r[0]) })
-      .sort(function (a, b) { return b[3] - a[3] }).slice(0, 20).map(function (r) { return { t: r[0], c: r[1], i: r[2], s: r[3], v: r[4], kw: covered(r[0]) } })
+      .sort(function (a, b) { return b[3] - a[3] }).slice(0, 20).map(function (r) { return mk('waste', r, { c: r[1], i: r[2], s: r[3], v: r[4], kw: covered(r[0]) }) })
     var organic = h.organic.filter(function (r) { return r[2] >= 20 && !covered(r[0]) && !negated(r[0]) })
-      .sort(function (a, b) { return b[2] - a[2] }).slice(0, 20).map(function (r) { return { t: r[0], c: r[1], i: r[2], p: r[3], home: home(r[0]) } })
+      .sort(function (a, b) { return b[2] - a[2] }).slice(0, 20).map(function (r) { return mk('organic', r, { c: r[1], i: r[2], p: r[3], home: home(r[0]) }) })
     return { kwHist: kwHist, cpc: cpc, totals: t, ideas: ideas, waste: waste, organic: organic }
   }
-  function asExpected(c, m) {
-    if (!m.cpc) return null
+  // expected clicks per day as a range: the old average price, never above the max bid
+  function asRange(c, m) {
+    if (!m.cpc || !c.budget) return null
     var price = c.ceiling ? Math.min(m.cpc, c.ceiling) : m.cpc
-    return price ? c.budget / price : null
+    var mid = c.budget / price
+    var lo = Math.max(0, Math.floor(mid * 0.7)), hi = Math.max(1, Math.round(mid * 1.15))
+    if (lo === hi) lo = Math.max(0, hi - 1)
+    return [lo, hi, price]
   }
-  function asFindings(co) {
+  function asRangeText(r) { return r ? r[0] + '–' + r[1] : '–' }
+  // the checklist before going live: every check with its level, an action title, the reason and where to fix it
+  function asChecks(co) {
     var camps = co.setup ? co.setup.campaigns : []
     var kwCamp = {}, placeCamp = {}
     camps.forEach(function (c) {
       c.groups.forEach(function (g) { g.keywords.forEach(function (k) { var t = k.text.toLowerCase(); (kwCamp[t] = kwCamp[t] || {})[c.name] = 1 }) })
-      c.places.forEach(function (p) { (placeCamp[p.id] = placeCamp[p.id] || {})[c.name] = p.name })
+      c.places.forEach(function (p) { (placeCamp[p.id] = placeCamp[p.id] || {})[c.name] = 1 })
     })
     var out = {}
     camps.forEach(function (c) {
-      var f = []
-      if (!c.radius.length && !c.places.length) f.push(['bad', 'Kein Gebiet eingestellt: würde weltweit ausgeliefert.'])
-      if (!c.languages.length) f.push(['bad', 'Keine Sprache eingestellt.'])
-      if (c.partners || c.display) f.push(['warn', (c.display ? 'Displaynetzwerk' : 'Suchnetzwerk-Partner') + ' eingeschaltet.'])
-      if (c.presence && c.presence !== 'PRESENCE') f.push(['warn', 'Standortoption „Interesse“ statt „Präsenz“.'])
+      var list = []
+      var add = function (ok, level, fail, pass, why, to) { list.push({ ok: ok, level: level, title: ok ? pass : fail, why: ok ? '' : why, to: to }) }
+      add(!!(c.radius.length || c.places.length), 'bad', 'Gebiet einstellen', 'Gebiet eingestellt', 'Ohne Gebiet würde die Anzeige weltweit gezeigt.', 'area')
+      add(!!c.languages.length, 'bad', 'Sprache einstellen', 'Sprache eingestellt', 'Ohne Sprache sieht die Anzeige jeder, auch in anderen Sprachen.', 'details')
+      var noAds = c.groups.filter(function (g) { return !g.ads.length }).length
+      add(!noAds, 'bad', 'Anzeigen ergänzen', 'Jede Anzeigengruppe hat eine Anzeige', plural(noAds, ['Anzeigengruppe hat', 'Anzeigengruppen haben']) + ' noch keine Anzeige.', 'ads')
       var others = {}, shared = 0
       c.groups.forEach(function (g) { g.keywords.forEach(function (k) { var o = Object.keys(kwCamp[k.text.toLowerCase()]).filter(function (n) { return n !== c.name }); if (o.length) { shared++; o.forEach(function (n) { others[n] = 1 }) } }) })
-      if (shared) f.push(['warn', plural(shared, ['Keyword steht', 'Keywords stehen']) + ' auch in ' + Object.keys(others).map(function (n) { return '„' + n + '“' }).join(', ') + '. Die Kampagnen bieten gegeneinander.'])
+      add(!shared, 'warn', 'Doppelte Keywords auflösen', 'Keine Keywords doppelt', plural(shared, ['Keyword steht', 'Keywords stehen']) + ' auch in ' + Object.keys(others).map(function (n) { return '„' + asShort(n) + '“' }).join(', ') + '. Beide Kampagnen bieten gegeneinander, Google wählt selbst.', 'kw')
       var po = {}
-      c.places.forEach(function (p) { Object.keys(placeCamp[p.id]).forEach(function (n) { if (n !== c.name) po[n] = (po[n] || 0) + 1 }) })
-      Object.keys(po).filter(function (n) { return others[n] }).forEach(function (n) { f.push(['warn', plural(po[n], ['Ort ist', 'Orte sind']) + ' auch in „' + n + '“ eingestellt, mit denselben Keywords.']) })
-      if (c.ceiling && c.budget < c.ceiling * 2) {
-        var perDay = Math.floor(c.budget / (c.ceiling * 0.6))
-        f.push(['warn', asEuro(c.budget) + ' am Tag bei bis zu ' + asEuro(c.ceiling) + ' pro Klick: ' + (perDay < 1 ? 'oft kein einziger Klick am Tag.' : 'nur etwa ' + plural(perDay, ['Klick', 'Klicks']) + ' am Tag.')])
-      }
+      c.places.forEach(function (p) { Object.keys(placeCamp[p.id]).forEach(function (n) { if (n !== c.name && others[n]) po[n] = (po[n] || 0) + 1 }) })
+      var poN = Object.keys(po)
+      add(!poN.length, 'warn', 'Überschneidende Orte bereinigen', 'Keine Orte mit gleichen Keywords doppelt', poN.map(function (n) { return plural(po[n], ['Ort', 'Orte']) + ' auch in „' + asShort(n) + '“' }).join(', ') + ', mit denselben Keywords.', 'area')
+      var r = c.ceiling ? Math.floor(c.budget / (c.ceiling * 0.6)) : 9
+      add(!(c.ceiling && c.budget < c.ceiling * 2), 'warn', 'Budget erhöhen oder Kampagne bündeln', 'Budget reicht für mehrere Klicks am Tag', asEuro(c.budget) + ' pro Tag bei bis zu ' + asEuro(c.ceiling) + ' pro Klick: ' + (r < 1 ? 'oft kein einziger Klick am Tag.' : 'nur etwa ' + plural(r, ['Klick', 'Klicks']) + ' am Tag.'), 'facts')
       var we = c.schedule.filter(function (s) { return (s.day === 'SATURDAY' || s.day === 'SUNDAY') && s.from === 0 && s.to === 24 })
       var wk = c.schedule.filter(function (s) { return s.day !== 'SATURDAY' && s.day !== 'SUNDAY' && !(s.from === 0 && s.to === 24) })
-      if (we.length && wk.length) f.push(['warn', 'Am Wochenende rund um die Uhr, werktags nur ' + asHours(wk[0].from, wk[0].to) + '.'])
+      add(!(we.length && wk.length), 'warn', 'Werbezeiten am Wochenende prüfen', 'Werbezeiten passen zueinander', 'Am Wochenende rund um die Uhr, werktags nur ' + (wk[0] ? asHours(wk[0].from, wk[0].to) : '') + '. Wer nachts anruft, erreicht niemanden.', 'schedule')
       var hosts = {}
       c.groups.forEach(function (g) { g.ads.forEach(function (a) { if (a.url && /\.onepage\.me$/.test(asHost(a.url))) hosts[asHost(a.url)] = 1 }) })
-      if (Object.keys(hosts).length) f.push(['warn', 'Anzeige zeigt ' + Object.keys(hosts).join(', ') + '. Eine eigene Domain wirkt vertrauenswürdiger.'])
-      var noAds = c.groups.filter(function (g) { return !g.ads.length }).length
-      if (noAds) f.push(['bad', plural(noAds, ['Anzeigengruppe hat', 'Anzeigengruppen haben']) + ' keine Anzeige.'])
-      if (!c.calls.length) f.push(['warn', 'Keine Telefonnummer als Anruf-Asset.'])
-      if (c.sitelinks.length && c.sitelinks.length < 4) f.push(['warn', 'Nur ' + c.sitelinks.length + ' Sitelinks, Google zeigt bis zu 4.'])
-      out[c.name] = f
+      add(!Object.keys(hosts).length, 'warn', 'Eigene Domain für die Zielseite', 'Zielseiten auf eigener Domain', 'Die Anzeige zeigt ' + Object.keys(hosts).join(', ') + '. Eine eigene Domain wirkt vertrauenswürdiger.', 'ads')
+      add(!c.partners && !c.display, 'warn', 'Nur in der Google-Suche zeigen', 'Nur in der Google-Suche', 'Partner-Websites oder Display bringen meist teure, schlechte Klicks.', 'details')
+      add(!c.presence || c.presence === 'PRESENCE', 'warn', 'Standortoption auf „Präsenz“ stellen', 'Nur Menschen, die wirklich im Gebiet sind', 'Sonst sehen auch Menschen außerhalb die Anzeige, die nur nach dem Ort suchen.', 'details')
+      add(!!c.calls.length, 'warn', 'Telefonnummer hinterlegen', 'Telefonnummer hinterlegt', 'Ohne Anruf-Erweiterung kann niemand direkt aus der Anzeige anrufen.', 'ext')
+      add(!(c.sitelinks.length && c.sitelinks.length < 4), 'warn', 'Mindestens 4 Sitelinks anlegen', 'Genug Sitelinks', 'Nur ' + c.sitelinks.length + ' Sitelinks, Google zeigt bis zu 4.', 'ext')
+      list.sort(function (a, b) { return (a.ok - b.ok) || ((a.level === 'bad' ? 0 : 1) - (b.level === 'bad' ? 0 : 1)) })
+      out[c.name] = list
     })
     return out
   }
+  function asOpen(list) { return (list || []).filter(function (x) { return !x.ok }) }
   function asStatus(s) { var x = AS_STATUS[s] || [s || '–', '']; return el('span', 'asx-st ' + x[1], x[0]) }
+  function asLink(as, cls, text) { var a = el('a', cls, text); a.href = urlFor({ view: 'adsetup', as: as }); a.dataset.nav = ''; return a }
+  function asCrumbs(parts) {
+    var nav = el('nav', 'asp-crumbs'); nav.setAttribute('aria-label', 'Pfad')
+    parts.forEach(function (p, i) { if (i) nav.append(el('span', 'sep', '/')); nav.append(p[1] ? asLink(p[1], null, p[0]) : el('span', 'cur', p[0])) })
+    return nav
+  }
+  function asSection(id, title, desc, node, extra) {
+    var s = el('section', 'asp-sec'); s.id = 'as-' + id
+    var h = el('div', 'asp-sh'); var t = el('div'); t.append(el('h2', null, title)); if (desc) t.append(el('p', null, desc)); h.append(t); if (extra) h.append(extra)
+    s.append(h, node)
+    return s
+  }
+  function asGo(id) { var n = $('as-' + id); if (n) n.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'start' }) }
+  function asEmpty(text) { return el('div', 'asx-empty', text) }
+  function asIssues(n, bad) { return n ? el('span', 'asx-iss ' + (bad ? 'bad' : 'warn'), '⚠ ' + plural(n, ['Hinweis', 'Hinweise'])) : el('span', 'asx-iss none', '–') }
   function asMap(r) {
-    var W = 320, H = 200, lat = r.lat, lng = r.lng
-    var z = Math.max(5, Math.min(13, Math.floor(Math.log2((156543.03 * Math.cos(lat * Math.PI / 180)) / ((r.km * 1000) / 74)))))
+    var W = 340, H = 220, lat = r.lat, lng = r.lng
+    var z = Math.max(5, Math.min(13, Math.floor(Math.log2((156543.03 * Math.cos(lat * Math.PI / 180)) / ((r.km * 1000) / 80)))))
     var scale = Math.pow(2, z) * 256
     var px = (lng + 180) / 360 * scale
     var py = (1 - Math.log(Math.tan(lat * Math.PI / 180) + 1 / Math.cos(lat * Math.PI / 180)) / Math.PI) / 2 * scale
@@ -4299,372 +4341,480 @@ body { font-size: 14px; line-height: 1.5; }
       img.style.left = Math.round(tx * 256 - (px - W / 2)) + 'px'; img.style.top = Math.round(ty * 256 - (py - H / 2)) + 'px'
       tiles.append(img)
     }
-    var rpx = (r.km * 1000) / ((156543.03 * Math.cos(lat * Math.PI / 180)) / Math.pow(2, z))
+    var rp = (r.km * 1000) / ((156543.03 * Math.cos(lat * Math.PI / 180)) / Math.pow(2, z))
+    var cx = W / 2, cy = H / 2
     var ov = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, 'aria-hidden': 'true' })
-    ov.append(svg('circle', { cx: W / 2, cy: H / 2, r: rpx, class: 'area' }), svg('circle', { cx: W / 2, cy: H / 2, r: 4, class: 'dot' }))
-    box.append(tiles, ov, el('span', 'lab', pct.format(r.km) + ' km'), el('span', 'attr', '© OpenStreetMap'))
+    // everything outside the area is dimmed, the area itself stays clear
+    ov.append(svg('path', { d: 'M0 0H' + W + 'V' + H + 'H0Z M' + (cx - rp) + ' ' + cy + 'a' + rp + ' ' + rp + ' 0 1 0 ' + (2 * rp) + ' 0a' + rp + ' ' + rp + ' 0 1 0 ' + (-2 * rp) + ' 0Z', class: 'dim', 'fill-rule': 'evenodd' }),
+      svg('circle', { cx: cx, cy: cy, r: rp, class: 'ring' }), svg('circle', { cx: cx, cy: cy, r: 5, class: 'pin' }))
+    box.append(tiles, ov, el('span', 'attr', '© OpenStreetMap'))
     return box
   }
-  function asWeek(sched) {
-    var g = el('div', 'asx-week')
+  function asNowIn(c) {
+    var now = new Date(), d = AS_DAYS[(now.getDay() + 6) % 7], h = now.getHours()
+    if (!c.schedule.length) return true
+    return c.schedule.some(function (s) { return s.day === d && h >= s.from && h < s.to })
+  }
+  function asWeekList(c) {
+    var box = el('div', 'asx-hours')
+    var today = (new Date().getDay() + 6) % 7
     AS_DAYS.forEach(function (d, i) {
-      var row = el('div', 'r'); row.append(el('span', 'd', AS_DAY_SHORT[i]))
-      var bar = el('div', 'bar')
-      ;(sched.length ? sched.filter(function (s) { return s.day === d }) : [{ from: 0, to: 24 }]).forEach(function (s) { var on = el('i'); on.style.left = (s.from / 24 * 100) + '%'; on.style.width = ((s.to - s.from) / 24 * 100) + '%'; on.title = asHours(s.from, s.to); bar.append(on) })
-      row.append(bar); g.append(row)
+      var t = c.schedule.length ? c.schedule.filter(function (s) { return s.day === d }).map(function (s) { return asHours(s.from, s.to) }).join(', ') : 'ganztags'
+      var r = el('div', 'r' + (i === today ? ' today' : ''))
+      r.append(el('span', 'd', AS_DAY_LONG[i] + (i === today ? ' (heute)' : '')), el('span', 't' + (t ? '' : ' off'), t || 'Aus'))
+      box.append(r)
     })
-    var ax = el('div', 'ax'); ax.append(el('span'), el('span', null, '0'), el('span', null, '6'), el('span', null, '12'), el('span', null, '18'), el('span', null, '24')); g.append(ax)
-    return g
+    return box
   }
-  function asKw(text, match) { var m = AS_MATCH[match] || ['', '', match]; var c = el('span', 'asx-kw', m[0] + text + m[1]); c.title = m[2]; return c }
-  function asTable(heads, rows, cls) {
-    var t = el('div', 'asx-tbl' + (cls ? ' ' + cls : ''))
-    var h = el('div', 'th'); heads.forEach(function (x) { h.append(el('span', x[1] || '', x[0])) }); t.append(h)
-    rows.forEach(function (r) { var tr = el('div', 'tr'); r.forEach(function (c, i) { var cell = el('span', heads[i][1] || ''); if (c && c.nodeType) cell.append(c); else cell.textContent = c === null || c === undefined ? '' : c; tr.append(cell) }); t.append(tr) })
-    return t
-  }
-  function asRecs(m) {
-    if (!m.ideas.length && !m.waste.length && !m.organic.length) return null
-    var sec = el('div', 'asx-recs')
-    var tabs = []
-    if (m.ideas.length) tabs.push(['ideas', 'Neue Keywords ' + m.ideas.length])
-    if (m.waste.length) tabs.push(['waste', 'Ausschließen ' + m.waste.length])
-    if (m.organic.length) tabs.push(['organic', 'Aus der Google-Suche ' + m.organic.length])
-    var cur = tabs[0][0], pane = el('div')
-    var hd = el('div', 'asx-rh'); hd.append(el('h4', null, 'Empfehlungen'), seg(tabs, cur, function (k) { cur = k; paint() }, 'asx-seg'))
-    sec.append(hd, pane)
-    function paint() {
-      pane.replaceChildren()
-      if (cur === 'ideas') {
-        pane.append(el('p', 'asx-mut', 'Diese Suchen haben im bisherigen Konto Klicks oder Anfragen gebracht, sind in den neuen Kampagnen aber durch kein Keyword abgedeckt.'))
-        pane.append(asTable([['Suchbegriff'], ['Passt zu'], ['Klicks', 'num'], ['Kosten', 'num'], ['Anfragen', 'num']], m.ideas.map(function (r) {
-          return [el('b', null, r.t), r.home || '–', nf.format(r.c), money.format(r.s), r.v ? el('b', 'asx-good', nf.format(Math.round(r.v * 10) / 10)) : '0']
-        }), 'rec'))
-      } else if (cur === 'waste') {
-        pane.append(el('p', 'asx-mut', 'Haben im bisherigen Konto Geld gekostet, aber keine Anfrage gebracht, und sind noch nicht ausgeschlossen. Prüfen, ob sie als Ausschluss rein sollten.'))
-        pane.append(asTable([['Suchbegriff'], ['Heute'], ['Klicks', 'num'], ['Kosten', 'num']], m.waste.map(function (r) {
-          return [el('b', null, r.t), r.kw ? 'würde wieder gezeigt' : 'kein Keyword', nf.format(r.c), el('b', 'asx-bad', money.format(r.s))]
-        }), 'rec'))
-      } else {
-        pane.append(el('p', 'asx-mut', 'So finden Menschen die Website in der normalen Google-Suche. Für diese Suchen gibt es noch kein Keyword.'))
-        pane.append(asTable([['Suche'], ['Passt zu'], ['Gezeigt', 'num'], ['Klicks', 'num'], ['Platz', 'num']], m.organic.map(function (r) {
-          return [el('b', null, r.t), r.home || '–', nf.format(r.i), nf.format(r.c), r.p === null ? '–' : pct.format(r.p)]
-        }), 'rec'))
-      }
-    }
-    paint()
-    return sec
-  }
-  var AS_ICON = {
-    euro: '<path d="M17 6.5A6.5 6.5 0 1 0 17 17.5"/><path d="M4 10.5h9M4 13.5h9"/>',
-    bid: '<path d="M4 17l5-5 4 4 7-7"/><path d="M15 9h5v5"/>',
-    pin: '<path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
-    clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
-    click: '<path d="M9 9l11 4-5 1.5L13.5 20z"/><path d="M5 3v3M3 5h3M8.5 4.5 7 6"/>',
-    back: '<path d="M15 18l-6-6 6-6"/>',
-    ext: '<path d="M14 4h6v6M20 4l-9 9"/><path d="M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/>',
-    check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
-    phone: '<rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M11 18h2"/>',
-    desk: '<rect x="3" y="4.5" width="18" height="12" rx="1.5"/><path d="M9 20h6M12 16.5V20"/>',
-    shuffle: '<path d="M4 7h3.5c2 0 3 1 4.5 3.5S14.5 17 16.5 17H20"/><path d="M4 17h3.5c1.3 0 2.2-.5 3-1.5M14 8.5c.8-1 1.7-1.5 2.5-1.5H20"/><path d="M17.5 4.5 20 7l-2.5 2.5M17.5 14.5 20 17l-2.5 2.5"/>'
-  }
-  function asIcon(k) { return html('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + AS_ICON[k] + '</svg>') }
-  function asLink(as, cls, text) { var a = el('a', cls, text); a.href = urlFor({ view: 'adsetup', as: as }); a.dataset.nav = ''; return a }
-  function asShort(name) { return name.replace(/ · Suche · /, ' · ') }
-  function asCrumbs(parts) {
-    var nav = el('nav', 'asp-crumbs'); nav.setAttribute('aria-label', 'Pfad')
-    parts.forEach(function (p, i) {
-      if (i) nav.append(el('span', 'sep', '/'))
-      nav.append(p[1] ? asLink(p[1], null, p[0]) : el('span', 'cur', p[0]))
-    })
-    return nav
-  }
-  function asSection(title, desc, node, extra) {
-    var s = el('section', 'asp-sec')
-    var h = el('div', 'asp-sh'); var t = el('div'); t.append(el('h2', null, title)); if (desc) t.append(el('p', null, desc)); h.append(t); if (extra) h.append(extra)
-    s.append(h, node)
-    return s
-  }
-  // one fact: coloured label, the number big, one line of plain words
-  function asFact(tone, label, big, text) { var c = el('div', 'asp-fact ' + tone); c.append(el('div', 'l', label), el('div', 'v', big), el('div', 't', text)); return c }
-  function asSideDetails(c, m) {
-    var side = el('aside', 'asp-side')
-    var kv = el('dl', 'asp-kv')
-    var row = function (k, v) { kv.append(el('dt', null, k), el('dd', null, v)) }
-    row('Status', (AS_STATUS[c.status] || [c.status])[0])
-    row('Kampagnen-ID', c.id)
-    row('Typ', 'Suchkampagne')
-    row('Netzwerk', 'Google-Suche' + (c.partners ? ' + Partner' : '') + (c.display ? ' + Display' : ''))
-    row('Standortoption', c.presence === 'PRESENCE' ? 'Präsenz' : (c.presence || '–'))
-    row('Sprache', c.languages.join(', ') || '–')
-    row('Gebotsstrategie', AS_BIDDING[c.bidding] || c.bidding || '–')
-    row('Max. pro Klick', c.ceiling ? asEuro(c.ceiling) : '–')
-    row('Budget', asEuro(c.budget) + ' / Tag')
-    side.append(el('h3', null, 'Details'), kv)
-    side.append(el('h3', null, 'Gebiet'))
-    c.radius.forEach(function (r) { side.append(asMap(r)) })
-    if (c.places.length) {
-      var pl = el('div', 'asx-pl')
-      var show = function (all) { pl.replaceChildren(); (all ? c.places : c.places.slice(0, 9)).forEach(function (p) { pl.append(el('span', null, p.name)) }); if (!all && c.places.length > 9) { var more = el('button', 'asx-more', '+ ' + (c.places.length - 9) + ' weitere'); more.type = 'button'; more.onclick = function () { show(true) }; pl.append(more) } }
-      show(false); side.append(pl)
-    }
-    if (!c.radius.length && !c.places.length) side.append(el('p', 'asx-mut', 'Kein Gebiet eingestellt'))
-    side.append(el('h3', null, 'Werbezeiten'), asWeek(c.schedule), el('p', 'asx-mut', asScheduleText(c.schedule)))
-    return side
-  }
-  // the ad on a phone, as Google would show it; "combo" picks which headlines are shown
-  function asPhone(a, c, combo, desk) {
-    var frame = el('div', desk ? 'asp-desk' : 'asp-phone')
-    var screen = el('div', 'scr')
-    var g = el('div', 'gbar'); g.append(el('span', 'glogo', 'Google'), el('span', 'q', a.headlines[0] || ''))
-    screen.append(g)
-    var card = el('div', 'gad')
-    var top = el('div', 'gtop'); top.append(el('b', null, 'Gesponsert'))
-    var u = el('div', 'gu'); u.append(el('span', 'fav', (asHost(a.url) || '?').charAt(0).toUpperCase()))
-    var ut = el('div'); ut.append(el('div', 'n', c.name.split(' · ')[0]), el('div', 'p', asHost(a.url) + (a.path1 ? ' › ' + a.path1 : '') + (a.path2 ? ' › ' + a.path2 : '')))
-    u.append(ut); top.append(u)
-    var hs = combo.slice(0, 3).map(function (i) { return a.headlines[i] }).filter(Boolean)
-    card.append(top, el('div', 'ghl', hs.join(' | ')), el('div', 'gds', [a.descriptions[combo[3] % a.descriptions.length], a.descriptions[(combo[3] + 1) % a.descriptions.length]].filter(Boolean).join(' ')))
-    if (c.sitelinks.length) { var sl = el('div', 'gsl'); c.sitelinks.slice(0, desk ? 4 : 4).forEach(function (x) { sl.append(el('span', null, x.text)) }); card.append(sl) }
-    if (c.calls.length) { var call = el('div', 'gcall'); call.append(asIcon('phone'), document.createTextNode(c.calls[0])); card.append(call) }
-    screen.append(card)
-    for (var i = 0; i < 3; i++) { var ph = el('div', 'ghost'); ph.append(el('i'), el('i'), el('i')); screen.append(ph) }
-    frame.append(screen)
-    return frame
-  }
-  function asMeter(text, max) {
-    var r = el('div', 'asp-line')
-    var bar = el('span', 'bar'); var f = el('i'); f.style.width = Math.min(100, text.length / max * 100) + '%'; if (text.length > max) f.className = 'over'; bar.append(f)
-    r.append(el('span', 'tx', text), bar, el('span', 'n' + (text.length > max ? ' over' : ''), text.length + '/' + max))
-    return r
-  }
-  function asCampaignPage(wrap, co, c, m, findings) {
-    wrap.append(asCrumbs([['Anzeigen', {}], [co.name, { co: co.id }], [asShort(c.name)]]))
-    var head = el('header', 'asp-head')
-    var h = el('div', 'tt'); h.append(el('h1', null, asShort(c.name)))
-    var sub = el('div', 'sub'); sub.append(asStatus(c.status), el('span', null, 'Suchkampagne · ' + co.name + ' · Konto ' + co.account)); h.append(sub)
-    head.append(h)
-    wrap.append(head)
-    // the five facts in plain words
-    var exp = asExpected(c, m)
-    var facts = el('div', 'asp-facts')
-    facts.append(
-      asFact('t-green', 'Budget', asEuro(c.budget) + ' / Tag', 'im Monat höchstens ca. ' + asEuro(Math.round(c.budget * 30.4))),
-      asFact('t-blue', 'Gebot', c.ceiling ? 'max. ' + asEuro(c.ceiling) : (AS_BIDDING[c.bidding] || '–'), AS_BIDDING[c.bidding] === 'Klicks maximieren' ? 'Google holt möglichst viele Klicks' : (AS_BIDDING[c.bidding] || c.bidding || '')),
-      asFact('t-violet', 'Gebiet', c.radius.length ? c.radius.map(function (r) { return pct.format(r.km) + ' km' }).join(' + ') : c.places.length ? plural(c.places.length, ['Ort', 'Orte']) : 'keins', c.radius.length ? 'Umkreis um den Betrieb' : c.places.length ? c.places.slice(0, 3).map(function (p) { return p.name }).join(', ') + (c.places.length > 3 ? ' …' : '') : 'würde weltweit laufen'),
-      asFact('t-orange', 'Werbezeiten', (function () { var t = asScheduleText(c.schedule); return t.split(' · ')[0] })(), (function () { var t = asScheduleText(c.schedule).split(' · '); return t.length > 1 ? t.slice(1).join(' · ') : (c.schedule.length ? 'sonst keine Anzeigen' : 'rund um die Uhr') })()),
-      asFact('t-teal', 'Erwartet', exp === null ? '–' : '≈ ' + pct.format(Math.round(exp * 10) / 10) + ' Klicks', exp === null ? 'keine Vergleichswerte' : 'pro Tag, bei bisher Ø ' + money.format(Math.min(m.cpc, c.ceiling || m.cpc))))
-    wrap.append(facts)
-    var grid = el('div', 'asp-grid'), main = el('div', 'asp-main')
-    grid.append(main, asSideDetails(c, m))
-    wrap.append(grid)
-    // 1. what to do
-    var todo = el('div', 'asp-todo')
-    if (!findings.length) { var ok = el('div', 'ok'); ok.append(asIcon('check'), el('span', null, 'Nichts gefunden, was vor dem Start geändert werden muss.')); todo.append(ok) }
-    findings.forEach(function (f) { var r = el('div', 'r ' + f[0]); r.append(el('i'), el('span', null, f[1])); todo.append(r) })
-    main.append(asSection('Vor dem Start', findings.length ? plural(findings.length, ['Punkt', 'Punkte']) + ', die wir uns ansehen sollten.' : null, todo))
-    // 2. ads
-    var ads = el('div', 'asp-adlist')
-    c.groups.forEach(function (g, gi) {
-      g.ads.forEach(function (a, ai) {
-        var card = asLink({ co: co.id, c: c.id, ad: gi + '-' + ai }, 'asp-adrow')
-        var l = el('div', 'l'); l.append(el('div', 'grp', g.name), el('div', 'hl', a.headlines.slice(0, 2).join(' | ')), el('div', 'u', asHost(a.url) + (a.path1 ? '/' + a.path1 : '') + (a.path2 ? '/' + a.path2 : '')))
-        var r = el('div', 'r'); r.append(el('span', 'asx-tag' + (a.approval === 'APPROVED' ? ' ok' : ''), a.approval === 'APPROVED' ? 'Genehmigt' : (a.approval || '–')), el('span', 'cnt', a.headlines.length + ' Titel · ' + a.descriptions.length + ' Texte'), asIcon('back'))
-        card.append(l, r)
-        ads.append(card)
-      })
-    })
-    var nAds = c.groups.reduce(function (a, g) { return a + g.ads.length }, 0)
-    main.append(asSection('Anzeigen', plural(nAds, ['Anzeige', 'Anzeigen']) + ' in ' + plural(c.groups.length, ['Anzeigengruppe', 'Anzeigengruppen']) + '. Antippen für Vorschau und alle Texte.', ads))
-    // 3. keywords
-    var kw = el('div')
-    c.groups.forEach(function (g, gi) {
-      var rows = g.keywords.map(function (k) { return { k: k, h: m.kwHist[k.text.toLowerCase()] } })
-      rows.sort(function (a, b) { return ((b.h && b.h.c) || 0) - ((a.h && a.h.c) || 0) || a.k.text.localeCompare(b.k.text) })
-      var clicks = rows.reduce(function (a, r) { return a + ((r.h && r.h.c) || 0) }, 0)
-      var det = el('details', 'asp-grp'); if (gi === 0) det.open = true
-      var sm = el('summary'); sm.append(el('b', null, g.name), el('span', null, plural(g.keywords.length, ['Keyword', 'Keywords']) + (clicks ? ' · ' + plural(clicks, ['Klick', 'Klicks']) + ' bisher' : '')))
-      det.append(sm)
-      kw.append(det)
-      det.append(asTable([['Keyword'], ['Option'], ['Klicks', 'num'], ['Ø Preis', 'num'], ['Anfragen', 'num']], rows.map(function (r) {
-        var x = r.h
-        return [asKw(r.k.text, r.k.match), (AS_MATCH[r.k.match] || ['', '', r.k.match])[2], x ? nf.format(x.c) : el('span', 'asx-new', 'neu'), x && x.c ? money.format(x.s / x.c) : '–', x ? nf.format(Math.round(x.v * 10) / 10) : '–']
-      }), 'kwt'))
-    })
-    var nKw = c.groups.reduce(function (a, g) { return a + g.keywords.length }, 0)
-    main.append(asSection('Keywords', plural(nKw, ['Keyword', 'Keywords']) + '. Klicks, Preis und Anfragen stammen aus den letzten 90 Tagen im bisherigen Konto.', kw))
-    // 4. negatives
-    var neg = el('div', 'asx-chips')
-    var sorted = c.negatives.slice().sort(function (a, b) { return a[0].localeCompare(b[0]) })
-    var paintNeg = function (all) { neg.replaceChildren(); (all ? sorted : sorted.slice(0, 40)).forEach(function (n) { neg.append(asKw(n[0], n[1])) }); if (!all && sorted.length > 40) { var b = el('button', 'asx-more', 'Alle ' + sorted.length + ' anzeigen'); b.type = 'button'; b.onclick = function () { paintNeg(true) }; neg.append(b) } }
-    paintNeg(false)
-    main.append(asSection('Ausgeschlossene Keywords', sorted.length ? 'Bei Suchen mit diesen Begriffen erscheint keine Anzeige dieser Kampagne.' : 'Keine.', neg))
-    // 5. extensions
-    var aw = el('div', 'asx-assets')
-    var blk = function (title, node) { var b = el('div', 'blk'); b.append(el('div', 'asx-gh', title), node); aw.append(b) }
-    var sl = el('div', 'asx-sls')
-    c.sitelinks.forEach(function (x) { var a = el('a', 'asx-sl'); if (x.url) { a.href = x.url; a.target = '_blank'; a.rel = 'noopener' } a.append(el('b', null, x.text)); if (x.d1 || x.d2) a.append(el('span', null, [x.d1, x.d2].filter(Boolean).join(' · '))); sl.append(a) })
-    blk('Sitelinks · ' + c.sitelinks.length, c.sitelinks.length ? sl : el('p', 'asx-mut', 'Keine'))
-    var co2 = el('div', 'asx-chips'); c.callouts.forEach(function (x) { co2.append(el('span', 'asx-pill', x)) })
-    blk('Callouts · ' + c.callouts.length, c.callouts.length ? co2 : el('p', 'asx-mut', 'Keine'))
-    var sn = el('div'); c.snippets.forEach(function (x) { var r = el('p', 'asx-snip'); r.append(el('b', null, (AS_SNIPPET[x.header] || x.header) + '  '), document.createTextNode(x.values.join(' · '))); sn.append(r) })
-    blk('Snippets · ' + c.snippets.length, c.snippets.length ? sn : el('p', 'asx-mut', 'Keine'))
-    var cl = el('div', 'asx-chips'); c.calls.forEach(function (x) { var a = el('a', 'asx-pill', x); a.href = 'tel:' + x.replace(/\s/g, ''); cl.append(a) })
-    blk('Anruf', c.calls.length ? cl : el('p', 'asx-mut', 'Keine Nummer'))
-    main.append(asSection('Erweiterungen', 'Zusätzliche Links, Hinweise und die Telefonnummer, die Google unter der Anzeige zeigen kann.', aw))
-  }
-  function asAdPage(wrap, co, c, m, gi, ai) {
-    var g = c.groups[gi], a = g && g.ads[ai]
-    if (!a) { wrap.append(el('div', 'empty', 'Diese Anzeige gibt es nicht mehr.')); return }
-    var list = []
-    c.groups.forEach(function (gg, x) { gg.ads.forEach(function (_, y) { list.push([x, y]) }) })
-    var idx = list.findIndex(function (p) { return p[0] === gi && p[1] === ai })
-    wrap.append(asCrumbs([['Anzeigen', {}], [co.name, { co: co.id }], [asShort(c.name), { co: co.id, c: c.id }], ['Anzeige ' + (idx + 1)]]))
-    var head = el('header', 'asp-head')
-    var h = el('div', 'tt'); h.append(el('h1', null, g.name))
-    var sub = el('div', 'sub')
-    var STR = { EXCELLENT: 'Sehr gut', GOOD: 'Gut', AVERAGE: 'Mittel', POOR: 'Schwach', PENDING: 'Bewertung folgt', UNRATED: '–' }
-    sub.append(asStatus(a.status), el('span', 'asx-tag' + (a.approval === 'APPROVED' ? ' ok' : ''), a.approval === 'APPROVED' ? 'Genehmigt' : (a.approval || '–')), el('span', null, 'Anzeigenstärke: ' + (STR[a.strength] || a.strength || '–')))
-    h.append(sub); head.append(h)
-    var nav = el('div', 'asp-pn')
-    if (idx > 0) nav.append(asLink({ co: co.id, c: c.id, ad: list[idx - 1].join('-') }, 'asx-btn ghost', '‹ Vorherige'))
-    if (idx < list.length - 1) nav.append(asLink({ co: co.id, c: c.id, ad: list[idx + 1].join('-') }, 'asx-btn ghost', 'Nächste ›'))
-    head.append(nav)
-    wrap.append(head)
-    var grid = el('div', 'asp-adgrid')
-    // left: the preview
-    var pv = el('div', 'asp-preview')
-    var mode = 'phone', combo = [0, 1, 2, 0]
-    var stage = el('div', 'stage')
-    var ctl = el('div', 'ctl')
-    var sw = seg([['phone', 'Handy'], ['desk', 'Computer']], mode, function (v) { mode = v; draw() }, 'asx-seg')
-    var shuffle = el('button', 'asx-btn ghost'); shuffle.type = 'button'; shuffle.append(asIcon('shuffle'), document.createTextNode('Andere Kombination'))
-    shuffle.onclick = function () {
-      var n = a.headlines.length, pick = []
-      while (pick.length < Math.min(3, n)) { var r = Math.floor(Math.random() * n); if (pick.indexOf(r) < 0) pick.push(r) }
-      pick.push(Math.floor(Math.random() * Math.max(1, a.descriptions.length)))
-      combo = pick; draw()
-    }
-    ctl.append(sw, shuffle)
-    function draw() { stage.replaceChildren(asPhone(a, c, combo, mode === 'desk')) }
-    draw()
-    pv.append(ctl, stage, el('p', 'asx-mut', 'Google setzt die Anzeige bei jeder Suche neu zusammen: bis zu 3 Titel und 2 Beschreibungen aus der Liste rechts.'))
-    // right: the texts
-    var tx = el('div', 'asp-texts')
-    var hl = el('div', 'asp-lines'); a.headlines.forEach(function (x) { hl.append(asMeter(x, 30)) })
-    tx.append(asSection('Titel', a.headlines.length + ' von 15 möglichen · je höchstens 30 Zeichen', hl))
-    var ds = el('div', 'asp-lines'); a.descriptions.forEach(function (x) { ds.append(asMeter(x, 90)) })
-    tx.append(asSection('Beschreibungen', a.descriptions.length + ' von 4 möglichen · je höchstens 90 Zeichen', ds))
-    var dest = el('div', 'asp-dest')
-    var link = el('a', null, a.url || '–'); if (a.url) { link.href = a.url; link.target = '_blank'; link.rel = 'noopener' } link.append(asIcon('ext'))
-    dest.append(el('div', 'l', 'Zielseite'), link, el('div', 'l', 'Angezeigter Pfad'), el('div', 'v', asHost(a.url) + (a.path1 ? '/' + a.path1 : '') + (a.path2 ? '/' + a.path2 : '')))
-    tx.append(asSection('Wohin die Anzeige führt', null, dest))
-    var kws = el('div', 'asx-chips')
-    g.keywords.slice().sort(function (x, y) { return x.text.localeCompare(y.text) }).forEach(function (k) { var ch = asKw(k.text, k.match); var hh = m.kwHist[k.text.toLowerCase()]; if (hh && hh.c) ch.append(el('small', null, ' ' + nf.format(hh.c))); kws.append(ch) })
-    tx.append(asSection('Bei diesen Suchen', g.keywords.length + ' Keywords der Anzeigengruppe. Die Zahl dahinter: Klicks im bisherigen Konto (90 Tage).', kws))
-    grid.append(pv, tx)
-    wrap.append(grid)
-  }
-  function asCompany(co, findings) {
+  function asKwText(k, match) { var s = el('span', 'asx-kwt'); s.append(el('span', 'tx', k), el('span', 'asx-mt', AS_MATCH[match] || match)); s.title = AS_MATCH_HELP[match] || ''; return s }
+  function asNeg(text, match) { var c = el('span', 'asx-neg'); c.append(el('i', null, '⊘'), document.createTextNode(text)); c.title = 'Ausgeschlossen · ' + (AS_MATCH[match] || match); return c }
+  // ---------- overview ----------
+  function asCompany(co, checks, onlyIssues) {
     var m = asModel(co)
-    var camps = co.setup.campaigns
+    var camps = co.setup.campaigns.filter(function (c) { return !onlyIssues || asOpen(checks[c.name]).length })
+    if (!camps.length) return null
     var sec = el('section', 'asx-co')
     var meta = COMPANIES.filter(function (x) { return x.id === co.id })[0]
     var hd = el('header', 'asx-coh')
     if (meta) hd.append(companyLogo(meta, 'lg'))
     var tt = el('div', 'tt'); tt.append(el('h3', null, co.name), el('div', 'sub', 'Konto ' + co.account + (co.fetched_ts ? ' · Stand ' + new Date(co.fetched_ts).toLocaleString('de-DE', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '')))
     hd.append(tt)
-    var budget = camps.reduce(function (a, c) { return a + c.budget }, 0)
-    var exp = camps.reduce(function (a, c) { var e = asExpected(c, m); return e === null ? a : a + e }, 0)
-    var kpis = el('div', 'asx-mini')
-    var mk = function (l, v, s) { var d = el('div'); d.append(el('span', 'l', l), el('b', null, v)); if (s) d.append(el('span', 's', s)); kpis.append(d) }
-    mk('Budget', asEuro(budget) + ' / Tag', 'ca. ' + asEuro(Math.round(budget * 30.4)) + ' im Monat')
-    if (m.cpc) mk('Erwartet', '≈ ' + nf.format(Math.round(exp)) + ' Klicks / Tag', 'bei Ø ' + money.format(m.cpc) + ' (bisher)')
-    if (m.totals) mk('Bisher 90 Tage', nf.format(m.totals.clicks) + ' Klicks', money.format(m.totals.spend) + ' · ' + nf.format(Math.round(m.totals.conversions)) + ' Conversions')
-    hd.append(kpis)
+    var all = co.setup.campaigns
+    var budget = all.reduce(function (a, c) { return a + c.budget }, 0)
+    var lo = 0, hi = 0, any = false
+    all.forEach(function (c) { var r = asRange(c, m); if (r) { any = true; lo += r[0]; hi += r[1] } })
+    var mini = el('dl', 'asx-mini')
+    var mk = function (l, v, s) { var d = el('div'); d.append(el('dt', null, l), el('dd', null, v)); if (s) d.append(el('dd', 's', s)); mini.append(d) }
+    mk('Budget', asEuro(budget) + ' pro Tag', '≈ ' + asEuro(Math.round(budget * 30.4)) + ' im Monat')
+    if (any) mk('Erwartet', lo + '–' + hi + ' Klicks pro Tag', 'bei bisher Ø ' + money.format(m.cpc) + ' pro Klick')
+    if (m.totals) mk('Bisher (90 Tage)', nf.format(m.totals.clicks) + ' Klicks', money.format(m.totals.spend) + ' · ' + nf.format(Math.round(m.totals.conversions)) + ' Anfragen')
+    hd.append(mini)
     sec.append(hd)
     var tbl = el('div', 'asx-camps')
     var th = el('div', 'th')
-    ;['Kampagne', 'Budget', 'Max. Gebot', 'Gebiet', 'Erwartet', 'Keywords', ''].forEach(function (x, i) { th.append(el('span', i && i < 6 && i !== 3 ? 'num' : '', x)) })
+    ;[['Kampagne', ''], ['Budget', 'num'], ['Gebiet', ''], ['Klicks pro Tag', 'num'], ['Hinweise', ''], ['', '']].forEach(function (x) { th.append(el('span', x[1], x[0])) })
     tbl.append(th)
     camps.forEach(function (c) {
-      var f = findings[c.name] || []
-      var bad = f.filter(function (x) { return x[0] === 'bad' }).length
+      var open = asOpen(checks[c.name])
+      var bad = open.some(function (x) { return x.level === 'bad' })
       var row = asLink({ co: co.id, c: c.id }, 'tr')
-      var nm = el('span', 'nm'); nm.append(el('b', null, asShort(c.name)), asStatus(c.status))
-      var e = asExpected(c, m)
       var kws = c.groups.reduce(function (a, g) { return a + g.keywords.length }, 0)
-      var fl = el('span', 'fl')
-      if (f.length) fl.append(el('span', 'asx-badge ' + (bad ? 'bad' : 'warn'), String(f.length)))
-      fl.append(html('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>'))
-      row.append(nm, el('span', 'num', asEuro(c.budget)), el('span', 'num', c.ceiling ? asEuro(c.ceiling) : '–'), el('span', 'geo', asGeoText(c)),
-        el('span', 'num', e === null ? '–' : '≈ ' + pct.format(Math.round(e * 10) / 10)), el('span', 'num', nf.format(kws)), fl)
+      var nm = el('span', 'nm')
+      var l1 = el('span', 'l1'); l1.append(el('b', null, asShort(c.name)), asStatus(c.status))
+      nm.append(l1, el('span', 'l2', (c.ceiling ? 'max. ' + asEuro(c.ceiling) + ' pro Klick · ' : '') + plural(kws, ['Keyword', 'Keywords']) + ' · ' + plural(c.groups.length, ['Gruppe', 'Gruppen'])))
+      var r = asRange(c, m)
+      var bud = el('span', 'num bud'); bud.append(el('b', null, asEuro(c.budget)), el('small', null, ' / Tag'))
+      row.append(nm, bud, el('span', 'geo', asGeoShort(c)), el('span', 'num', asRangeText(r)), asIssues(open.length, bad),
+        html('<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>'))
       tbl.append(row)
     })
     sec.append(tbl)
-    var recs = asRecs(m)
+    var recs = asRecs(co, m)
     if (recs) sec.append(recs)
     return sec
   }
+  function asRecs(co, m) {
+    var groups = [['ideas', 'Neue Keywords', m.ideas], ['waste', 'Ausschließen', m.waste], ['organic', 'Aus der Google-Suche', m.organic]].filter(function (g) { return g[2].length })
+    if (!groups.length) return null
+    var sec = el('div', 'asx-recs')
+    var cur = groups[0][0], pane = el('div'), done = false
+    var hd = el('div', 'asx-rh'); hd.append(el('h4', null, 'Empfehlungen'))
+    var tabs = el('div', 'asx-tabs')
+    function paintTabs() {
+      tabs.replaceChildren()
+      groups.forEach(function (g) {
+        var open = g[2].filter(function (r) { return r.state === 'open' }).length
+        var b = el('button', g[0] === cur ? 'on' : ''); b.type = 'button'
+        b.append(document.createTextNode(g[1]), el('span', 'n', String(open)))
+        b.onclick = function () { cur = g[0]; done = false; paintTabs(); paint() }
+        tabs.append(b)
+      })
+    }
+    hd.append(tabs)
+    sec.append(hd, pane)
+    function setState(r, state) {
+      r.state = state
+      fetch('/api/ad-setup/rec', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ company: co.id, kind: r.kind, term: r.t, state: state }) })
+        .then(function (res) { if (res.ok) { co.decisions = (co.decisions || []).filter(function (d) { return !(d.kind === r.kind && d.term === r.t) }); if (state !== 'open') co.decisions.push({ kind: r.kind, term: r.t, state: state }) } })
+        .catch(function () {})
+      paintTabs(); paint()
+    }
+    function paint() {
+      pane.replaceChildren()
+      var list = groups.filter(function (g) { return g[0] === cur })[0][2]
+      var open = list.filter(function (r) { return r.state === 'open' }), closed = list.filter(function (r) { return r.state !== 'open' })
+      var sum = el('p', 'asx-sum')
+      if (cur === 'ideas') {
+        var v = open.reduce(function (a, r) { return a + r.v }, 0), c = open.reduce(function (a, r) { return a + r.c }, 0)
+        sum.append(document.createTextNode(plural(open.length, ['Suchbegriff brachte', 'Suchbegriffe brachten']) + ' im alten Konto ' + plural(c, ['Klick', 'Klicks'])), v ? el('b', 'g', ' und ' + plural(Math.round(v), ['Anfrage', 'Anfragen'])) : document.createTextNode(''), document.createTextNode(', haben aber in den neuen Kampagnen kein Keyword.'))
+      } else if (cur === 'waste') {
+        var s = open.reduce(function (a, r) { return a + r.s }, 0)
+        sum.append(document.createTextNode(plural(open.length, ['Suchbegriff kostete', 'Suchbegriffe kosteten']) + ' im alten Konto '), el('b', 'r', money.format(s)), document.createTextNode(' ohne eine einzige Anfrage und sind noch nicht ausgeschlossen.'))
+      } else {
+        sum.append(document.createTextNode('So finden Menschen die Website in der normalen Google-Suche. Für diese ' + plural(open.length, ['Suche', 'Suchen']) + ' gibt es noch kein Keyword.'))
+      }
+      pane.append(sum)
+      if (!open.length) pane.append(asEmpty('Alles erledigt.'))
+      var list2 = el('div', 'asx-reclist')
+      open.forEach(function (r) { list2.append(row(r)) })
+      pane.append(list2)
+      if (closed.length) {
+        var t = el('button', 'asx-more', (done ? '− ' : '+ ') + 'Erledigt (' + closed.length + ')'); t.type = 'button'
+        t.onclick = function () { done = !done; paint() }
+        pane.append(t)
+        if (done) { var cl = el('div', 'asx-reclist done'); closed.forEach(function (r) { cl.append(row(r)) }); pane.append(cl) }
+      }
+      if (isAdmin()) pane.append(el('p', 'asx-foot', '„Übernehmen“ merkt den Begriff vor. Übernommene Begriffe lege ich pausiert im Google-Ads-Konto an.'))
+    }
+    function row(r) {
+      var d = el('div', 'asx-rec' + (r.state !== 'open' ? ' ' + r.state : ''))
+      var l = el('div', 'l'); l.append(el('b', null, r.t))
+      var why
+      if (r.kind === 'ideas') why = plural(r.c, ['Klick', 'Klicks']) + ' für ' + money.format(r.s) + (r.home ? ' · passt zu ' + r.home : '')
+      else if (r.kind === 'waste') why = plural(r.c, ['Klick', 'Klicks']) + ', keine Anfrage' + (r.kw ? ' · würde in den neuen Kampagnen wieder gezeigt' : '')
+      else why = nf.format(r.i) + '-mal gezeigt, ' + plural(r.c, ['Klick', 'Klicks']) + (r.p !== null ? ', Platz ' + pct.format(r.p) : '') + (r.home ? ' · passt zu ' + r.home : '')
+      var w = el('span', 'w'); w.textContent = why
+      if (r.kind === 'ideas' && r.v) { var g = el('b', 'g', plural(Math.round(r.v * 10) / 10, ['Anfrage', 'Anfragen'])); w.prepend(g, document.createTextNode(' · ')) }
+      l.append(w)
+      var big = r.kind === 'waste' ? el('span', 'big r', money.format(r.s)) : r.kind === 'ideas' ? el('span', 'big', plural(r.c, ['Klick', 'Klicks'])) : el('span', 'big', nf.format(r.i) + '×')
+      var act = el('div', 'act')
+      if (r.state === 'open') {
+        var yes = el('button', 'asx-btn sm', r.kind === 'waste' ? 'Ausschließen' : 'Übernehmen'); yes.type = 'button'; yes.onclick = function () { setState(r, 'accepted') }
+        var no = el('button', 'asx-btn sm ghost', 'Ignorieren'); no.type = 'button'; no.onclick = function () { setState(r, 'ignored') }
+        act.append(yes, no)
+      } else {
+        act.append(el('span', 'asx-done', r.state === 'accepted' ? (r.kind === 'waste' ? '✓ Zum Ausschließen vorgemerkt' : '✓ Vorgemerkt') : 'Ignoriert'))
+        var undo = el('button', 'asx-more', 'Rückgängig'); undo.type = 'button'; undo.onclick = function () { setState(r, 'open') }; act.append(undo)
+      }
+      d.append(l, big, act)
+      return d
+    }
+    paintTabs(); paint()
+    return sec
+  }
+  // ---------- campaign page ----------
+  function asFact(label, big, text) { var c = el('div', 'asp-fact'); c.append(el('div', 'l', label), el('div', 'v', big), el('div', 't', text)); return c }
+  function asCampaignPage(wrap, co, c, m, checks) {
+    wrap.append(asCrumbs([['Anzeigen', {}], [co.name, { co: co.id }], [asShort(c.name)]]))
+    var r = asRange(c, m)
+    var open = asOpen(checks)
+    var head = el('header', 'asp-head')
+    var h = el('div', 'tt'); h.append(el('h1', null, asShort(c.name)))
+    var sub = el('p', 'sub')
+    sub.append(asStatus(c.status), document.createTextNode(' ' + (c.status === 'PAUSED' ? 'Zeigt gerade keine Anzeigen. ' : '') + 'Suchanzeigen ' + asGeoSentence(c).replace(/^Im /, 'im ').replace(/^In /, 'in ') + ', ' + asScheduleText(c.schedule) + '.'))
+    h.append(sub); head.append(h); wrap.append(head)
+    // jump bar
+    var jump = el('nav', 'asp-jump')
+    ;[['todo', 'Vor dem Start', open.length], ['ads', 'Anzeigen'], ['kw', 'Keywords'], ['neg', 'Ausschlüsse'], ['ext', 'Erweiterungen'], ['area', 'Gebiet & Zeiten']].forEach(function (j) {
+      var b = el('button', null, j[1]); b.type = 'button'; if (j[2]) b.append(el('span', 'n', String(j[2]))); b.onclick = function () { asGo(j[0]) }; jump.append(b)
+    })
+    wrap.append(jump)
+    var facts = el('div', 'asp-facts'); facts.id = 'as-facts'
+    facts.append(
+      asFact('Budget', asEuro(c.budget) + ' pro Tag', '≈ ' + asEuro(Math.round(c.budget * 30.4)) + ' im Monat'),
+      asFact('Gebot', c.ceiling ? 'höchstens ' + asEuro(c.ceiling) : (AS_BIDDING[c.bidding] || '–'), AS_BIDDING[c.bidding] === 'Klicks maximieren' ? 'Google holt möglichst viele Klicks' : (AS_BIDDING[c.bidding] || '')),
+      asFact('Gebiet', c.radius.length ? c.radius.map(function (x) { return pct.format(x.km) + ' km' }).join(' + ') : c.places.length ? plural(c.places.length, ['Ort', 'Orte']) : 'keins', c.radius.length ? 'Umkreis um den Betrieb' : c.places.slice(0, 3).map(function (p) { return p.name }).join(', ')),
+      asFact('Erwartet', r ? r[0] + '–' + r[1] + ' Klicks' : '–', r ? 'pro Tag, bei bisher Ø ' + money.format(r[2]) + ' pro Klick' : 'noch keine Vergleichswerte'))
+    wrap.append(facts)
+    var grid = el('div', 'asp-grid'), main = el('div', 'asp-main'), side = el('aside', 'asp-side')
+    grid.append(main, side); wrap.append(grid)
+    // 1. checklist
+    var ok = checks.filter(function (x) { return x.ok })
+    var cl = el('div', 'asp-check')
+    var prog = el('div', 'prog'); var pb = el('div', 'bar'); var pf = el('i'); pf.style.width = (ok.length / checks.length * 100) + '%'; pb.append(pf)
+    prog.append(el('span', null, open.length ? plural(open.length, ['Punkt', 'Punkte']) + ' prüfen · ' + ok.length + ' sind in Ordnung' : 'Alle ' + checks.length + ' Prüfungen in Ordnung'), pb)
+    cl.append(prog)
+    open.forEach(function (x) {
+      var row = el('div', 'it ' + x.level)
+      var l = el('div', 'l'); l.append(el('b', null, x.title), el('span', null, x.why))
+      var go = el('button', 'go', { area: 'Zum Gebiet', details: 'Zu den Details', ads: 'Zu den Anzeigen', kw: 'Zu den Keywords', facts: 'Zum Budget', schedule: 'Zu den Zeiten', ext: 'Zu den Erweiterungen' }[x.to] + ' →'); go.type = 'button'
+      go.onclick = function () { asGo(x.to === 'schedule' ? 'area' : x.to) }
+      row.append(el('span', 'lv', x.level === 'bad' ? 'Wichtig' : 'Hinweis'), l, go)
+      cl.append(row)
+    })
+    if (ok.length) {
+      var det = el('details', 'okl'); var sm = el('summary', null, 'Bereits in Ordnung (' + ok.length + ')'); det.append(sm)
+      ok.forEach(function (x) { det.append(el('div', 'okr', '✓ ' + x.title)) })
+      cl.append(det)
+    }
+    main.append(asSection('todo', 'Vor dem Start', null, cl))
+    // 2. ads
+    var ads = el('div', 'asp-adlist')
+    var nAds = 0
+    c.groups.forEach(function (g, gi) {
+      g.ads.forEach(function (a, ai) {
+        nAds++
+        var card = asLink({ co: co.id, c: c.id, ad: gi + '-' + ai }, 'asp-adrow')
+        var l = el('div', 'l'); l.append(el('div', 'grp', g.name), el('div', 'hl', a.headlines.slice(0, 2).join(' | ')), el('div', 'u', asHost(a.url) + (a.path1 ? '/' + a.path1 : '') + (a.path2 ? '/' + a.path2 : '')))
+        var rr = el('div', 'r'); rr.append(el('span', 'cnt', a.headlines.length + ' Titel · ' + a.descriptions.length + ' Texte'), html('<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>'))
+        card.append(l, rr); ads.append(card)
+      })
+    })
+    main.append(asSection('ads', 'Anzeigen · ' + nAds, 'Antippen für die Vorschau und alle Texte.', nAds ? ads : asEmpty('Noch keine Anzeigen in dieser Kampagne.')))
+    // 3. keywords
+    var kw = el('div')
+    var nKw = 0
+    c.groups.forEach(function (g, gi) {
+      nKw += g.keywords.length
+      var rows = g.keywords.map(function (k) { return { k: k, h: m.kwHist[k.text.toLowerCase()] } })
+      rows.sort(function (a, b) { return ((b.h && b.h.c) || 0) - ((a.h && a.h.c) || 0) || a.k.text.localeCompare(b.k.text) })
+      var clicks = rows.reduce(function (a, x) { return a + ((x.h && x.h.c) || 0) }, 0), enq = rows.reduce(function (a, x) { return a + ((x.h && x.h.v) || 0) }, 0)
+      var max = Math.max.apply(null, rows.map(function (x) { return (x.h && x.h.c) || 0 }).concat([1]))
+      var det = el('details', 'asp-grp'); if (gi === 0) det.open = true
+      var sm = el('summary'); sm.append(el('b', null, g.name), el('span', null, plural(g.keywords.length, ['Keyword', 'Keywords']) + (clicks ? ' · ' + plural(clicks, ['Klick', 'Klicks']) : '') + (enq ? ' · ' + plural(Math.round(enq), ['Anfrage', 'Anfragen']) : '')))
+      det.append(sm)
+      var t = el('div', 'asx-kwtab')
+      var th = el('div', 'th'); ;['Keyword', 'Klicks', 'Ø Preis', 'Anfragen'].forEach(function (x, i) { th.append(el('span', i ? 'num' : '', x)) }); t.append(th)
+      var LIM = 8
+      var paintRows = function (all) {
+        Array.prototype.slice.call(t.querySelectorAll('.tr, .asx-more')).forEach(function (n) { n.remove() })
+        ;(all ? rows : rows.slice(0, LIM)).forEach(function (x) {
+          var tr = el('div', 'tr')
+          tr.append(asKwText(x.k.text, x.k.match))
+          if (x.h && (x.h.c || x.h.i)) {
+            var cc = el('span', 'num clk'); if (x.h.c) { var bar = el('i'); bar.style.width = (x.h.c / max * 100) + '%'; cc.append(bar) } cc.append(el('b', null, nf.format(x.h.c)))
+            tr.append(cc, el('span', 'num', x.h.c ? money.format(x.h.s / x.h.c) : '–'), el('span', 'num' + (x.h.v ? ' g' : ''), x.h.v ? nf.format(Math.round(x.h.v * 10) / 10) : '0'))
+          } else tr.append(el('span', 'nodata', 'neu · noch keine Daten'))
+          t.append(tr)
+        })
+        if (!all && rows.length > LIM) { var b = el('button', 'asx-more', 'Alle ' + rows.length + ' Keywords anzeigen'); b.type = 'button'; b.onclick = function () { paintRows(true) }; t.append(b) }
+      }
+      paintRows(false)
+      det.append(t); kw.append(det)
+    })
+    main.append(asSection('kw', 'Keywords · ' + nKw, 'Suchen, bei denen die Anzeige erscheinen kann. Zahlen: letzte 90 Tage im bisherigen Konto.', kw))
+    // 4. negatives
+    var neg = el('div', 'asx-chips')
+    var sorted = c.negatives.slice().sort(function (a, b) { return a[0].localeCompare(b[0]) })
+    var paintNeg = function (all) { neg.replaceChildren(); (all ? sorted : sorted.slice(0, 30)).forEach(function (n) { neg.append(asNeg(n[0], n[1])) }); if (!all && sorted.length > 30) { var b = el('button', 'asx-more', 'Alle ' + sorted.length + ' anzeigen'); b.type = 'button'; b.onclick = function () { paintNeg(true) }; neg.append(b) } }
+    paintNeg(false)
+    main.append(asSection('neg', 'Ausschlüsse · ' + sorted.length, 'Bei Suchen mit diesen Wörtern erscheint keine Anzeige.', sorted.length ? neg : asEmpty('Keine ausgeschlossenen Wörter hinterlegt.')))
+    // 5. extensions
+    var aw = el('div', 'asx-ext')
+    var blk = function (title, node) { var b = el('div', 'blk'); b.append(el('h3', null, title), node); aw.append(b) }
+    var sl = el('div', 'asx-sls')
+    c.sitelinks.forEach(function (x) { var a = el('a', 'asx-sl'); if (x.url) { a.href = x.url; a.target = '_blank'; a.rel = 'noopener' } a.append(el('b', null, x.text)); if (x.d1 || x.d2) a.append(el('span', null, [x.d1, x.d2].filter(Boolean).join(' · '))); sl.append(a) })
+    blk('Sitelinks · ' + c.sitelinks.length, c.sitelinks.length ? sl : asEmpty('Keine Sitelinks.'))
+    var co2 = el('div', 'asx-chips'); c.callouts.forEach(function (x) { co2.append(el('span', 'asx-pill', x)) })
+    blk('Hervorhebungen · ' + c.callouts.length, c.callouts.length ? co2 : asEmpty('Keine.'))
+    var sn = el('div'); c.snippets.forEach(function (x) { var p = el('p', 'asx-snip'); p.append(el('b', null, (AS_SNIPPET[x.header] || x.header) + ': '), document.createTextNode(x.values.join(', '))); sn.append(p) })
+    blk('Aufzählungen · ' + c.snippets.length, c.snippets.length ? sn : asEmpty('Keine.'))
+    var call = el('div', 'asx-chips'); c.calls.forEach(function (x) { var a = el('a', 'asx-pill tel', x); a.href = 'tel:' + x.replace(/\s/g, ''); call.append(a) })
+    blk('Telefon', c.calls.length ? call : asEmpty('Keine Nummer hinterlegt.'))
+    main.append(asSection('ext', 'Erweiterungen', 'Was Google zusätzlich unter der Anzeige zeigen kann.', aw))
+    // 6. area and times (also first in the side column on wide screens)
+    var area = el('div', 'asp-area')
+    var ga = el('div', 'ga'); ga.append(el('p', 'sent', asGeoSentence(c) + '.'))
+    c.radius.forEach(function (x) { ga.append(asMap(x)) })
+    if (c.places.length) {
+      var pl = el('div', 'asx-pl')
+      var show = function (all) { pl.replaceChildren(); (all ? c.places : c.places.slice(0, 8)).forEach(function (p) { pl.append(el('span', null, p.name)) }); if (!all && c.places.length > 8) { var more = el('button', 'asx-more', '+ ' + (c.places.length - 8) + ' weitere'); more.type = 'button'; more.onclick = function () { show(true) }; pl.append(more) } }
+      show(false); ga.append(pl)
+    }
+    var ti = el('div', 'ti')
+    var live = c.status === 'ENABLED' && asNowIn(c)
+    ti.append(el('p', 'sent', asScheduleText(c.schedule) + '.'), el('span', 'asx-now ' + (c.status !== 'ENABLED' ? 'off' : live ? 'on' : 'idle'), c.status !== 'ENABLED' ? 'Pausiert, zeigt keine Anzeigen' : live ? 'Läuft gerade' : 'Gerade außerhalb der Werbezeit'), asWeekList(c))
+    area.append(ga, ti)
+    main.append(asSection('area', 'Gebiet & Werbezeiten', null, area))
+    // side: details in small groups
+    var grp = function (title, rows) { var b = el('div', 'kvg'); b.append(el('h3', null, title)); var dl = el('dl'); rows.forEach(function (x) { dl.append(el('dt', null, x[0]), el('dd', null, x[1])) }); b.append(dl); side.append(b) }
+    grp('Kampagne', [['Status', (AS_STATUS[c.status] || [c.status])[0]], ['Budget', asEuro(c.budget) + ' pro Tag'], ['Gebote', (AS_BIDDING[c.bidding] === 'Klicks maximieren' ? 'Google bestimmt das Gebot' : (AS_BIDDING[c.bidding] || '–')) + (c.ceiling ? ', höchstens ' + asEuro(c.ceiling) + ' pro Klick' : '')]])
+    grp('Zielgruppe', [['Sprache', c.languages.join(', ') || '–'], ['Wer sieht die Anzeige', c.presence === 'PRESENCE' ? 'Nur wer im Gebiet ist' : 'Auch wer sich für das Gebiet interessiert'], ['Wo', 'Google-Suche' + (c.partners ? ' und Partner-Websites' : '') + (c.display ? ' und Display' : '')]])
+    grp('Bisher', [['Klicks (30 Tage)', c.stats && c.stats.clicks ? nf.format(c.stats.clicks) + ' für ' + money.format(c.stats.spend) : 'noch keine']])
+    grp('Technik', [['Kampagnen-ID', c.id], ['Konto', co.account]])
+  }
+  // ---------- ad page ----------
+  function asVerdict(len, max) {
+    if (len > max) return ['zu lang', 'r']
+    if (len >= max * 0.7) return ['gut genutzt', 'g']
+    return ['noch ' + (max - len) + ' Zeichen frei', 'a']
+  }
+  function asPreview(a, c, v, desk, mark) {
+    var frame = el('div', desk ? 'asp-desk' : 'asp-phone')
+    var scr = el('div', 'scr')
+    var g = el('div', 'gbar'); g.append(el('span', 'glogo', 'Google'), el('span', 'q', a.headlines[0] || '')); scr.append(g)
+    var gh = el('div', 'ghost'); gh.append(el('i'), el('i')); scr.append(gh)
+    var card = el('div', 'gad')
+    var top = el('div', 'gtop'); top.append(el('b', null, 'Gesponsert'))
+    var u = el('div', 'gu'); u.append(el('span', 'fav', (asHost(a.url) || '?').charAt(0).toUpperCase()))
+    var ut = el('div'); ut.append(el('div', 'n', c.name.split(' · ')[0]), el('div', 'p', asHost(a.url) + (a.path1 ? ' › ' + a.path1 : '') + (a.path2 ? ' › ' + a.path2 : '')))
+    u.append(ut); top.append(u)
+    var hl = el('div', 'ghl')
+    v.h.forEach(function (i, k) { if (k) hl.append(document.createTextNode(' | ')); var s = el('span', i === mark ? 'mk' : '', a.headlines[i]); hl.append(s) })
+    card.append(top, hl, el('div', 'gds', v.d.map(function (i) { return a.descriptions[i] }).join(' ')))
+    if (c.sitelinks.length) { var sl = el('div', 'gsl'); c.sitelinks.slice(0, 4).forEach(function (x) { sl.append(el('span', null, x.text)) }); card.append(sl) }
+    if (c.calls.length) card.append(el('div', 'gcall', '☎ ' + c.calls[0]))
+    scr.append(card)
+    for (var i = 0; i < 2; i++) { var ph = el('div', 'ghost'); ph.append(el('i'), el('i'), el('i')); scr.append(ph) }
+    frame.append(scr)
+    return frame
+  }
+  function asAdPage(wrap, co, c, m, gi, ai) {
+    var g = c.groups[gi], a = g && g.ads[ai]
+    if (!a) { wrap.append(asEmpty('Diese Anzeige gibt es nicht mehr.')); return }
+    var all = []
+    c.groups.forEach(function (gg, x) { gg.ads.forEach(function (_, y) { all.push([x, y]) }) })
+    var idx = all.findIndex(function (p) { return p[0] === gi && p[1] === ai })
+    wrap.append(asCrumbs([['Anzeigen', {}], [co.name, { co: co.id }], [asShort(c.name), { co: co.id, c: c.id }], ['Anzeige ' + (idx + 1) + ' von ' + all.length]]))
+    var head = el('header', 'asp-head')
+    var h = el('div', 'tt'); h.append(el('h1', null, g.name))
+    var STR = { EXCELLENT: 'sehr gut', GOOD: 'gut', AVERAGE: 'mittel', POOR: 'schwach', PENDING: 'wird bewertet, sobald sie läuft' }
+    var sub = el('p', 'sub'); sub.append(asStatus(a.status), document.createTextNode(' ' + (a.approval === 'APPROVED' ? 'Von Google genehmigt' : a.approval === 'DISAPPROVED' ? 'Von Google abgelehnt' : 'Prüfung bei Google: ' + (a.approval || '–')) + ' · Anzeigenstärke ' + (STR[a.strength] || a.strength || '–') + '.'))
+    h.append(sub); head.append(h)
+    var pn = el('div', 'asp-pn')
+    if (idx > 0) pn.append(asLink({ co: co.id, c: c.id, ad: all[idx - 1].join('-') }, 'asx-btn ghost', '‹ Vorherige'))
+    if (idx < all.length - 1) pn.append(asLink({ co: co.id, c: c.id, ad: all[idx + 1].join('-') }, 'asx-btn ghost', 'Nächste ›'))
+    head.append(pn); wrap.append(head)
+    // variants that walk through every headline: 3 headlines and 2 descriptions each
+    var nh = a.headlines.length, nd = Math.max(1, a.descriptions.length)
+    var count = Math.max(1, Math.ceil(nh / 3))
+    var variant = function (k) { return { h: [0, 1, 2].map(function (j) { return (k * 3 + j) % nh }).filter(function (x, i, arr) { return arr.indexOf(x) === i }), d: [k % nd, (k + 1) % nd].filter(function (x, i, arr) { return a.descriptions.length > 1 ? arr.indexOf(x) === i : i === 0 }) } }
+    var k = 0, mode = 'phone', mark = -1, override = null
+    var grid = el('div', 'asp-adgrid')
+    var pv = el('div', 'asp-preview')
+    pv.append(el('p', 'cap', 'So kann die Anzeige bei Google aussehen'))
+    var ctl = el('div', 'ctl')
+    var sw = seg([['phone', 'Handy'], ['desk', 'Computer']], mode, function (x) { mode = x; draw() }, 'asx-seg')
+    var nav = el('div', 'vnav')
+    var prev = el('button', 'asx-btn ghost sm', '‹'); prev.type = 'button'; prev.setAttribute('aria-label', 'Vorherige Kombination')
+    var next = el('button', 'asx-btn ghost sm', '›'); next.type = 'button'; next.setAttribute('aria-label', 'Nächste Kombination')
+    var lab = el('span', 'lab')
+    prev.onclick = function () { k = (k - 1 + count) % count; override = null; mark = -1; draw() }
+    next.onclick = function () { k = (k + 1) % count; override = null; mark = -1; draw() }
+    nav.append(prev, lab, next)
+    ctl.append(sw, nav)
+    var stage = el('div', 'stage')
+    pv.append(ctl, stage, el('p', 'asx-foot', 'Google setzt die Anzeige bei jeder Suche selbst zusammen: bis zu 3 Titel und 2 Beschreibungen aus den Listen rechts. Fahren Sie über einen Titel, um ihn hier zu sehen.'))
+    function draw() {
+      lab.textContent = override ? 'Titel ' + (mark + 1) : 'Kombination ' + (k + 1) + ' von ' + count
+      stage.replaceChildren(asPreview(a, c, override || variant(k), mode === 'desk', mark))
+    }
+    draw()
+    var tx = el('div', 'asp-texts')
+    var hl = el('div', 'asp-lines')
+    a.headlines.forEach(function (x, i) {
+      var ln = asLine(x, 30)
+      ln.onmouseenter = function () { mark = i; override = { h: [i, (i + 1) % nh, (i + 2) % nh].filter(function (y, j, arr) { return arr.indexOf(y) === j }), d: variant(k).d }; draw() }
+      ln.onmouseleave = function () { mark = -1; override = null; draw() }
+      hl.append(ln)
+    })
+    var good = a.headlines.filter(function (x) { return x.length >= 21 && x.length <= 30 }).length
+    tx.append(asSection('h', 'Titel · ' + nh + ' von 15', good + ' gut genutzt, höchstens 30 Zeichen je Titel. Google empfiehlt 10 bis 15 verschiedene Titel.', hl))
+    var ds = el('div', 'asp-lines'); a.descriptions.forEach(function (x) { ds.append(asLine(x, 90)) })
+    tx.append(asSection('d', 'Beschreibungen · ' + a.descriptions.length + ' von 4', 'Höchstens 90 Zeichen je Beschreibung.', ds))
+    var dest = el('dl', 'asp-dest')
+    var link = el('a', null, a.url || '–'); if (a.url) { link.href = a.url; link.target = '_blank'; link.rel = 'noopener' }
+    dest.append(el('dt', null, 'Zielseite'), el('dd'), el('dt', null, 'Angezeigter Pfad'), el('dd', null, asHost(a.url) + (a.path1 ? '/' + a.path1 : '') + (a.path2 ? '/' + a.path2 : '')))
+    dest.children[1].append(link)
+    tx.append(asSection('u', 'Wohin die Anzeige führt', null, dest))
+    var kws = el('div', 'asx-kwlist')
+    g.keywords.slice().sort(function (x, y) { var hx = m.kwHist[x.text.toLowerCase()], hy = m.kwHist[y.text.toLowerCase()]; return ((hy && hy.c) || 0) - ((hx && hx.c) || 0) || x.text.localeCompare(y.text) }).forEach(function (kk) {
+      var r = el('div', 'r'); r.append(asKwText(kk.text, kk.match))
+      var hh = m.kwHist[kk.text.toLowerCase()]
+      r.append(el('span', 'num', hh && hh.c ? plural(hh.c, ['Klick', 'Klicks']) : 'neu'))
+      kws.append(r)
+    })
+    tx.append(asSection('k', 'Bei diesen Suchen · ' + g.keywords.length, 'Keywords der Anzeigengruppe, mit Klicks im bisherigen Konto (90 Tage).', kws))
+    grid.append(pv, tx); wrap.append(grid)
+  }
+  function asLine(text, max) {
+    var r = el('div', 'asp-line')
+    var v = asVerdict(text.length, max)
+    var bar = el('span', 'bar'); var f = el('i', v[1]); f.style.width = Math.min(100, text.length / max * 100) + '%'; bar.append(f)
+    var meta = el('span', 'm'); meta.append(el('span', 'vd ' + v[1], v[0]), el('span', 'n', text.length + ' / ' + max))
+    r.append(el('span', 'tx', text), bar, meta)
+    return r
+  }
+  // ---------- page ----------
   function renderAdSetup(view) {
     var token = renderToken
     var wrap = el('div', 'asx'); view.append(wrap)
     var as = state.as || {}
-    var list = el('div', 'asx-list'); list.append(skeletonRows(6)); wrap.append(list)
+    var sk = el('div'); sk.append(skeletonRows(6)); wrap.append(sk)
     var load = adSetupCache ? Promise.resolve(adSetupCache) : api('ad-setup').then(function (d) { adSetupCache = d; return d })
     load.then(function (d) {
       if (token !== renderToken) return
-      list.remove()
+      sk.remove()
       var cos = d.companies.filter(function (c) { return c.setup })
-      var findings = {}
-      cos.forEach(function (c) { findings[c.id] = asFindings(c) })
-      // a campaign or one ad on its own page
+      var checks = {}
+      cos.forEach(function (c) { checks[c.id] = asChecks(c) })
       if (as.c) {
         var co = cos.filter(function (x) { return x.id === as.co })[0]
         var camp = co && co.setup.campaigns.filter(function (x) { return x.id === as.c })[0]
-        if (!camp) { wrap.append(el('div', 'empty', 'Diese Kampagne gibt es nicht mehr.')); return }
-        var mm = asModel(co)
+        if (!camp) { wrap.append(asEmpty('Diese Kampagne gibt es nicht mehr.')); return }
         var page = el('div', 'asp'); wrap.append(page)
+        var mm = asModel(co)
         if (as.ad) { var pr = as.ad.split('-').map(Number); asAdPage(page, co, camp, mm, pr[0], pr[1]) }
-        else asCampaignPage(page, co, camp, mm, findings[co.id][camp.name] || [])
+        else asCampaignPage(page, co, camp, mm, checks[co.id][camp.name] || [])
         return
       }
+      var pick = as.co && cos.some(function (c) { return c.id === as.co }) ? as.co : (cos.length === 1 ? cos[0].id : 'all')
+      var onlyIssues = !!state.tabs.asIssues
       var strip = el('div', 'asx-strip'), bar = el('div', 'asx-bar'), body = el('div', 'asx-list')
       wrap.append(strip, bar, body)
-      var all = [], badN = 0, warnN = 0, clicks = 0, hist = 0
-      cos.forEach(function (c) {
-        c.setup.campaigns.forEach(function (x) { all.push(x); clicks += (x.stats && x.stats.clicks) || 0; (findings[c.id][x.name] || []).forEach(function (f) { if (f[0] === 'bad') badN++; else warnN++ }) })
-        if (c.history && c.history.totals) hist += c.history.totals.clicks || 0
-      })
-      var on = all.filter(function (c) { return c.status === 'ENABLED' }).length
-      var budget = all.reduce(function (a, c) { return a + c.budget }, 0)
-      var cell = function (l, v, s, cls) { var x = el('div', 'c' + (cls ? ' ' + cls : '')); x.append(el('span', 'l', l), el('b', null, v), el('span', 's', s || ' ')); strip.append(x) }
-      cell('Kampagnen', nf.format(all.length), on ? on + ' aktiv, ' + (all.length - on) + ' pausiert' : 'alle pausiert')
-      cell('Tagesbudget', asEuro(budget), 'ca. ' + asEuro(Math.round(budget * 30.4)) + ' im Monat')
-      cell('Klicks 30 Tage', nf.format(clicks), hist ? nf.format(hist) + ' in 90 Tagen (alt)' : 'neue Konten')
-      cell('Keywords', nf.format(all.reduce(function (a, c) { return a + c.groups.reduce(function (b, g) { return b + g.keywords.length }, 0) }, 0)), nf.format(all.reduce(function (a, c) { return a + c.negatives.length }, 0)) + ' Ausschlüsse')
-      cell('Hinweise', nf.format(badN + warnN), badN ? badN + ' vor dem Start beheben' : 'nichts Kritisches', badN ? 'bad' : warnN ? 'warn' : '')
-      var pick = as.co && cos.some(function (c) { return c.id === as.co }) ? as.co : (cos.length === 1 ? cos[0].id : 'all')
-      if (cos.length > 1) {
-        var opts = [['all', 'Alle']].concat(cos.map(function (c) { return [c.id, c.name] }))
-        var s = seg(opts, pick, function (v) { state.as = v === 'all' ? {} : { co: v }; saveUrl(); paintList(v) }, 'asx-pick')
-        Array.prototype.forEach.call(s.children, function (b, i) { if (!i) return; var co = COMPANIES.filter(function (x) { return x.id === opts[i][0] })[0]; if (co) b.prepend(companyLogo(co)) })
-        bar.append(s)
-      }
-      if (isAdmin()) {
-        var rf = el('button', 'asx-btn', 'Aktualisieren'); rf.type = 'button'
-        rf.onclick = function () {
-          rf.disabled = true; rf.textContent = 'Lädt …'
-          fetch('/api/ad-setup/refresh', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin' }).then(function () { adSetupCache = null; render(true) }).catch(function () { rf.disabled = false; rf.textContent = 'Nochmal versuchen' })
+      function issuesOf(co) { return co.setup.campaigns.reduce(function (a, c) { return a + asOpen(checks[co.id][c.name]).length }, 0) }
+      function paintStrip() {
+        strip.replaceChildren()
+        var sel = cos.filter(function (c) { return pick === 'all' || c.id === pick })
+        var camps = [], issues = 0, bad = 0, hist = 0, clicks = 0
+        sel.forEach(function (co) {
+          co.setup.campaigns.forEach(function (c) { camps.push(c); clicks += (c.stats && c.stats.clicks) || 0; var o = asOpen(checks[co.id][c.name]); issues += o.length; bad += o.filter(function (x) { return x.level === 'bad' }).length })
+          if (co.history && co.history.totals) hist += co.history.totals.clicks || 0
+        })
+        var on = camps.filter(function (c) { return c.status === 'ENABLED' }).length
+        var budget = camps.reduce(function (a, c) { return a + c.budget }, 0)
+        var kws = camps.reduce(function (a, c) { return a + c.groups.reduce(function (b, g) { return b + g.keywords.length }, 0) }, 0)
+        var negs = camps.reduce(function (a, c) { return a + c.negatives.length }, 0)
+        var who = pick === 'all' ? 'Alle ' + plural(sel.length, ['Firma', 'Firmen']) : sel[0].name
+        strip.append(el('div', 'who', who))
+        var cells = el('div', 'cells')
+        var cell = function (l, v, unit, s, cls, onClick) {
+          var x = el(onClick ? 'button' : 'div', 'c' + (cls ? ' ' + cls : '')); if (onClick) { x.type = 'button'; x.onclick = onClick }
+          var vv = el('div', 'v'); vv.append(document.createTextNode(v)); if (unit) vv.append(el('small', null, unit))
+          x.append(el('div', 'l', l), vv, el('div', 's', s)); cells.append(x)
         }
-        bar.append(rf)
+        cell('Kampagnen', nf.format(camps.length), '', on ? on + ' aktiv, ' + (camps.length - on) + ' pausiert' : 'alle pausiert')
+        cell('Tagesbudget', nf.format(budget), ' €', '≈ ' + asEuro(Math.round(budget * 30.4)) + ' im Monat')
+        cell('Klicks (30 Tage)', nf.format(clicks), '', hist ? nf.format(hist) + ' im alten Konto' : 'noch keine Daten')
+        cell('Keywords', nf.format(kws), '', nf.format(negs) + ' Ausschlüsse')
+        cell('Hinweise', nf.format(issues), '', issues ? (onlyIssues ? 'Filter aktiv · alle zeigen' : (bad ? bad + ' wichtig · nur diese zeigen' : 'nur betroffene zeigen')) : 'alles in Ordnung', issues ? (bad ? 'bad' : 'warn') + (onlyIssues ? ' act' : '') : '', issues ? function () { onlyIssues = !onlyIssues; state.tabs.asIssues = onlyIssues; paintAll() } : null)
+        strip.append(cells)
       }
-      paintList(pick)
-      function paintList(which) {
+      function paintBar() {
+        bar.replaceChildren()
+        if (cos.length > 1) {
+          var pills = el('div', 'asx-pills')
+          ;[{ id: 'all', name: 'Alle Firmen' }].concat(cos).forEach(function (co) {
+            var b = el('button', pick === co.id ? 'on' : ''); b.type = 'button'
+            var meta = COMPANIES.filter(function (x) { return x.id === co.id })[0]
+            if (meta) b.append(companyLogo(meta))
+            b.append(el('span', null, co.name))
+            var n = co.id === 'all' ? null : issuesOf(co)
+            if (n) b.append(el('span', 'n', String(n)))
+            b.onclick = function () { pick = co.id; state.as = co.id === 'all' ? {} : { co: co.id }; saveUrl(); paintAll() }
+            pills.append(b)
+          })
+          bar.append(pills)
+        }
+        var tg = el('label', 'asx-toggle'); var cb = el('input'); cb.type = 'checkbox'; cb.checked = onlyIssues
+        cb.onchange = function () { onlyIssues = cb.checked; state.tabs.asIssues = onlyIssues; paintAll() }
+        tg.append(cb, el('span', null, 'Nur mit Hinweisen'))
+        bar.append(tg)
+        if (isAdmin()) {
+          var rf = el('button', 'asx-btn ghost', 'Aktualisieren'); rf.type = 'button'
+          rf.onclick = function () { rf.disabled = true; rf.textContent = 'Lädt …'; fetch('/api/ad-setup/refresh', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin' }).then(function () { adSetupCache = null; render(true) }).catch(function () { rf.disabled = false; rf.textContent = 'Nochmal versuchen' }) }
+          bar.append(rf)
+        }
+      }
+      function paintAll() {
+        paintStrip(); paintBar()
         body.replaceChildren()
-        cos.filter(function (c) { return which === 'all' || c.id === which }).forEach(function (co) { body.append(asCompany(co, findings[co.id])) })
+        var n = 0
+        cos.filter(function (c) { return pick === 'all' || c.id === pick }).forEach(function (co) { var s = asCompany(co, checks[co.id], onlyIssues); if (s) { body.append(s); n++ } })
+        if (!n) body.append(asEmpty(onlyIssues ? 'Keine Kampagne mit offenen Hinweisen.' : 'Keine Kampagnen.'))
       }
-    }).catch(function () { if (token === renderToken) list.replaceChildren(el('div', 'empty', 'Die Anzeigen-Übersicht konnte nicht geladen werden')) })
+      paintAll()
+    }).catch(function () { if (token === renderToken) { sk.remove(); wrap.append(asEmpty('Die Anzeigen-Übersicht konnte nicht geladen werden.')) } })
   }
   function renderGoogleTab(view) {
     siteSwitch(view, true)
