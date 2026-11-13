@@ -755,6 +755,35 @@ td.m { color: var(--text-3); font-weight: 400; }
   .asp-line .m { flex-direction: column; align-items: flex-end; gap: 0; }
   .asp-pn { width: 100%; } .asp-pn .asx-btn { flex: 1; }
 }
+/* ---------- fold: details as a quiet list of questions ---------- */
+.k-folds-h { margin: 34px 2px 12px; font: 600 13px/1.2 var(--sans, inherit); letter-spacing: .04em; text-transform: uppercase; color: var(--text-3); }
+.k-folds { display: grid; gap: 10px; margin-bottom: 16px; }
+.k-fold { background: var(--card); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+.k-fold[hidden] { display: none; }
+.k-fold-h { width: 100%; display: flex; align-items: center; gap: 16px; text-align: left; border: 0; background: none; padding: 18px 22px; font: inherit; color: var(--text); cursor: pointer; min-height: 68px; }
+.k-fold-h:hover { background: color-mix(in srgb, var(--text) 3%, transparent); }
+.k-fold-h .t { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.k-fold-h b { font: 600 17px/1.3 var(--display); letter-spacing: -.01em; }
+.k-fold-h .fh { font-size: 14px; line-height: 1.4; color: var(--text-2); }
+.k-fold-h svg { width: 20px; height: 20px; flex: none; color: var(--text-3); transition: transform .2s var(--ease); }
+.k-fold.open > .k-fold-h svg { transform: rotate(180deg); }
+.k-fold-b { height: 0; overflow: hidden; visibility: hidden; }
+.k-fold.open > .k-fold-b { height: auto; overflow: visible; visibility: visible; border-top: 1px solid var(--line-soft); }
+.k-fold-b > * { border: 0 !important; box-shadow: none !important; background: none !important; margin: 0 !important; border-radius: 0 !important; }
+.k-fold-b > .k-card > .k-card-h h2, .k-fold-b > .panel > .ph .tabs > .title { display: none; }
+.k-fold-b > .k-card > .k-card-h:empty, .k-fold-b > .k-card > .k-card-h:not(:has(a, span, button)) { display: none; }
+.k-fold-b > .k-card > .k-card-h > .k-muted { display: none; }
+.k-okbox > summary { cursor: pointer; padding: 14px 0 6px; font-size: 14.5px; font-weight: 600; color: var(--text); }
+.asp-fsec { margin-bottom: 10px; }
+.asp-fb { padding: 18px 22px 22px !important; }
+.asp-fnote { margin: 0 0 14px; font-size: 14px; color: var(--text-2); }
+@media (max-width: 700px) { .asp-fb { padding: 14px 16px 18px !important; } }
+.k-morebtn { display: block; width: 100%; margin-top: 10px; padding: 13px; border: 1px solid var(--line); border-radius: 12px; background: none; font: 600 14.5px inherit; color: var(--text); cursor: pointer; }
+.k-morebtn:hover { border-color: var(--text); }
+@media (max-width: 760px) {
+  .k-fold-h { padding: 16px; }
+  .k-fold-h b { font-size: 16px; }
+}
 .chipv.warn { background: color-mix(in srgb, var(--warn) 18%, transparent); color: color-mix(in srgb, var(--warn) 60%, var(--text)); }
 .two { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .two .a { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text); min-width: 0; }
@@ -2921,6 +2950,44 @@ body { font-size: 14px; line-height: 1.5; }
   }
   // ---------- overview tab of a company or website ----------
   var lastSeries = []
+  // ---------- fold: a detail the page can do without at first glance ----------
+  // Folded to a question and one plain line; a tap opens it. The content is rendered either way
+  // (hidden by height, not display), so charts inside keep their measurements.
+  function fold(node, key, title, hint, open) {
+    var w = el('div', 'k-fold'), saved = null
+    try { saved = localStorage.getItem('gw-fold-' + key) } catch (e) {}
+    var isOpen = saved === null ? !!open : saved === '1'
+    var head = el('button', 'k-fold-h'); head.type = 'button'
+    var t = el('span', 't'); var hi = el('span', 'fh', hint || '')
+    t.append(el('b', null, title), hi)
+    head.append(t, html('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>'))
+    var body = el('div', 'k-fold-b'); body.append(node)
+    var set = function (v, keep) {
+      isOpen = v; w.classList.toggle('open', v); head.setAttribute('aria-expanded', String(v))
+      if (keep) { try { localStorage.setItem('gw-fold-' + key, v ? '1' : '0') } catch (e) {} }
+    }
+    head.onclick = function () { set(!isOpen, true) }
+    set(isOpen, false)
+    w.append(head, body)
+    w.setHint = function (x) { hi.textContent = x || '' }
+    w.open = function () { if (!isOpen) set(true, false) }
+    // a section that hides or removes itself takes its row with it
+    var sync = function () { w.hidden = node.hidden || !node.isConnected && node.parentNode !== body }
+    if (window.MutationObserver) {
+      new MutationObserver(sync).observe(node, { attributes: true, attributeFilter: ['hidden'] })
+      new MutationObserver(function () { if (!body.contains(node)) w.hidden = true }).observe(body, { childList: true })
+    }
+    w.hidden = !!node.hidden
+    node._fold = w
+    return w
+  }
+  function folds(view, label) {
+    var box = el('div', 'k-folds')
+    if (label !== false) view.append(el('h2', 'k-folds-h', label || 'Mehr dazu'))
+    view.append(box)
+    return box
+  }
+
   function kcard(id, title, link) {
     var c = el('section', 'k-card'); c.id = id
     var h = el('div', 'k-card-h'); h.append(el('h2', null, title))
@@ -2943,6 +3010,7 @@ body { font-size: 14px; line-height: 1.5; }
       var body = el('div', 'k-bars')
       if (!rows.length) { card.append(el('p', 'k-muted', 'Noch keine Besuche im Zeitraum.')); return }
       var max = rows[0].visitors || 1
+      if (card._fold) card._fold.setHint('Am häufigsten: ' + pageName(rows[0].name) + (rows[1] ? ', danach ' + pageName(rows[1].name) : ''))
       rows.forEach(function (p) {
         var r = el('div', 'k-bar'), fill = el('i')
         fill.style.width = '0%'
@@ -2955,7 +3023,9 @@ body { font-size: 14px; line-height: 1.5; }
   }
   function renderTodo(card) {
     var token = renderToken
+    var wait = el('p', 'k-muted', 'Wird geprüft …'); card.append(wait)
     api('insights').then(function (d) {
+      wait.remove()
       if (token !== renderToken) return
       var list = (d.results || []).filter(function (r) { return r.state !== 'done' && r.state !== 'dismissed' }).slice(0, 4)
       if (!list.length) { card.append(el('p', 'k-muted', 'Gerade gibt es nichts Dringendes. Gut so.')); return }
@@ -3246,7 +3316,8 @@ body { font-size: 14px; line-height: 1.5; }
     var groups = groupLeads(results.filter(function (r) { return r.type !== 'Application' && r.type !== 'Application contact' }))
     if (!groups.length) { card.append(el('p', 'k-muted', 'Sobald Anfragen da sind, steht hier, über welchen Weg die Leute kamen und wie sie sich gemeldet haben.')); return }
     // with few enquiries a plain list says more than a flow chart
-    if (groups.length < 10) {
+    // also on phones: the flow chart has no room for its labels there
+    if (groups.length < 10 || window.innerWidth < 700) {
       var cnt = {}
       groups.forEach(function (g) { var k = sourceName(g.source) + '\u0000' + leadTypes(g)[0]; cnt[k] = (cnt[k] || 0) + 1 })
       var list = el('div', 'k-pathlist')
@@ -3357,8 +3428,12 @@ body { font-size: 14px; line-height: 1.5; }
     var pages = kcard('toppages', 'Meistbesuchte Seiten', ['Alle Besucher', l2[0], l2[1]])
     var srcs = kcard('srcs', 'Woher die Besucher kommen', ['Alle Besucher', l2[0], l2[1]])
     var row1 = el('div', 'k-cols k-cols-37'), row2 = el('div', 'k-cols'), row3 = el('div', 'k-cols')
-    row1.append(notes, paths); row2.append(recent, todo); row3.append(srcs, pages)
-    view.append(alerts, board, row1, row2, row3)
+    row2.append(recent, todo)
+    view.append(alerts, board, row2, notes)
+    folds(view).append(
+      fold(srcs, 'dash-srcs', 'Woher kommen die Besucher?', 'Google, Anzeigen, direkt und andere Quellen'),
+      fold(pages, 'dash-pages', 'Welche Seiten sehen sie sich an?', 'Die meistbesuchten Seiten'),
+      fold(paths, 'dash-paths', 'Über welchen Weg kommen die Anfragen?', 'Von der Quelle über die erste Seite bis zum Kontakt'))
     renderAlerts(alerts)
     var token = renderToken
     api('summary').then(function (d) {
@@ -3383,6 +3458,7 @@ body { font-size: 14px; line-height: 1.5; }
       var body = el('div', 'k-bars')
       if (!rows.length) { card.append(el('p', 'k-muted', 'Noch keine Besuche im Zeitraum.')); return }
       var max = rows[0].visitors || 1
+      if (card._fold) card._fold.setHint('Die meisten über ' + sourceName(rows[0].name) + (rows[1] ? ', danach ' + sourceName(rows[1].name) : ''))
       rows.forEach(function (p) {
         var r = el('div', 'k-bar'), fill = el('i')
         fill.style.width = '0%'
@@ -3579,12 +3655,17 @@ body { font-size: 14px; line-height: 1.5; }
     var when = el('section', 'card panel'); when.id = 'when'
     var choices = kcard('choices', 'Was Anfragende auswählen')
     choices.hidden = true
-    cols.append(forms, paths)
-    var cols2 = el('div', 'k-cols')
-    cols2.append(when, choices)
     var before = kcard('before', 'Vor Messbeginn')
     before.hidden = true
-    view.append(sum, inbox, bySrc, cols, cols2, before)
+    view.append(sum, inbox)
+    var more = folds(view)
+    more.append(
+      fold(bySrc, 'bysrc', 'Welcher Weg bringt Aufträge?', 'Anfragen, Aufträge und Umsatz je Quelle'),
+      fold(paths, 'paths', 'Über welchen Weg kommen die Anfragen?', 'Von der Quelle über die erste Seite bis zum Kontakt'),
+      fold(when, 'when', 'Wann melden sich Kunden?', 'Wochentag und Uhrzeit der Anfragen'),
+      fold(forms, 'forms', 'Wo hören Besucher im Formular auf?', 'Feld für Feld, vom Beginn bis zum Absenden'),
+      fold(choices, 'choices', 'Was wählen Anfragende aus?', 'Die häufigsten Antworten im Formular'),
+      fold(before, 'before', 'Was war vor Messbeginn?', 'Formular-Anfragen aus der Zeit davor'))
     var token = renderToken
     api('before').then(function (b) { if (token === renderToken) renderBefore(before, b) }).catch(function () {})
     var load = function () {
@@ -3634,9 +3715,16 @@ body { font-size: 14px; line-height: 1.5; }
         var list = el('div', 'k-list')
         var paintList = function () {
           list.replaceChildren()
-          groups.filter(function (g) { return current === 'all' || ((outs[g.key] || {}).status || 'open') === current }).forEach(function (g) {
+          var sel = groups.filter(function (g) { return current === 'all' || ((outs[g.key] || {}).status || 'open') === current })
+          var all = !!state.leadAll
+          ;(all ? sel : sel.slice(0, 8)).forEach(function (g) {
             list.append(leadRow(g, outs[g.key], function (x) { leadSheet(x, outs[x.key], load) }))
           })
+          if (sel.length > 8) {
+            var mb = el('button', 'k-morebtn', all ? 'Weniger anzeigen' : 'Alle ' + sel.length + ' Anfragen anzeigen'); mb.type = 'button'
+            mb.onclick = function () { state.leadAll = !all; paintList() }
+            list.append(mb)
+          }
           if (!list.children.length) list.append(el('p', 'k-muted', 'Keine Anfrage mit diesem Status.'))
         }
         ;[['all', 'Alle']].concat(OUTCOMES).forEach(function (o) {
@@ -3693,16 +3781,28 @@ body { font-size: 14px; line-height: 1.5; }
     var setHero = hero(view)
     var main = el('section', 'k-board k-board3')
     main.append(skeletonRows(3))
-    var grid = el('div', 'grid')
-    var panel = function (k, wide) { var x = el('section', 'card panel' + (wide ? ' wide' : '')); x.dataset.panel = k; grid.append(x); return x }
-    var byId = function (id, wide) { var x = el('section', 'card panel' + (wide ? ' wide' : '')); x.id = id; grid.append(x); return x }
-    if (!state.site) panel('sites', true)
-    ;['sources', 'pages', 'locations', 'devices'].forEach(function (k) { panel(k, false) })
-    byId('funnel', true)
-    byId('content', false)
-    panel('goals', false)
-    byId('months', true)
-    view.append(main, grid)
+    var grid = el('div', 'k-folds')
+    var FT = {
+      sites: ['Welche Website bringt wie viel?', 'Besucher je Website'],
+      sources: ['Woher kommen die Besucher?', 'Google, Anzeigen, direkt und andere Quellen', true],
+      pages: ['Welche Seiten sehen sie sich an?', 'Meistbesuchte Seiten, Einstieg und Ausstieg', true],
+      locations: ['Aus welchen Orten kommen sie?', 'Städte, Regionen und Länder'],
+      devices: ['Womit schauen sie?', 'Handy oder Computer, Browser und System'],
+      funnel: ['Wie weit kommen Besucher?', 'Vom Besuch bis zum Kontakt, Schritt für Schritt'],
+      content: ['Was passiert auf der Seite?', 'Abschnitte, Lesetiefe, Ladezeit und Frust-Klicks'],
+      goals: ['Was klicken Besucher an?', 'Knöpfe, Anrufe und begonnene Formulare'],
+      months: ['Wie lief es Monat für Monat?', 'Besucher, Kontakte und Werbekosten je Monat']
+    }
+    var wrapF = function (x, k) { grid.append(fold(x, 'vis-' + k, FT[k][0], FT[k][1], !!FT[k][2])); return x }
+    var panel = function (k) { var x = el('section', 'card panel wide'); x.dataset.panel = k; return wrapF(x, k) }
+    var byId = function (id) { var x = el('section', 'card panel wide'); x.id = id; return wrapF(x, id) }
+    if (!state.site) panel('sites')
+    ;['sources', 'pages', 'locations', 'devices'].forEach(function (k) { panel(k) })
+    byId('funnel')
+    byId('content')
+    panel('goals')
+    byId('months')
+    view.append(main, el('h2', 'k-folds-h', 'Mehr dazu'), grid)
     var token = renderToken
     Promise.all([api('overview'), api('timeseries')]).then(function (res) {
       if (token !== renderToken) return
@@ -4069,8 +4169,8 @@ body { font-size: 14px; line-height: 1.5; }
     var list = stats.filter(function (x) { return filter === 'all' || x.s.trend[2] === filter })
     list.sort(function (a, b) { return (b.s.clicks - a.s.clicks) || (b.s.prev - a.s.prev) || (b.s.impr - a.s.impr) || (b.s.total - a.s.total) })
     var showAll = !!section.dataset.all
-    var shown = showAll ? list : list.filter(function (x) { return x.s.clicks || x.s.prev || x.s.total }).slice(0, 25)
-    if (!shown.length) shown = list.slice(0, 25)
+    var shown = showAll ? list : list.filter(function (x) { return x.s.clicks || x.s.prev || x.s.total }).slice(0, 10)
+    if (!shown.length) shown = list.slice(0, 10)
     var multi = scopeSites().length > 1
     var tbl = el('div', 'tr-kw' + (kind === 'ads' ? ' ads' : ''))
     var head = el('div', 'tr-kh')
@@ -4117,7 +4217,11 @@ body { font-size: 14px; line-height: 1.5; }
     var s1 = el('section', 'card panel wide k-solo tr-card'); s1.id = 'trend'
     var s2 = el('section', 'card panel wide k-solo'); s2.id = 'trendchain'
     var s3 = el('section', 'card panel wide k-solo'); s3.id = 'trendkw'
-    view.append(s1, s2, s3)
+    view.append(s1)
+    var moreT = folds(view)
+    var f2 = fold(s2, 'trend-chain', 'Wie wird aus einer Einblendung eine Anfrage?', 'Gezeigt, geklickt, auf der Website, Anfrage')
+    var f3 = fold(s3, 'trend-kw', 'Welche Suchbegriffe laufen gut?', 'Jedes Keyword Woche für Woche: steigt, fällt oder stabil')
+    moreT.append(f2, f3)
     var sk = skeletonRows(4); s1.append(sk)
     var token = renderToken, key = qs()
     var load = trendCache && trendCache.key === key ? Promise.resolve(trendCache.data) : api('trends').then(function (d) { trendCache = { key: key, data: d }; return d })
@@ -4126,7 +4230,7 @@ body { font-size: 14px; line-height: 1.5; }
       sk.remove()
       if (!d.daily.length) {
         setHero('Noch keine Klickdaten', 'Sobald Anzeigen laufen oder Google die Seite in der Suche zeigt, erscheint hier der Verlauf.')
-        s1.append(el('div', 'empty', 'Keine Daten')); s2.remove(); s3.remove(); return
+        s1.append(el('div', 'empty', 'Keine Daten')); s2.hidden = true; s3.hidden = true; return
       }
       var show = { ads: d.daily.some(function (r) { return r.ads_clicks || r.ads_impressions }), organic: d.daily.some(function (r) { return r.organic_clicks || r.organic_impressions }) }
       if (!show.ads && !show.organic) show.ads = show.organic = true
@@ -4182,7 +4286,7 @@ body { font-size: 14px; line-height: 1.5; }
       if (ch.children.length) {
         var ph2 = el('div', 'ph'), tl2 = el('div', 'tabs'); tl2.append(el('span', 'title', 'So entsteht aus einer Einblendung eine Anfrage')); ph2.append(tl2)
         s2.append(ph2, el('div', 'lead-in', 'Letzte 28 Tage. Jede Stufe zeigt, wie viele es bis dorthin geschafft haben, und wie sich das gegenüber den 28 Tagen davor verändert hat.'), ch)
-      } else s2.remove()
+      } else s2.hidden = true
       renderKeywordTrends(s3, d)
     }).catch(function () { if (token === renderToken) { sk.remove(); s1.append(el('div', 'empty', 'Verlauf konnte nicht geladen werden')) } })
   }
@@ -4325,7 +4429,15 @@ body { font-size: 14px; line-height: 1.5; }
     s.append(h, node)
     return s
   }
-  function asGo(id) { var n = $('as-' + id); if (n) n.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'start' }) }
+  // a section that starts closed: the title is the question, the hint the short answer
+  function asFoldSec(id, title, hint, node) {
+    var s = el('section', 'asp-sec asp-fsec'); s.id = 'as-' + id
+    var pad = el('div', 'asp-fb'); pad.append(node)
+    s._fold = fold(pad, 'as-' + id, title, hint, false)
+    s.append(s._fold)
+    return s
+  }
+  function asGo(id) { var n = $('as-' + id); if (n && n._fold) n._fold.open(); if (n) n.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'start' }) }
   function asEmpty(text) { return el('div', 'asx-empty', text) }
   function asIssues(n, bad) { return n ? el('span', 'asx-iss ' + (bad ? 'bad' : 'warn'), '⚠ ' + plural(n, ['Hinweis', 'Hinweise'])) : el('span', 'asx-iss none', '–') }
   function asMap(r) {
@@ -4417,7 +4529,7 @@ body { font-size: 14px; line-height: 1.5; }
     var groups = [['ideas', 'Neue Keywords', m.ideas], ['waste', 'Ausschließen', m.waste], ['organic', 'Aus der Google-Suche', m.organic]].filter(function (g) { return g[2].length })
     if (!groups.length) return null
     var sec = el('div', 'asx-recs')
-    var cur = groups[0][0], pane = el('div'), done = false
+    var cur = groups[0][0], pane = el('div'), done = false, showAll = {}
     var hd = el('div', 'asx-rh'); hd.append(el('h4', null, 'Empfehlungen'))
     var tabs = el('div', 'asx-tabs')
     function paintTabs() {
@@ -4456,8 +4568,13 @@ body { font-size: 14px; line-height: 1.5; }
       pane.append(sum)
       if (!open.length) pane.append(asEmpty('Alles erledigt.'))
       var list2 = el('div', 'asx-reclist')
-      open.forEach(function (r) { list2.append(row(r)) })
+      ;(showAll[cur] ? open : open.slice(0, 5)).forEach(function (r) { list2.append(row(r)) })
       pane.append(list2)
+      if (!showAll[cur] && open.length > 5) {
+        var mb = el('button', 'k-morebtn', 'Alle ' + open.length + ' Empfehlungen anzeigen'); mb.type = 'button'
+        mb.onclick = function () { showAll[cur] = true; paint() }
+        pane.append(mb)
+      }
       if (closed.length) {
         var t = el('button', 'asx-more', (done ? '− ' : '+ ') + 'Erledigt (' + closed.length + ')'); t.type = 'button'
         t.onclick = function () { done = !done; paint() }
@@ -4582,13 +4699,15 @@ body { font-size: 14px; line-height: 1.5; }
       paintRows(false)
       det.append(t); kw.append(det)
     })
-    main.append(asSection('kw', 'Keywords · ' + nKw, 'Suchen, bei denen die Anzeige erscheinen kann. Zahlen: letzte 90 Tage im bisherigen Konto.', kw))
+    kw.prepend(el('p', 'asp-fnote', 'Suchen, bei denen die Anzeige erscheinen kann. Zahlen: letzte 90 Tage im bisherigen Konto.'))
+    main.append(el('h2', 'k-folds-h', 'Einstellungen im Einzelnen'))
+    main.append(asFoldSec('kw', 'Bei welchen Suchen erscheint die Anzeige?', plural(nKw, ['Keyword', 'Keywords']) + ' in ' + plural(c.groups.length, ['Gruppe', 'Gruppen']), kw))
     // 4. negatives
     var neg = el('div', 'asx-chips')
     var sorted = c.negatives.slice().sort(function (a, b) { return a[0].localeCompare(b[0]) })
     var paintNeg = function (all) { neg.replaceChildren(); (all ? sorted : sorted.slice(0, 30)).forEach(function (n) { neg.append(asNeg(n[0], n[1])) }); if (!all && sorted.length > 30) { var b = el('button', 'asx-more', 'Alle ' + sorted.length + ' anzeigen'); b.type = 'button'; b.onclick = function () { paintNeg(true) }; neg.append(b) } }
     paintNeg(false)
-    main.append(asSection('neg', 'Ausschlüsse · ' + sorted.length, 'Bei Suchen mit diesen Wörtern erscheint keine Anzeige.', sorted.length ? neg : asEmpty('Keine ausgeschlossenen Wörter hinterlegt.')))
+    main.append(asFoldSec('neg', 'Bei welchen Suchen erscheint sie nicht?', sorted.length ? plural(sorted.length, ['ausgeschlossenes Wort', 'ausgeschlossene Wörter']) + ', zum Beispiel „' + sorted.slice(0, 3).map(function (n) { return n[0] }).join('“, „') + '“' : 'Noch keine Wörter ausgeschlossen', sorted.length ? neg : asEmpty('Keine ausgeschlossenen Wörter hinterlegt.')))
     // 5. extensions
     var aw = el('div', 'asx-ext')
     var blk = function (title, node) { var b = el('div', 'blk'); b.append(el('h3', null, title), node); aw.append(b) }
@@ -4601,7 +4720,7 @@ body { font-size: 14px; line-height: 1.5; }
     blk('Aufzählungen · ' + c.snippets.length, c.snippets.length ? sn : asEmpty('Keine.'))
     var call = el('div', 'asx-chips'); c.calls.forEach(function (x) { var a = el('a', 'asx-pill tel', x); a.href = 'tel:' + x.replace(/\s/g, ''); call.append(a) })
     blk('Telefon', c.calls.length ? call : asEmpty('Keine Nummer hinterlegt.'))
-    main.append(asSection('ext', 'Erweiterungen', 'Was Google zusätzlich unter der Anzeige zeigen kann.', aw))
+    main.append(asFoldSec('ext', 'Was steht zusätzlich unter der Anzeige?', [c.sitelinks.length ? plural(c.sitelinks.length, ['Sitelink', 'Sitelinks']) : '', c.callouts.length ? plural(c.callouts.length, ['Hervorhebung', 'Hervorhebungen']) : '', c.calls.length ? 'Telefonnummer' : ''].filter(Boolean).join(', ') || 'Noch nichts hinterlegt', aw))
     // 6. area and times (also first in the side column on wide screens)
     var area = el('div', 'asp-area')
     var ga = el('div', 'ga'); ga.append(el('p', 'sent', asGeoSentence(c) + '.'))
@@ -4615,7 +4734,7 @@ body { font-size: 14px; line-height: 1.5; }
     var live = c.status === 'ENABLED' && asNowIn(c)
     ti.append(el('p', 'sent', asScheduleText(c.schedule) + '.'), el('span', 'asx-now ' + (c.status !== 'ENABLED' ? 'off' : live ? 'on' : 'idle'), c.status !== 'ENABLED' ? 'Pausiert, zeigt keine Anzeigen' : live ? 'Läuft gerade' : 'Gerade außerhalb der Werbezeit'), asWeekList(c))
     area.append(ga, ti)
-    main.append(asSection('area', 'Gebiet & Werbezeiten', null, area))
+    main.append(asFoldSec('area', 'Wo und wann läuft die Anzeige?', asGeoSentence(c) + ', ' + asScheduleText(c.schedule), area))
     // side: details in small groups
     var grp = function (title, rows) { var b = el('div', 'kvg'); b.append(el('h3', null, title)); var dl = el('dl'); rows.forEach(function (x) { dl.append(el('dt', null, x[0]), el('dd', null, x[1])) }); b.append(dl); side.append(b) }
     grp('Kampagne', [['Status', (AS_STATUS[c.status] || [c.status])[0]], ['Budget', asEuro(c.budget) + ' pro Tag'], ['Gebote', (AS_BIDDING[c.bidding] === 'Klicks maximieren' ? 'Google bestimmt das Gebot' : (AS_BIDDING[c.bidding] || '–')) + (c.ceiling ? ', höchstens ' + asEuro(c.ceiling) + ' pro Klick' : '')]])
@@ -5679,6 +5798,7 @@ body { font-size: 14px; line-height: 1.5; }
     c.append(foot)
     return c
   }
+  var insMore = {}
   function renderInsightsPage(view) {
     var token = renderToken
     var seg = el('div', 'seg')
@@ -5773,8 +5893,15 @@ body { font-size: 14px; line-height: 1.5; }
         var gh = el('div', 'sv-igh'), gval = list.reduce(function (a, r) { return a + (r.value || 0) }, 0)
         gh.append(ownerLabel(o), el('span', null, list.length + (list.length === 1 ? ' Punkt' : ' Punkte') + (gval ? ' · ≈ ' + money0.format(gval) + ' pro Monat' : '')))
         var box = el('div', 'sv-colist')
-        list.forEach(function (r) { box.append(insightRow(r, render)) })
+        // the most urgent five first; the rest only on request, so the page stays readable
+        var LIM = 5, all = insFilter !== 'all' || insQuick || insMore[o] || list.length <= LIM + 1
+        ;(all ? list : list.slice(0, LIM)).forEach(function (r) { box.append(insightRow(r, render)) })
         g.append(gh, box)
+        if (!all) {
+          var mb = el('button', 'k-morebtn', 'Alle ' + list.length + ' Punkte anzeigen'); mb.type = 'button'
+          mb.onclick = function () { insMore[o] = true; list.slice(LIM).forEach(function (r) { box.append(insightRow(r, render)) }); mb.remove() }
+          g.append(mb)
+        }
         wrap.append(g)
       })
       if (closed.length) {
@@ -6346,8 +6473,11 @@ body { font-size: 14px; line-height: 1.5; }
     var setHero = hero(view)
     var jCard = kcard('journey', 'Wo Besucher aussteigen')
     var pCard = kcard('pagedrop', 'Wo auf der Seite sie gehen')
-    var fBox = el('div')
-    view.append(jCard, pCard, fBox)
+    var fBox = el('div', 'k-folds')
+    view.append(jCard)
+    var moreD = folds(view)
+    moreD.append(fold(pCard, 'pagedrop', 'Wo auf der Seite gehen sie?', 'Abschnitt für Abschnitt, auf Handy und Computer'))
+    view.append(fBox)
     var token = renderToken
     Promise.all([api('journey'), api('forms')]).then(function (res) {
       if (token !== renderToken) return
@@ -6372,7 +6502,7 @@ body { font-size: 14px; line-height: 1.5; }
       jCard.append(dev)
       // forms, one card each
       if (!fm.length) fBox.append(kcard('noform', 'Formulare')).lastChild.append(el('p', 'k-muted', 'Im Zeitraum hat niemand ein Formular begonnen.'))
-      fm.forEach(function (f) { fBox.append(formDropCard(f)) })
+      fm.forEach(function (f) { fBox.append(fold(formDropCard(f), 'formdrop', 'Wo hören sie im Formular auf?', (f.name || f.form) + ': ' + nf.format(f.starts) + ' begonnen, ' + nf.format(f.leads) + ' abgeschickt')) })
     }).catch(function (e) { console.error(e); jCard.append(el('div', 'empty', 'Fehler beim Laden')) })
     pageDrop(pCard)
   }
@@ -6573,8 +6703,9 @@ body { font-size: 14px; line-height: 1.5; }
       var cols = el('div', 'k-sim-cols')
       var levers = el('section', 'k-card')
       var why = el('section', 'k-card')
-      cols.append(levers, why)
+      cols.append(levers)
       view.append(board, cols)
+      folds(view).append(fold(why, 'sim-why', 'Worauf beruhen die Zahlen?', 'Was gemessen und was hochgerechnet ist'))
 
       // funnel picture: bars with bands between them, today's size as an outline
       var stageVals = function (r) { return [r.visits, r.looked, r.area, r.leads, r.customers] }
@@ -6908,21 +7039,25 @@ body { font-size: 14px; line-height: 1.5; }
       bc.append(el('div', 'k-card-h'))
       bc.firstChild.append(el('h2', null, 'Grundlagen'), el('span', 'k-muted', d.basics_ok + ' von ' + d.basics_total + ' erfüllt'))
       var list = el('div', 'k-basics')
+      var okBox = el('details', 'k-okbox'), okN = 0
       d.basics.forEach(function (b) {
         var r = el('div', 'k-basic' + (b.ok ? ' ok' : ''))
         r.append(el('span', 'k-tick', b.ok ? '✓' : '!'), el('span', 'k-bt', b.title), el('span', 'k-bf', b.found))
         if (!b.ok) r.append(el('span', 'k-bfix', b.fix))
-        list.append(r)
+        if (b.ok) { okBox.append(r); okN++ } else list.append(r)
       })
+      if (okN) { okBox.prepend(el('summary', null, '✓ ' + okN + ' in Ordnung')); list.append(okBox) }
       bc.append(list)
-      body.append(bc)
+      var open = d.basics.filter(function (b) { return !b.ok }).length
+      var moreC = folds(body)
+      moreC.append(fold(bc, 'check-basics', 'Stimmen die Grundlagen?', d.basics_ok + ' von ' + d.basics_total + ' erfüllt' + (open ? ', ' + plural(open, ['Punkt', 'Punkte']) + ' offen' : ''), open > 0))
 
       var pc = el('section', 'k-card')
       pc.append(el('div', 'k-card-h'))
       pc.firstChild.append(el('h2', null, 'Alle Seiten'))
       var pl = el('div', 'k-list'); pl.id = 'wcPages'
       pc.append(pl)
-      body.append(pc)
+      moreC.append(fold(pc, 'check-pages', 'Wie stehen die anderen Seiten da?', 'Alle Seiten der Website mit ihrem Stand'))
       if (view._pages) renderPagesList(view)
     }
   }
@@ -7566,8 +7701,8 @@ body { font-size: 14px; line-height: 1.5; }
     var recent = kcard('recent', 'Neueste Anfragen')
     var todo = kcard('todo', 'Was jetzt zu tun ist', ['Alle Chancen', '?view=insights', null])
     var cols0 = el('div', 'k-cols'), cols = el('div', 'k-cols')
-    cols0.append(notes, recent)
-    cols.append(todo)
+    cols0.append(todo, recent)
+    cols.append(notes)
     view.append(alerts, silent, board, tableCard, cols0, cols)
     renderAlerts(alerts)
     if (isAdmin()) renderSilentSites(silent)
