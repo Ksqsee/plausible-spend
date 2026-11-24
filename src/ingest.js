@@ -278,6 +278,32 @@ export async function handleEvent(request, env) {
     return accepted()
   }
 
+  // A report on how long the visitor was away after a contact click. It is not stored as an event of
+  // its own: it marks the click. A tap that was cancelled at once (back within seconds, or the phone or
+  // chat app never opened) becomes "... tap" and no longer counts as an enquiry anywhere.
+  if (name === 'Contact check') {
+    const p = props || {}
+    const of = CONTACT_CHECK[p.of] ? p.of : null
+    const cid = typeof p.cid === 'string' && /^[a-z0-9]{8}$/.test(p.cid) ? p.cid : null
+    const away = Math.min(Math.max(Math.round(Number(p.away) || 0), 0), 3600)
+    const hid = Number(p.hid) === 1
+    if (!of || !cid) return accepted()
+    const click = await db
+      .prepare("SELECT id, device FROM events WHERE site = ? AND visitor_id = ? AND name IN (?, ?) AND ts > ? AND json_extract(props, '$.cid') = ? LIMIT 1")
+      .bind(site, visitorId, of, CONTACT_CHECK[of].tap, now - 2 * 3600 * 1000, cid)
+      .first()
+    if (!click) return accepted()
+    const rule = CONTACT_CHECK[of]
+    const handheld = click.device === 'Mobile' || click.device === 'Tablet'
+    // on a computer a phone number is often dialled by hand, so there a short stay proves nothing
+    const cancelled = (handheld || (rule.desktop && hid)) && away < rule.min
+    await db
+      .prepare("UPDATE events SET name = ?, props = json_set(COALESCE(props, '{}'), '$.away', ?, '$.hid', ?) WHERE id = ?")
+      .bind(cancelled ? rule.tap : of, away, hid ? 1 : 0, click.id)
+      .run()
+    return accepted()
+  }
+
   // One visit per visitor and day. The visitor id already changes every day (daily salt), and a
   // fixed id means events that arrive at the same moment can never open two separate visits.
   const sessionId = `${visitorId}-${date}`
@@ -393,6 +419,13 @@ function capitalizeSource(source) {
 // Event properties are kept small and flat: strings, numbers, a list of strings (sections seen)
 // and one level of string choices (form answers).
 // list props: max entries and max length per entry
+// Contact clicks the tracker follows up: seconds away below which a tap counts as cancelled, the name
+// a cancelled tap gets, and whether a short stay also counts on a computer (WhatsApp opens a new tab).
+const CONTACT_CHECK = {
+  'Phone click': { min: 10, tap: 'Phone tap', desktop: false },
+  'WhatsApp click': { min: 8, tap: 'WhatsApp tap', desktop: true },
+  'Email click': { min: 8, tap: 'Email tap', desktop: false }
+}
 const LIST_PROPS = { sec: [40, 60], fs: [20, 60], err: [20, 60], hc: [40, 300], sg: [40, 60], fd: [20, 70] }
 
 // Section id -> visible heading, as sent with engagement events.

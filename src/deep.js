@@ -112,7 +112,13 @@ export async function leads(db, q, limit = 60) {
       .all()
   ])
   const outcomes = Object.fromEntries(outs.map((o) => [o.session_id, { status: o.status, value: o.value, note: o.note, ts: o.updated_ts }]))
-  return { results: rows, by_type: byType, choices, outcomes, by_source: bySource }
+  // contact taps that were cancelled at once (see ingest): not counted, only reported
+  const tapRows = await db
+    .prepare(`SELECT name, COUNT(*) AS n FROM events WHERE ${w.sql} AND name IN ('Phone tap', 'WhatsApp tap', 'Email tap') GROUP BY name`)
+    .bind(...w.params)
+    .all()
+  const taps = Object.fromEntries(tapRows.results.map((t) => [t.name, t.n]))
+  return { results: rows, by_type: byType, choices, outcomes, by_source: bySource, taps }
 }
 
 export const OUTCOME_STATUS = ['open', 'quote', 'won', 'lost', 'none']

@@ -778,6 +778,7 @@ td.m { color: var(--text-3); font-weight: 400; }
 .asp-fb { padding: 18px 22px 22px !important; }
 .asp-fnote { margin: 0 0 14px; font-size: 14px; color: var(--text-2); }
 @media (max-width: 700px) { .asp-fb { padding: 14px 16px 18px !important; } }
+.k-tapnote { margin: 0 0 14px; font-size: 14px; color: var(--text-2); }
 .k-morebtn { display: block; width: 100%; margin-top: 10px; padding: 13px; border: 1px solid var(--line); border-radius: 12px; background: none; font: 600 14.5px inherit; color: var(--text); cursor: pointer; }
 .k-morebtn:hover { border-color: var(--text); }
 @media (max-width: 760px) {
@@ -3706,7 +3707,13 @@ body { font-size: 14px; line-height: 1.5; }
         })
         sum.append(strip)
         // inbox with a status filter
-        inbox.querySelectorAll('.k-filter, .k-list, .k-muted').forEach(function (n) { n.remove() })
+        inbox.querySelectorAll('.k-filter, .k-list, .k-muted, .k-tapnote').forEach(function (n) { n.remove() })
+        var tp = d.taps || {}, tapN = (tp['Phone tap'] || 0) + (tp['WhatsApp tap'] || 0) + (tp['Email tap'] || 0)
+        if (tapN) {
+          var tparts = [[tp['Phone tap'], ['Klick auf Anrufen', 'Klicks auf Anrufen']], [tp['WhatsApp tap'], ['Klick auf WhatsApp', 'Klicks auf WhatsApp']], [tp['Email tap'], ['Klick auf E-Mail', 'Klicks auf E-Mail']]]
+            .filter(function (x) { return x[0] }).map(function (x) { return plural(x[0], x[1]) })
+          inbox.append(el('p', 'k-tapnote', 'Nicht mitgezählt: ' + tparts.join(', ') + ', bei denen die Person sofort zurück auf der Seite war, also nicht angerufen oder geschrieben hat.'))
+        }
         if (!groups.length) { inbox.append(el('p', 'k-muted', 'Noch keine Anfrage im Zeitraum.')); return }
         var filter = el('div', 'k-filter')
         var current = state.leadFilter || 'all'

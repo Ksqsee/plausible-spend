@@ -44,6 +44,47 @@
     } catch (e) {}
   }
 
+  // ---- contact clicks: did a call or message probably follow? ----
+  // A tap on "call" opens the phone app and the page goes to the background. Someone who really calls
+  // or writes stays away a while; someone who cancels is back within seconds. The click carries a short
+  // id, and when the visitor comes back the time away is reported for that id (or 0 if the page never
+  // left). The server then decides whether the click still counts as an enquiry. Nothing else is sent.
+  var watching = null
+  function contact(name, p) {
+    var cid = Math.random().toString(36).slice(2, 10)
+    while (cid.length < 8) cid += '0'
+    p.cid = cid
+    send(name, p)
+    if (watching) watching.stop()
+    var hiddenAt = 0
+    var done = false
+    var w = {}
+    var early = false
+    var report = function (away, hid) { send('Contact check', { of: name, cid: cid, away: away, hid: hid }) }
+    var finish = function (away, hid) {
+      if (done) return
+      done = true
+      w.stop()
+      report(away, hid)
+    }
+    var onVis = function () {
+      if (document.visibilityState === 'hidden') {
+        if (hiddenAt) return
+        hiddenAt = Date.now()
+        // left only after the "never opened" report (an iPhone asks "call?" first): undo that report now,
+        // in case the visitor never comes back to the page
+        if (early) report(60, 1)
+      } else if (hiddenAt) finish(Math.min(Math.round((Date.now() - hiddenAt) / 1000), 3600), 1)
+    }
+    // still on the page after 12 seconds without ever leaving it: the call or chat was not opened.
+    // Keep listening a while longer; a later report overrides this one.
+    var timer = setTimeout(function () { if (!hiddenAt) { early = true; report(0, 0) } }, 12000)
+    var giveUp = setTimeout(function () { if (!hiddenAt) finish(0, 0) }, 120000)
+    w.stop = function () { clearTimeout(timer); clearTimeout(giveUp); document.removeEventListener('visibilitychange', onVis); if (watching === w) watching = null }
+    document.addEventListener('visibilitychange', onVis)
+    watching = w
+  }
+
   function clip(s, n) {
     return String(s || '').replace(/\s+/g, ' ').trim().slice(0, n || 80)
   }
@@ -329,9 +370,9 @@
         var href = el.getAttribute('href') || ''
         // Calls and mails about a job are applications, not customer leads.
         var job = APPLICATION_RE.test(label + ' ' + (where || '') + ' ' + location.pathname)
-        if (/^tel:/i.test(href)) return send(job ? 'Application contact' : 'Phone click', props({ target: href.slice(4).replace(/[^\d+]/g, ''), via: 'Telefon' }))
-        if (/^mailto:/i.test(href)) return send(job ? 'Application contact' : 'Email click', props({ target: href.slice(7).split('?')[0], via: 'E-Mail' }))
-        if (/^https?:\/\/(wa\.me|api\.whatsapp\.com|chat\.whatsapp\.com)/i.test(href)) return send(job ? 'Application contact' : 'WhatsApp click', props({ via: 'WhatsApp' }))
+        if (/^tel:/i.test(href)) return job ? send('Application contact', props({ via: 'Telefon' })) : contact('Phone click', props({ target: href.slice(4).replace(/[^\d+]/g, ''), via: 'Telefon' }))
+        if (/^mailto:/i.test(href)) return job ? send('Application contact', props({ via: 'E-Mail' })) : contact('Email click', props({ target: href.slice(7).split('?')[0], via: 'E-Mail' }))
+        if (/^https?:\/\/(wa\.me|api\.whatsapp\.com|chat\.whatsapp\.com)/i.test(href)) return job ? send('Application contact', props({ via: 'WhatsApp' })) : contact('WhatsApp click', props({ via: 'WhatsApp' }))
         var url
         try {
           url = new URL(el.href, location.href)
