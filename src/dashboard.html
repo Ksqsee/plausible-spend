@@ -460,7 +460,6 @@ td.m { color: var(--text-3); font-weight: 400; }
 .asx-iss.warn { color: var(--c-warn); } .asx-iss.bad { color: var(--c-bad); } .asx-iss.none { color: var(--mut); font-weight: 400; }
 /* summary strip */
 .asx-strip { margin-bottom: 18px; }
-.asx-strip .who { font-size: 13px; color: var(--sub); margin: 0 0 8px 2px; }
 .asx-strip .cells { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); background: var(--card); border: 1px solid var(--hair); border-radius: 16px; overflow: hidden; }
 .asx-strip .c { text-align: left; font: inherit; color: inherit; border: 0; background: none; padding: 20px 22px; border-left: 1px solid var(--soft); min-width: 0; }
 .asx-strip .c:first-child { border-left: 0; }
@@ -475,15 +474,46 @@ td.m { color: var(--text-3); font-weight: 400; }
 .asx-strip .c.bad .v, .asx-strip .c.bad .s { color: var(--c-bad); }
 .asx-strip .c.act { box-shadow: inset 0 -3px 0 currentColor; }
 /* toolbar */
-.asx-bar { display: flex; align-items: center; gap: 12px; margin: 0 0 18px; flex-wrap: wrap; }
-.asx-pills { display: flex; gap: 6px; flex: 1; min-width: 0; overflow-x: auto; scrollbar-width: none; padding: 1px; }
-.asx-pills button { display: inline-flex; align-items: center; gap: 7px; flex: none; height: 38px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--hair); background: var(--card); color: var(--ink); font: 500 14px inherit; cursor: pointer; }
-.asx-pills button:hover { border-color: var(--ink); }
-.asx-pills button.on { background: var(--ink); border-color: var(--ink); color: var(--card); }
-.asx-pills button img, .asx-pills button .logo { width: 18px; height: 18px; border-radius: 4px; }
-.asx-pills .n { min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; display: inline-grid; place-items: center; font-size: 11.5px; font-weight: 700; background: var(--c-warn); color: #fff; }
-.asx-toggle { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--ink); cursor: pointer; white-space: nowrap; }
-.asx-toggle input { width: 18px; height: 18px; accent-color: var(--ink); }
+.asx-bar { display: flex; align-items: center; gap: 12px; margin: 0 0 16px; flex-wrap: wrap; }
+.asx-pick { position: relative; flex: 0 1 420px; min-width: 0; }
+.asx-pickbtn { width: 100%; display: flex; align-items: center; gap: 14px; text-align: left; padding: 12px 16px 12px 14px; border: 1px solid var(--hair); border-radius: 16px; background: var(--card); color: var(--ink); font: inherit; cursor: pointer; }
+.asx-pickbtn:hover, .asx-pick.open .asx-pickbtn { border-color: var(--ink); }
+.asx-pickbtn .tt, .asx-menu .tt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.asx-pickbtn b { font: 600 18px/1.25 var(--display); letter-spacing: -.015em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.asx-pickbtn .tt span, .asx-menu .tt span { font-size: 13.5px; color: var(--sub); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.asx-pickbtn .dn { width: 20px; height: 20px; flex: none; color: var(--sub); transition: transform .2s var(--ease); }
+.asx-pick.open .asx-pickbtn .dn { transform: rotate(180deg); }
+.asx-pickbtn img, .asx-pickbtn .logo, .asx-pickbtn .asx-allic { width: 36px; height: 36px; border-radius: 9px; flex: none; }
+.asx-allic { display: inline-grid; place-items: center; background: var(--soft); color: var(--ink); }
+.asx-allic svg { width: 58%; height: 58%; }
+.asx-menu { position: absolute; z-index: 30; top: calc(100% + 8px); left: 0; width: max(100%, 440px); max-height: min(calc(100vh - 220px), 680px); overflow-y: auto; background: var(--card); border: 1px solid var(--hair); border-radius: 18px; padding: 6px; box-shadow: 0 18px 50px -12px rgba(0,0,0,.25), 0 2px 6px rgba(0,0,0,.06); }
+.asx-menu .it { width: 100%; display: flex; align-items: center; gap: 14px; text-align: left; padding: 10px 12px; border: 0; border-radius: 12px; background: none; color: var(--ink); font: inherit; cursor: pointer; min-height: 60px; }
+.asx-menu .it:hover, .asx-menu .it:focus-visible { background: var(--soft); outline: none; }
+.asx-menu .it.on { background: color-mix(in srgb, var(--ink) 6%, var(--card)); box-shadow: inset 3px 0 0 var(--ink); }
+.asx-menu .it .tt b { font-size: 16px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.asx-menu .it img, .asx-menu .it .logo, .asx-menu .it .asx-allic { width: 32px; height: 32px; border-radius: 8px; flex: none; }
+.asx-menu .sep { height: 1px; background: var(--soft); margin: 4px 10px; }
+.asx-cbadge b, .asx-cbadge i { font: inherit; }
+.asx-cbadge { flex: none; font-size: 13px; font-weight: 600; padding: 5px 10px; border-radius: 999px; white-space: nowrap; }
+.asx-cbadge.warn { background: color-mix(in srgb, var(--c-warn) 14%, var(--card)); color: var(--c-warn); }
+.asx-cbadge.ok { background: color-mix(in srgb, var(--c-ok, #1a7f4b) 12%, var(--card)); color: var(--c-ok, #1a7f4b); }
+.asx-barr { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+.asx-seg2 { display: inline-flex; padding: 4px; border-radius: 12px; background: var(--soft); }
+.asx-seg2 button { border: 0; background: none; font: 500 14.5px/1 inherit; color: var(--sub); padding: 10px 14px; border-radius: 9px; cursor: pointer; white-space: nowrap; }
+.asx-seg2 button.on { background: var(--card); color: var(--ink); font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+.asx-refresh { display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 14px; border: 1px solid var(--hair); border-radius: 12px; background: var(--card); color: var(--ink); font: 500 14.5px/1 inherit; cursor: pointer; }
+.asx-refresh:hover { border-color: var(--ink); }
+.asx-refresh svg { width: 17px; height: 17px; }
+.asx-refresh:disabled { opacity: .55; cursor: default; }
+@media (max-width: 700px) {
+  .asx-pick { flex: 1 1 100%; }
+  .asx-menu { width: 100%; max-height: calc(100vh - 330px); }
+  .asx-cbadge i { display: none; }
+  .asx-cbadge { min-width: 34px; text-align: center; }
+  .asx-barr { margin-left: 0; width: 100%; }
+  .asx-seg2 { flex: 1; } .asx-seg2 button { flex: 1; }
+  .asx-refresh span { display: none; } .asx-refresh { width: 44px; justify-content: center; padding: 0; }
+}
 /* company card */
 .asx-co { background: var(--card); border: 1px solid var(--hair); border-radius: 18px; padding: 24px 24px 12px; margin-bottom: 18px; }
 .asx-coh { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding-bottom: 20px; }
@@ -721,7 +751,6 @@ td.m { color: var(--text-3); font-weight: 400; }
   .asx-strip .c:nth-child(even) { border-left: 1px solid var(--soft); }
   .asx-strip .c:last-child { grid-column: 1 / -1; border-left: 0; }
   .asx-strip .v { font-size: 25px; }
-  .asx-pills { flex: 1 1 100%; }
   .asx-co { padding: 16px 14px 6px; }
   .asx-mini { gap: 18px; width: 100%; }
   .asx-camps .th { display: none; }
@@ -4877,7 +4906,7 @@ body { font-size: 14px; line-height: 1.5; }
       var pick = as.co && cos.some(function (c) { return c.id === as.co }) ? as.co : (cos.length === 1 ? cos[0].id : 'all')
       var onlyIssues = !!state.tabs.asIssues
       var strip = el('div', 'asx-strip'), bar = el('div', 'asx-bar'), body = el('div', 'asx-list')
-      wrap.append(strip, bar, body)
+      wrap.append(bar, strip, body)
       function issuesOf(co) { return co.setup.campaigns.reduce(function (a, c) { return a + asOpen(checks[co.id][c.name]).length }, 0) }
       function paintStrip() {
         strip.replaceChildren()
@@ -4891,8 +4920,6 @@ body { font-size: 14px; line-height: 1.5; }
         var budget = camps.reduce(function (a, c) { return a + c.budget }, 0)
         var kws = camps.reduce(function (a, c) { return a + c.groups.reduce(function (b, g) { return b + g.keywords.length }, 0) }, 0)
         var negs = camps.reduce(function (a, c) { return a + c.negatives.length }, 0)
-        var who = pick === 'all' ? 'Alle ' + plural(sel.length, ['Firma', 'Firmen']) : sel[0].name
-        strip.append(el('div', 'who', who))
         var cells = el('div', 'cells')
         var cell = function (l, v, unit, s, cls, onClick) {
           var x = el(onClick ? 'button' : 'div', 'c' + (cls ? ' ' + cls : '')); if (onClick) { x.type = 'button'; x.onclick = onClick }
@@ -4908,29 +4935,78 @@ body { font-size: 14px; line-height: 1.5; }
       }
       function paintBar() {
         bar.replaceChildren()
+        var sumOf = function (list) {
+          var camps = 0, budget = 0, iss = 0
+          list.forEach(function (co) { camps += co.setup.campaigns.length; budget += co.setup.campaigns.reduce(function (a, c) { return a + c.budget }, 0); iss += issuesOf(co) })
+          return { camps: camps, budget: budget, iss: iss }
+        }
+        var line = function (x) { return plural(x.camps, ['Kampagne', 'Kampagnen']) + ' · ' + asEuro(x.budget) + '/Tag' }
+        var badge = function (n) {
+          var b = el('span', 'asx-cbadge ' + (n ? 'warn' : 'ok'))
+          if (n) b.append(el('b', null, nf.format(n)), el('i', null, n === 1 ? ' Hinweis' : ' Hinweise'))
+          else b.append(el('b', null, '✓'), el('i', null, ' in Ordnung'))
+          b.title = n ? plural(n, ['Hinweis', 'Hinweise']) : 'in Ordnung'
+          return b
+        }
+        var allIcon = function () { return html('<span class="asx-allic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg></span>') }
+        var logoOf = function (id) { var meta = COMPANIES.filter(function (x) { return x.id === id })[0]; return meta ? companyLogo(meta) : allIcon() }
+        // company picker: one big button, the list folds out below it
         if (cos.length > 1) {
-          var pills = el('div', 'asx-pills')
-          ;[{ id: 'all', name: 'Alle Firmen' }].concat(cos).forEach(function (co) {
-            var b = el('button', pick === co.id ? 'on' : ''); b.type = 'button'
-            var meta = COMPANIES.filter(function (x) { return x.id === co.id })[0]
-            if (meta) b.append(companyLogo(meta))
-            b.append(el('span', null, co.name))
-            var n = co.id === 'all' ? null : issuesOf(co)
-            if (n) b.append(el('span', 'n', String(n)))
-            b.onclick = function () { pick = co.id; state.as = co.id === 'all' ? {} : { co: co.id }; saveUrl(); paintAll() }
-            pills.append(b)
-          })
-          bar.append(pills)
+          var pw = el('div', 'asx-pick')
+          var cur = pick === 'all' ? null : cos.filter(function (c) { return c.id === pick })[0]
+          var btn = el('button', 'asx-pickbtn'); btn.type = 'button'
+          btn.setAttribute('aria-haspopup', 'listbox'); btn.setAttribute('aria-expanded', 'false')
+          var tt = el('span', 'tt')
+          tt.append(el('b', null, cur ? cur.name : 'Alle Firmen'), el('span', null, line(sumOf(cur ? [cur] : cos))))
+          btn.append(cur ? logoOf(cur.id) : allIcon(), tt, html('<svg class="dn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 10l5 5 5-5"/></svg>'))
+          var menu = el('div', 'asx-menu'); menu.hidden = true; menu.setAttribute('role', 'listbox')
+          var items = []
+          var add = function (id, name, x, logo) {
+            var it = el('button', 'it' + (pick === id ? ' on' : '')); it.type = 'button'; it.setAttribute('role', 'option'); it.setAttribute('aria-selected', String(pick === id))
+            var t = el('span', 'tt'); t.append(el('b', null, name), el('span', null, line(x)))
+            it.append(logo, t, badge(x.iss))
+            it.onclick = function () { close(); pick = id; state.as = id === 'all' ? {} : { co: id }; saveUrl(); paintAll() }
+            menu.append(it); items.push(it)
+          }
+          add('all', 'Alle Firmen', sumOf(cos), allIcon())
+          menu.append(el('div', 'sep'))
+          cos.forEach(function (co) { add(co.id, co.name, sumOf([co]), logoOf(co.id)) })
+          var outside = function (e) { if (!pw.contains(e.target)) close() }
+          var keys = function (e) {
+            var i = items.indexOf(document.activeElement)
+            if (e.key === 'Escape') { close(); btn.focus() }
+            else if (e.key === 'ArrowDown') { e.preventDefault(); items[Math.min(items.length - 1, i + 1)].focus() }
+            else if (e.key === 'ArrowUp') { e.preventDefault(); items[Math.max(0, i - 1)].focus() }
+          }
+          var open = function () {
+            menu.hidden = false; btn.setAttribute('aria-expanded', 'true'); pw.classList.add('open')
+            document.addEventListener('click', outside, true); document.addEventListener('keydown', keys)
+            var sel = items.filter(function (x) { return x.classList.contains('on') })[0] || items[0]; sel.focus()
+          }
+          var close = function () {
+            menu.hidden = true; btn.setAttribute('aria-expanded', 'false'); pw.classList.remove('open')
+            document.removeEventListener('click', outside, true); document.removeEventListener('keydown', keys)
+          }
+          btn.onclick = function () { menu.hidden ? open() : close() }
+          pw.append(btn, menu)
+          bar.append(pw)
         }
-        var tg = el('label', 'asx-toggle'); var cb = el('input'); cb.type = 'checkbox'; cb.checked = onlyIssues
-        cb.onchange = function () { onlyIssues = cb.checked; state.tabs.asIssues = onlyIssues; paintAll() }
-        tg.append(cb, el('span', null, 'Nur mit Hinweisen'))
-        bar.append(tg)
+        var right = el('div', 'asx-barr')
+        // which campaigns: all of them, or only those that still need work
+        var seg2 = el('div', 'asx-seg2'); seg2.setAttribute('role', 'radiogroup')
+        ;[[false, 'Alle Kampagnen'], [true, 'Nur mit Hinweisen']].forEach(function (o) {
+          var b = el('button', onlyIssues === o[0] ? 'on' : '', o[1]); b.type = 'button'; b.setAttribute('role', 'radio'); b.setAttribute('aria-checked', String(onlyIssues === o[0]))
+          b.onclick = function () { if (onlyIssues === o[0]) return; onlyIssues = o[0]; state.tabs.asIssues = onlyIssues; paintAll() }
+          seg2.append(b)
+        })
+        right.append(seg2)
         if (isAdmin()) {
-          var rf = el('button', 'asx-btn ghost', 'Aktualisieren'); rf.type = 'button'
-          rf.onclick = function () { rf.disabled = true; rf.textContent = 'Lädt …'; fetch('/api/ad-setup/refresh', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin' }).then(function () { adSetupCache = null; render(true) }).catch(function () { rf.disabled = false; rf.textContent = 'Nochmal versuchen' }) }
-          bar.append(rf)
+          var rf = el('button', 'asx-refresh'); rf.type = 'button'; rf.title = 'Neu aus Google Ads laden'
+          rf.append(html('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 5v6h-6"/></svg>'), el('span', null, 'Aktualisieren'))
+          rf.onclick = function () { rf.disabled = true; rf.lastChild.textContent = 'Lädt …'; fetch('/api/ad-setup/refresh', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin' }).then(function () { adSetupCache = null; render(true) }).catch(function () { rf.disabled = false; rf.lastChild.textContent = 'Nochmal versuchen' }) }
+          right.append(rf)
         }
+        bar.append(right)
       }
       function paintAll() {
         paintStrip(); paintBar()
